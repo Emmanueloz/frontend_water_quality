@@ -1,4 +1,5 @@
 // app_router.dart
+import 'package:frontend_water_quality/presentation/pages/list_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/simple.dart';
 import 'package:frontend_water_quality/presentation/pages/splash.dart';
 import 'package:frontend_water_quality/router/routes.dart';
@@ -28,7 +29,7 @@ class AppRouter {
       GoRoute(
         path: Routes.listWorkspace.path,
         name: Routes.listWorkspace.name,
-        builder: (context, state) => const Simple(title: 'List Workspace'),
+        builder: (context, state) => const ListWorkspace(),
       ),
       GoRoute(
         path: Routes.viewWorkspace.path,

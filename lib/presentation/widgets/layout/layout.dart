@@ -11,6 +11,7 @@ class Layout extends StatelessWidget {
     return Scaffold(
       appBar: AppBarNavigation(title: title),
       body: body,
+      backgroundColor: Colors.white70,
     );
   }
 }

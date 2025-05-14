@@ -20,6 +20,7 @@ class Routes {
   static RouteProperties viewWorkspace = RouteProperties(
     name: "viewWorkspace",
     path: "/workspace/:id",
+    pathRoot: "/workspace/",
   );
   static RouteProperties profile = RouteProperties(
     name: "profile",
