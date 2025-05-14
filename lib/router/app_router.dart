@@ -2,6 +2,7 @@
 import 'package:frontend_water_quality/presentation/pages/list_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/simple.dart';
 import 'package:frontend_water_quality/presentation/pages/splash.dart';
+import 'package:frontend_water_quality/presentation/pages/view_workspace.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
@@ -36,7 +37,7 @@ class AppRouter {
         name: Routes.viewWorkspace.name,
         builder: (context, state) {
           final id = state.pathParameters['id'] ?? 'default';
-          return Simple(title: 'View Workspace $id');
+          return ViewWorkspace(id: id);
         },
       ),
       GoRoute(

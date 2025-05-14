@@ -43,8 +43,11 @@ class WorkspaceCard extends StatelessWidget {
           ),
         ),
         onTap: () {
-          context.go(
-            "${Routes.viewWorkspace.pathRoot ?? ""}$id",
+          context.goNamed(
+            Routes.viewWorkspace.name,
+            pathParameters: {
+              'id': id,
+            },
           );
         },
       ),
