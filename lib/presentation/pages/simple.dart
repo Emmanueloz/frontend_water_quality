@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
@@ -8,8 +9,9 @@ class Simple extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
+    return Layout(
+      title: title,
+      body: Column(
         children: [
           Text(title),
           ElevatedButton(
