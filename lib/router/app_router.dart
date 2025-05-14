@@ -6,54 +6,62 @@ import 'package:go_router/go_router.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: Routes.splash,
+    initialLocation: Routes.splash.path,
     //debugLogDiagnostics: true, // Útil durante el desarrollo
     //routerNeglect: true, // Ayuda con URLs en web
     routes: [
       GoRoute(
-        path: Routes.splash,
+        path: Routes.splash.path,
+        name: Routes.splash.name,
         builder: (context, state) => Splash(),
       ),
       GoRoute(
-        path: Routes.login,
+        path: Routes.login.path,
+        name: Routes.login.name,
         builder: (context, state) => const Simple(title: 'Login'),
       ),
       GoRoute(
-        path: Routes.register,
-        //name: 'register',
+        path: Routes.register.path,
+        name: Routes.register.name,
         builder: (context, state) => const Simple(title: 'Register'),
       ),
       GoRoute(
-        path: Routes.listWorkspace,
+        path: Routes.listWorkspace.path,
+        name: Routes.listWorkspace.name,
         builder: (context, state) => const Simple(title: 'List Workspace'),
       ),
       GoRoute(
-        path: Routes.viewWorkspace,
+        path: Routes.viewWorkspace.path,
+        name: Routes.viewWorkspace.name,
         builder: (context, state) {
           final id = state.pathParameters['id'] ?? 'default';
           return Simple(title: 'View Workspace $id');
         },
       ),
       GoRoute(
-        path: Routes.profile,
+        path: Routes.profile.path,
+        name: Routes.profile.name,
         builder: (context, state) => const Simple(title: 'Profile'),
       ),
       GoRoute(
-        path: Routes.alerts,
+        path: Routes.alerts.path,
+        name: Routes.alerts.name,
         builder: (context, state) {
           final id = state.pathParameters['id'] ?? 'default';
           return Simple(title: 'Alerts for Workspace $id');
         },
       ),
       GoRoute(
-        path: Routes.listRecords,
+        path: Routes.listRecords.path,
+        name: Routes.listRecords.name,
         builder: (context, state) {
           final id = state.pathParameters['id'] ?? 'default';
           return Simple(title: 'Records for Workspace $id');
         },
       ),
       GoRoute(
-        path: Routes.notificationDetails,
+        path: Routes.notificationDetails.path,
+        name: Routes.notificationDetails.name,
         builder: (context, state) {
           final id = state.pathParameters['id'] ?? 'default';
           return Simple(title: 'Notification Details $id');

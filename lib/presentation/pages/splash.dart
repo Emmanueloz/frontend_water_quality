@@ -13,7 +13,7 @@ class Splash extends StatelessWidget {
           Text("Splash"),
           ElevatedButton(
             onPressed: () {
-              context.go(Routes.login);
+              context.go(Routes.login.path);
             },
             child: const Text('Go to List Workspace'),
           ),

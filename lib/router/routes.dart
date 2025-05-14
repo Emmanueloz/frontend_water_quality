@@ -1,13 +1,40 @@
+import 'package:frontend_water_quality/domain/models/route_properties.dart';
+
 class Routes {
-  static const String splash = '/';
-  static const String login = '/login';
-  static const String register = '/register';
-
-  static const String listWorkspace = '/workspace';
-  static const String viewWorkspace = '/workspace/:id';
-
-  static const String profile = '/profile';
-  static const String alerts = '/workspace/:id/alerts';
-  static const String listRecords = '/workspace/:id/records';
-  static const String notificationDetails = '/notifications/:id';
+  static RouteProperties splash = RouteProperties(
+    name: "splash",
+    path: "/",
+  );
+  static RouteProperties login = RouteProperties(
+    name: "login",
+    path: "/login",
+  );
+  static RouteProperties register = RouteProperties(
+    name: "register",
+    path: "/register",
+  );
+  static RouteProperties listWorkspace = RouteProperties(
+    name: "listWorkspace",
+    path: "/workspaces",
+  );
+  static RouteProperties viewWorkspace = RouteProperties(
+    name: "viewWorkspace",
+    path: "/workspace/:id",
+  );
+  static RouteProperties profile = RouteProperties(
+    name: "profile",
+    path: "/profile",
+  );
+  static RouteProperties alerts = RouteProperties(
+    name: "alerts",
+    path: "/workspace/:id/alerts",
+  );
+  static RouteProperties listRecords = RouteProperties(
+    name: "listRecords",
+    path: "/workspace/:id/records",
+  );
+  static RouteProperties notificationDetails = RouteProperties(
+    name: "notificationDetails",
+    path: "/notification/:id",
+  );
 }

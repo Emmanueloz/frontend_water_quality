@@ -14,7 +14,7 @@ class Simple extends StatelessWidget {
           Text(title),
           ElevatedButton(
             onPressed: () {
-              context.go(Routes.listWorkspace);
+              context.go(Routes.listWorkspace.path);
             },
             child: const Text('Go to List Workspace'),
           ),
