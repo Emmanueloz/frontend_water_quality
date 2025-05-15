@@ -8,16 +8,13 @@ class SideBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: ListTile(
-        title: Text(
-          title,
-          style: const TextStyle(fontSize: 14),
-        ),
-        dense: true,
-        onTap: onTap,
+    return ListTile(
+      leading: const Icon(Icons.analytics_outlined),
+      title: Text(
+        title,
+        style: const TextStyle(fontSize: 14),
       ),
+      onTap: onTap,
     );
   }
 }
