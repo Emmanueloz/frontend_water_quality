@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/app_bar_navigation.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/drawer_navigation.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
 
 class Layout extends StatelessWidget {
@@ -25,6 +26,7 @@ class Layout extends StatelessWidget {
           appBar: AppBar(
             title: Text(title),
           ),
+          drawer: DrawerNavigation(title: title),
           body: builder!(context, screenSize),
           backgroundColor: Colors.white70,
         );
