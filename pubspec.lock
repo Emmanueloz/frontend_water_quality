@@ -136,6 +136,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  girix_code_gauge:
+    dependency: "direct main"
+    description:
+      name: girix_code_gauge
+      sha256: f1505ef49dacff948d051cad3883fe73b089fe868bf7313e56f99969309e7121
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.6"
   go_router:
     dependency: "direct main"
     description:

@@ -18,7 +18,7 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         TextButton(
           child: const Text(
-            "Workspaces",
+            "Espacios de trabajo",
             style: TextStyle(
               color: Colors.black,
             ),
