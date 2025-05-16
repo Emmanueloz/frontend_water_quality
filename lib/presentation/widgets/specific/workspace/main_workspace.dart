@@ -15,7 +15,10 @@ class MainWorkspace extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 60.0,
+          vertical: 10.0,
+        ),
         decoration: BoxDecoration(
           color: const Color.fromARGB(179, 211, 211, 211),
           borderRadius: BorderRadius.circular(10.0),
@@ -25,8 +28,19 @@ class MainWorkspace extends StatelessWidget {
           children: [
             Text(
               "Medidor $idMeter",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
-            RadialGaugeMeter()
+            RadialGaugeMeter(
+              sensorType: "Temperatura",
+              value: 54,
+              min: 0,
+              max: 60,
+              interval: 10,
+            ),
           ],
         ),
       ),
