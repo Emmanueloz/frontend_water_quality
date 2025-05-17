@@ -5,20 +5,140 @@ import 'package:frontend_water_quality/presentation/widgets/specific/workspace/r
 class MainWorkspace extends StatelessWidget {
   final String idMeter;
   final ScreenSize screenSize;
+
   const MainWorkspace({
     super.key,
     required this.idMeter,
     required this.screenSize,
   });
 
+  Widget _buildSecondaryNavigation(BuildContext context) {
+    List<Widget> children = [
+      Text(
+        "Medidor $idMeter",
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        spacing: 10,
+        children: [
+          ElevatedButton.icon(
+            onPressed: () {},
+            icon: const Icon(Icons.add),
+            label: const Text("Agregar"),
+          ),
+          ElevatedButton.icon(
+            onPressed: () {},
+            icon: const Icon(Icons.alarm),
+            label: const Text("Alertas"),
+          ),
+          ElevatedButton.icon(
+            onPressed: () {},
+            icon: const Icon(Icons.history),
+            label: const Text("Historial"),
+          ),
+        ],
+      )
+    ];
+
+    if (screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: children,
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: children,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Configuración del padding y tamaño de los medidores según el tamaño de pantalla
+    EdgeInsetsGeometry padding;
+    Size meterSize;
+    int crossAxisCount;
+    double childAspectRatio;
+
+    if (screenSize == ScreenSize.smallDesktop) {
+      padding = const EdgeInsets.all(16.0);
+      meterSize = const Size(300, 180);
+      crossAxisCount = 3;
+      childAspectRatio = 1 / 1.2;
+    } else if (screenSize == ScreenSize.largeDesktop) {
+      padding = const EdgeInsets.symmetric(
+        horizontal: 30,
+        vertical: 16,
+      );
+      meterSize = const Size(300, 190);
+      crossAxisCount = 3;
+      childAspectRatio = 1 / 0.8;
+    } else if (screenSize == ScreenSize.tablet) {
+      padding = const EdgeInsets.all(12.0);
+      meterSize = const Size(300, 240);
+      crossAxisCount = 2;
+      childAspectRatio = 1 / 1.2;
+    } else {
+      // Mobile
+      padding = const EdgeInsets.all(10.0);
+      meterSize = const Size(340, 260);
+      crossAxisCount = 1;
+      childAspectRatio = 1 / 1.2;
+    }
+
+    // Lista de medidores de ejemplo
+    final List<Widget> meters = [
+      RadialGaugeMeter(
+        sensorType: "Temperatura",
+        value: 54,
+        min: 0,
+        max: 60,
+        interval: 10,
+        size: meterSize,
+      ),
+      RadialGaugeMeter(
+        sensorType: "PH",
+        value: 2.4,
+        min: 0,
+        max: 14,
+        interval: 1,
+        size: meterSize,
+      ),
+      RadialGaugeMeter(
+        sensorType: "Oxígeno Disuelto",
+        value: 7.5,
+        min: 0,
+        max: 10,
+        interval: 1,
+        size: meterSize,
+      ),
+      RadialGaugeMeter(
+        sensorType: "Conductividad",
+        value: 450,
+        min: 0,
+        max: 1000,
+        interval: 100,
+        size: meterSize,
+      ),
+      RadialGaugeMeter(
+        sensorType: "Turbidez",
+        value: 12,
+        min: 0,
+        max: 20,
+        interval: 2,
+        size: meterSize,
+      ),
+    ];
+
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 60.0,
-          vertical: 10.0,
-        ),
+        padding: padding,
         decoration: BoxDecoration(
           color: const Color.fromARGB(179, 211, 211, 211),
           borderRadius: BorderRadius.circular(10.0),
@@ -26,20 +146,23 @@ class MainWorkspace extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Medidor $idMeter",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
+            _buildSecondaryNavigation(context),
+            const SizedBox(height: 16),
+
+            // Contenedor con scroll para los medidores
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: GridView.count(
+                  childAspectRatio: childAspectRatio,
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: meters,
+                ),
               ),
-            ),
-            RadialGaugeMeter(
-              sensorType: "Temperatura",
-              value: 54,
-              min: 0,
-              max: 60,
-              interval: 10,
             ),
           ],
         ),

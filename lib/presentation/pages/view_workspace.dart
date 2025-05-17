@@ -14,8 +14,6 @@ class ViewWorkspace extends StatelessWidget {
     return Layout(
       title: "Espacio de trabajo $id",
       builder: (context, screenSize) {
-        //print("screenSize: $screenSize");
-
         return Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
@@ -38,6 +36,7 @@ class ViewWorkspace extends StatelessWidget {
                     ),
                   ],
                 ),
+
               // Main content area with workspace grid
               MainWorkspace(
                 idMeter: "1",
