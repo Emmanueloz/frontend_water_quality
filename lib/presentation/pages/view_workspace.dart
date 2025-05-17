@@ -28,10 +28,15 @@ class ViewWorkspace extends StatelessWidget {
                   children: [
                     SideBarItem(
                       title: "Medidor 1",
+                      leading: const Icon(Icons.analytics_outlined),
+                      leadingSelected: const Icon(Icons.analytics),
+                      isSelected: true,
                       onTap: () {},
                     ),
                     SideBarItem(
                       title: "Medidor 2",
+                      leading: const Icon(Icons.analytics_outlined),
+                      leadingSelected: const Icon(Icons.analytics),
                       onTap: () {},
                     ),
                   ],
