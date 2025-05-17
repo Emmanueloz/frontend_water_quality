@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/radial_gauge_meter.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/sensor_color.dart';
 
 class MainWorkspace extends StatelessWidget {
   final String idMeter;
@@ -94,6 +95,12 @@ class MainWorkspace extends StatelessWidget {
 
     // Lista de medidores de ejemplo
     final List<Widget> meters = [
+      //48, 120, 171
+      SensorColor(
+        red: 48,
+        green: 120,
+        blue: 171,
+      ),
       RadialGaugeMeter(
         sensorType: "Temperatura",
         value: 54,

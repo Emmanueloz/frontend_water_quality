@@ -9,7 +9,7 @@ class ListWorkspace extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Layout(
-      title: "Workspaces",
+      title: "Espacios de trabajo",
       builder: (context, screenSize) {
         print("screenSize: $screenSize");
 

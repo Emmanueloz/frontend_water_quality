@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/sensor_container.dart';
 import 'package:girix_code_gauge/girix_code_gauge.dart';
 
 class RadialGaugeMeter extends StatelessWidget {
@@ -23,12 +24,7 @@ class RadialGaugeMeter extends StatelessWidget {
   Widget build(BuildContext context) {
     final double valueValid = value > min && value < max ? value : min;
 
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(179, 211, 211, 211),
-        borderRadius: BorderRadius.circular(10.0),
-      ),
+    return SensorContainer(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         spacing: 10,
@@ -57,13 +53,13 @@ class RadialGaugeMeter extends StatelessWidget {
               showLabels: true,
               showMajorTicks: true,
               labelTickStyle: const RadialTickLabelStyle(
-                position: RadialElementPosition.outside,
-                padding: 5, // Reducido para optimizar espacio
+                position: RadialElementPosition.inside,
+                padding: 10,
               ),
               majorTickStyle: RadialTickStyle(
                 color: Colors.cyan,
-                position: RadialElementPosition.outside,
-                length: 8, // Ligeramente reducido
+                position: RadialElementPosition.inside,
+                length: 8,
                 thickness: 1,
               ),
               style: RadialGaugeStyle(
