@@ -32,7 +32,7 @@ class Routes {
   );
   static RouteProperties listRecords = RouteProperties(
     name: "listRecords",
-    path: "/workspace/:id/records",
+    path: "/workspace/:id/meter/:idMeter/records",
   );
   static RouteProperties notificationDetails = RouteProperties(
     name: "notificationDetails",

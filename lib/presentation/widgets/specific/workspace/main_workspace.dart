@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/radial_gauge_meter.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/sensor_color.dart';
+import 'package:frontend_water_quality/router/routes.dart';
+import 'package:go_router/go_router.dart';
 
 class MainWorkspace extends StatelessWidget {
+  final String id;
   final String idMeter;
   final ScreenSize screenSize;
 
@@ -11,6 +14,7 @@ class MainWorkspace extends StatelessWidget {
     super.key,
     required this.idMeter,
     required this.screenSize,
+    required this.id,
   });
 
   List<Widget> _buttonsNavigation(BuildContext context) {
@@ -26,7 +30,15 @@ class MainWorkspace extends StatelessWidget {
         label: const Text("Alertas"),
       ),
       ElevatedButton.icon(
-        onPressed: () {},
+        onPressed: () {
+          context.goNamed(
+            Routes.listRecords.name,
+            pathParameters: {
+              "id": id,
+              "idMeter": idMeter,
+            },
+          );
+        },
         icon: const Icon(Icons.history),
         label: const Text("Historial"),
       ),

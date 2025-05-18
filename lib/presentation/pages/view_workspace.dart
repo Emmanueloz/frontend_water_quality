@@ -40,6 +40,7 @@ class ViewWorkspace extends StatelessWidget {
 
         // Main content area with workspace grid
         MainWorkspace(
+          id: "1",
           idMeter: "1",
           screenSize: screenSize,
         ),
@@ -70,6 +71,7 @@ class ViewWorkspace extends StatelessWidget {
           onChanged: (value) {},
         ),
         MainWorkspace(
+          id: "1",
           idMeter: "1",
           screenSize: screenSize,
         ),
