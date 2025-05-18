@@ -61,8 +61,8 @@ class MainWorkspace extends StatelessWidget {
         width: double.infinity,
         child: Wrap(
           alignment: WrapAlignment.spaceBetween,
-          spacing: 10,
-          runSpacing: 10,
+          spacing: 2,
+          runSpacing: 2,
           children: _buttonsNavigation(context),
         ),
       )

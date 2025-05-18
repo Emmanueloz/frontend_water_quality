@@ -11,7 +11,7 @@ class Simple extends StatelessWidget {
   Widget build(BuildContext context) {
     return Layout(
       title: title,
-      body: Column(
+      builder: (context, screenSize) => Column(
         children: [
           Text(title),
           ElevatedButton(

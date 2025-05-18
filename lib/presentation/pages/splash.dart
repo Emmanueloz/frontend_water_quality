@@ -10,7 +10,7 @@ class Splash extends StatelessWidget {
   Widget build(BuildContext context) {
     return Layout(
       title: 'Water Quality App',
-      body: Column(
+      builder: (context, screenSize) => Column(
         children: [
           Text("Splash"),
           ElevatedButton(
