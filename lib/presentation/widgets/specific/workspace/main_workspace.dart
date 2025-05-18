@@ -13,8 +13,50 @@ class MainWorkspace extends StatelessWidget {
     required this.screenSize,
   });
 
-  Widget _buildSecondaryNavigation(BuildContext context) {
+  List<Widget> _buttonsNavigation(BuildContext context) {
+    return [
+      ElevatedButton.icon(
+        onPressed: () {},
+        icon: const Icon(Icons.add),
+        label: const Text("Agregar"),
+      ),
+      ElevatedButton.icon(
+        onPressed: () {},
+        icon: const Icon(Icons.alarm),
+        label: const Text("Alertas"),
+      ),
+      ElevatedButton.icon(
+        onPressed: () {},
+        icon: const Icon(Icons.history),
+        label: const Text("Historial"),
+      ),
+    ];
+  }
+
+  Widget _buildSecondaryNavigation(
+    BuildContext context,
+  ) {
     List<Widget> children = [
+      Text(
+        "Medidor $idMeter",
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+      ),
+      SizedBox(
+        width: double.infinity,
+        child: Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          spacing: 10,
+          runSpacing: 10,
+          children: _buttonsNavigation(context),
+        ),
+      )
+    ];
+
+    List<Widget> childrenDesktop = [
       Text(
         "Medidor $idMeter",
         style: const TextStyle(
@@ -26,36 +68,21 @@ class MainWorkspace extends StatelessWidget {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         spacing: 10,
-        children: [
-          ElevatedButton.icon(
-            onPressed: () {},
-            icon: const Icon(Icons.add),
-            label: const Text("Agregar"),
-          ),
-          ElevatedButton.icon(
-            onPressed: () {},
-            icon: const Icon(Icons.alarm),
-            label: const Text("Alertas"),
-          ),
-          ElevatedButton.icon(
-            onPressed: () {},
-            icon: const Icon(Icons.history),
-            label: const Text("Historial"),
-          ),
-        ],
-      )
+        children: _buttonsNavigation(context),
+      ),
     ];
 
     if (screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 10,
         children: children,
       );
     }
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: children,
+      children: childrenDesktop,
     );
   }
 
@@ -79,7 +106,7 @@ class MainWorkspace extends StatelessWidget {
       );
       meterSize = const Size(300, 190);
       crossAxisCount = 3;
-      childAspectRatio = 1 / 0.8;
+      childAspectRatio = 1 / 0.70;
     } else if (screenSize == ScreenSize.tablet) {
       padding = const EdgeInsets.all(12.0);
       meterSize = const Size(300, 240);
@@ -118,7 +145,7 @@ class MainWorkspace extends StatelessWidget {
         size: meterSize,
       ),
       RadialGaugeMeter(
-        sensorType: "Oxígeno Disuelto",
+        sensorType: "Total de sólidos disueltos",
         value: 7.5,
         min: 0,
         max: 10,

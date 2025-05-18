@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class SideBarItem extends StatelessWidget {
+class SidebarItem extends StatelessWidget {
   final String title;
   final Widget leading;
   final Widget leadingSelected;
   final bool isSelected;
   final void Function()? onTap;
 
-  const SideBarItem({
+  const SidebarItem({
     super.key,
     required this.title,
     this.isSelected = false,

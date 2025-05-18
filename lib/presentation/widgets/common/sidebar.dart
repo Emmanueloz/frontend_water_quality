@@ -5,7 +5,7 @@ import 'package:frontend_water_quality/presentation/widgets/common/sidebar_item.
 class Sidebar extends StatelessWidget {
   final String title;
   final ScreenSize screenSize;
-  final List<SideBarItem> children;
+  final List<SidebarItem> children;
   const Sidebar({
     super.key,
     required this.title,
@@ -31,7 +31,7 @@ class Sidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = screenSize == ScreenSize.smallDesktop ? 200 : 400;
+    double width = screenSize == ScreenSize.smallDesktop ? 200 : 300;
 
     return Container(
       width: width,

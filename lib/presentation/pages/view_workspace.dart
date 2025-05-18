@@ -9,6 +9,74 @@ class ViewWorkspace extends StatelessWidget {
   final String id;
   const ViewWorkspace({super.key, required this.id});
 
+  List<String> _getDropdownItems() {
+    return [
+      "Medidor 1",
+      "Medidor 2",
+      "Medidor 3",
+    ];
+  }
+
+  Widget _buildDesktopContent(BuildContext context, ScreenSize screenSize) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 16.0,
+      children: [
+        Sidebar(
+          title: "Medidores",
+          screenSize: screenSize,
+          children: _getDropdownItems()
+              .map(
+                (item) => SidebarItem(
+                  title: item,
+                  leading: const Icon(Icons.analytics_outlined),
+                  leadingSelected: const Icon(Icons.analytics),
+                  isSelected: true,
+                  onTap: () {},
+                ),
+              )
+              .toList(),
+        ),
+
+        // Main content area with workspace grid
+        MainWorkspace(
+          idMeter: "1",
+          screenSize: screenSize,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMobileContent(BuildContext context, ScreenSize screenSize) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 16.0,
+      children: [
+        DropdownButton(
+          isExpanded: true,
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.black,
+          ),
+          value: _getDropdownItems().first,
+          items: _getDropdownItems()
+              .map(
+                (item) => DropdownMenuItem(
+                  value: item,
+                  child: Text(item),
+                ),
+              )
+              .toList(),
+          onChanged: (value) {},
+        ),
+        MainWorkspace(
+          idMeter: "1",
+          screenSize: screenSize,
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Layout(
@@ -16,39 +84,16 @@ class ViewWorkspace extends StatelessWidget {
       builder: (context, screenSize) {
         return Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 16.0,
-            children: [
-              if (screenSize == ScreenSize.smallDesktop ||
-                  screenSize == ScreenSize.largeDesktop)
-                Sidebar(
-                  title: "Medidores",
-                  screenSize: screenSize,
-                  children: [
-                    SideBarItem(
-                      title: "Medidor 1",
-                      leading: const Icon(Icons.analytics_outlined),
-                      leadingSelected: const Icon(Icons.analytics),
-                      isSelected: true,
-                      onTap: () {},
+          child:
+              screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet
+                  ? _buildMobileContent(
+                      context,
+                      screenSize,
+                    )
+                  : _buildDesktopContent(
+                      context,
+                      screenSize,
                     ),
-                    SideBarItem(
-                      title: "Medidor 2",
-                      leading: const Icon(Icons.analytics_outlined),
-                      leadingSelected: const Icon(Icons.analytics),
-                      onTap: () {},
-                    ),
-                  ],
-                ),
-
-              // Main content area with workspace grid
-              MainWorkspace(
-                idMeter: "1",
-                screenSize: screenSize,
-              ),
-            ],
-          ),
         );
       },
     );
