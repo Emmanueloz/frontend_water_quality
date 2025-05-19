@@ -18,7 +18,7 @@ class ListWorkspace extends StatelessWidget {
       title: "Espacios de trabajo",
       builder: (context, screenSize) {
         return Padding(
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.all(10),
           child: _buildMainContent(context, screenSize),
         );
       },

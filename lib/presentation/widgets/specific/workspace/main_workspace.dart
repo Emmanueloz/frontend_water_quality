@@ -107,14 +107,17 @@ class MainWorkspace extends StatelessWidget {
     double childAspectRatio;
 
     if (screenSize == ScreenSize.smallDesktop) {
-      padding = const EdgeInsets.all(16.0);
+      padding = const EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 9,
+      );
       meterSize = const Size(300, 180);
       crossAxisCount = 3;
       childAspectRatio = 1 / 1.2;
     } else if (screenSize == ScreenSize.largeDesktop) {
       padding = const EdgeInsets.symmetric(
-        horizontal: 30,
-        vertical: 16,
+        horizontal: 20,
+        vertical: 9,
       );
       meterSize = const Size(300, 190);
       crossAxisCount = 3;
@@ -186,7 +189,7 @@ class MainWorkspace extends StatelessWidget {
       child: Container(
         padding: padding,
         decoration: BoxDecoration(
-          color: const Color.fromARGB(179, 211, 211, 211),
+          color: Theme.of(context).colorScheme.secondary,
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: Column(

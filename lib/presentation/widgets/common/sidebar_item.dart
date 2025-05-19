@@ -20,13 +20,9 @@ class SidebarItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: isSelected ? leadingSelected : leading,
-      title: Text(
-        title,
-        style: const TextStyle(fontSize: 14),
-      ),
+      title: Text(title),
       selected: isSelected,
-      selectedColor: Colors.black,
-      selectedTileColor: Colors.cyan.shade100,
+      tileColor: Colors.yellowAccent,
       onTap: onTap,
     );
   }

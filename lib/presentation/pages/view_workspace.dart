@@ -31,8 +31,10 @@ class ViewWorkspace extends StatelessWidget {
                   title: item,
                   leading: const Icon(Icons.analytics_outlined),
                   leadingSelected: const Icon(Icons.analytics),
-                  isSelected: true,
-                  onTap: () {},
+                  isSelected: item == "Medidor 1",
+                  onTap: () {
+                    print("Selected $item");
+                  },
                 ),
               )
               .toList(),

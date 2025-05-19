@@ -37,7 +37,7 @@ class Sidebar extends StatelessWidget {
       width: width,
       height: double.infinity,
       decoration: BoxDecoration(
-        color: const Color.fromARGB(179, 211, 211, 211),
+        color: Theme.of(context).colorScheme.secondary,
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: ListView(
