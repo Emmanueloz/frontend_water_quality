@@ -87,7 +87,7 @@ class ListWorkspace extends StatelessWidget {
               margin: const EdgeInsets.all(16.0),
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
-                color: const Color.fromARGB(179, 211, 211, 211),
+                color: Theme.of(context).colorScheme.secondary,
                 borderRadius: BorderRadius.circular(10.0),
               ),
               child: _gridBuilder(
@@ -144,7 +144,7 @@ class ListWorkspace extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
-              color: const Color.fromARGB(179, 211, 211, 211),
+              color: Theme.of(context).colorScheme.secondary,
               borderRadius: BorderRadius.circular(10.0),
             ),
             child: _gridBuilder(

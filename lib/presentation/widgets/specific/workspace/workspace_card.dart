@@ -19,7 +19,6 @@ class WorkspaceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: const Color.fromARGB(179, 233, 233, 233),
       elevation: 2.0,
       child: InkWell(
         onTap: onTap,
