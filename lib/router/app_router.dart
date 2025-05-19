@@ -1,4 +1,5 @@
 // app_router.dart
+import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/presentation/pages/list_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/simple.dart';
 import 'package:frontend_water_quality/presentation/pages/splash.dart';
@@ -30,7 +31,23 @@ class AppRouter {
       GoRoute(
         path: Routes.listWorkspace.path,
         name: Routes.listWorkspace.name,
-        builder: (context, state) => const ListWorkspace(),
+        builder: (context, state) {
+          ListWorkspaces type;
+          final typeString = state.pathParameters['type'] ?? 'mine';
+          switch (typeString) {
+            case 'mine':
+              type = ListWorkspaces.mine;
+              break;
+            case 'shared':
+              type = ListWorkspaces.shared;
+              break;
+            default:
+              type = ListWorkspaces.mine;
+              break;
+          }
+
+          return ListWorkspace(type: type);
+        },
       ),
       GoRoute(
         path: Routes.viewWorkspace.path,

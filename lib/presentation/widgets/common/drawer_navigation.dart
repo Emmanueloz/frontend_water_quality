@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
@@ -26,7 +27,9 @@ class DrawerNavigation extends StatelessWidget {
               ),
             ),
             onTap: () {
-              context.goNamed(Routes.listWorkspace.name);
+              context.goNamed(Routes.listWorkspace.name, pathParameters: {
+                "type": ListWorkspaces.mine.name,
+              });
             },
           ),
         ],

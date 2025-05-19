@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/sidebar.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/sidebar_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/workspace_card.dart';
+import 'package:frontend_water_quality/router/routes.dart';
+import 'package:go_router/go_router.dart';
 
 class ListWorkspace extends StatelessWidget {
-  const ListWorkspace({super.key});
+  final ListWorkspaces type;
+  const ListWorkspace({super.key, required this.type});
 
   @override
   Widget build(BuildContext context) {
     return Layout(
       title: "Espacios de trabajo",
       builder: (context, screenSize) {
-        print("screenSize: $screenSize");
-
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildMainContent(context, screenSize),
-          ],
+        return Padding(
+          padding: EdgeInsets.all(16),
+          child: _buildMainContent(context, screenSize),
         );
       },
     );
@@ -47,40 +48,223 @@ class ListWorkspace extends StatelessWidget {
     }
 
     if (screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet) {
-      return Expanded(
-        child: Container(
-          width: maxWidth,
-          margin: const EdgeInsets.all(16.0),
-          padding: const EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(179, 211, 211, 211),
-            borderRadius: BorderRadius.circular(10.0),
+      return Column(
+        children: [
+          ToggleButtons(
+            isSelected: [
+              type == ListWorkspaces.mine,
+              type == ListWorkspaces.shared
+            ],
+            onPressed: (int index) {
+              if (index == 0) {
+                context.goNamed(
+                  Routes.listWorkspace.name,
+                  pathParameters: {
+                    "type": ListWorkspaces.mine.name,
+                  },
+                );
+              } else if (index == 1) {
+                context.goNamed(
+                  Routes.listWorkspace.name,
+                  pathParameters: {
+                    "type": ListWorkspaces.shared.name,
+                  },
+                );
+              }
+            },
+            borderRadius: BorderRadius.circular(8.0),
+            constraints: const BoxConstraints(
+              minHeight: 40.0,
+              minWidth: 100.0,
+            ),
+            children: [
+              Text("Mis espacios"),
+              Text("Compartidos"),
+            ],
           ),
-          child: _gridBuilder(
-            context,
-            maxWidth,
-            crossAxisCount,
-            gap,
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(179, 211, 211, 211),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: _gridBuilder(
+                context,
+                maxWidth,
+                crossAxisCount,
+                gap,
+              ),
+            ),
           ),
-        ),
+        ],
       );
     }
 
-    return Container(
-      width: maxWidth,
-      margin: const EdgeInsets.all(16.0),
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(179, 211, 211, 211),
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      child: _gridBuilder(
-        context,
-        maxWidth,
-        crossAxisCount,
-        gap,
-      ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: gap,
+      children: [
+        Sidebar(
+          title: "Tipos de espacios",
+          screenSize: screenSize,
+          children: [
+            SidebarItem(
+              title: "Mis espacios",
+              leading: const Icon(Icons.home_outlined),
+              leadingSelected: const Icon(Icons.home),
+              isSelected: type == ListWorkspaces.mine,
+              onTap: () {
+                context.goNamed(
+                  Routes.listWorkspace.name,
+                  pathParameters: {
+                    "type": ListWorkspaces.mine.name,
+                  },
+                );
+              },
+            ),
+            SidebarItem(
+              title: "Compartidos",
+              leading: const Icon(Icons.share_outlined),
+              leadingSelected: const Icon(Icons.share),
+              isSelected: type == ListWorkspaces.shared,
+              onTap: () {
+                context.goNamed(
+                  Routes.listWorkspace.name,
+                  pathParameters: {
+                    "type": ListWorkspaces.shared.name,
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(179, 211, 211, 211),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: _gridBuilder(
+              context,
+              maxWidth,
+              crossAxisCount,
+              gap,
+            ),
+          ),
+        )
+      ],
     );
+  }
+
+  List<Widget> _getWorkspacesCard(BuildContext context) {
+    return [
+      WorkspaceCard(
+        id: "1",
+        title: "Espacio de trabajo 1",
+        owner: "David",
+        type: "Privado",
+        onTap: () {
+          context.goNamed(
+            Routes.viewWorkspace.name,
+            pathParameters: {
+              'id': "1",
+            },
+          );
+        },
+      ),
+      WorkspaceCard(
+        id: "2",
+        title: "Espacio de trabajo 2",
+        owner: "David",
+        type: "Privado",
+        onTap: () {
+          context.goNamed(
+            Routes.viewWorkspace.name,
+            pathParameters: {
+              'id': "2",
+            },
+          );
+        },
+      ),
+      WorkspaceCard(
+        id: "3",
+        title: "Espacio de trabajo 3",
+        owner: "David",
+        type: "Privado",
+        onTap: () {
+          context.goNamed(
+            Routes.viewWorkspace.name,
+            pathParameters: {
+              'id': "3",
+            },
+          );
+        },
+      ),
+      WorkspaceCard(
+        id: "4",
+        title: "Espacio de trabajo 4",
+        owner: "David",
+        type: "Privado",
+        onTap: () {
+          context.goNamed(
+            Routes.viewWorkspace.name,
+            pathParameters: {
+              'id': "4",
+            },
+          );
+        },
+      ),
+    ];
+  }
+
+  List<Widget> _getWorkspacesSharedCard(BuildContext context) {
+    return [
+      WorkspaceCard(
+        id: "5",
+        title: "Espacio de trabajo 5",
+        owner: "Angel",
+        type: "Privado",
+        onTap: () {
+          context.goNamed(
+            Routes.viewWorkspace.name,
+            pathParameters: {
+              'id': "5",
+            },
+          );
+        },
+      ),
+      WorkspaceCard(
+        id: "6",
+        title: "Espacio de trabajo 6",
+        owner: "Daniel",
+        type: "Privado",
+        onTap: () {
+          context.goNamed(
+            Routes.viewWorkspace.name,
+            pathParameters: {
+              'id': "6",
+            },
+          );
+        },
+      ),
+      WorkspaceCard(
+        id: "7",
+        title: "Espacio de trabajo 7",
+        owner: "Raul",
+        type: "Privado",
+        onTap: () {
+          context.goNamed(
+            Routes.viewWorkspace.name,
+            pathParameters: {
+              'id': "7",
+            },
+          );
+        },
+      ),
+    ];
   }
 
   Widget _gridBuilder(
@@ -91,31 +275,12 @@ class ListWorkspace extends StatelessWidget {
   ) {
     return GridView.count(
       crossAxisCount: crossAxisCount, // 4 cards per row
-      childAspectRatio: 1.2, // Width to height ratio
+      childAspectRatio: 1 / 0.6, // Width to height ratio
       crossAxisSpacing: gap,
       mainAxisSpacing: gap,
-      children: const [
-        WorkspaceCard(
-          id: "1",
-          title: "Workspace 1",
-          subtitle: "Subtitle 1",
-        ),
-        WorkspaceCard(
-          id: "2",
-          title: "Workspace 2",
-          subtitle: "Subtitle 2",
-        ),
-        WorkspaceCard(
-          id: "3",
-          title: "Workspace 3",
-          subtitle: "Subtitle 3",
-        ),
-        WorkspaceCard(
-          id: "4",
-          title: "Workspace 4",
-          subtitle: "Subtitle 4",
-        ),
-      ],
+      children: type == ListWorkspaces.mine
+          ? _getWorkspacesCard(context)
+          : _getWorkspacesSharedCard(context),
     );
   }
 }

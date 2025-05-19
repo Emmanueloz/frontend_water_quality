@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/router/routes.dart';
-import 'package:go_router/go_router.dart';
 
 class WorkspaceCard extends StatelessWidget {
   final String id;
   final String title;
-  final String subtitle;
+  final String owner;
+  final String type;
+  final void Function()? onTap;
 
-  const WorkspaceCard(
-      {super.key,
-      required this.id,
-      required this.title,
-      required this.subtitle});
+  const WorkspaceCard({
+    super.key,
+    required this.id,
+    required this.title,
+    required this.owner,
+    required this.type,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +22,7 @@ class WorkspaceCard extends StatelessWidget {
       color: const Color.fromARGB(179, 233, 233, 233),
       elevation: 2.0,
       child: InkWell(
+        onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(
@@ -33,7 +37,14 @@ class WorkspaceCard extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                subtitle,
+                owner,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                ),
+              ),
+              Text(
+                type,
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey[600],
@@ -42,14 +53,6 @@ class WorkspaceCard extends StatelessWidget {
             ],
           ),
         ),
-        onTap: () {
-          context.goNamed(
-            Routes.viewWorkspace.name,
-            pathParameters: {
-              'id': id,
-            },
-          );
-        },
       ),
     );
   }
