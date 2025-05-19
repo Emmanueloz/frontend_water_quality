@@ -4,6 +4,7 @@ import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/sidebar.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/sidebar_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/button_actions.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/workspace_card.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
@@ -29,6 +30,7 @@ class ListWorkspace extends StatelessWidget {
     int crossAxisCount;
     double maxWidth;
     double gap;
+
     if (screenSize == ScreenSize.mobile) {
       crossAxisCount = 1;
       maxWidth = double.infinity;
@@ -49,6 +51,7 @@ class ListWorkspace extends StatelessWidget {
 
     if (screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet) {
       return Column(
+        spacing: 10,
         children: [
           ToggleButtons(
             isSelected: [
@@ -82,22 +85,7 @@ class ListWorkspace extends StatelessWidget {
               Text("Compartidos"),
             ],
           ),
-          Expanded(
-            child: Container(
-              margin: const EdgeInsets.all(16.0),
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondary,
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: _gridBuilder(
-                context,
-                maxWidth,
-                crossAxisCount,
-                gap,
-              ),
-            ),
-          ),
+          _mainContent(context, screenSize, maxWidth, crossAxisCount, gap),
         ],
       );
     }
@@ -140,22 +128,48 @@ class ListWorkspace extends StatelessWidget {
             ),
           ],
         ),
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondary,
-              borderRadius: BorderRadius.circular(10.0),
+        _mainContent(context, screenSize, maxWidth, crossAxisCount, gap),
+      ],
+    );
+  }
+
+  Widget _mainContent(BuildContext context, ScreenSize screenSize,
+      double maxWidth, int crossAxisCount, double gap) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondary,
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Column(
+          spacing: 10,
+          children: [
+            ButtonActions(
+              title: type == ListWorkspaces.mine
+                  ? "Mis espacios de trabajo"
+                  : "Espacios de trabajo compartidos",
+              actions: [
+                if (type == ListWorkspaces.mine)
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      print("Agregar espacio de trabajo");
+                    },
+                    icon: const Icon(Icons.add),
+                    label: const Text("Agregar"),
+                  )
+              ],
+              screenSize: screenSize,
             ),
-            child: _gridBuilder(
+            _gridBuilder(
               context,
               maxWidth,
               crossAxisCount,
               gap,
             ),
-          ),
-        )
-      ],
+          ],
+        ),
+      ),
     );
   }
 
@@ -273,14 +287,20 @@ class ListWorkspace extends StatelessWidget {
     int crossAxisCount,
     double gap,
   ) {
-    return GridView.count(
-      crossAxisCount: crossAxisCount, // 4 cards per row
-      childAspectRatio: 1 / 0.6, // Width to height ratio
-      crossAxisSpacing: gap,
-      mainAxisSpacing: gap,
-      children: type == ListWorkspaces.mine
-          ? _getWorkspacesCard(context)
-          : _getWorkspacesSharedCard(context),
+    return Expanded(
+      child: SingleChildScrollView(
+        child: GridView.count(
+          crossAxisCount: crossAxisCount, // 4 cards per row
+          childAspectRatio: 1 / 0.6, // Width to height ratio
+          crossAxisSpacing: gap,
+          mainAxisSpacing: gap,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          children: type == ListWorkspaces.mine
+              ? _getWorkspacesCard(context)
+              : _getWorkspacesSharedCard(context),
+        ),
+      ),
     );
   }
 }

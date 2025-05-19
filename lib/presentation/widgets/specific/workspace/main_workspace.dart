@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/button_actions.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/radial_gauge_meter.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/sensor_color.dart';
 import 'package:frontend_water_quality/router/routes.dart';
@@ -43,59 +44,6 @@ class MainWorkspace extends StatelessWidget {
         label: const Text("Historial"),
       ),
     ];
-  }
-
-  Widget _buildSecondaryNavigation(
-    BuildContext context,
-  ) {
-    List<Widget> children = [
-      Text(
-        "Medidor $idMeter",
-        style: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
-        ),
-      ),
-      SizedBox(
-        width: double.infinity,
-        child: Wrap(
-          alignment: WrapAlignment.spaceBetween,
-          spacing: 2,
-          runSpacing: 2,
-          children: _buttonsNavigation(context),
-        ),
-      )
-    ];
-
-    List<Widget> childrenDesktop = [
-      Text(
-        "Medidor $idMeter",
-        style: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
-        ),
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        spacing: 10,
-        children: _buttonsNavigation(context),
-      ),
-    ];
-
-    if (screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 10,
-        children: children,
-      );
-    }
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: childrenDesktop,
-    );
   }
 
   @override
@@ -195,7 +143,12 @@ class MainWorkspace extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSecondaryNavigation(context),
+            //_buildSecondaryNavigation(context),
+            ButtonActions(
+              title: "Medidor $idMeter",
+              actions: _buttonsNavigation(context),
+              screenSize: screenSize,
+            ),
             const SizedBox(height: 16),
 
             // Contenedor con scroll para los medidores
