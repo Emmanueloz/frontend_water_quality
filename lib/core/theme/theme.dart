@@ -1,79 +1,105 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
+  static const Color textColor = Color(0xff004E49); //#424a4d
+
+  static ColorScheme get colorScheme => const ColorScheme.light(
+        primary: Color(0xff5accc4), //
+        secondary: Color(0xff145c57),
+        tertiary: Color(0xffbfe7e4),
+        surface: Color(0xfff7fafa),
+        primaryContainer: Color(0xff145c57),
+        secondaryContainer: Color(0xff5accc4),
+        tertiaryContainer: Color(0xffbfe7e4),
+        surfaceContainer: Color(0xfff7fafa),
+      );
+
+  static TextTheme get textTheme => const TextTheme(
+        displayLarge: TextStyle(
+          color: textColor,
+          fontSize: 40,
+        ),
+        displayMedium: TextStyle(
+          color: textColor,
+          fontSize: 34,
+        ),
+        displaySmall: TextStyle(
+          color: textColor,
+          fontSize: 28,
+        ),
+        titleLarge: TextStyle(
+          color: textColor,
+          fontSize: 16,
+        ),
+        titleMedium: TextStyle(
+          color: textColor,
+          fontSize: 14,
+        ),
+        titleSmall: TextStyle(
+          color: textColor,
+          fontSize: 12,
+        ),
+        bodyLarge: TextStyle(
+          color: textColor,
+          fontSize: 20,
+        ),
+        bodyMedium: TextStyle(
+          color: textColor,
+          fontSize: 16,
+        ),
+        bodySmall: TextStyle(
+          color: textColor,
+          fontSize: 10,
+        ),
+      );
+
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
-      primarySwatch: Colors.blue,
-      primaryColor: const Color(0xFF5BCDC5), //#5bcdc5
-      colorScheme: const ColorScheme.light(
-        primary: Color.fromRGBO(91, 205, 197, 1), //#5bcdc5
-        secondary: Color(0xffdcf2f1), //#dcf2f1
-        surface: Color(0xFFBAE0DE), //#bae0de
-        primaryContainer: Color.fromRGBO(47, 201, 221, 1),
-        secondaryContainer: Color.fromRGBO(47, 201, 221, 1),
-      ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF5BCDC5), //#5bcdc5
-        foregroundColor: Colors.black,
+      primarySwatch: Colors.cyan,
+      primaryColor: colorScheme.primary,
+      colorScheme: colorScheme,
+      appBarTheme: AppBarTheme(
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.surface,
         elevation: 0,
         actionsIconTheme: IconThemeData(
-          color: Colors.black,
+          color: colorScheme.secondary,
         ),
         iconTheme: IconThemeData(
-          color: Colors.black,
+          color: colorScheme.secondary,
         ),
         titleTextStyle: TextStyle(
-          color: Colors.black,
+          color: textColor,
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
       ),
-      scaffoldBackgroundColor: Color.fromARGB(255, 180, 180, 180), //#f8f8f8
-      primaryTextTheme: const TextTheme(
-        bodyLarge: TextStyle(
-          color: Colors.black,
-          fontSize: 20,
-        ),
-        bodyMedium: TextStyle(
-          color: Colors.black,
-          fontSize: 16,
-        ),
-        bodySmall: TextStyle(
-          color: Colors.black,
-          fontSize: 10,
-        ),
-      ),
-      iconTheme: const IconThemeData(
-        color: Colors.black,
+      scaffoldBackgroundColor: colorScheme.surface,
+      primaryTextTheme: textTheme,
+      textTheme: textTheme,
+      iconTheme: IconThemeData(
+        color: colorScheme.secondary,
       ),
       listTileTheme: ListTileThemeData(
-        tileColor: Colors.white,
-        titleTextStyle: const TextStyle(
-          color: Colors.black,
-          fontSize: 16,
-        ),
-        subtitleTextStyle: const TextStyle(
-          color: Colors.black,
-          fontSize: 14,
-        ),
-        selectedColor: Colors.black,
+        textColor: textColor,
+      ),
+      cardColor: colorScheme.surface,
+      cardTheme: CardTheme(
+        elevation: 2,
+        color: colorScheme.surface,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF5BCDC5), //#5bcdc5
-          foregroundColor: Colors.black,
-          textStyle: const TextStyle(
-            fontSize: 14,
-          ),
+          backgroundColor: colorScheme.secondary, //#5bcdc5
+          foregroundColor: colorScheme.surface,
+          textStyle: textTheme.bodyMedium,
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: Colors.black,
-          textStyle: TextStyle(
-            fontSize: 14,
-          ),
+          foregroundColor: textColor, //#5bcdc5
+          textStyle: textTheme.bodyMedium,
         ),
       ),
     );

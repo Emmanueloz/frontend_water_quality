@@ -28,21 +28,18 @@ class Layout extends StatelessWidget {
           ),
           drawer: DrawerNavigation(title: title),
           body: builder!(context, screenSize),
-          backgroundColor: Colors.white70,
         );
       }
 
       return Scaffold(
         appBar: AppBarNavigation(title: title),
         body: builder!(context, screenSize),
-        backgroundColor: Colors.white70,
       );
     }
 
     return Scaffold(
       appBar: AppBarNavigation(title: title),
       body: body,
-      backgroundColor: Colors.white70,
     );
   }
 }

@@ -19,7 +19,6 @@ class WorkspaceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 2.0,
       child: InkWell(
         onTap: onTap,
         child: Padding(
@@ -29,25 +28,13 @@ class WorkspaceCard extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
               ),
               const SizedBox(height: 4),
               Text(
                 owner,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
               ),
               Text(
                 type,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
               ),
             ],
           ),

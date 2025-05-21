@@ -22,7 +22,6 @@ class SidebarItem extends StatelessWidget {
       leading: isSelected ? leadingSelected : leading,
       title: Text(title),
       selected: isSelected,
-      tileColor: Colors.yellowAccent,
       onTap: onTap,
     );
   }
