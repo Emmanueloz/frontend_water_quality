@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/button_actions.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/radial_gauge_meter.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/sensor_color.dart';
@@ -134,15 +135,8 @@ class MainWorkspace extends StatelessWidget {
     ];
 
     return Expanded(
-      child: Container(
+      child: BaseContainer(
         padding: padding,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.0),
-          border: Border.all(
-            color: Theme.of(context).colorScheme.primary,
-            width: 2,
-          ),
-        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

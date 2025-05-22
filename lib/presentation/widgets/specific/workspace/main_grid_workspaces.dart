@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/button_actions.dart';
 
 class MainGridWorkspaces extends StatelessWidget {
@@ -39,15 +40,8 @@ class MainGridWorkspaces extends StatelessWidget {
     }
 
     return Expanded(
-      child: Container(
+      child: BaseContainer(
         padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.0),
-          border: Border.all(
-            color: Theme.of(context).colorScheme.primary,
-            width: 2,
-          ),
-        ),
         child: Column(
           spacing: 10,
           children: [

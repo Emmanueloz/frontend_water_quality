@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/sidebar_item.dart';
 
 class Sidebar extends StatelessWidget {
@@ -26,16 +27,9 @@ class Sidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     double width = screenSize == ScreenSize.smallDesktop ? 200 : 300;
 
-    return Container(
+    return BaseContainer(
       width: width,
       height: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.primary,
-          width: 2,
-        ),
-      ),
       child: ListView(
         children: _buildSidebar(context),
       ),

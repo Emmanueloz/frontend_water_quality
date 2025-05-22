@@ -97,6 +97,9 @@ class AppTheme {
         labelStyle: textTheme.bodySmall?.copyWith(
           color: colorScheme.surface,
         ),
+        iconTheme: IconThemeData(
+          color: colorScheme.surface,
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
           side: BorderSide(
