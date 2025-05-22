@@ -24,6 +24,12 @@ class RadialGaugeMeter extends StatelessWidget {
   Widget build(BuildContext context) {
     final double valueValid = value > min && value < max ? value : min;
 
+    List<Color> colors = [
+      Theme.of(context).colorScheme.tertiary,
+      Theme.of(context).colorScheme.primary,
+      Theme.of(context).colorScheme.secondary,
+    ];
+
     return SensorContainer(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -57,24 +63,19 @@ class RadialGaugeMeter extends StatelessWidget {
                 padding: 10,
               ),
               majorTickStyle: RadialTickStyle(
-                color: Colors.cyan,
+                color: Theme.of(context).colorScheme.primary,
                 position: RadialElementPosition.inside,
                 length: 8,
                 thickness: 1,
               ),
               style: RadialGaugeStyle(
-                color: Colors.white,
                 thickness: 10,
                 gradient: LinearGradient(
-                  colors: [
-                    Colors.cyan.shade300,
-                    Colors.cyan.shade600,
-                    Colors.cyan.shade900,
-                  ],
+                  colors: colors,
                 ),
               ),
-              needle: const RadialNeedle(
-                color: Colors.cyan,
+              needle: RadialNeedle(
+                color: Theme.of(context).colorScheme.primary,
                 shape: RadialNeedleShape.tapperedLine,
                 alignment: RadialElementAlignment.end,
                 thickness: 12,

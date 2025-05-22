@@ -137,8 +137,11 @@ class MainWorkspace extends StatelessWidget {
       child: Container(
         padding: padding,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondary,
           borderRadius: BorderRadius.circular(10.0),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.primary,
+            width: 2,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
