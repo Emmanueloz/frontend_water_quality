@@ -16,14 +16,7 @@ class Sidebar extends StatelessWidget {
   List<Widget> _buildSidebar(BuildContext context) {
     return [
       ListTile(
-        title: Text(
-          title,
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: Text(title, style: Theme.of(context).textTheme.titleLarge),
       ),
       ...children,
     ];

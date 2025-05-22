@@ -18,6 +18,8 @@ class WorkspaceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget iconAvatar = Icon(Icons.lock_outlined);
+
     return Card(
       child: InkWell(
         onTap: onTap,
@@ -28,13 +30,17 @@ class WorkspaceCard extends StatelessWidget {
             children: [
               Text(
                 title,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge
+                    ?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 4),
-              Text(
-                owner,
-              ),
-              Text(
-                type,
+              Text("Creador: $owner"),
+              Spacer(),
+              Chip(
+                avatar: iconAvatar,
+                label: Text(type),
               ),
             ],
           ),

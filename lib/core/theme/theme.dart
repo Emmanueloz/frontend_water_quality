@@ -17,23 +17,26 @@ class AppTheme {
   static TextTheme get textTheme => const TextTheme(
         displayLarge: TextStyle(
           color: textColor,
-          fontSize: 40,
+          fontSize: 32,
+          fontWeight: FontWeight.bold,
         ),
         displayMedium: TextStyle(
           color: textColor,
-          fontSize: 34,
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
         ),
         displaySmall: TextStyle(
           color: textColor,
-          fontSize: 28,
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
         ),
         titleLarge: TextStyle(
           color: textColor,
-          fontSize: 16,
+          fontSize: 20,
         ),
         titleMedium: TextStyle(
           color: textColor,
-          fontSize: 14,
+          fontSize: 16,
         ),
         titleSmall: TextStyle(
           color: textColor,
@@ -69,11 +72,7 @@ class AppTheme {
         iconTheme: IconThemeData(
           color: colorScheme.secondary,
         ),
-        titleTextStyle: TextStyle(
-          color: textColor,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
+        titleTextStyle: textTheme.displaySmall,
       ),
       scaffoldBackgroundColor: colorScheme.surface,
       primaryTextTheme: textTheme,
@@ -83,11 +82,28 @@ class AppTheme {
       ),
       listTileTheme: ListTileThemeData(
         textColor: textColor,
+        iconColor: textColor,
+        selectedColor: colorScheme.secondary,
+        selectedTileColor: colorScheme.tertiary,
+        titleTextStyle: textTheme.titleMedium,
       ),
       cardColor: colorScheme.surface,
       cardTheme: CardTheme(
         elevation: 2,
         color: colorScheme.surface,
+      ),
+      chipTheme: ChipThemeData(
+        backgroundColor: colorScheme.secondary,
+        labelStyle: textTheme.bodySmall?.copyWith(
+          color: colorScheme.surface,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(
+            color: colorScheme.secondary,
+            width: 0,
+          ),
+        ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
