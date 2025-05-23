@@ -7,6 +7,7 @@ import 'package:frontend_water_quality/presentation/widgets/layout/responsive_sc
 class Layout extends StatelessWidget {
   final String title;
   final Widget? body;
+  final List<Widget>? childrenDrawer;
   final Widget Function(BuildContext context, ScreenSize screenSize)? builder;
 
   const Layout({
@@ -14,6 +15,7 @@ class Layout extends StatelessWidget {
     required this.title,
     this.body,
     this.builder,
+    this.childrenDrawer,
   });
 
   @override
@@ -26,7 +28,7 @@ class Layout extends StatelessWidget {
           appBar: AppBar(
             title: Text(title),
           ),
-          drawer: DrawerNavigation(title: title),
+          drawer: DrawerNavigation(title: title, children: childrenDrawer),
           body: builder!(context, screenSize),
         );
       }

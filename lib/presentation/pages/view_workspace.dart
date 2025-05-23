@@ -85,18 +85,23 @@ class ViewWorkspace extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 16.0,
       children: [
-        DropdownButton(
-          isExpanded: true,
-          value: _getDropdownItems().first,
-          items: _getDropdownItems()
+        DropdownMenu(
+          width: double.infinity,
+          label: Text("Lista de medidores"),
+          initialSelection: _getDropdownItems().first,
+          dropdownMenuEntries: _getDropdownItems()
               .map(
-                (item) => DropdownMenuItem(
-                  value: item,
-                  child: Text(item),
-                ),
+                (item) => DropdownMenuEntry(
+                    value: item,
+                    label: item,
+                    style: MenuItemButton.styleFrom(
+                      foregroundColor: Theme.of(context).colorScheme.secondary,
+                    )),
               )
               .toList(),
-          onChanged: (value) {},
+          onSelected: (value) {
+            print(value);
+          },
         ),
         MainWorkspace(
           id: "1",
@@ -111,6 +116,29 @@ class ViewWorkspace extends StatelessWidget {
   Widget build(BuildContext context) {
     return Layout(
       title: "Espacio de trabajo $id",
+      childrenDrawer: [
+        SidebarItem(
+          title: "Invitados",
+          leading: const Icon(Icons.people_outline),
+          leadingSelected: const Icon(Icons.people),
+          isSelected: false,
+          onTap: () {},
+        ),
+        SidebarItem(
+          title: "Alertas",
+          leading: const Icon(Icons.alarm_outlined),
+          leadingSelected: const Icon(Icons.alarm),
+          isSelected: false,
+          onTap: () {},
+        ),
+        SidebarItem(
+          title: "Configuración",
+          leading: const Icon(Icons.settings_outlined),
+          leadingSelected: const Icon(Icons.settings),
+          isSelected: false,
+          onTap: () {},
+        ),
+      ],
       builder: (context, screenSize) {
         return Padding(
           padding: const EdgeInsets.all(16.0),

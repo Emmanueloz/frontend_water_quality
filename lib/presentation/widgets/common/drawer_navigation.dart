@@ -5,26 +5,44 @@ import 'package:go_router/go_router.dart';
 
 class DrawerNavigation extends StatelessWidget {
   final String title;
-  const DrawerNavigation({super.key, required this.title});
+  final List<Widget>? children;
+  const DrawerNavigation({
+    super.key,
+    required this.title,
+    this.children,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
+        padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            decoration: BoxDecoration(color: Colors.lightBlueAccent),
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor,
+              border: Border.all(
+                width: 0,
+                color: Theme.of(context).primaryColor,
+              ),
+            ),
             child: Text(
               title,
               style: TextStyle(fontSize: 24),
             ),
           ),
           ListTile(
+            title: Text(
+              "Paginas",
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
+            ),
+          ),
+          ListTile(
             title: const Text(
-              "Workspaces",
-              style: TextStyle(
-                color: Colors.black,
-              ),
+              "Espacios de trabajo",
             ),
             onTap: () {
               context.goNamed(Routes.listWorkspace.name, pathParameters: {
@@ -32,6 +50,17 @@ class DrawerNavigation extends StatelessWidget {
               });
             },
           ),
+          if (children != null)
+            ListTile(
+              title: Text(
+                "Secciones",
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ...?children,
         ],
       ),
     );

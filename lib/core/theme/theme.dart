@@ -120,18 +120,19 @@ class AppTheme {
       dropdownMenuTheme: DropdownMenuThemeData(
         textStyle: textTheme.bodyMedium,
         inputDecorationTheme: InputDecorationTheme(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+          labelStyle: textTheme.bodyLarge,
+          floatingLabelStyle: textTheme.bodyLarge,
+          suffixIconColor: colorScheme.primary,
+          enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: colorScheme.secondary,
-              width: 1,
+              color: colorScheme.primary,
+              width: 2,
             ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide(
-              color: colorScheme.secondary,
-              width: 0,
+              color: colorScheme.primary,
+              width: 2,
             ),
           ),
         ),
