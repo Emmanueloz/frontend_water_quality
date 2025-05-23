@@ -108,6 +108,40 @@ class AppTheme {
           ),
         ),
       ),
+      expansionTileTheme: ExpansionTileThemeData(
+        textColor: textColor,
+        collapsedTextColor: textColor,
+        iconColor: colorScheme.secondary,
+        collapsedIconColor: colorScheme.secondary,
+        shape: BeveledRectangleBorder(
+          side: BorderSide.none,
+        ),
+      ),
+      dropdownMenuTheme: DropdownMenuThemeData(
+        textStyle: textTheme.bodyMedium,
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(
+              color: colorScheme.secondary,
+              width: 1,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(
+              color: colorScheme.secondary,
+              width: 0,
+            ),
+          ),
+        ),
+      ),
+      toggleButtonsTheme: ToggleButtonsThemeData(
+        color: colorScheme.secondary,
+        textStyle: textTheme.bodyMedium,
+        selectedColor: textColor,
+        fillColor: colorScheme.tertiary,
+      ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: colorScheme.secondary, //#5bcdc5

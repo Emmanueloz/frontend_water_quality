@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/base_container.dart';
-import 'package:frontend_water_quality/presentation/widgets/common/sidebar_item.dart';
 
 class Sidebar extends StatelessWidget {
   final String title;
   final ScreenSize screenSize;
-  final List<SidebarItem> children;
+  final List<Widget> children;
   const Sidebar({
     super.key,
     required this.title,

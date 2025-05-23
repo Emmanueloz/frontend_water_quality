@@ -27,11 +27,6 @@ class MainWorkspace extends StatelessWidget {
         label: const Text("Agregar"),
       ),
       ElevatedButton.icon(
-        onPressed: () {},
-        icon: const Icon(Icons.alarm),
-        label: const Text("Alertas"),
-      ),
-      ElevatedButton.icon(
         onPressed: () {
           context.goNamed(
             Routes.listRecords.name,

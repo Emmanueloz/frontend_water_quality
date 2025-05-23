@@ -18,25 +18,30 @@ class MainGridWorkspaces extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int crossAxisCount;
+    double childAspectRatio;
     double maxWidth;
     double gap;
 
     if (screenSize == ScreenSize.mobile) {
       crossAxisCount = 1;
       maxWidth = double.infinity;
+      childAspectRatio = 1 / 0.6;
       gap = 5;
     } else if (screenSize == ScreenSize.tablet) {
       crossAxisCount = 2;
       maxWidth = double.infinity;
       gap = 5;
+      childAspectRatio = 1 / 0.6;
     } else if (screenSize == ScreenSize.smallDesktop) {
       crossAxisCount = 3;
       maxWidth = 800;
       gap = 10;
+      childAspectRatio = 1 / 0.85;
     } else {
       crossAxisCount = 4;
       maxWidth = 1000;
       gap = 16;
+      childAspectRatio = 1 / 0.85;
     }
 
     return Expanded(
@@ -65,6 +70,7 @@ class MainGridWorkspaces extends StatelessWidget {
               context,
               maxWidth,
               crossAxisCount,
+              childAspectRatio,
               gap,
             ),
           ],
@@ -77,13 +83,14 @@ class MainGridWorkspaces extends StatelessWidget {
     BuildContext context,
     double maxWidth,
     int crossAxisCount,
+    double childAspectRatio,
     double gap,
   ) {
     return Expanded(
       child: SingleChildScrollView(
         child: GridView.count(
           crossAxisCount: crossAxisCount, // 4 cards per row
-          childAspectRatio: 1 / 0.6, // Width to height ratio
+          childAspectRatio: childAspectRatio, // Width to height ratio
           crossAxisSpacing: gap,
           mainAxisSpacing: gap,
           shrinkWrap: true,

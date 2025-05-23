@@ -56,11 +56,33 @@ class ListWorkspace extends StatelessWidget {
             borderRadius: BorderRadius.circular(8.0),
             constraints: const BoxConstraints(
               minHeight: 40.0,
-              minWidth: 100.0,
+              minWidth: 120.0,
             ),
             children: [
-              Text("Mis espacios"),
-              Text("Compartidos"),
+              Row(
+                spacing: 2,
+                children: [
+                  Icon(
+                    type == ListWorkspaces.mine
+                        ? Icons.home
+                        : Icons.home_outlined,
+                    size: 18,
+                  ),
+                  Text("Mis espacios")
+                ],
+              ),
+              Row(
+                spacing: 2,
+                children: [
+                  Icon(
+                    type == ListWorkspaces.shared
+                        ? Icons.share
+                        : Icons.share_outlined,
+                    size: 18,
+                  ),
+                  Text("Compartidos")
+                ],
+              ),
             ],
           ),
           MainGridWorkspaces(

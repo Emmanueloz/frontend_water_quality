@@ -23,21 +23,51 @@ class ViewWorkspace extends StatelessWidget {
       spacing: 16.0,
       children: [
         Sidebar(
-          title: "Medidores",
+          title: "Herramientas",
           screenSize: screenSize,
-          children: _getDropdownItems()
-              .map(
-                (item) => SidebarItem(
-                  title: item,
-                  leading: const Icon(Icons.analytics_outlined),
-                  leadingSelected: const Icon(Icons.analytics),
-                  isSelected: item == "Medidor 1",
-                  onTap: () {
-                    print("Selected $item");
-                  },
+          children: [
+            ExpansionTile(
+              leading: const Icon(Icons.analytics),
+              title: const Text(
+                "Medidores",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
                 ),
-              )
-              .toList(),
+              ),
+              children: _getDropdownItems()
+                  .map(
+                    (m) => SidebarItem(
+                      title: m,
+                      leading: const Icon(Icons.analytics_outlined),
+                      leadingSelected: const Icon(Icons.analytics),
+                      isSelected: false,
+                      onTap: () {},
+                    ),
+                  )
+                  .toList(),
+            ),
+            SidebarItem(
+              title: "Invitados",
+              leading: const Icon(Icons.people_outline),
+              leadingSelected: const Icon(Icons.people),
+              isSelected: false,
+              onTap: () {},
+            ),
+            SidebarItem(
+              title: "Alertas",
+              leading: const Icon(Icons.alarm_outlined),
+              leadingSelected: const Icon(Icons.alarm),
+              isSelected: false,
+              onTap: () {},
+            ),
+            SidebarItem(
+              title: "Configuración",
+              leading: const Icon(Icons.settings_outlined),
+              leadingSelected: const Icon(Icons.settings),
+              isSelected: false,
+              onTap: () {},
+            ),
+          ],
         ),
 
         // Main content area with workspace grid
@@ -57,10 +87,6 @@ class ViewWorkspace extends StatelessWidget {
       children: [
         DropdownButton(
           isExpanded: true,
-          style: const TextStyle(
-            fontSize: 16,
-            color: Colors.black,
-          ),
           value: _getDropdownItems().first,
           items: _getDropdownItems()
               .map(
