@@ -25,47 +25,28 @@ class ViewWorkspace extends StatelessWidget {
         Sidebar(
           title: "Herramientas",
           screenSize: screenSize,
-          children: [
-            ExpansionTile(
-              leading: const Icon(Icons.analytics),
-              title: const Text(
-                "Medidores",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              children: _getDropdownItems()
-                  .map(
-                    (m) => SidebarItem(
-                      title: m,
-                      leading: const Icon(Icons.analytics_outlined),
-                      leadingSelected: const Icon(Icons.analytics),
-                      isSelected: false,
-                      onTap: () {},
-                    ),
-                  )
-                  .toList(),
+          selectedIndex: 0,
+          onDestinationSelected: (index) => print(index),
+          destinations: [
+            NavigationRailDestination(
+              icon: const Icon(Icons.analytics_outlined),
+              selectedIcon: const Icon(Icons.analytics),
+              label: Text("Medidores"),
             ),
-            SidebarItem(
-              title: "Invitados",
-              leading: const Icon(Icons.people_outline),
-              leadingSelected: const Icon(Icons.people),
-              isSelected: false,
-              onTap: () {},
+            NavigationRailDestination(
+              icon: const Icon(Icons.alarm_outlined),
+              selectedIcon: const Icon(Icons.alarm),
+              label: Text("Alertas"),
             ),
-            SidebarItem(
-              title: "Alertas",
-              leading: const Icon(Icons.alarm_outlined),
-              leadingSelected: const Icon(Icons.alarm),
-              isSelected: false,
-              onTap: () {},
+            NavigationRailDestination(
+              icon: const Icon(Icons.people_outline),
+              selectedIcon: const Icon(Icons.people),
+              label: Text("Invitados"),
             ),
-            SidebarItem(
-              title: "Configuración",
-              leading: const Icon(Icons.settings_outlined),
-              leadingSelected: const Icon(Icons.settings),
-              isSelected: false,
-              onTap: () {},
+            NavigationRailDestination(
+              icon: const Icon(Icons.settings_outlined),
+              selectedIcon: const Icon(Icons.settings),
+              label: Text("Configuración"),
             ),
           ],
         ),
