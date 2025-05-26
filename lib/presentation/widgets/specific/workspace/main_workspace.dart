@@ -19,6 +19,14 @@ class MainWorkspace extends StatelessWidget {
     required this.id,
   });
 
+  List<String> _getDropdownItems() {
+    return [
+      "Medidor 1",
+      "Medidor 2",
+      "Medidor 3",
+    ];
+  }
+
   List<Widget> _buttonsNavigation(BuildContext context) {
     return [
       ElevatedButton.icon(
@@ -129,6 +137,11 @@ class MainWorkspace extends StatelessWidget {
       ),
     ];
 
+    double maxDropdownWidth = double.infinity;
+    if (screenSize != ScreenSize.mobile) {
+      maxDropdownWidth = 300;
+    }
+
     return Expanded(
       child: BaseContainer(
         padding: padding,
@@ -137,7 +150,25 @@ class MainWorkspace extends StatelessWidget {
           children: [
             //_buildSecondaryNavigation(context),
             ButtonActions(
-              title: "Medidor $idMeter",
+              title: DropdownMenu(
+                width: maxDropdownWidth,
+                enableFilter: true,
+                initialSelection: _getDropdownItems().first,
+                dropdownMenuEntries: _getDropdownItems()
+                    .map(
+                      (item) => DropdownMenuEntry(
+                          value: item,
+                          label: item,
+                          style: MenuItemButton.styleFrom(
+                            foregroundColor:
+                                Theme.of(context).colorScheme.secondary,
+                          )),
+                    )
+                    .toList(),
+                onSelected: (value) {
+                  print(value);
+                },
+              ),
               actions: _buttonsNavigation(context),
               screenSize: screenSize,
             ),

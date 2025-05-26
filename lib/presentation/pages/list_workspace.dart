@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/sidebar.dart';
-import 'package:frontend_water_quality/presentation/widgets/common/sidebar_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/main_grid_workspaces.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/workspace_card.dart';
@@ -13,10 +12,44 @@ class ListWorkspace extends StatelessWidget {
   final ListWorkspaces type;
   const ListWorkspace({super.key, required this.type});
 
+  void onDestinationSelected(BuildContext context, int index) {
+    if (index == 0) {
+      context.goNamed(
+        Routes.listWorkspace.name,
+        pathParameters: {
+          "type": ListWorkspaces.mine.name,
+        },
+      );
+    } else if (index == 1) {
+      context.goNamed(
+        Routes.listWorkspace.name,
+        pathParameters: {
+          "type": ListWorkspaces.shared.name,
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Layout(
       title: "Espacios de trabajo",
+      selectedIndex: type == ListWorkspaces.mine ? 0 : 1,
+      onDestinationSelected: (int index) {
+        onDestinationSelected(context, index);
+      },
+      destinations: [
+        NavigationDestination(
+          label: "Mis espacios",
+          icon: const Icon(Icons.home_outlined),
+          selectedIcon: const Icon(Icons.home),
+        ),
+        NavigationDestination(
+          label: "Compartidos",
+          icon: const Icon(Icons.share_outlined),
+          selectedIcon: const Icon(Icons.share),
+        ),
+      ],
       builder: (context, screenSize) {
         return Padding(
           padding: EdgeInsets.all(10),
@@ -28,71 +61,12 @@ class ListWorkspace extends StatelessWidget {
 
   Widget _buildMainContent(BuildContext context, ScreenSize screenSize) {
     if (screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet) {
-      return Column(
-        spacing: 10,
-        children: [
-          ToggleButtons(
-            isSelected: [
-              type == ListWorkspaces.mine,
-              type == ListWorkspaces.shared
-            ],
-            onPressed: (int index) {
-              if (index == 0) {
-                context.goNamed(
-                  Routes.listWorkspace.name,
-                  pathParameters: {
-                    "type": ListWorkspaces.mine.name,
-                  },
-                );
-              } else if (index == 1) {
-                context.goNamed(
-                  Routes.listWorkspace.name,
-                  pathParameters: {
-                    "type": ListWorkspaces.shared.name,
-                  },
-                );
-              }
-            },
-            borderRadius: BorderRadius.circular(8.0),
-            constraints: const BoxConstraints(
-              minHeight: 40.0,
-              minWidth: 120.0,
-            ),
-            children: [
-              Row(
-                spacing: 2,
-                children: [
-                  Icon(
-                    type == ListWorkspaces.mine
-                        ? Icons.home
-                        : Icons.home_outlined,
-                    size: 18,
-                  ),
-                  Text("Mis espacios")
-                ],
-              ),
-              Row(
-                spacing: 2,
-                children: [
-                  Icon(
-                    type == ListWorkspaces.shared
-                        ? Icons.share
-                        : Icons.share_outlined,
-                    size: 18,
-                  ),
-                  Text("Compartidos")
-                ],
-              ),
-            ],
-          ),
-          MainGridWorkspaces(
-            type: type,
-            screenSize: screenSize,
-            children: type == ListWorkspaces.mine
-                ? _getWorkspacesCard(context)
-                : _getWorkspacesSharedCard(context),
-          ),
-        ],
+      return MainGridWorkspaces(
+        type: type,
+        screenSize: screenSize,
+        children: type == ListWorkspaces.mine
+            ? _getWorkspacesCard(context)
+            : _getWorkspacesSharedCard(context),
       );
     }
 
@@ -101,38 +75,23 @@ class ListWorkspace extends StatelessWidget {
       spacing: 10,
       children: [
         Sidebar(
-          title: "Tipos de espacios",
           screenSize: screenSize,
-          children: [
-            SidebarItem(
-              title: "Mis espacios",
-              leading: const Icon(Icons.home_outlined),
-              leadingSelected: const Icon(Icons.home),
-              isSelected: type == ListWorkspaces.mine,
-              onTap: () {
-                context.goNamed(
-                  Routes.listWorkspace.name,
-                  pathParameters: {
-                    "type": ListWorkspaces.mine.name,
-                  },
-                );
-              },
+          selectedIndex: type == ListWorkspaces.mine ? 0 : 1,
+          destinations: [
+            NavigationRailDestination(
+              label: Text("Medidores"),
+              icon: const Icon(Icons.home_outlined),
+              selectedIcon: const Icon(Icons.home),
             ),
-            SidebarItem(
-              title: "Compartidos",
-              leading: const Icon(Icons.share_outlined),
-              leadingSelected: const Icon(Icons.share),
-              isSelected: type == ListWorkspaces.shared,
-              onTap: () {
-                context.goNamed(
-                  Routes.listWorkspace.name,
-                  pathParameters: {
-                    "type": ListWorkspaces.shared.name,
-                  },
-                );
-              },
+            NavigationRailDestination(
+              label: Text("Compartidos"),
+              icon: const Icon(Icons.share_outlined),
+              selectedIcon: const Icon(Icons.share),
             ),
           ],
+          onDestinationSelected: (int index) {
+            onDestinationSelected(context, index);
+          },
         ),
         MainGridWorkspaces(
           type: type,

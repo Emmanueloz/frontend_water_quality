@@ -92,6 +92,22 @@ class AppTheme {
         elevation: 2,
         color: colorScheme.surface,
       ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: colorScheme.surface,
+        indicatorColor: colorScheme.tertiary,
+      ),
+      navigationRailTheme: NavigationRailThemeData(
+        backgroundColor: colorScheme.surface,
+        selectedIconTheme: IconThemeData(
+          color: colorScheme.secondary,
+        ),
+        unselectedIconTheme: IconThemeData(
+          color: textColor,
+        ),
+        indicatorColor: colorScheme.tertiary,
+        selectedLabelTextStyle: textTheme.titleMedium,
+        unselectedLabelTextStyle: textTheme.titleMedium,
+      ),
       chipTheme: ChipThemeData(
         backgroundColor: colorScheme.secondary,
         labelStyle: textTheme.bodySmall?.copyWith(
@@ -118,17 +134,10 @@ class AppTheme {
         ),
       ),
       dropdownMenuTheme: DropdownMenuThemeData(
-        textStyle: textTheme.bodyMedium,
+        textStyle: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
         inputDecorationTheme: InputDecorationTheme(
-          labelStyle: textTheme.bodyLarge,
-          floatingLabelStyle: textTheme.bodyLarge,
           suffixIconColor: colorScheme.primary,
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: colorScheme.primary,
-              width: 2,
-            ),
-          ),
+          enabledBorder: InputBorder.none,
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(
               color: colorScheme.primary,

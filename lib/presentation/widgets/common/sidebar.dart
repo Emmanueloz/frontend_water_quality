@@ -3,7 +3,6 @@ import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/base_container.dart';
 
 class Sidebar extends StatelessWidget {
-  final String title;
   final ScreenSize screenSize;
   final List<Widget>? children;
   final List<NavigationRailDestination>? destinations;
@@ -11,7 +10,6 @@ class Sidebar extends StatelessWidget {
   final void Function(int)? onDestinationSelected;
   const Sidebar({
     super.key,
-    required this.title,
     required this.screenSize,
     this.destinations,
     this.children,
@@ -21,12 +19,14 @@ class Sidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isExtended = screenSize == ScreenSize.largeDesktop;
+
     return BaseContainer(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(5),
       child: NavigationRail(
-        extended: screenSize == ScreenSize.largeDesktop,
+        extended: isExtended,
         selectedIndex: selectedIndex,
-        leading: Text(title),
+        minExtendedWidth: 300,
         destinations: destinations ?? [],
         onDestinationSelected: onDestinationSelected,
       ),

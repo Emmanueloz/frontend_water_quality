@@ -8,6 +8,9 @@ class Layout extends StatelessWidget {
   final String title;
   final Widget? body;
   final List<Widget>? childrenDrawer;
+  final int? selectedIndex;
+  final List<Widget>? destinations;
+  final void Function(int)? onDestinationSelected;
   final Widget Function(BuildContext context, ScreenSize screenSize)? builder;
 
   const Layout({
@@ -16,6 +19,9 @@ class Layout extends StatelessWidget {
     this.body,
     this.builder,
     this.childrenDrawer,
+    this.selectedIndex,
+    this.destinations,
+    this.onDestinationSelected,
   });
 
   @override
@@ -30,6 +36,13 @@ class Layout extends StatelessWidget {
           ),
           drawer: DrawerNavigation(title: title, children: childrenDrawer),
           body: builder!(context, screenSize),
+          bottomNavigationBar: selectedIndex != null && destinations != null
+              ? NavigationBar(
+                  selectedIndex: selectedIndex!,
+                  destinations: destinations!,
+                  onDestinationSelected: onDestinationSelected,
+                )
+              : null,
         );
       }
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 
 class ButtonActions extends StatelessWidget {
-  final String title;
+  final Widget title;
   final List<Widget> actions;
   final ScreenSize screenSize;
   const ButtonActions(
@@ -13,20 +13,12 @@ class ButtonActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget textTitle = Text(
-      title,
-      style: Theme.of(context)
-          .primaryTextTheme
-          .bodyLarge
-          ?.copyWith(fontWeight: FontWeight.bold),
-    );
-
     if (screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 10,
         children: [
-          textTitle,
+          title,
           SizedBox(
             width: double.infinity,
             child: Wrap(
@@ -43,7 +35,7 @@ class ButtonActions extends StatelessWidget {
     return Row(
       spacing: 10,
       children: [
-        textTitle,
+        title,
         const Spacer(),
         ...actions,
       ],

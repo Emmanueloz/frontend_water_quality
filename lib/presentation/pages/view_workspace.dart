@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/sidebar.dart';
-import 'package:frontend_water_quality/presentation/widgets/common/sidebar_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/main_workspace.dart';
 
@@ -9,12 +8,20 @@ class ViewWorkspace extends StatelessWidget {
   final String id;
   const ViewWorkspace({super.key, required this.id});
 
-  List<String> _getDropdownItems() {
-    return [
-      "Medidor 1",
-      "Medidor 2",
-      "Medidor 3",
-    ];
+  void onDestinationSelected(BuildContext context, int index) {
+    if (index == 0) {
+      // Navigate to meters
+      print("Navigate to meters");
+    } else if (index == 1) {
+      // Navigate to alerts
+      print("Navigate to alerts");
+    } else if (index == 2) {
+      // Navigate to guests
+      print("Navigate to guests");
+    } else if (index == 3) {
+      // Navigate to settings
+      print("Navigate to settings");
+    }
   }
 
   Widget _buildDesktopContent(BuildContext context, ScreenSize screenSize) {
@@ -23,10 +30,10 @@ class ViewWorkspace extends StatelessWidget {
       spacing: 16.0,
       children: [
         Sidebar(
-          title: "Herramientas",
           screenSize: screenSize,
           selectedIndex: 0,
-          onDestinationSelected: (index) => print(index),
+          onDestinationSelected: (index) =>
+              onDestinationSelected(context, index),
           destinations: [
             NavigationRailDestination(
               icon: const Icon(Icons.analytics_outlined),
@@ -66,24 +73,6 @@ class ViewWorkspace extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 16.0,
       children: [
-        DropdownMenu(
-          width: double.infinity,
-          label: Text("Lista de medidores"),
-          initialSelection: _getDropdownItems().first,
-          dropdownMenuEntries: _getDropdownItems()
-              .map(
-                (item) => DropdownMenuEntry(
-                    value: item,
-                    label: item,
-                    style: MenuItemButton.styleFrom(
-                      foregroundColor: Theme.of(context).colorScheme.secondary,
-                    )),
-              )
-              .toList(),
-          onSelected: (value) {
-            print(value);
-          },
-        ),
         MainWorkspace(
           id: "1",
           idMeter: "1",
@@ -97,27 +86,29 @@ class ViewWorkspace extends StatelessWidget {
   Widget build(BuildContext context) {
     return Layout(
       title: "Espacio de trabajo $id",
-      childrenDrawer: [
-        SidebarItem(
-          title: "Invitados",
-          leading: const Icon(Icons.people_outline),
-          leadingSelected: const Icon(Icons.people),
-          isSelected: false,
-          onTap: () {},
+      selectedIndex: 0,
+      onDestinationSelected: (int index) =>
+          onDestinationSelected(context, index),
+      destinations: [
+        NavigationDestination(
+          label: "Medidores",
+          icon: const Icon(Icons.analytics_outlined),
+          selectedIcon: const Icon(Icons.analytics),
         ),
-        SidebarItem(
-          title: "Alertas",
-          leading: const Icon(Icons.alarm_outlined),
-          leadingSelected: const Icon(Icons.alarm),
-          isSelected: false,
-          onTap: () {},
+        NavigationDestination(
+          label: "Alertas",
+          icon: const Icon(Icons.alarm_outlined),
+          selectedIcon: const Icon(Icons.alarm),
         ),
-        SidebarItem(
-          title: "Configuración",
-          leading: const Icon(Icons.settings_outlined),
-          leadingSelected: const Icon(Icons.settings),
-          isSelected: false,
-          onTap: () {},
+        NavigationDestination(
+          label: "Invitados",
+          icon: const Icon(Icons.people_outline),
+          selectedIcon: const Icon(Icons.people),
+        ),
+        NavigationDestination(
+          label: "Configuración",
+          icon: const Icon(Icons.settings_outlined),
+          selectedIcon: const Icon(Icons.settings),
         ),
       ],
       builder: (context, screenSize) {

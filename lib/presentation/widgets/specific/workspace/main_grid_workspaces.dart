@@ -51,9 +51,15 @@ class MainGridWorkspaces extends StatelessWidget {
           spacing: 10,
           children: [
             ButtonActions(
-              title: type == ListWorkspaces.mine
-                  ? "Mis espacios de trabajo"
-                  : "Espacios de trabajo compartidos",
+              title: Text(
+                type == ListWorkspaces.mine
+                    ? "Mis espacios de trabajo"
+                    : "Espacios de trabajo",
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              ),
               actions: [
                 if (type == ListWorkspaces.mine)
                   ElevatedButton.icon(
