@@ -28,58 +28,66 @@ class Layout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (builder != null) {
-      ScreenSize screenSize = ResponsiveScreenSize.getScreenSize(context);
-
-      bool showNavigationBar = selectedIndex != null && destinations != null;
-
-      if (screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(title),
-          ),
-          drawer: DrawerNavigation(title: title, children: childrenDrawer),
-          body: builder!(context, screenSize),
-          bottomNavigationBar: showNavigationBar
-              ? NavigationBar(
-                  selectedIndex: selectedIndex ?? 0,
-                  destinations: destinations!
-                      .map(
-                        (NavigationItem item) => NavigationDestination(
-                          label: item.label,
-                          icon: Icon(
-                            item.icon,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                          selectedIcon: Icon(
-                            item.selectedIcon,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                      )
-                      .toList(),
-                  onDestinationSelected: onDestinationSelected,
-                )
-              : null,
-        );
-      }
-      if (showNavigationBar) {
-        return buildWithNavigationBar(context, screenSize);
-      }
-
-      return Scaffold(
-        appBar: AppBarNavigation(title: title),
-        body: builder!(context, screenSize),
-      );
+    // Si no hay builder personalizado, usar layout básico
+    if (builder == null) {
+      return _buildBasicLayout();
     }
 
+    final screenSize = ResponsiveScreenSize.getScreenSize(context);
+    final hasNavigation = _hasNavigationData();
+
+    // Layout para dispositivos móviles y tablets
+    if (_isMobileOrTablet(screenSize)) {
+      return _buildMobileLayout(context, screenSize, hasNavigation);
+    }
+
+    // Layout para desktop
+    return hasNavigation
+        ? _buildDesktopWithNavigation(context, screenSize)
+        : _buildDesktopLayout(context, screenSize);
+  }
+
+  /// Verifica si tiene datos de navegación válidos
+  bool _hasNavigationData() {
+    return selectedIndex != null && destinations != null;
+  }
+
+  /// Verifica si es dispositivo móvil o tablet
+  bool _isMobileOrTablet(ScreenSize screenSize) {
+    return screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet;
+  }
+
+  /// Layout básico sin builder personalizado
+  Widget _buildBasicLayout() {
     return Scaffold(
       appBar: AppBarNavigation(title: title),
       body: body,
     );
   }
 
-  Widget buildWithNavigationBar(BuildContext context, ScreenSize screenSize) {
+  /// Layout para dispositivos móviles y tablets
+  Widget _buildMobileLayout(
+      BuildContext context, ScreenSize screenSize, bool hasNavigation) {
+    return Scaffold(
+      appBar: AppBar(title: Text(title)),
+      drawer: _buildDrawer(),
+      body: builder!(context, screenSize),
+      bottomNavigationBar:
+          hasNavigation ? _buildBottomNavigationBar(context) : null,
+    );
+  }
+
+  /// Layout para desktop sin navegación
+  Widget _buildDesktopLayout(BuildContext context, ScreenSize screenSize) {
+    return Scaffold(
+      appBar: AppBarNavigation(title: title),
+      body: builder!(context, screenSize),
+    );
+  }
+
+  /// Layout para desktop con navegación lateral
+  Widget _buildDesktopWithNavigation(
+      BuildContext context, ScreenSize screenSize) {
     return Scaffold(
       appBar: AppBarNavigation(title: title),
       body: Padding(
@@ -88,24 +96,69 @@ class Layout extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 10,
           children: [
-            Sidebar(
-              screenSize: screenSize,
-              selectedIndex: selectedIndex,
-              onDestinationSelected: onDestinationSelected,
-              destinations: destinations!
-                  .map(
-                    (NavigationItem item) => NavigationRailDestination(
-                      label: Text(item.label),
-                      icon: Icon(item.icon),
-                      selectedIcon: Icon(item.selectedIcon),
-                    ),
-                  )
-                  .toList(),
-            ),
+            _buildSidebar(screenSize),
             builder!(context, screenSize),
           ],
         ),
       ),
     );
+  }
+
+  /// Construye el drawer de navegación
+  Widget? _buildDrawer() {
+    if (childrenDrawer == null) return null;
+
+    return DrawerNavigation(
+      title: title,
+      children: childrenDrawer,
+    );
+  }
+
+  /// Construye la barra de navegación inferior
+  Widget _buildBottomNavigationBar(BuildContext context) {
+    return NavigationBar(
+      selectedIndex: selectedIndex ?? 0,
+      destinations: _buildNavigationDestinations(context),
+      onDestinationSelected: onDestinationSelected,
+    );
+  }
+
+  /// Construye la barra lateral de navegación
+  Widget _buildSidebar(ScreenSize screenSize) {
+    return Sidebar(
+      screenSize: screenSize,
+      selectedIndex: selectedIndex,
+      onDestinationSelected: onDestinationSelected,
+      destinations: _buildNavigationRailDestinations(),
+    );
+  }
+
+  /// Construye las destinations para NavigationBar
+  List<NavigationDestination> _buildNavigationDestinations(
+      BuildContext context) {
+    return destinations!.map((NavigationItem item) {
+      return NavigationDestination(
+        label: item.label,
+        icon: Icon(
+          item.icon,
+          color: Theme.of(context).colorScheme.secondary,
+        ),
+        selectedIcon: Icon(
+          item.selectedIcon,
+          color: Theme.of(context).colorScheme.secondary,
+        ),
+      );
+    }).toList();
+  }
+
+  /// Construye las destinations para NavigationRail
+  List<NavigationRailDestination> _buildNavigationRailDestinations() {
+    return destinations!.map((NavigationItem item) {
+      return NavigationRailDestination(
+        label: Text(item.label),
+        icon: Icon(item.icon),
+        selectedIcon: Icon(item.selectedIcon),
+      );
+    }).toList();
   }
 }
