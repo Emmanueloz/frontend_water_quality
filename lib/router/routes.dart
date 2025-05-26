@@ -1,4 +1,4 @@
-import 'package:frontend_water_quality/domain/models/route_properties.dart';
+import 'package:frontend_water_quality/core/interface/route_properties.dart';
 
 class Routes {
   static RouteProperties splash = RouteProperties(
