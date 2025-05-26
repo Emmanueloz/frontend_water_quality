@@ -70,7 +70,7 @@ class Layout extends StatelessWidget {
       BuildContext context, ScreenSize screenSize, bool hasNavigation) {
     return Scaffold(
       appBar: AppBar(title: Text(title)),
-      drawer: _buildDrawer(),
+      endDrawer: _buildDrawer(),
       body: builder!(context, screenSize),
       bottomNavigationBar:
           hasNavigation ? _buildBottomNavigationBar(context) : null,
@@ -106,8 +106,6 @@ class Layout extends StatelessWidget {
 
   /// Construye el drawer de navegación
   Widget? _buildDrawer() {
-    if (childrenDrawer == null) return null;
-
     return DrawerNavigation(
       title: title,
       children: childrenDrawer,
