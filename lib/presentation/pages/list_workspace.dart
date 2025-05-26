@@ -85,6 +85,7 @@ class ListWorkspace extends StatelessWidget {
           context.goNamed(
             Routes.viewWorkspace.name,
             pathParameters: {
+              "type": ListWorkspaces.mine.name,
               'id': "1",
             },
           );
@@ -99,6 +100,7 @@ class ListWorkspace extends StatelessWidget {
           context.goNamed(
             Routes.viewWorkspace.name,
             pathParameters: {
+              "type": ListWorkspaces.mine.name,
               'id': "2",
             },
           );
@@ -113,6 +115,7 @@ class ListWorkspace extends StatelessWidget {
           context.goNamed(
             Routes.viewWorkspace.name,
             pathParameters: {
+              "type": ListWorkspaces.mine.name,
               'id': "3",
             },
           );
@@ -127,6 +130,7 @@ class ListWorkspace extends StatelessWidget {
           context.goNamed(
             Routes.viewWorkspace.name,
             pathParameters: {
+              "type": ListWorkspaces.mine.name,
               'id': "4",
             },
           );
@@ -146,6 +150,7 @@ class ListWorkspace extends StatelessWidget {
           context.goNamed(
             Routes.viewWorkspace.name,
             pathParameters: {
+              "type": ListWorkspaces.shared.name,
               'id': "5",
             },
           );
@@ -160,6 +165,7 @@ class ListWorkspace extends StatelessWidget {
           context.goNamed(
             Routes.viewWorkspace.name,
             pathParameters: {
+              "type": ListWorkspaces.shared.name,
               'id': "6",
             },
           );
@@ -174,6 +180,7 @@ class ListWorkspace extends StatelessWidget {
           context.goNamed(
             Routes.viewWorkspace.name,
             pathParameters: {
+              "type": ListWorkspaces.shared.name,
               'id': "7",
             },
           );

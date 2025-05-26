@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
@@ -6,7 +7,8 @@ import 'package:frontend_water_quality/presentation/widgets/specific/workspace/m
 
 class ViewWorkspace extends StatelessWidget {
   final String id;
-  const ViewWorkspace({super.key, required this.id});
+  final ListWorkspaces type;
+  const ViewWorkspace({super.key, required this.id, required this.type});
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +62,7 @@ class ViewWorkspace extends StatelessWidget {
             child: MainWorkspace(
               id: id,
               idMeter: "1",
+              type: type,
               screenSize: screenSize,
             ),
           );
@@ -68,6 +71,7 @@ class ViewWorkspace extends StatelessWidget {
         return MainWorkspace(
           id: id,
           idMeter: "1",
+          type: type,
           screenSize: screenSize,
         );
       },

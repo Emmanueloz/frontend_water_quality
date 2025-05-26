@@ -10,8 +10,8 @@ import 'package:go_router/go_router.dart';
 class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: Routes.splash.path,
-    //debugLogDiagnostics: true, // Útil durante el desarrollo
-    //routerNeglect: true, // Ayuda con URLs en web
+    debugLogDiagnostics: true, // Útil durante el desarrollo
+    routerNeglect: true, // Ayuda con URLs en web
     routes: [
       GoRoute(
         path: Routes.splash.path,
@@ -48,35 +48,52 @@ class AppRouter {
 
           return ListWorkspace(type: type);
         },
-      ),
-      GoRoute(
-        path: Routes.viewWorkspace.path,
-        name: Routes.viewWorkspace.name,
-        builder: (context, state) {
-          final id = state.pathParameters['id'] ?? 'default';
-          return ViewWorkspace(id: id);
-        },
+        routes: [
+          GoRoute(
+              path: Routes.viewWorkspace.path,
+              name: Routes.viewWorkspace.name,
+              builder: (context, state) {
+                final id = state.pathParameters['id'] ?? 'default';
+                final typeString = state.pathParameters['type'] ?? 'mine';
+                ListWorkspaces type;
+
+                switch (typeString) {
+                  case 'mine':
+                    type = ListWorkspaces.mine;
+                    break;
+                  case 'shared':
+                    type = ListWorkspaces.shared;
+                    break;
+                  default:
+                    type = ListWorkspaces.mine;
+                    break;
+                }
+                return ViewWorkspace(id: id, type: type);
+              },
+              routes: [
+                GoRoute(
+                  path: Routes.listRecords.path,
+                  name: Routes.listRecords.name,
+                  builder: (context, state) {
+                    final id = state.pathParameters['id'] ?? 'default';
+                    return Simple(title: 'Records for Workspace $id');
+                  },
+                ),
+              ]),
+          GoRoute(
+            path: Routes.alerts.path,
+            name: Routes.alerts.name,
+            builder: (context, state) {
+              final id = state.pathParameters['id'] ?? 'default';
+              return Simple(title: 'Alerts for Workspace $id');
+            },
+          ),
+        ],
       ),
       GoRoute(
         path: Routes.profile.path,
         name: Routes.profile.name,
         builder: (context, state) => const Simple(title: 'Profile'),
-      ),
-      GoRoute(
-        path: Routes.alerts.path,
-        name: Routes.alerts.name,
-        builder: (context, state) {
-          final id = state.pathParameters['id'] ?? 'default';
-          return Simple(title: 'Alerts for Workspace $id');
-        },
-      ),
-      GoRoute(
-        path: Routes.listRecords.path,
-        name: Routes.listRecords.name,
-        builder: (context, state) {
-          final id = state.pathParameters['id'] ?? 'default';
-          return Simple(title: 'Records for Workspace $id');
-        },
       ),
       GoRoute(
         path: Routes.notificationDetails.path,

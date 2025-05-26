@@ -19,7 +19,7 @@ class Routes {
   );
   static RouteProperties viewWorkspace = RouteProperties(
     name: "viewWorkspace",
-    path: "/workspace/:id",
+    path: "/:id",
     pathRoot: "/workspace/",
   );
   static RouteProperties profile = RouteProperties(
@@ -28,11 +28,11 @@ class Routes {
   );
   static RouteProperties alerts = RouteProperties(
     name: "alerts",
-    path: "/workspace/:id/alerts",
+    path: "/:id/alerts",
   );
   static RouteProperties listRecords = RouteProperties(
     name: "listRecords",
-    path: "/workspace/:id/meter/:idMeter/records",
+    path: "/meter/:idMeter/records",
   );
   static RouteProperties notificationDetails = RouteProperties(
     name: "notificationDetails",
