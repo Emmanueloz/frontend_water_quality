@@ -1,0 +1,1 @@
+/home/emmanueloz/desarrollo/frontend_water_quality/build/app/intermediates/cxx/RelWithDebInfo/6w1l491f/obj/armeabi-v7a

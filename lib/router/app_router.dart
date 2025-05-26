@@ -10,8 +10,7 @@ import 'package:go_router/go_router.dart';
 class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: Routes.splash.path,
-    debugLogDiagnostics: true, // Útil durante el desarrollo
-    routerNeglect: true, // Ayuda con URLs en web
+    //debugLogDiagnostics: true, // Útil durante el desarrollo
     routes: [
       GoRoute(
         path: Routes.splash.path,

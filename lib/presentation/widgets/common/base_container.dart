@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class BaseContainer extends StatelessWidget {
   final double? width;
   final double? height;
+  final EdgeInsetsGeometry? margin;
   final EdgeInsetsGeometry? padding;
   final Widget? child;
   const BaseContainer({
@@ -10,6 +11,7 @@ class BaseContainer extends StatelessWidget {
     this.child,
     this.width,
     this.height,
+    this.margin,
     this.padding,
   });
 
@@ -18,6 +20,7 @@ class BaseContainer extends StatelessWidget {
     return Container(
       width: width,
       height: height,
+      margin: margin,
       padding: padding,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),

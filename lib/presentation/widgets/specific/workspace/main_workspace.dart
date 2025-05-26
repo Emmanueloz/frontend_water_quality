@@ -56,13 +56,23 @@ class MainWorkspace extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Configuración del padding y tamaño de los medidores según el tamaño de pantalla
+    if (screenSize == ScreenSize.smallDesktop ||
+        screenSize == ScreenSize.largeDesktop) {
+      return Expanded(child: _buildMain(context));
+    }
+
+    return _buildMain(context);
+  }
+
+  Widget _buildMain(BuildContext context) {
+    EdgeInsetsGeometry margin;
     EdgeInsetsGeometry padding;
     Size meterSize;
     int crossAxisCount;
     double childAspectRatio;
 
     if (screenSize == ScreenSize.smallDesktop) {
+      margin = const EdgeInsets.all(0);
       padding = const EdgeInsets.symmetric(
         horizontal: 20,
         vertical: 9,
@@ -71,6 +81,8 @@ class MainWorkspace extends StatelessWidget {
       crossAxisCount = 3;
       childAspectRatio = 1 / 1.2;
     } else if (screenSize == ScreenSize.largeDesktop) {
+      margin = const EdgeInsets.all(0);
+
       padding = const EdgeInsets.symmetric(
         horizontal: 20,
         vertical: 9,
@@ -79,12 +91,16 @@ class MainWorkspace extends StatelessWidget {
       crossAxisCount = 3;
       childAspectRatio = 1 / 0.70;
     } else if (screenSize == ScreenSize.tablet) {
+      margin = const EdgeInsets.all(10);
+
       padding = const EdgeInsets.all(12.0);
       meterSize = const Size(300, 240);
       crossAxisCount = 2;
       childAspectRatio = 1 / 1.2;
     } else {
       // Mobile
+      margin = const EdgeInsets.all(10);
+
       padding = const EdgeInsets.all(10.0);
       meterSize = const Size(340, 260);
       crossAxisCount = 1;
@@ -145,56 +161,53 @@ class MainWorkspace extends StatelessWidget {
     if (screenSize != ScreenSize.mobile) {
       maxDropdownWidth = 300;
     }
-
-    return Expanded(
-      child: BaseContainer(
-        padding: padding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            //_buildSecondaryNavigation(context),
-            ButtonActions(
-              title: DropdownMenu(
-                width: maxDropdownWidth,
-                enableFilter: true,
-                initialSelection: _getDropdownItems().first,
-                dropdownMenuEntries: _getDropdownItems()
-                    .map(
-                      (item) => DropdownMenuEntry(
-                          value: item,
-                          label: item,
-                          style: MenuItemButton.styleFrom(
-                            foregroundColor:
-                                Theme.of(context).colorScheme.secondary,
-                          )),
-                    )
-                    .toList(),
-                onSelected: (value) {
-                  print(value);
-                },
-              ),
-              actions: _buttonsNavigation(context),
-              screenSize: screenSize,
+    return BaseContainer(
+      margin: margin,
+      padding: padding,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ButtonActions(
+            title: DropdownMenu(
+              width: maxDropdownWidth,
+              enableFilter: true,
+              initialSelection: _getDropdownItems().first,
+              dropdownMenuEntries: _getDropdownItems()
+                  .map(
+                    (item) => DropdownMenuEntry(
+                        value: item,
+                        label: item,
+                        style: MenuItemButton.styleFrom(
+                          foregroundColor:
+                              Theme.of(context).colorScheme.secondary,
+                        )),
+                  )
+                  .toList(),
+              onSelected: (value) {
+                print(value);
+              },
             ),
-            const SizedBox(height: 16),
+            actions: _buttonsNavigation(context),
+            screenSize: screenSize,
+          ),
+          const SizedBox(height: 16),
 
-            // Contenedor con scroll para los medidores
-            Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: GridView.count(
-                  childAspectRatio: childAspectRatio,
-                  crossAxisCount: crossAxisCount,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: meters,
-                ),
+          // Contenedor con scroll para los medidores
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: GridView.count(
+                childAspectRatio: childAspectRatio,
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                children: meters,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

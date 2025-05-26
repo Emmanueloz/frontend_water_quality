@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
-import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/main_grid_workspaces.dart';
@@ -49,20 +48,6 @@ class ListWorkspace extends StatelessWidget {
         ),
       ],
       builder: (context, screenSize) {
-        if (screenSize == ScreenSize.mobile ||
-            screenSize == ScreenSize.tablet) {
-          return Padding(
-            padding: const EdgeInsets.all(10),
-            child: MainGridWorkspaces(
-              type: type,
-              screenSize: screenSize,
-              children: type == ListWorkspaces.mine
-                  ? _getWorkspacesCard(context)
-                  : _getWorkspacesSharedCard(context),
-            ),
-          );
-        }
-
         return MainGridWorkspaces(
           type: type,
           screenSize: screenSize,

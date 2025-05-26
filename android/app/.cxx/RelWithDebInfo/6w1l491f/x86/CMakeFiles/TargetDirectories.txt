@@ -1,0 +1,2 @@
+/home/emmanueloz/desarrollo/frontend_water_quality/android/app/.cxx/RelWithDebInfo/6w1l491f/x86/CMakeFiles/edit_cache.dir
+/home/emmanueloz/desarrollo/frontend_water_quality/android/app/.cxx/RelWithDebInfo/6w1l491f/x86/CMakeFiles/rebuild_cache.dir

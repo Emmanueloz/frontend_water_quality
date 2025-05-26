@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
-import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/main_workspace.dart';
@@ -55,19 +54,6 @@ class ViewWorkspace extends StatelessWidget {
         ),
       ],
       builder: (context, screenSize) {
-        if (screenSize == ScreenSize.mobile ||
-            screenSize == ScreenSize.tablet) {
-          return Padding(
-            padding: const EdgeInsets.all(10),
-            child: MainWorkspace(
-              id: id,
-              idMeter: "1",
-              type: type,
-              screenSize: screenSize,
-            ),
-          );
-        }
-
         return MainWorkspace(
           id: id,
           idMeter: "1",
