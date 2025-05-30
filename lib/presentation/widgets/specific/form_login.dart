@@ -42,7 +42,9 @@ class LoginForm extends StatelessWidget {
               labelText: 'Email address',
               labelStyle: TextStyle(fontSize: 18),
               prefixIcon: Icon(Icons.email_outlined),
-              border: OutlineInputBorder(),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+              ),
               contentPadding:
                   EdgeInsets.symmetric(vertical: 20, horizontal: 16),
             ),
@@ -57,7 +59,9 @@ class LoginForm extends StatelessWidget {
               labelStyle: TextStyle(fontSize: 18),
               prefixIcon: Icon(Icons.lock_outline),
               suffixIcon: Icon(Icons.visibility_outlined),
-              border: OutlineInputBorder(),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+              ),
               contentPadding:
                   EdgeInsets.symmetric(vertical: 20, horizontal: 16),
             ),
