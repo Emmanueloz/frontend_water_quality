@@ -78,17 +78,9 @@ class _IllustrationSection extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset('assets/images/illustration.png',
-              width: 150, height: 150),
+          Image.asset('../../../assets/images/agua.png',
+              width: 500, height: 500),
           const SizedBox(height: 20),
-          const Text(
-            'Imagen ilustrativa',
-            style: TextStyle(
-              fontSize: 16,
-              fontStyle: FontStyle.italic,
-              color: Colors.black54,
-            ),
-          ),
         ],
       ),
     );
