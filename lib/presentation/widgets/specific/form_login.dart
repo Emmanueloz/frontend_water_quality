@@ -41,7 +41,7 @@ class LoginForm extends StatelessWidget {
             decoration: const InputDecoration(
               labelText: 'Email address',
               labelStyle: TextStyle(fontSize: 18),
-              prefixIcon: Icon(Icons.email_outlined),
+              suffixIcon: Icon(Icons.email_outlined),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20)),
               ),
@@ -57,7 +57,6 @@ class LoginForm extends StatelessWidget {
             decoration: const InputDecoration(
               labelText: 'Password',
               labelStyle: TextStyle(fontSize: 18),
-              prefixIcon: Icon(Icons.lock_outline),
               suffixIcon: Icon(Icons.visibility_outlined),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20)),
