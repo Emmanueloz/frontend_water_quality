@@ -1,6 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/constants/profile_ui.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/profile/profile_header.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/profile/user_info_card.dart';
+
+
+// Modelo para datos del usuario
+class UserProfile {
+  final String name;
+  final String email;
+  final String phone;
+  final String role;
+
+  const UserProfile({
+    required this.name,
+    required this.email,
+    required this.phone,
+    required this.role,
+  });
+}
 
 class Profile extends StatelessWidget {
   const Profile({super.key});
@@ -8,182 +27,120 @@ class Profile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Layout(
-        title: 'Perfil',
-        builder: (context, screenSize) {
-          if (screenSize == ScreenSize.mobile ||
-              screenSize == ScreenSize.tablet) {
-            return _MainContent(screenSize: screenSize);
-          }
-          return Center(child: _MainContent(screenSize: screenSize));
-        });
+      title: 'Perfil',
+      builder: (context, screenSize) => _buildProfileContent(screenSize),
+    );
+  }
+
+  Widget _buildProfileContent(ScreenSize screenSize) {
+    final content = _ProfileContent(screenSize: screenSize);
+    
+    if (_isDesktop(screenSize)) {
+      return Center(child: content);
+    }
+    return content;
+  }
+
+  bool _isDesktop(ScreenSize screenSize) {
+    return screenSize != ScreenSize.mobile && screenSize != ScreenSize.tablet;
   }
 }
 
-class _MainContent extends StatelessWidget {
+class _ProfileContent extends StatelessWidget {
   final ScreenSize screenSize;
-  bool get isMobileOrTablet =>
+
+  const _ProfileContent({required this.screenSize});
+
+  bool get _isMobileOrTablet =>
       screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet;
 
-  const _MainContent({
-    required this.screenSize,
-  });
+  // Datos del usuario (en una app real vendría de un provider/bloc)
+  UserProfile get _userProfile => const UserProfile(
+    name: 'Marcos esp',
+    email: 'mrlsp.452@gmail.com',
+    phone: '919 453 2398',
+    role: 'cliente',
+  );
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+      padding: const EdgeInsets.symmetric(
+        horizontal: ProfileConstants.horizontalPadding,
+        vertical: ProfileConstants.verticalPadding,
+      ),
       child: Column(
         children: [
-          // Card principal del perfil
-          Container(
-            width: isMobileOrTablet ? double.infinity : 800,
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: const Color(0xFF4A7C7A),
-              borderRadius:
-                  BorderRadius.vertical(top: Radius.circular(12)),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: const BoxDecoration(
-                    color: Colors.black,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.person,
-                    color: Color(0xFF7DD3C0),
-                    size: 30,
-                  ),
-                ),
-                const SizedBox(width: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Marcos esp',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Color(0xFF7DD3C0),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        'cliente',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+          _ProfileCard(
+            user: _userProfile,
+            width: _getCardWidth(),
           ),
-    
-          // const SizedBox(height: 32),
-    
-          // Información del usuario
-          Container(
-            
-            width: isMobileOrTablet ? double.infinity : 800,
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-            decoration: BoxDecoration(
-              color: const Color(0xFFf7fafa),
-              borderRadius:
-                  BorderRadius.vertical(bottom: Radius.circular(12)),
-            ),
-            child: const Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _ProfileInfoItem(
-                  label: 'Nombre de usuario',
-                  value: 'Marcos esp',
-                ),
-                SizedBox(height: 20),
-                _ProfileInfoItem(
-                  label: 'Correo electrónico',
-                  value: 'mrlsp.452@gmail.com',
-                ),
-                SizedBox(height: 20),
-                _ProfileInfoItem(
-                  label: 'Teléfono',
-                  value: '919 453 2398',
-                ),
-                SizedBox(height: 20),
-                _ProfileInfoItem(
-                  label: 'Rol',
-                  value: 'cliente',
-                ),
-              ],
-            ),
+          UserInfoCard(
+            user: _userProfile,
+            width: _getCardWidth(),
           ),
+        ],
+      ),
+    );
+  }
+
+  double _getCardWidth() {
+    return _isMobileOrTablet 
+        ? double.infinity 
+        : ProfileConstants.profileCardWidth;
+  }
+}
+
+class _ProfileCard extends StatelessWidget {
+  final UserProfile user;
+  final double width;
+
+  const _ProfileCard({
+    required this.user,
+    required this.width,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    
+    return Container(
+      width: width,
+      padding: const EdgeInsets.all(ProfileConstants.horizontalPadding),
+      decoration: BoxDecoration(
+        color: colorScheme.secondary, // Color principal del header
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(ProfileConstants.cardBorderRadius),
+        ),
+      ),
+      child: Row(
+        children: [
+          _ProfileAvatar(),
+          const SizedBox(width: 20),
+          ProfileHeader(user: user),
         ],
       ),
     );
   }
 }
 
-class _ProfileInfoItem extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _ProfileInfoItem({
-    required this.label,
-    required this.value,
-  });
-
+class _ProfileAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 7),
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: Color(0xFF145C57),
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 6,
-          ),
-          decoration: BoxDecoration(
-            color: Color(0xffefefef),
-            borderRadius: BorderRadius.circular(3),
-          ),
-          child: Text(
-            value,
-            style: const TextStyle(
-              color: Color(0xff145c57),
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ),
-      ],
+    final colorScheme = Theme.of(context).colorScheme;
+    
+    return Container(
+      width: ProfileConstants.avatarSize,
+      height: ProfileConstants.avatarSize,
+      decoration: const BoxDecoration(
+        color: Colors.black,
+        shape: BoxShape.circle,
+      ),
+      child: Icon(
+        Icons.person,
+        color: colorScheme.primary,
+        size: 30,
+      ),
     );
   }
 }
