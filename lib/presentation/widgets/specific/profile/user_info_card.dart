@@ -45,12 +45,7 @@ class UserInfoCard extends StatelessWidget {
           ProfileInfoField(
             label: 'Teléfono',
             value: user.phone,
-          ),
-          const SizedBox(height: 20),
-          ProfileInfoField(
-            label: 'Rol',
-            value: user.role,
-          ),
+          )
         ],
       ),
     );

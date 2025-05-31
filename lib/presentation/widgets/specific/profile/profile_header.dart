@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/presentation/pages/profile.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/profile/role_tag.dart';
 
 class ProfileHeader extends StatelessWidget {
   final UserProfile user;
@@ -23,7 +22,7 @@ class ProfileHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          RoleTag(role: user.role),
+          Chip(label: Text(user.role)),
         ],
       ),
     );

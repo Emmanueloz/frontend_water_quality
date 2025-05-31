@@ -108,7 +108,7 @@ class _ProfileCard extends StatelessWidget {
       width: width,
       padding: const EdgeInsets.all(ProfileConstants.horizontalPadding),
       decoration: BoxDecoration(
-        color: colorScheme.secondary, // Color principal del header
+        color: colorScheme.primary, // Color principal del header
         borderRadius: const BorderRadius.vertical(
           top: Radius.circular(ProfileConstants.cardBorderRadius),
         ),
@@ -132,8 +132,8 @@ class _ProfileAvatar extends StatelessWidget {
     return Container(
       width: ProfileConstants.avatarSize,
       height: ProfileConstants.avatarSize,
-      decoration: const BoxDecoration(
-        color: Colors.black,
+      decoration:  BoxDecoration(
+        color: colorScheme.secondary, // Color de fondo del avatar
         shape: BoxShape.circle,
       ),
       child: Icon(
