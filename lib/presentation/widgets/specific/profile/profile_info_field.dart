@@ -37,8 +37,21 @@ class ProfileInfoField extends StatelessWidget {
             color: Color(0xFFEFEFEF), // Fondo del campo
             borderRadius: BorderRadius.circular(ProfileConstants.fieldBorderRadius),
           ),
-          child: Text(
-            value,
+          child: TextFormField(
+            initialValue: value,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.all(10),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(ProfileConstants.fieldBorderRadius),
+                borderSide: BorderSide(color: theme.colorScheme.primary),
+                ),
+              labelStyle: theme.textTheme.titleSmall?.copyWith(
+                color: theme.colorScheme.secondary,
+                fontSize: 14,
+                fontWeight: FontWeight.w300,
+              ),
+            ),
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.secondary, // Color del texto del valor
             ),

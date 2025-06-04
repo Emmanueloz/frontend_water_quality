@@ -22,7 +22,7 @@ class ProfileHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Chip(label: Text(user.role)),
+          Chip(label: Text(user.role, style: TextStyle(fontSize: 14),)),
         ],
       ),
     );
