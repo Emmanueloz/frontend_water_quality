@@ -38,15 +38,24 @@ class LoginForm extends StatelessWidget {
           TextField(
             controller: emailController,
             style: const TextStyle(fontSize: 18),
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Email address',
-              labelStyle: TextStyle(fontSize: 18),
-              suffixIcon: Icon(Icons.email_outlined),
-              border: OutlineInputBorder(
+              labelStyle: const TextStyle(fontSize: 18),
+              suffixIcon: const Icon(Icons.email_outlined),
+              border: const OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20)),
+                borderSide: BorderSide(color: Color(0xff5accc4)),
+              ),
+              enabledBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                borderSide: BorderSide(color: Color(0xff5accc4)),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                borderSide: BorderSide(color: Color(0xff5accc4), width: 2),
               ),
               contentPadding:
-                  EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                  const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
             ),
           ),
           const SizedBox(height: 25),
@@ -54,22 +63,31 @@ class LoginForm extends StatelessWidget {
             controller: passwordController,
             obscureText: true,
             style: const TextStyle(fontSize: 18),
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Password',
-              labelStyle: TextStyle(fontSize: 18),
-              suffixIcon: Icon(Icons.visibility_outlined),
-              border: OutlineInputBorder(
+              labelStyle: const TextStyle(fontSize: 18),
+              suffixIcon: const Icon(Icons.visibility_outlined),
+              border: const OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20)),
+                borderSide: BorderSide(color: Color(0xff5accc4)),
+              ),
+              enabledBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                borderSide: BorderSide(color: Color(0xff5accc4)),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                borderSide: BorderSide(color: Color(0xff5accc4), width: 2),
               ),
               contentPadding:
-                  EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                  const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
             ),
           ),
           const SizedBox(height: 40),
           Center(
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF3AE0D0),
+                backgroundColor: const Color(0xff5accc4),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 50, vertical: 18),
                 shape: RoundedRectangleBorder(

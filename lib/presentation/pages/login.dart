@@ -15,43 +15,41 @@ class LoginPage extends StatelessWidget {
           builder: (context, constraints) {
             final isMobile = constraints.maxWidth < 800;
 
-            return Container(
-              width: isMobile ? double.infinity : 1000,
-              height: isMobile ? null : 700,
-              margin: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 10,
-                  ),
-                ],
-              ),
-              child: isMobile
-                  ? Column(
-                      children: [
-                        _IllustrationSection(isMobile: true),
-                        const Divider(height: 1),
-                        const Padding(
-                          padding: EdgeInsets.all(24),
-                          child: LoginForm(),
-                        ),
-                      ],
-                    )
-                  : Row(
-                      children: [
-                        Expanded(child: _IllustrationSection()),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 50),
-                            child: const LoginForm(),
-                          ),
-                        ),
-                      ],
+            if (isMobile) {
+              // Solo formulario sin contenedor blanco ni sombra
+              return const Padding(
+                padding: EdgeInsets.all(24),
+                child: LoginForm(),
+              );
+            } else {
+              // Desktop / pantallas grandes con ilustración y fondo blanco + sombra
+              return Container(
+                width: 1000,
+                height: 700,
+                margin: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 10,
                     ),
-            );
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Expanded(child: _IllustrationSection()),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 50),
+                        child: const LoginForm(),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
           },
         ),
       ),
