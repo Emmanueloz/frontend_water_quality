@@ -39,20 +39,12 @@ class LoginForm extends StatelessWidget {
             controller: emailController,
             style: const TextStyle(fontSize: 18),
             decoration: InputDecoration(
-              labelText: 'Email address',
+              labelText: 'Correo electrónico',
               labelStyle: const TextStyle(fontSize: 18),
               suffixIcon: const Icon(Icons.email_outlined),
               border: const OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20)),
                 borderSide: BorderSide(color: Color(0xff5accc4)),
-              ),
-              enabledBorder: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                borderSide: BorderSide(color: Color(0xff5accc4)),
-              ),
-              focusedBorder: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                borderSide: BorderSide(color: Color(0xff5accc4), width: 2),
               ),
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
@@ -64,20 +56,12 @@ class LoginForm extends StatelessWidget {
             obscureText: true,
             style: const TextStyle(fontSize: 18),
             decoration: InputDecoration(
-              labelText: 'Password',
+              labelText: 'Contraseña',
               labelStyle: const TextStyle(fontSize: 18),
               suffixIcon: const Icon(Icons.visibility_outlined),
               border: const OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20)),
                 borderSide: BorderSide(color: Color(0xff5accc4)),
-              ),
-              enabledBorder: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                borderSide: BorderSide(color: Color(0xff5accc4)),
-              ),
-              focusedBorder: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                borderSide: BorderSide(color: Color(0xff5accc4), width: 2),
               ),
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
