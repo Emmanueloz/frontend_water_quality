@@ -30,33 +30,33 @@ class ProfileInfoField extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-          decoration: BoxDecoration(
-            color: Color(0xFFEFEFEF), // Fondo del campo
+        Card(
+          elevation: 2, // Ajusta este valor para cambiar la sombra
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(ProfileConstants.fieldBorderRadius),
           ),
           child: TextFormField(
-            initialValue: value,
-            decoration: InputDecoration(
-              isDense: true,
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(ProfileConstants.fieldBorderRadius),
-                borderSide: BorderSide(color: theme.colorScheme.primary),
+              initialValue: value,
+              decoration: InputDecoration(
+                isDense: true,
+                border: InputBorder.none,
+                // filled: true,
+                // fillColor: const Color(0xFFEFEFEF),
+                contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(ProfileConstants.fieldBorderRadius),
+                  borderSide: BorderSide(color: theme.colorScheme.primary, width: 1),
+                  ),
+                labelStyle: theme.textTheme.titleSmall?.copyWith(
+                  color: theme.colorScheme.secondary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w300,
                 ),
-              labelStyle: theme.textTheme.titleSmall?.copyWith(
-                color: theme.colorScheme.secondary,
-                fontSize: 14,
-                fontWeight: FontWeight.w300,
+              ),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.secondary, // Color del texto del valor
               ),
             ),
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.secondary, // Color del texto del valor
-            ),
-          ),
         ),
       ],
     );

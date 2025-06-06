@@ -3,6 +3,9 @@ import 'package:frontend_water_quality/core/constants/profile_ui.dart';
 import 'package:frontend_water_quality/presentation/pages/profile.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/profile/profile_info_field.dart';
 
+import '../../common/action_button.dart';
+import '../../common/base_container.dart';
+
 class UserInfoCard extends StatelessWidget {
   final UserProfile user;
   final double width;
@@ -15,19 +18,16 @@ class UserInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    
-    return Container(
+    // final colorScheme = Theme.of(context).colorScheme;
+
+    return BaseContainer(
       width: width,
       padding: const EdgeInsets.symmetric(
         horizontal: 10,
         vertical: ProfileConstants.verticalPadding,
       ),
-      decoration: BoxDecoration(
-        color: colorScheme.surface, // Fondo claro
-        borderRadius: const BorderRadius.vertical(
-          bottom: Radius.circular(ProfileConstants.cardBorderRadius),
-        ),
+      margin: const EdgeInsets.symmetric(
+        vertical: 15,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -45,9 +45,38 @@ class UserInfoCard extends StatelessWidget {
           ProfileInfoField(
             label: 'Teléfono',
             value: user.phone,
-          )
+          ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ActionButton(
+                  onPressed: () {
+                    // Lógica de Resetear
+                  },
+                  label: 'Resetear',
+                  style: ActionButtonStyle.outlined, // botón con borde
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                  width: _getWithActionButton(),
+                ),
+              // SizedBox(width: width == double.infinity ? 50 : 200),
+              ActionButton(
+                  onPressed: () {
+                    // Lógica de Guardar
+                  },
+                  label: 'Guardar',
+                  style: ActionButtonStyle.filled, // botón con fondo sólido
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                  width: _getWithActionButton(),
+                ),
+            ],
+          ),
         ],
       ),
     );
+  }
+
+  double _getWithActionButton() {
+    return width == double.infinity ? 150 : 200;
   }
 }
