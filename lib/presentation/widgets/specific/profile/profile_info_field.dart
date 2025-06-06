@@ -32,7 +32,7 @@ class ProfileInfoField extends StatelessWidget {
         const SizedBox(height: 4),
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
           decoration: BoxDecoration(
             color: Color(0xFFEFEFEF), // Fondo del campo
             borderRadius: BorderRadius.circular(ProfileConstants.fieldBorderRadius),
@@ -40,8 +40,9 @@ class ProfileInfoField extends StatelessWidget {
           child: TextFormField(
             initialValue: value,
             decoration: InputDecoration(
+              isDense: true,
               border: InputBorder.none,
-              contentPadding: EdgeInsets.all(10),
+              contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(ProfileConstants.fieldBorderRadius),
                 borderSide: BorderSide(color: theme.colorScheme.primary),

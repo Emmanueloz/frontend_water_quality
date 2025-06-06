@@ -38,7 +38,9 @@ class Profile extends StatelessWidget {
     if (_isDesktop(screenSize)) {
       return Center(child: content);
     }
-    return content;
+    return SingleChildScrollView(
+      child: content,
+    );
   }
 
   bool _isDesktop(ScreenSize screenSize) {
@@ -65,23 +67,23 @@ class _ProfileContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: ProfileConstants.horizontalPadding,
-        vertical: ProfileConstants.verticalPadding,
-      ),
-      child: Column(
-        children: [
-          _ProfileCard(
-            user: _userProfile,
-            width: _getCardWidth(),
-          ),
-          UserInfoCard(
-            user: _userProfile,
-            width: _getCardWidth(),
-          ),
-        ],
-      ),
-    );
+        padding: const EdgeInsets.symmetric(
+          horizontal: ProfileConstants.horizontalPadding,
+          vertical: ProfileConstants.verticalPadding,
+        ),
+        child: Column(
+          children: [
+            _ProfileCard(
+              user: _userProfile,
+              width: _getCardWidth(),
+            ),
+            UserInfoCard(
+              user: _userProfile,
+              width: _getCardWidth(),
+            ),
+          ],
+        ),
+      );
   }
 
   double _getCardWidth() {
