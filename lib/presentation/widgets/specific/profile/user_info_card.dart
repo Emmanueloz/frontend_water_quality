@@ -59,7 +59,6 @@ class UserInfoCard extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                   width: _getWithActionButton(),
                 ),
-              // SizedBox(width: width == double.infinity ? 50 : 200),
               ActionButton(
                   onPressed: () {
                     // Lógica de Guardar
