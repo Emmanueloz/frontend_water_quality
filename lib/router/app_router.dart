@@ -1,5 +1,6 @@
 // app_router.dart
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
+import 'package:frontend_water_quality/presentation/pages/alerts_screen.dart';
 import 'package:frontend_water_quality/presentation/pages/list_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/simple.dart';
 import 'package:frontend_water_quality/presentation/pages/splash.dart';
@@ -84,7 +85,7 @@ class AppRouter {
             name: Routes.alerts.name,
             builder: (context, state) {
               final id = state.pathParameters['id'] ?? 'default';
-              return Simple(title: 'Alerts for Workspace $id');
+              return AlertsScreen(idWorkspace: id);
             },
           ),
         ],
