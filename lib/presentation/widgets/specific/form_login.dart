@@ -46,6 +46,14 @@ class LoginForm extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(20)),
                 borderSide: BorderSide(color: Color(0xff5accc4)),
               ),
+              enabledBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                borderSide: BorderSide(color: Color(0xff5accc4)),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                borderSide: BorderSide(color: Color(0xff5accc4), width: 2),
+              ),
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
             ),
@@ -63,6 +71,14 @@ class LoginForm extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(20)),
                 borderSide: BorderSide(color: Color(0xff5accc4)),
               ),
+              enabledBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                borderSide: BorderSide(color: Color(0xff5accc4)),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                borderSide: BorderSide(color: Color(0xff5accc4), width: 2),
+              ),
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
             ),
@@ -71,7 +87,7 @@ class LoginForm extends StatelessWidget {
           Center(
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xff5accc4),
+                backgroundColor: const Color(0xff145c57),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 50, vertical: 18),
                 shape: RoundedRectangleBorder(
