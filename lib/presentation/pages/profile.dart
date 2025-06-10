@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/constants/profile_ui.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/profile/profile_header.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/profile/user_info_card.dart';
@@ -36,7 +37,9 @@ class Profile extends StatelessWidget {
     final content = _ProfileContent(screenSize: screenSize);
     
     if (_isDesktop(screenSize)) {
-      return Center(child: content);
+      return Align(
+        alignment: Alignment.topCenter,
+        child: content,);
     }
     return SingleChildScrollView(
       child: content,
@@ -66,30 +69,36 @@ class _ProfileContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: ProfileConstants.horizontalPadding,
-          vertical: ProfileConstants.verticalPadding,
-        ),
-        child: Column(
-          children: [
-            _ProfileCard(
-              user: _userProfile,
-              width: _getCardWidth(),
-            ),
-            UserInfoCard(
-              user: _userProfile,
-              width: _getCardWidth(),
-            ),
-          ],
-        ),
-      );
+    return BaseContainer(
+      width: _getCardWidth(),
+      height: _getCardHeight(),
+      margin: EdgeInsets.symmetric(vertical: ProfileConstants.verticalPadding, horizontal: ProfileConstants.horizontalPadding),
+      child: Column(
+            children: [
+              _ProfileCard(
+                user: _userProfile,
+                width: _getCardWidth(),
+              ),
+              UserInfoCard(
+                user: _userProfile,
+                width: _getCardWidth(),
+              ),
+            ],
+          ),
+    );
   }
 
   double _getCardWidth() {
     return _isMobileOrTablet 
         ? double.infinity 
         : ProfileConstants.profileCardWidth;
+  }
+
+  // TODO: funcion para obtener el height de la card
+  double _getCardHeight() {
+    return _isMobileOrTablet 
+        ? ProfileConstants.profileCardHeightMobile 
+        : ProfileConstants.profileCardHeightDesktop;
   }
 }
 

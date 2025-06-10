@@ -4,11 +4,13 @@ import 'package:frontend_water_quality/core/constants/profile_ui.dart';
 class ProfileInfoField extends StatelessWidget {
   final String label;
   final String value;
+  final TextInputType? keyboardType;
 
   const ProfileInfoField({
     super.key,
     required this.label,
     required this.value,
+    this.keyboardType = TextInputType.text,
   });
 
   @override
@@ -30,19 +32,23 @@ class ProfileInfoField extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        Card(
-          elevation: 2, // Ajusta este valor para cambiar la sombra
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(ProfileConstants.fieldBorderRadius),
-          ),
-          child: TextFormField(
+        TextFormField(
+              keyboardType: keyboardType,
               initialValue: value,
               decoration: InputDecoration(
                 isDense: true,
-                border: InputBorder.none,
+                border: UnderlineInputBorder(
+                  borderRadius: BorderRadius.circular(ProfileConstants.fieldBorderRadius),
+                  borderSide: BorderSide(color: theme.colorScheme.primary, width: 1,),
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderRadius: BorderRadius.circular(ProfileConstants.fieldBorderRadius),
+                  borderSide: BorderSide(color: theme.colorScheme.primary, width: 1,),
+                ),
                 // filled: true,
                 // fillColor: const Color(0xFFEFEFEF),
                 contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(ProfileConstants.fieldBorderRadius),
                   borderSide: BorderSide(color: theme.colorScheme.primary, width: 1),
@@ -57,7 +63,6 @@ class ProfileInfoField extends StatelessWidget {
                 color: theme.colorScheme.secondary, // Color del texto del valor
               ),
             ),
-        ),
       ],
     );
   }
