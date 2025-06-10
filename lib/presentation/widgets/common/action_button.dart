@@ -30,8 +30,8 @@ class ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final Color primary = theme.colorScheme.primary;
-    final Color onPrimary = theme.colorScheme.onPrimary;
+    final Color primary = theme.colorScheme.secondary;
+    final Color onPrimary = theme.colorScheme.onSecondary;
 
     // Colores por defecto según estilo
     final Color fg = foregroundColor ??
@@ -74,7 +74,7 @@ class ActionButton extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          child: Text(label),
+          child: Text(label, style: TextStyle(color: theme.colorScheme.surface),),
         );
         break;
     }
