@@ -40,6 +40,7 @@ dependencies:
   fl_chart: ^0.70.2
   socket_io: ^1.0.1
   girix_code_gauge: ^0.0.6
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
