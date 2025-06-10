@@ -32,7 +32,7 @@ class MainListrecords extends StatelessWidget {
     double childAspectRatio;
 
     if (screenSize == ScreenSize.smallDesktop) {
-      margin = const EdgeInsets.all(0);
+      margin = const EdgeInsets.all(10);
       padding = const EdgeInsets.symmetric(
         horizontal: 20,
         vertical: 9,
@@ -40,7 +40,7 @@ class MainListrecords extends StatelessWidget {
       crossAxisCount = 3;
       childAspectRatio = 1 / 1.2;
     } else if (screenSize == ScreenSize.largeDesktop) {
-      margin = const EdgeInsets.all(0);
+      margin = const EdgeInsets.all(10);
 
       padding = const EdgeInsets.symmetric(
         horizontal: 20,
