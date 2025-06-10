@@ -4,7 +4,7 @@ import 'package:frontend_water_quality/presentation/pages/profile.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/profile/profile_info_field.dart';
 
 import '../../common/action_button.dart';
-import '../../common/base_container.dart';
+// import '../../common/base_container.dart';
 
 class UserInfoCard extends StatelessWidget {
   final UserProfile user;
@@ -20,7 +20,7 @@ class UserInfoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // final colorScheme = Theme.of(context).colorScheme;
 
-    return BaseContainer(
+    return Container(
       width: width,
       padding: const EdgeInsets.symmetric(
         horizontal: 10,
@@ -40,11 +40,13 @@ class UserInfoCard extends StatelessWidget {
           ProfileInfoField(
             label: 'Correo electrónico',
             value: user.email,
+            keyboardType: TextInputType.emailAddress,
           ),
           const SizedBox(height: 20),
           ProfileInfoField(
             label: 'Teléfono',
             value: user.phone,
+            keyboardType: TextInputType.phone,
           ),
           const SizedBox(height: 20),
           Row(
