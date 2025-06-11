@@ -88,7 +88,7 @@ class AppTheme {
         titleTextStyle: textTheme.titleMedium,
       ),
       cardColor: colorScheme.surface,
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 2,
         color: colorScheme.surface,
       ),
