@@ -3,6 +3,8 @@ import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/main_workspace.dart';
+import 'package:frontend_water_quality/router/routes.dart';
+import 'package:go_router/go_router.dart';
 
 class ViewWorkspace extends StatelessWidget {
   final String id;
@@ -23,7 +25,13 @@ class ViewWorkspace extends StatelessWidget {
         print("Navigate to guests");
       } else if (index == 3) {
         // Navigate to settings
-        print("Navigate to settings");
+        context.goNamed(
+          Routes.updateWorkspace.name,
+          pathParameters: {
+            "type": type.name,
+            'id': id,
+          },
+        );
       }
     }
 
@@ -48,9 +56,9 @@ class ViewWorkspace extends StatelessWidget {
           selectedIcon: Icons.people,
         ),
         NavigationItem(
-          label: "Configuración",
-          icon: Icons.settings_outlined,
-          selectedIcon: Icons.settings,
+          label: "Editar",
+          icon: Icons.edit_outlined,
+          selectedIcon: Icons.edit,
         ),
       ],
       builder: (context, screenSize) {

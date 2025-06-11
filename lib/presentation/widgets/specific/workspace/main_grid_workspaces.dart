@@ -3,6 +3,8 @@ import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/button_actions.dart';
+import 'package:frontend_water_quality/router/routes.dart';
+import 'package:go_router/go_router.dart';
 
 class MainGridWorkspaces extends StatelessWidget {
   final ListWorkspaces type;
@@ -80,6 +82,12 @@ class MainGridWorkspaces extends StatelessWidget {
                 ElevatedButton.icon(
                   onPressed: () {
                     print("Agregar espacio de trabajo");
+                    context.goNamed(
+                      Routes.createWorkspace.name,
+                      pathParameters: {
+                        "type": ListWorkspaces.mine.name,
+                      },
+                    );
                   },
                   icon: const Icon(Icons.add),
                   label: const Text("Agregar"),

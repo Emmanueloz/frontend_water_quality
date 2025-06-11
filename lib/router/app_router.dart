@@ -1,5 +1,6 @@
 // app_router.dart
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
+import 'package:frontend_water_quality/presentation/pages/form_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/list_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/login.dart';
 import 'package:frontend_water_quality/presentation/pages/register.dart';
@@ -54,6 +55,14 @@ class AppRouter {
         },
         routes: [
           GoRoute(
+            path: Routes.createWorkspace.path,
+            name: Routes.createWorkspace.name,
+            builder: (context, state) {
+              print("Create Workspace");
+              return FormWorkspace();
+            },
+          ),
+          GoRoute(
               path: Routes.viewWorkspace.path,
               name: Routes.viewWorkspace.name,
               builder: (context, state) {
@@ -75,6 +84,14 @@ class AppRouter {
                 return ViewWorkspace(id: id, type: type);
               },
               routes: [
+                GoRoute(
+                  path: Routes.updateWorkspace.path,
+                  name: Routes.updateWorkspace.name,
+                  builder: (context, state) {
+                    final id = state.pathParameters['id'] ?? 'default';
+                    return FormWorkspace(idWorkspace: id);
+                  },
+                ),
                 GoRoute(
                   path: Routes.listRecords.path,
                   name: Routes.listRecords.name,
@@ -110,7 +127,7 @@ class AppRouter {
             description: "Nueva notificacion",
             qualityLevel: "buena",
             id: id,
-            );
+          );
         },
       ),
     ],
