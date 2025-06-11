@@ -178,6 +178,13 @@ class AppTheme {
           textStyle: textTheme.bodyMedium,
         ),
       ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: colorScheme.secondary, width: 1),
+          foregroundColor: textColor,
+          textStyle: textTheme.bodyMedium,
+        ),
+      ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: textColor, //#5bcdc5

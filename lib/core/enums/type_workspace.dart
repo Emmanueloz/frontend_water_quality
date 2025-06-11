@@ -1,0 +1,4 @@
+enum TypeWorkspace {
+  public,
+  private,
+}
