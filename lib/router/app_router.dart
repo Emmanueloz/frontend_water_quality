@@ -2,8 +2,11 @@
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/presentation/pages/list_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/login.dart';
+import 'package:frontend_water_quality/presentation/pages/profile.dart';
 import 'package:frontend_water_quality/presentation/pages/simple.dart';
 import 'package:frontend_water_quality/presentation/pages/splash.dart';
+import 'package:frontend_water_quality/presentation/pages/view_listrecords.dart';
+import 'package:frontend_water_quality/presentation/pages/view_notificationdetails.dart';
 import 'package:frontend_water_quality/presentation/pages/view_workspace.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
@@ -76,7 +79,7 @@ class AppRouter {
                   name: Routes.listRecords.name,
                   builder: (context, state) {
                     final id = state.pathParameters['id'] ?? 'default';
-                    return Simple(title: 'Records for Workspace $id');
+                    return VieListrecords(id: id);
                   },
                 ),
               ]),
@@ -93,14 +96,20 @@ class AppRouter {
       GoRoute(
         path: Routes.profile.path,
         name: Routes.profile.name,
-        builder: (context, state) => const Simple(title: 'Profile'),
+        builder: (context, state) => const Profile(),
       ),
       GoRoute(
         path: Routes.notificationDetails.path,
         name: Routes.notificationDetails.name,
         builder: (context, state) {
           final id = state.pathParameters['id'] ?? 'default';
-          return Simple(title: 'Notification Details $id');
+          return NotificationDetailPage(
+            title: 'Notification Details $id',
+            date: DateTime.now(),
+            description: "Nueva notificacion",
+            qualityLevel: "buena",
+            id: id,
+            );
         },
       ),
     ],
