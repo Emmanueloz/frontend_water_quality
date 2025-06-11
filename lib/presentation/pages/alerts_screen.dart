@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
+import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/alerts/alert_card.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/alerts/main_grid_alerts.dart';
@@ -7,6 +8,7 @@ import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
 import '../widgets/layout/layout.dart';
+import '../widgets/specific/alerts/alert_tile.dart';
 
 class AlertsScreen extends StatelessWidget {
   final String idWorkspace;
@@ -64,7 +66,9 @@ class AlertsScreen extends StatelessWidget {
       builder: (context, screenSize) {
         return MainGridAlerts(
           screenSize: screenSize,
-          children: _getAlertsCard(context),
+          children: screenSize == ScreenSize.mobile
+              ? _getAlertsTile(context)
+              : _getAlertsCard(context),
         );
       },
     );
@@ -130,4 +134,63 @@ class AlertsScreen extends StatelessWidget {
       ),
     ];
   }
+
+List<Widget> _getAlertsTile(BuildContext context) {
+    return [
+      AlertTile(
+        title: "El agua esta bueno",
+        type: "Bueno",
+        onTap: () {
+          print("Navigate to alert 1");
+          context.goNamed(
+            Routes.alerts.name,
+            pathParameters: {
+              "type": ListWorkspaces.mine.name,
+              'id': "1",
+            },
+          );
+        },
+      ),
+      AlertTile(
+        title: "El agua esta malo",
+        type: "malo",
+        onTap: () {
+          context.goNamed(
+            Routes.alerts.name,
+            pathParameters: {
+              "type": ListWorkspaces.mine.name,
+              'id': "2",
+            },
+          );
+        },
+      ),
+      AlertTile(
+        title: "El agua es inaceptable",
+        type: "inaceptable",
+        onTap: () {
+          context.goNamed(
+            Routes.alerts.name,
+            pathParameters: {
+              "type": ListWorkspaces.mine.name,
+              'id': "3",
+            },
+          );
+        },
+      ),
+      AlertTile(
+        title: "El agua esta contaminado",
+        type: "contaminado",
+        onTap: () {
+          context.goNamed(
+            Routes.alerts.name,
+            pathParameters: {
+              "type": ListWorkspaces.mine.name,
+              'id': "4",
+            },
+          );
+        },
+      ),
+    ];
+  }
+
 }
