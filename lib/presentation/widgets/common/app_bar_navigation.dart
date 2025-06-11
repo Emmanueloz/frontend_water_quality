@@ -25,10 +25,7 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
             });
           },
         ),
-        IconButton(
-          icon: const Icon(Icons.notifications),
-          onPressed: () {},
-        ),
+        IconButton(icon: const Icon(Icons.notifications), onPressed: () {}),
         ButtonProfile(
           username: "Username",
           email: "email@email.com",
