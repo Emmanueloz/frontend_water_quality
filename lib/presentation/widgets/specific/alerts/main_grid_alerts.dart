@@ -34,14 +34,14 @@ class MainGridAlerts extends StatelessWidget {
     if (screenSize == ScreenSize.mobile) {
       crossAxisCount = 1;
       maxWidth = double.infinity;
-      childAspectRatio = 1 / 0.6;
+      childAspectRatio = 1 / 0.25;
       gap = 5;
       margin = const EdgeInsets.all(10);
     } else if (screenSize == ScreenSize.tablet) {
       crossAxisCount = 2;
       maxWidth = double.infinity;
       gap = 5;
-      childAspectRatio = 1 / 0.6;
+      childAspectRatio = 1 / 0.45;
       margin = const EdgeInsets.all(10);
     } else if (screenSize == ScreenSize.smallDesktop) {
       crossAxisCount = 3;
