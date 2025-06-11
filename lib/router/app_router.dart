@@ -1,6 +1,7 @@
 // app_router.dart
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/presentation/pages/list_workspace.dart';
+import 'package:frontend_water_quality/presentation/pages/login.dart';
 import 'package:frontend_water_quality/presentation/pages/profile.dart';
 import 'package:frontend_water_quality/presentation/pages/simple.dart';
 import 'package:frontend_water_quality/presentation/pages/splash.dart';
@@ -23,7 +24,7 @@ class AppRouter {
       GoRoute(
         path: Routes.login.path,
         name: Routes.login.name,
-        builder: (context, state) => const Simple(title: 'Login'),
+        builder: (context, state) => const LoginPage(title: 'Login'),
       ),
       GoRoute(
         path: Routes.register.path,
