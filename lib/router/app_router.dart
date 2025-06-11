@@ -27,7 +27,7 @@ class AppRouter {
       GoRoute(
         path: Routes.register.path,
         name: Routes.register.name,
-        builder: (context, state) => const Simple(title: 'Register'),
+        builder: (context, state) => const RegisterPage(title: 'Register'),
       ),
       GoRoute(
         path: Routes.listWorkspace.path,
