@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AlertCard extends StatelessWidget {
-  final String id;
+  // final String id;
   final String title;
   // final String owner;
   final String type;
@@ -9,7 +9,7 @@ class AlertCard extends StatelessWidget {
 
   const AlertCard({
     super.key,
-    required this.id,
+    // required this.id,
     required this.title,
     // required this.owner,
     required this.type,

@@ -1,6 +1,6 @@
 // app_router.dart
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
-import 'package:frontend_water_quality/presentation/pages/alerts_screen.dart';
+import 'package:frontend_water_quality/presentation/pages/alerts.dart';
 import 'package:frontend_water_quality/presentation/pages/list_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/simple.dart';
 import 'package:frontend_water_quality/presentation/pages/splash.dart';

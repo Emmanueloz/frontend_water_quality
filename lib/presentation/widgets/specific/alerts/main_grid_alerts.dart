@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
+import 'package:frontend_water_quality/core/interface/alert_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/base_container.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/alerts/alert_card.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/alerts/alert_tile.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/button_actions.dart';
 
 class MainGridAlerts extends StatelessWidget {
   final ScreenSize screenSize;
-  final List<Widget> children;
+  final List<AlertItem> alertItems;
   const MainGridAlerts({
     super.key,
     required this.screenSize,
-    required this.children,
+    required this.alertItems,
   });
 
   @override
@@ -71,13 +74,13 @@ class MainGridAlerts extends StatelessWidget {
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
             actions: [
-                ElevatedButton.icon(
-                  onPressed: () {
-                    print("Agregar alerta");
-                  },
-                  icon: const Icon(Icons.add),
-                  label: const Text("Agregar"),
-                )
+              ElevatedButton.icon(
+                onPressed: () {
+                  print("Agregar alerta");
+                },
+                icon: const Icon(Icons.add),
+                label: const Text("Agregar"),
+              )
             ],
             screenSize: screenSize,
           ),
@@ -109,9 +112,21 @@ class MainGridAlerts extends StatelessWidget {
           mainAxisSpacing: gap,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          children: children,
+          children: screenSize == ScreenSize.mobile ? _buildTileAlerts() : _buildCardAlerts(),
         ),
       ),
     );
+  }
+
+  List<AlertCard> _buildCardAlerts() {
+    return alertItems.map((AlertItem item) {
+      return AlertCard(title: item.title, type: item.type);
+    }).toList();
+  }
+
+  List<AlertTile> _buildTileAlerts() {
+    return alertItems.map((AlertItem item) {
+      return AlertTile(title: item.title, type: item.type);
+    }).toList();
   }
 }
