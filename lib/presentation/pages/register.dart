@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/form_register.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/auth/illustration_section.dart';
 
 class RegisterPage extends StatelessWidget {
   final String title;
@@ -36,47 +37,20 @@ class RegisterPage extends StatelessWidget {
                   ],
                 ),
                 child: Row(
-                  children: [
+                  children: const [
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 50),
-                        child: const RegisterForm(),
+                        padding: EdgeInsets.symmetric(horizontal: 50),
+                        child: RegisterForm(),
                       ),
                     ),
-                    const Expanded(child: _IllustrationSection()),
+                    Expanded(child: IllustrationSection()),
                   ],
                 ),
               );
             }
           },
         ),
-      ),
-    );
-  }
-}
-
-class _IllustrationSection extends StatelessWidget {
-  const _IllustrationSection();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: const Color(0xFFEAEAEA),
-        borderRadius: const BorderRadius.only(
-          topRight: Radius.circular(16),
-          bottomRight: Radius.circular(16),
-          topLeft: Radius.circular(0),
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset('../../../assets/images/agua.png',
-              width: 500, height: 500),
-          const SizedBox(height: 20),
-        ],
       ),
     );
   }
