@@ -17,22 +17,7 @@ class RegisterForm extends StatelessWidget {
     InputDecoration inputDecoration(String label, IconData icon) {
       return InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(fontSize: 18),
         suffixIcon: Icon(icon),
-        border: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-          borderSide: BorderSide(color: Color(0xff5accc4)),
-        ),
-        enabledBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-          borderSide: BorderSide(color: Color(0xff5accc4)),
-        ),
-        focusedBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-          borderSide: BorderSide(color: Color(0xff5accc4), width: 2),
-        ),
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
       );
     }
 

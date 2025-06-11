@@ -44,7 +44,7 @@ class AppTheme {
         ),
         bodyLarge: TextStyle(
           color: textColor,
-          fontSize: 20,
+          fontSize: 18,
         ),
         bodyMedium: TextStyle(
           color: textColor,
@@ -86,6 +86,25 @@ class AppTheme {
         selectedColor: colorScheme.secondary,
         selectedTileColor: colorScheme.tertiary,
         titleTextStyle: textTheme.titleMedium,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        labelStyle: textTheme.bodyMedium,
+        iconColor: colorScheme.secondary,
+        prefixIconColor: colorScheme.secondary,
+        suffixIconColor: colorScheme.secondary,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderSide: BorderSide(color: colorScheme.primary, width: 1),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderSide: BorderSide(color: colorScheme.primary, width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2),
+        ),
       ),
       cardColor: colorScheme.surface,
       cardTheme: CardThemeData(
