@@ -18,63 +18,78 @@ class FormWorkspace extends StatelessWidget {
     return Layout(
       title: title,
       builder: (context, screenSize) {
-        return Align(
-          alignment: Alignment.topCenter,
-          child: BaseContainer(
-            width: screenSize == ScreenSize.mobile ? double.infinity : 600,
-            height: screenSize == ScreenSize.mobile ? double.infinity : 600,
-            margin: EdgeInsets.all(10),
-            padding: EdgeInsets.all(10),
-            child: Column(
-              spacing: 10,
-              children: [
-                Text(
-                  title,
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleLarge
-                      ?.copyWith(fontWeight: FontWeight.bold),
-                ),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: "Nombre del workspace",
-                  ),
-                ),
-                DropdownButtonFormField(
-                  decoration: InputDecoration(
-                    labelText: "Tipo de workspace",
-                  ),
-                  value: TypeWorkspace.private,
-                  items: [
-                    DropdownMenuItem(
-                      value: TypeWorkspace.private,
-                      child: Text("Privado"),
-                    ),
-                    DropdownMenuItem(
-                      value: TypeWorkspace.public,
-                      child: Text("Publico"),
-                    ),
-                  ],
-                  onChanged: (value) {},
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    OutlinedButton(
-                      onPressed: () {},
-                      child: Text("Restablecer"),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: Text("Guardar"),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
+        if (screenSize == ScreenSize.smallDesktop ||
+            screenSize == ScreenSize.largeDesktop) {
+          return Align(
+            alignment: Alignment.topCenter,
+            child: _buildForm(context, screenSize, title),
+          );
+        }
+
+        return _buildForm(context, screenSize, title);
       },
+    );
+  }
+
+  Widget _buildForm(BuildContext context, ScreenSize screenSize, String title) {
+    return BaseContainer(
+      width: screenSize == ScreenSize.mobile ? double.infinity : 600,
+      height: screenSize == ScreenSize.mobile ? double.infinity : 600,
+      margin: EdgeInsets.all(10),
+      padding: EdgeInsets.all(10),
+      child: Column(
+        spacing: 10,
+        children: [
+          Text(
+            title,
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge
+                ?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: "Nombre del workspace",
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "El nombre del workspace es obligatorio";
+              }
+              return null;
+            },
+          ),
+          DropdownButtonFormField(
+            decoration: InputDecoration(
+              labelText: "Tipo de workspace",
+            ),
+            value: TypeWorkspace.private,
+            items: [
+              DropdownMenuItem(
+                value: TypeWorkspace.private,
+                child: Text("Privado"),
+              ),
+              DropdownMenuItem(
+                value: TypeWorkspace.public,
+                child: Text("Publico"),
+              ),
+            ],
+            onChanged: (value) {},
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              OutlinedButton(
+                onPressed: () {},
+                child: Text("Restablecer"),
+              ),
+              ElevatedButton(
+                onPressed: () {},
+                child: Text("Guardar"),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
