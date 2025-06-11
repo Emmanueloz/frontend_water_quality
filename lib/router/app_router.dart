@@ -85,6 +85,14 @@ class AppRouter {
               },
               routes: [
                 GoRoute(
+                  path: Routes.updateWorkspace.path,
+                  name: Routes.updateWorkspace.name,
+                  builder: (context, state) {
+                    final id = state.pathParameters['id'] ?? 'default';
+                    return FormWorkspace(idWorkspace: id);
+                  },
+                ),
+                GoRoute(
                   path: Routes.listRecords.path,
                   name: Routes.listRecords.name,
                   builder: (context, state) {

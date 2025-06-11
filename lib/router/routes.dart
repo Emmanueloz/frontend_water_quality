@@ -27,6 +27,10 @@ class Routes {
     path: "/:id",
     pathRoot: "/workspace/",
   );
+  static RouteProperties updateWorkspace = RouteProperties(
+    name: "updateWorkspace",
+    path: "/update",
+  );
   static RouteProperties profile = RouteProperties(
     name: "profile",
     path: "/profile",

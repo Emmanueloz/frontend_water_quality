@@ -13,7 +13,9 @@ class FormWorkspace extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String title = idWorkspace != null ? "Editar workspace" : "Crear workspace";
+    String title = idWorkspace != null
+        ? "Editar espacio de trabajo"
+        : "Crear espacio de trabajo";
 
     return Layout(
       title: title,
