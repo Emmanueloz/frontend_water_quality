@@ -56,8 +56,7 @@ class RegisterPage extends StatelessWidget {
 }
 
 class _IllustrationSection extends StatelessWidget {
-  final bool isMobile;
-  const _IllustrationSection({this.isMobile = false});
+  const _IllustrationSection();
 
   @override
   Widget build(BuildContext context) {
@@ -65,10 +64,10 @@ class _IllustrationSection extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: const Color(0xFFEAEAEA),
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(isMobile ? 16 : 16),
-          bottomRight: Radius.circular(isMobile ? 0 : 16),
-          topLeft: Radius.circular(isMobile ? 16 : 0),
+        borderRadius: const BorderRadius.only(
+          topRight: Radius.circular(16),
+          bottomRight: Radius.circular(16),
+          topLeft: Radius.circular(0),
         ),
       ),
       child: Column(
