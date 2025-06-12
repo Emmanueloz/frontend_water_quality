@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
+import 'package:frontend_water_quality/core/interface/alert_item.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
-import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/workspace/main_workspace.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/alerts/main_grid_alerts.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
-class ViewWorkspace extends StatelessWidget {
-  final String id;
-  final ListWorkspaces type;
-  const ViewWorkspace({super.key, required this.id, required this.type});
+import '../widgets/layout/layout.dart';
+
+class AlertsScreen extends StatelessWidget {
+  final String idWorkspace;
+  const AlertsScreen({super.key, required this.idWorkspace});
 
   @override
   Widget build(BuildContext context) {
@@ -22,29 +22,21 @@ class ViewWorkspace extends StatelessWidget {
         context.goNamed(
           Routes.alerts.name,
           pathParameters: {
-            "id": id,
-            "type": type.name,
+            "id": idWorkspace,
           },
         );
-        print("Navigate to alerts");
       } else if (index == 2) {
         // Navigate to guests
         print("Navigate to guests");
       } else if (index == 3) {
         // Navigate to settings
-        context.goNamed(
-          Routes.updateWorkspace.name,
-          pathParameters: {
-            "type": type.name,
-            'id': id,
-          },
-        );
+        print("Navigate to settings");
       }
     }
 
     return Layout(
-      title: "Espacio de trabajo $id",
-      selectedIndex: 0,
+      title: "Alertas del espacio de trabajo $idWorkspace",
+      selectedIndex: 1,
       onDestinationSelected: onDestinationSelected,
       destinations: [
         NavigationItem(
@@ -63,19 +55,34 @@ class ViewWorkspace extends StatelessWidget {
           selectedIcon: Icons.people,
         ),
         NavigationItem(
-          label: "Editar",
-          icon: Icons.edit_outlined,
-          selectedIcon: Icons.edit,
+          label: "Configuración",
+          icon: Icons.settings_outlined,
+          selectedIcon: Icons.settings,
         ),
       ],
       builder: (context, screenSize) {
-        return MainWorkspace(
-          id: id,
-          idMeter: "1",
-          type: type,
+        return MainGridAlerts(
           screenSize: screenSize,
+          alertItems: [
+            AlertItem(
+              id: "1",
+              title: "El agua esta bueno",
+              type: "Bueno",
+            ),
+            AlertItem(
+              id: "2",
+              title: "El agua esta malo",
+              type: "malo",
+            ),
+            AlertItem(
+              id: "3",
+              title: "El agua es inaceptable",
+              type: "inaceptable",
+            ),
+          ],
         );
       },
     );
   }
+
 }
