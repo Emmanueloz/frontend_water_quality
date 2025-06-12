@@ -20,7 +20,7 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
         TextButton(
           child: const Text("Espacios de trabajo"),
           onPressed: () {
-            context.goNamed(Routes.listWorkspace.name, pathParameters: {
+            context.goNamed(Routes.workspaces.name, pathParameters: {
               "type": ListWorkspaces.mine.name,
             });
           },

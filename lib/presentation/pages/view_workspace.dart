@@ -64,7 +64,6 @@ class ViewWorkspace extends StatelessWidget {
       builder: (context, screenSize) {
         return MainWorkspace(
           id: id,
-          idMeter: "1",
           type: type,
           screenSize: screenSize,
         );

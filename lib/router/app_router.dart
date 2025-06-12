@@ -8,6 +8,7 @@ import 'package:frontend_water_quality/presentation/pages/profile.dart';
 import 'package:frontend_water_quality/presentation/pages/simple.dart';
 import 'package:frontend_water_quality/presentation/pages/splash.dart';
 import 'package:frontend_water_quality/presentation/pages/view_listrecords.dart';
+import 'package:frontend_water_quality/presentation/pages/view_meter.dart';
 import 'package:frontend_water_quality/presentation/pages/view_notificationdetails.dart';
 import 'package:frontend_water_quality/presentation/pages/view_workspace.dart';
 import 'package:frontend_water_quality/router/routes.dart';
@@ -34,8 +35,8 @@ class AppRouter {
         builder: (context, state) => const RegisterPage(title: 'Register'),
       ),
       GoRoute(
-        path: Routes.listWorkspace.path,
-        name: Routes.listWorkspace.name,
+        path: Routes.workspaces.path,
+        name: Routes.workspaces.name,
         builder: (context, state) {
           ListWorkspaces type;
           final typeString = state.pathParameters['type'] ?? 'mine';
@@ -63,8 +64,8 @@ class AppRouter {
             },
           ),
           GoRoute(
-              path: Routes.viewWorkspace.path,
-              name: Routes.viewWorkspace.name,
+              path: Routes.workspace.path,
+              name: Routes.workspace.name,
               builder: (context, state) {
                 final id = state.pathParameters['id'] ?? 'default';
                 final typeString = state.pathParameters['type'] ?? 'mine';
@@ -84,6 +85,30 @@ class AppRouter {
                 return ViewWorkspace(id: id, type: type);
               },
               routes: [
+                GoRoute(
+                  path: Routes.meter.path,
+                  name: Routes.meter.name,
+                  builder: (context, state) {
+                    final id = state.pathParameters['id'] ?? 'default';
+                    final idMeter =
+                        state.pathParameters['idMeter'] ?? 'default';
+                    final typeString = state.pathParameters['type'] ?? 'mine';
+                    ListWorkspaces type;
+
+                    switch (typeString) {
+                      case 'mine':
+                        type = ListWorkspaces.mine;
+                        break;
+                      case 'shared':
+                        type = ListWorkspaces.shared;
+                        break;
+                      default:
+                        type = ListWorkspaces.mine;
+                        break;
+                    }
+                    return ViewMeter(id: id, idMeter: idMeter, type: type);
+                  },
+                ),
                 GoRoute(
                   path: Routes.updateWorkspace.path,
                   name: Routes.updateWorkspace.name,

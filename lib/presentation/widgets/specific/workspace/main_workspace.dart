@@ -1,58 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
+import 'package:frontend_water_quality/core/enums/meter_state.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/button_actions.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/workspace/radial_gauge_meter.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/workspace/sensor_color.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/meter_card.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
 class MainWorkspace extends StatelessWidget {
   final String id;
-  final String idMeter;
   final ListWorkspaces type;
   final ScreenSize screenSize;
 
   const MainWorkspace({
     super.key,
-    required this.idMeter,
-    required this.screenSize,
     required this.id,
+    required this.screenSize,
     required this.type,
   });
-
-  List<String> _getDropdownItems() {
-    return [
-      "Medidor 1",
-      "Medidor 2",
-      "Medidor 3",
-    ];
-  }
-
-  List<Widget> _buttonsNavigation(BuildContext context) {
-    return [
-      ElevatedButton.icon(
-        onPressed: () {},
-        icon: const Icon(Icons.add),
-        label: const Text("Agregar"),
-      ),
-      ElevatedButton.icon(
-        onPressed: () {
-          context.goNamed(
-            Routes.listRecords.name,
-            pathParameters: {
-              "id": id,
-              "idMeter": idMeter,
-              "type": type.name,
-            },
-          );
-        },
-        icon: const Icon(Icons.history),
-        label: const Text("Historial"),
-      ),
-    ];
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,145 +31,97 @@ class MainWorkspace extends StatelessWidget {
   }
 
   Widget _buildMain(BuildContext context) {
-    EdgeInsetsGeometry margin;
-    EdgeInsetsGeometry padding;
-    Size meterSize;
     int crossAxisCount;
     double childAspectRatio;
+    double gap;
+    EdgeInsetsGeometry margin;
 
-    if (screenSize == ScreenSize.smallDesktop) {
-      margin = const EdgeInsets.all(0);
-      padding = const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 9,
-      );
-      meterSize = const Size(300, 180);
-      crossAxisCount = 3;
-      childAspectRatio = 1 / 1.2;
-    } else if (screenSize == ScreenSize.largeDesktop) {
-      margin = const EdgeInsets.all(0);
-
-      padding = const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 9,
-      );
-      meterSize = const Size(300, 190);
-      crossAxisCount = 3;
-      childAspectRatio = 1 / 0.70;
-    } else if (screenSize == ScreenSize.tablet) {
-      margin = const EdgeInsets.all(10);
-
-      padding = const EdgeInsets.all(12.0);
-      meterSize = const Size(300, 240);
-      crossAxisCount = 2;
-      childAspectRatio = 1 / 1.2;
-    } else {
-      // Mobile
-      margin = const EdgeInsets.all(10);
-
-      padding = const EdgeInsets.all(10.0);
-      meterSize = const Size(340, 260);
+    if (screenSize == ScreenSize.mobile) {
       crossAxisCount = 1;
-      childAspectRatio = 1 / 1.2;
-    }
-
-    // Lista de medidores de ejemplo
-    final List<Widget> meters = [
-      //48, 120, 171
-      SensorColor(
-        red: 48,
-        green: 120,
-        blue: 171,
-      ),
-      RadialGaugeMeter(
-        sensorType: "Temperatura",
-        value: 54,
-        min: 0,
-        max: 60,
-        interval: 10,
-        size: meterSize,
-      ),
-      RadialGaugeMeter(
-        sensorType: "PH",
-        value: 2.4,
-        min: 0,
-        max: 14,
-        interval: 1,
-        size: meterSize,
-      ),
-      RadialGaugeMeter(
-        sensorType: "Total de sólidos disueltos",
-        value: 7.5,
-        min: 0,
-        max: 10,
-        interval: 1,
-        size: meterSize,
-      ),
-      RadialGaugeMeter(
-        sensorType: "Conductividad",
-        value: 450,
-        min: 0,
-        max: 1000,
-        interval: 100,
-        size: meterSize,
-      ),
-      RadialGaugeMeter(
-        sensorType: "Turbidez",
-        value: 12,
-        min: 0,
-        max: 20,
-        interval: 2,
-        size: meterSize,
-      ),
-    ];
-
-    double maxDropdownWidth = double.infinity;
-    if (screenSize != ScreenSize.mobile) {
-      maxDropdownWidth = 300;
+      childAspectRatio = 1 / 0.4;
+      gap = 5;
+      margin = const EdgeInsets.all(10);
+    } else if (screenSize == ScreenSize.tablet) {
+      crossAxisCount = 2;
+      gap = 5;
+      childAspectRatio = 1 / 0.6;
+      margin = const EdgeInsets.all(10);
+    } else if (screenSize == ScreenSize.smallDesktop) {
+      crossAxisCount = 3;
+      gap = 10;
+      childAspectRatio = 1 / 0.6;
+      margin = const EdgeInsets.all(0);
+    } else {
+      crossAxisCount = 4;
+      gap = 16;
+      childAspectRatio = 1 / 0.6;
+      margin = const EdgeInsets.all(0);
     }
     return BaseContainer(
       margin: margin,
-      padding: padding,
+      padding: const EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 10,
         children: [
           ButtonActions(
-            title: DropdownMenu(
-              width: maxDropdownWidth,
-              enableFilter: true,
-              initialSelection: _getDropdownItems().first,
-              dropdownMenuEntries: _getDropdownItems()
-                  .map(
-                    (item) => DropdownMenuEntry(
-                        value: item,
-                        label: item,
-                        style: MenuItemButton.styleFrom(
-                          foregroundColor:
-                              Theme.of(context).colorScheme.secondary,
-                        )),
-                  )
-                  .toList(),
-              onSelected: (value) {
-                print(value);
-              },
+            title: Text(
+              "Espacio de trabajo $id",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
-            actions: _buttonsNavigation(context),
+            actions: [
+              ElevatedButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.add),
+                label: const Text("Agregar"),
+              )
+            ],
             screenSize: screenSize,
           ),
-          const SizedBox(height: 16),
-
-          // Contenedor con scroll para los medidores
           Expanded(
             child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
               child: GridView.count(
-                childAspectRatio: childAspectRatio,
                 crossAxisCount: crossAxisCount,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
+                crossAxisSpacing: gap,
+                mainAxisSpacing: gap,
+                childAspectRatio: childAspectRatio,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                children: meters,
+                children: [
+                  MeterCard(
+                    id: "1",
+                    name: "Medidor 1",
+                    state: MeterState.connected,
+                    onTap: () {
+                      context.goNamed(
+                        Routes.meter.name,
+                        pathParameters: {
+                          "id": id,
+                          "idMeter": "1",
+                          "type": type.name,
+                        },
+                      );
+                    },
+                  ),
+                  MeterCard(
+                    id: "2",
+                    name: "Medidor 2",
+                    state: MeterState.sendingData,
+                  ),
+                  MeterCard(
+                    id: "3",
+                    name: "Medidor 3",
+                    state: MeterState.disconnected,
+                  ),
+                  MeterCard(
+                    id: "3",
+                    name: "Medidor 3",
+                    state: MeterState.disconnected,
+                  ),
+                ],
               ),
             ),
           ),

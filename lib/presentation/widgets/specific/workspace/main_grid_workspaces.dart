@@ -32,31 +32,26 @@ class MainGridWorkspaces extends StatelessWidget {
   Widget _buildMain(BuildContext context) {
     int crossAxisCount;
     double childAspectRatio;
-    double maxWidth;
     double gap;
     EdgeInsetsGeometry margin;
 
     if (screenSize == ScreenSize.mobile) {
       crossAxisCount = 1;
-      maxWidth = double.infinity;
       childAspectRatio = 1 / 0.6;
       gap = 5;
       margin = const EdgeInsets.all(10);
     } else if (screenSize == ScreenSize.tablet) {
       crossAxisCount = 2;
-      maxWidth = double.infinity;
       gap = 5;
       childAspectRatio = 1 / 0.6;
       margin = const EdgeInsets.all(10);
     } else if (screenSize == ScreenSize.smallDesktop) {
       crossAxisCount = 3;
-      maxWidth = 800;
       gap = 10;
       childAspectRatio = 1 / 0.85;
       margin = const EdgeInsets.all(0);
     } else {
       crossAxisCount = 4;
-      maxWidth = 1000;
       gap = 16;
       childAspectRatio = 1 / 0.85;
       margin = const EdgeInsets.all(0);
@@ -97,7 +92,6 @@ class MainGridWorkspaces extends StatelessWidget {
           ),
           _gridBuilder(
             context,
-            maxWidth,
             crossAxisCount,
             childAspectRatio,
             gap,
@@ -109,7 +103,6 @@ class MainGridWorkspaces extends StatelessWidget {
 
   Widget _gridBuilder(
     BuildContext context,
-    double maxWidth,
     int crossAxisCount,
     double childAspectRatio,
     double gap,

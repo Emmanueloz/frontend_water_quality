@@ -65,7 +65,7 @@ class LoginForm extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                context.go(Routes.listWorkspace.path);
+                context.go(Routes.workspaces.path);
               },
               child: const Text(
                 'Iniciar sesión',
