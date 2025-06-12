@@ -44,7 +44,7 @@ class AppTheme {
         ),
         bodyLarge: TextStyle(
           color: textColor,
-          fontSize: 20,
+          fontSize: 18,
         ),
         bodyMedium: TextStyle(
           color: textColor,
@@ -87,8 +87,27 @@ class AppTheme {
         selectedTileColor: colorScheme.tertiary,
         titleTextStyle: textTheme.titleMedium,
       ),
+      inputDecorationTheme: InputDecorationTheme(
+        labelStyle: textTheme.bodyMedium,
+        iconColor: colorScheme.secondary,
+        prefixIconColor: colorScheme.secondary,
+        suffixIconColor: colorScheme.secondary,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderSide: BorderSide(color: colorScheme.primary, width: 1),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderSide: BorderSide(color: colorScheme.primary, width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2),
+        ),
+      ),
       cardColor: colorScheme.surface,
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 2,
         color: colorScheme.surface,
       ),
@@ -156,6 +175,13 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: colorScheme.secondary, //#5bcdc5
           foregroundColor: colorScheme.surface,
+          textStyle: textTheme.bodyMedium,
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: colorScheme.secondary, width: 1),
+          foregroundColor: textColor,
           textStyle: textTheme.bodyMedium,
         ),
       ),

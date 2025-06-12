@@ -50,6 +50,14 @@ class DrawerNavigation extends StatelessWidget {
               });
             },
           ),
+          ListTile(
+            title: const Text(
+              "Perfil",
+            ),
+            onTap: () {
+              context.goNamed(Routes.profile.name);
+            },
+          ),
           if (children != null)
             ListTile(
               title: Text(

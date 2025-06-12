@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/form_register.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/auth/illustration_section.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/form_login.dart';
 
-class LoginPage extends StatelessWidget {
+class RegisterPage extends StatelessWidget {
   final String title;
-  const LoginPage({super.key, required this.title});
+  const RegisterPage({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -17,13 +17,11 @@ class LoginPage extends StatelessWidget {
             final isMobile = constraints.maxWidth < 800;
 
             if (isMobile) {
-              // Solo formulario sin contenedor blanco ni sombra
               return const Padding(
                 padding: EdgeInsets.all(24),
-                child: LoginForm(),
+                child: RegisterForm(),
               );
             } else {
-              // Desktop / pantallas grandes con ilustración y fondo blanco + sombra
               return Container(
                 width: 1000,
                 height: 700,
@@ -39,16 +37,14 @@ class LoginPage extends StatelessWidget {
                   ],
                 ),
                 child: Row(
-                  children: [
+                  children: const [
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 50),
-                        child: const LoginForm(),
+                        padding: EdgeInsets.symmetric(horizontal: 50),
+                        child: RegisterForm(),
                       ),
                     ),
-                    Expanded(
-                      child: IllustrationSection(),
-                    )
+                    Expanded(child: IllustrationSection()),
                   ],
                 ),
               );

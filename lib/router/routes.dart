@@ -17,10 +17,19 @@ class Routes {
     name: "listWorkspace",
     path: "/workspaces/:type",
   );
+  static RouteProperties createWorkspace = RouteProperties(
+    name: "createWorkspace",
+    path: "/create",
+    pathRoot: "/workspace/mine",
+  );
   static RouteProperties viewWorkspace = RouteProperties(
     name: "viewWorkspace",
     path: "/:id",
     pathRoot: "/workspace/",
+  );
+  static RouteProperties updateWorkspace = RouteProperties(
+    name: "updateWorkspace",
+    path: "/update",
   );
   static RouteProperties profile = RouteProperties(
     name: "profile",
