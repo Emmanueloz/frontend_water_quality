@@ -45,7 +45,7 @@ class Routes {
   );
   static RouteProperties listRecords = RouteProperties(
     name: "listRecords",
-    path: "/meter/:idMeter/records",
+    path: "/records",
   );
   static RouteProperties notificationDetails = RouteProperties(
     name: "notificationDetails",
