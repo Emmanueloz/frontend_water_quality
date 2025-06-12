@@ -20,16 +20,6 @@ class MainMeter extends StatelessWidget {
     required this.type,
   });
 
-  List<Widget> _buttonsNavigation(BuildContext context) {
-    return [
-      ElevatedButton.icon(
-        onPressed: () {},
-        icon: const Icon(Icons.add),
-        label: const Text("Agregar"),
-      ),
-    ];
-  }
-
   @override
   Widget build(BuildContext context) {
     if (screenSize == ScreenSize.smallDesktop ||
@@ -140,8 +130,14 @@ class MainMeter extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ButtonActions(
-            title: Text("Meter $idMeter"),
-            actions: _buttonsNavigation(context),
+            title: Text(
+              "Meter $idMeter",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            actions: [],
             screenSize: screenSize,
           ),
           const SizedBox(height: 16),

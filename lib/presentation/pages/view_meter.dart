@@ -45,6 +45,11 @@ class ViewMeter extends StatelessWidget {
           icon: Icons.history_outlined,
           selectedIcon: Icons.history,
         ),
+        NavigationItem(
+          label: "Editar",
+          icon: Icons.edit_outlined,
+          selectedIcon: Icons.edit,
+        ),
       ],
       builder: (context, screenSize) {
         return MainMeter(
