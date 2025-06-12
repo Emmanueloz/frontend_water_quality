@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
+import 'package:frontend_water_quality/core/enums/meter_state.dart';
+import 'package:frontend_water_quality/core/interface/meter_item.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/main_workspace.dart';
@@ -31,6 +33,9 @@ class ViewWorkspace extends StatelessWidget {
         // Navigate to guests
         print("Navigate to guests");
       } else if (index == 3) {
+        // Navigate to guests
+        print("Locations meters");
+      } else if (index == 4) {
         // Navigate to settings
         context.goNamed(
           Routes.updateWorkspace.name,
@@ -63,6 +68,11 @@ class ViewWorkspace extends StatelessWidget {
           selectedIcon: Icons.people,
         ),
         NavigationItem(
+          label: "Ubicaciones",
+          icon: Icons.location_on_outlined,
+          selectedIcon: Icons.location_on,
+        ),
+        NavigationItem(
           label: "Editar",
           icon: Icons.edit_outlined,
           selectedIcon: Icons.edit,
@@ -71,9 +81,30 @@ class ViewWorkspace extends StatelessWidget {
       builder: (context, screenSize) {
         return MainWorkspace(
           id: id,
-          idMeter: "1",
           type: type,
           screenSize: screenSize,
+          meters: [
+            MeterItem(
+              id: "1",
+              name: "Medidor 1",
+              state: MeterState.error,
+            ),
+            MeterItem(
+              id: "2",
+              name: "Medidor 2",
+              state: MeterState.disconnected,
+            ),
+            MeterItem(
+              id: "3",
+              name: "Medidor 3",
+              state: MeterState.sendingData,
+            ),
+            MeterItem(
+              id: "4",
+              name: "Medidor 4",
+              state: MeterState.connected,
+            ),
+          ],
         );
       },
     );

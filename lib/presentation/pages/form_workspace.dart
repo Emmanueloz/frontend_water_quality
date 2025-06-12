@@ -20,15 +20,14 @@ class FormWorkspace extends StatelessWidget {
     return Layout(
       title: title,
       builder: (context, screenSize) {
-        if (screenSize == ScreenSize.smallDesktop ||
-            screenSize == ScreenSize.largeDesktop) {
-          return Align(
-            alignment: Alignment.topCenter,
-            child: _buildForm(context, screenSize, title),
-          );
+        if (screenSize == ScreenSize.mobile) {
+          return _buildForm(context, screenSize, title);
         }
 
-        return _buildForm(context, screenSize, title);
+        return Align(
+          alignment: Alignment.topCenter,
+          child: _buildForm(context, screenSize, title),
+        );
       },
     );
   }
