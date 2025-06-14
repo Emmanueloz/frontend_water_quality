@@ -3,8 +3,8 @@ import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/interface/meter_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/base_container.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/workspace/button_actions.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/workspace/meter_card.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/button_actions.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/atoms/meter_card.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
