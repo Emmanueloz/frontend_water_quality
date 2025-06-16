@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 class ChangePasswordForm extends StatefulWidget {
   final String email;
+  final void Function(String password) onSubmit;
 
   const ChangePasswordForm({
     super.key,
     required this.email,
+    required this.onSubmit,
   });
 
   @override
@@ -13,9 +15,8 @@ class ChangePasswordForm extends StatefulWidget {
 }
 
 class _ChangePasswordFormState extends State<ChangePasswordForm> {
-  final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final _newPasswordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
   @override
   void dispose() {
@@ -24,110 +25,86 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
     super.dispose();
   }
 
-  void _handleSubmit() {
-    final newPass = _newPasswordController.text;
-    final confirmPass = _confirmPasswordController.text;
+  void _submit() {
+    final password = _newPasswordController.text.trim();
+    final confirm = _confirmPasswordController.text.trim();
 
-    if (newPass != confirmPass) {
-      _showSnackBar("Las contraseñas no coinciden");
+    if (password.length < 6) {
+      _showSnackBar('Debe tener al menos 6 caracteres');
       return;
     }
 
-    if (newPass.length < 6) {
-      _showSnackBar("La contraseña debe tener al menos 6 caracteres");
+    if (password != confirm) {
+      _showSnackBar('Las contraseñas no coinciden');
       return;
     }
 
-    _showSnackBar("Contraseña actualizada (simulada)");
-    Navigator.pop(context);
+    widget.onSubmit(password);
   }
 
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+  void _showSnackBar(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
+
+  InputDecoration _inputDecoration(String label) => InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+          borderSide: BorderSide(color: Color(0xff5accc4)),
+        ),
+        enabledBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+          borderSide: BorderSide(color: Color(0xff5accc4)),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+          borderSide: BorderSide(color: Color(0xff5accc4), width: 2),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Center(
-            child: Column(
-              children: [
-                Icon(Icons.lock_reset_outlined, size: 50),
-                SizedBox(height: 12),
-                Text(
-                  'Cambio de contraseña',
-                  style: TextStyle(fontSize: 20),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 30),
-          Center(
-            child: Text(
-              'Usuario: ${widget.email}',
-              style: const TextStyle(fontSize: 16),
-            ),
-          ),
-          const SizedBox(height: 40),
-          TextField(
-            controller: _newPasswordController,
-            obscureText: true,
-            style: const TextStyle(fontSize: 18),
-            decoration: _inputDecoration('Nueva contraseña'),
-          ),
-          const SizedBox(height: 25),
-          TextField(
-            controller: _confirmPasswordController,
-            obscureText: true,
-            style: const TextStyle(fontSize: 18),
-            decoration: _inputDecoration('Confirmar contraseña'),
-          ),
-          const SizedBox(height: 40),
-          Center(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xff145c57),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 50, vertical: 18),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              onPressed: _handleSubmit,
-              child: const Text(
-                'Actualizar contraseña',
-                style: TextStyle(fontSize: 18),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+    final textTheme = Theme.of(context).textTheme;
 
-  InputDecoration _inputDecoration(String label) {
-    return InputDecoration(
-      labelText: label,
-      labelStyle: const TextStyle(fontSize: 18),
-      suffixIcon: const Icon(Icons.visibility_outlined),
-      border: const OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(20)),
-        borderSide: BorderSide(color: Color(0xff5accc4)),
-      ),
-      enabledBorder: const OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(20)),
-        borderSide: BorderSide(color: Color(0xff5accc4)),
-      ),
-      focusedBorder: const OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(20)),
-        borderSide: BorderSide(color: Color(0xff5accc4), width: 2),
-      ),
-      contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(
+          child: Column(
+            children: [
+              const Icon(Icons.lock, size: 50),
+              const SizedBox(height: 12),
+              Text(
+                'Cambio de contraseña',
+                style: textTheme.titleMedium,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 30),
+        Center(
+          child: Text('Usuario: ${widget.email}', style: textTheme.bodyLarge),
+        ),
+        const SizedBox(height: 30),
+        TextField(
+          controller: _newPasswordController,
+          obscureText: true,
+          decoration: _inputDecoration('Nueva contraseña'),
+        ),
+        const SizedBox(height: 20),
+        TextField(
+          controller: _confirmPasswordController,
+          obscureText: true,
+          decoration: _inputDecoration('Confirmar contraseña'),
+        ),
+        const SizedBox(height: 40),
+        Center(
+          child: ElevatedButton(
+            onPressed: _submit,
+            child: const Text('Actualizar contraseña'),
+          ),
+        ),
+      ],
     );
   }
 }

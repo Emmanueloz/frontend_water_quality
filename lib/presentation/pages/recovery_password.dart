@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/form_recovery.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/auth/form_recovery.dart';
 
 class RecoveryPasswordPage extends StatelessWidget {
   final String title;
 
-  const RecoveryPasswordPage({
-    super.key,
-    required this.title,
-  });
+  const RecoveryPasswordPage({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -18,32 +15,22 @@ class RecoveryPasswordPage extends StatelessWidget {
         child: LayoutBuilder(
           builder: (context, constraints) {
             final isMobile = constraints.maxWidth < 800;
-
-            if (isMobile) {
-              return const Padding(
-                padding: EdgeInsets.all(24),
-                child: RecoveryPasswordForm(),
-              );
-            } else {
-              return Container(
-                width: 600,
-                height: 400,
-                margin: const EdgeInsets.all(16),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 50, vertical: 40),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 10,
-                    ),
-                  ],
+            return Padding(
+              padding: const EdgeInsets.all(24),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: isMobile ? double.infinity : 600,
+                  maxHeight: 500,
                 ),
-                child: const RecoveryPasswordForm(),
-              );
-            }
+                child: const Card(
+                  elevation: 4,
+                  child: Padding(
+                    padding: EdgeInsets.all(32.0),
+                    child: RecoveryPasswordForm(),
+                  ),
+                ),
+              ),
+            );
           },
         ),
       ),

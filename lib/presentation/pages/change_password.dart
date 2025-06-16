@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/form_change.dart';
+import 'package:go_router/go_router.dart';
 
 class ChangePasswordPage extends StatelessWidget {
   final String title;
   final String email;
-  final String token;
 
   const ChangePasswordPage({
     super.key,
     required this.title,
     required this.email,
-    required this.token,
   });
 
   @override
@@ -22,32 +21,28 @@ class ChangePasswordPage extends StatelessWidget {
         child: LayoutBuilder(
           builder: (context, constraints) {
             final isMobile = constraints.maxWidth < 800;
-
-            if (isMobile) {
-              return Padding(
-                padding: const EdgeInsets.all(24),
-                child: ChangePasswordForm(email: email),
-              );
-            } else {
-              return Container(
-                width: 600,
-                height: 500,
-                margin: const EdgeInsets.all(16),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 50, vertical: 40),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 10,
-                    ),
-                  ],
+            return Padding(
+              padding: const EdgeInsets.all(24),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: isMobile ? double.infinity : 600,
+                  maxHeight: 500,
                 ),
-                child: ChangePasswordForm(email: email),
-              );
-            }
+                child: Card(
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: ChangePasswordForm(
+                      email: email,
+                      onSubmit: (newPassword) {
+                        // Simulación de cambio de contraseña
+                        context.goNamed('login');
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            );
           },
         ),
       ),

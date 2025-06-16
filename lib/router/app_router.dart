@@ -126,8 +126,7 @@ class AppRouter {
         name: Routes.changePassword.name,
         builder: (context, state) => ChangePasswordPage(
           title: 'change Password',
-          email: '', // TODO: Provide the actual email here
-          token: '', // TODO: Provide the actual token here
+          email: '',
         ),
       )
     ],
