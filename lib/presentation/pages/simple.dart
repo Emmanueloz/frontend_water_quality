@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
-import 'package:frontend_water_quality/router/routes.dart';
-import 'package:go_router/go_router.dart';
 
 class Simple extends StatelessWidget {
   final String title;
@@ -14,12 +12,6 @@ class Simple extends StatelessWidget {
       builder: (context, screenSize) => Column(
         children: [
           Text(title),
-          ElevatedButton(
-            onPressed: () {
-              context.go(Routes.listWorkspace.path);
-            },
-            child: const Text('Go to List Workspace'),
-          ),
         ],
       ),
     );

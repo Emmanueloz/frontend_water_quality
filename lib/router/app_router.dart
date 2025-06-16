@@ -1,14 +1,15 @@
 // app_router.dart
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
-import 'package:frontend_water_quality/presentation/pages/change_password.dart';
+import 'package:frontend_water_quality/presentation/pages/alerts.dart';
+import 'package:frontend_water_quality/presentation/pages/form_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/list_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/login.dart';
 import 'package:frontend_water_quality/presentation/pages/recovery_password.dart';
 import 'package:frontend_water_quality/presentation/pages/register.dart';
 import 'package:frontend_water_quality/presentation/pages/profile.dart';
-import 'package:frontend_water_quality/presentation/pages/simple.dart';
 import 'package:frontend_water_quality/presentation/pages/splash.dart';
 import 'package:frontend_water_quality/presentation/pages/view_listrecords.dart';
+import 'package:frontend_water_quality/presentation/pages/view_meter.dart';
 import 'package:frontend_water_quality/presentation/pages/view_notificationdetails.dart';
 import 'package:frontend_water_quality/presentation/pages/view_workspace.dart';
 import 'package:frontend_water_quality/router/routes.dart';
@@ -35,8 +36,8 @@ class AppRouter {
         builder: (context, state) => const RegisterPage(title: 'Register'),
       ),
       GoRoute(
-        path: Routes.listWorkspace.path,
-        name: Routes.listWorkspace.name,
+        path: Routes.workspaces.path,
+        name: Routes.workspaces.name,
         builder: (context, state) {
           ListWorkspaces type;
           final typeString = state.pathParameters['type'] ?? 'mine';
@@ -56,8 +57,16 @@ class AppRouter {
         },
         routes: [
           GoRoute(
-              path: Routes.viewWorkspace.path,
-              name: Routes.viewWorkspace.name,
+            path: Routes.createWorkspace.path,
+            name: Routes.createWorkspace.name,
+            builder: (context, state) {
+              print("Create Workspace");
+              return FormWorkspace();
+            },
+          ),
+          GoRoute(
+              path: Routes.workspace.path,
+              name: Routes.workspace.name,
               builder: (context, state) {
                 final id = state.pathParameters['id'] ?? 'default';
                 final typeString = state.pathParameters['type'] ?? 'mine';
@@ -78,11 +87,44 @@ class AppRouter {
               },
               routes: [
                 GoRoute(
-                  path: Routes.listRecords.path,
-                  name: Routes.listRecords.name,
+                    path: Routes.meter.path,
+                    name: Routes.meter.name,
+                    builder: (context, state) {
+                      final id = state.pathParameters['id'] ?? 'default';
+                      final idMeter =
+                          state.pathParameters['idMeter'] ?? 'default';
+                      final typeString = state.pathParameters['type'] ?? 'mine';
+                      ListWorkspaces type;
+
+                      switch (typeString) {
+                        case 'mine':
+                          type = ListWorkspaces.mine;
+                          break;
+                        case 'shared':
+                          type = ListWorkspaces.shared;
+                          break;
+                        default:
+                          type = ListWorkspaces.mine;
+                          break;
+                      }
+                      return ViewMeter(id: id, idMeter: idMeter, type: type);
+                    },
+                    routes: [
+                      GoRoute(
+                        path: Routes.listRecords.path,
+                        name: Routes.listRecords.name,
+                        builder: (context, state) {
+                          final id = state.pathParameters['id'] ?? 'default';
+                          return VieListrecords(id: id);
+                        },
+                      ),
+                    ]),
+                GoRoute(
+                  path: Routes.updateWorkspace.path,
+                  name: Routes.updateWorkspace.name,
                   builder: (context, state) {
                     final id = state.pathParameters['id'] ?? 'default';
-                    return VieListrecords(id: id);
+                    return FormWorkspace(idWorkspace: id);
                   },
                 ),
               ]),
@@ -91,7 +133,7 @@ class AppRouter {
             name: Routes.alerts.name,
             builder: (context, state) {
               final id = state.pathParameters['id'] ?? 'default';
-              return Simple(title: 'Alerts for Workspace $id');
+              return AlertsScreen(idWorkspace: id);
             },
           ),
         ],

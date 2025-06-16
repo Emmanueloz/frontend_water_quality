@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/workspace/sensor_container.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/sensor_container.dart';
 import 'package:girix_code_gauge/girix_code_gauge.dart';
 
 class RadialGaugeMeter extends StatelessWidget {

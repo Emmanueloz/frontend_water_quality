@@ -15,23 +15,23 @@ class LoginForm extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Center(
+          Center(
             child: Column(
               children: [
                 Icon(Icons.image, size: 50),
                 SizedBox(height: 12),
                 Text(
                   'Logo y nombre',
-                  style: TextStyle(fontSize: 20),
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
               ],
             ),
           ),
           const SizedBox(height: 30),
-          const Center(
+          Center(
             child: Text(
               'Bienvenido',
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.displayLarge,
             ),
           ),
           const SizedBox(height: 40),
@@ -40,22 +40,7 @@ class LoginForm extends StatelessWidget {
             style: const TextStyle(fontSize: 18),
             decoration: InputDecoration(
               labelText: 'Correo electrónico',
-              labelStyle: const TextStyle(fontSize: 18),
               suffixIcon: const Icon(Icons.email_outlined),
-              border: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                borderSide: BorderSide(color: Color(0xff5accc4)),
-              ),
-              enabledBorder: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                borderSide: BorderSide(color: Color(0xff5accc4)),
-              ),
-              focusedBorder: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                borderSide: BorderSide(color: Color(0xff5accc4), width: 2),
-              ),
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
             ),
           ),
           const SizedBox(height: 25),
@@ -65,22 +50,7 @@ class LoginForm extends StatelessWidget {
             style: const TextStyle(fontSize: 18),
             decoration: InputDecoration(
               labelText: 'Contraseña',
-              labelStyle: const TextStyle(fontSize: 18),
               suffixIcon: const Icon(Icons.visibility_outlined),
-              border: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                borderSide: BorderSide(color: Color(0xff5accc4)),
-              ),
-              enabledBorder: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                borderSide: BorderSide(color: Color(0xff5accc4)),
-              ),
-              focusedBorder: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                borderSide: BorderSide(color: Color(0xff5accc4), width: 2),
-              ),
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
             ),
           ),
           const SizedBox(height: 40),
@@ -95,7 +65,7 @@ class LoginForm extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                context.go(Routes.listWorkspace.path);
+                context.go(Routes.workspaces.path);
               },
               child: const Text(
                 'Iniciar sesión',

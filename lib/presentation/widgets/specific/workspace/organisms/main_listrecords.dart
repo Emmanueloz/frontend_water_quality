@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/base_container.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/workspace/line_graph.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/line_graph.dart';
 
 class MainListrecords extends StatelessWidget {
   final String id;

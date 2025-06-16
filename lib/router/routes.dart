@@ -13,14 +13,23 @@ class Routes {
     name: "register",
     path: "/register",
   );
-  static RouteProperties listWorkspace = RouteProperties(
-    name: "listWorkspace",
+  static RouteProperties workspaces = RouteProperties(
+    name: "workspaces",
     path: "/workspaces/:type",
   );
-  static RouteProperties viewWorkspace = RouteProperties(
-    name: "viewWorkspace",
+  static RouteProperties createWorkspace = RouteProperties(
+    name: "createWorkspace",
+    path: "/create",
+    pathRoot: "/workspace/mine",
+  );
+  static RouteProperties workspace = RouteProperties(
+    name: "workspace",
     path: "/:id",
     pathRoot: "/workspace/",
+  );
+  static RouteProperties updateWorkspace = RouteProperties(
+    name: "updateWorkspace",
+    path: "/update",
   );
   static RouteProperties profile = RouteProperties(
     name: "profile",
@@ -30,9 +39,13 @@ class Routes {
     name: "alerts",
     path: "/:id/alerts",
   );
+  static RouteProperties meter = RouteProperties(
+    name: "meters",
+    path: "/meter/:idMeter",
+  );
   static RouteProperties listRecords = RouteProperties(
     name: "listRecords",
-    path: "/meter/:idMeter/records",
+    path: "/records",
   );
   static RouteProperties notificationDetails = RouteProperties(
     name: "notificationDetails",

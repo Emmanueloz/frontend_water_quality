@@ -1,0 +1,60 @@
+name: Auto Tag on Merge
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Grants write access to the repository's contents
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get last tag
+        id: get_tag
+        run: |
+          git fetch --tags
+          TAG=$(git tag --sort=-v:refname | head -n 1)
+          echo "Last tag: $TAG"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Determine new version
+        id: new_version
+        run: |
+          LAST_TAG=${{ steps.get_tag.outputs.tag }}
+          if [[ $LAST_TAG == "" ]]; then
+            LAST_TAG="v0.0.0"
+          fi
+          IFS='.' read -r -a parts <<< "${LAST_TAG#v}"
+          major="${parts[0]}"
+          minor="${parts[1]}"
+          patch="${parts[2]}"
+
+          BRANCH_NAME="${GITHUB_REF##*/}"
+          echo "Merged branch: $BRANCH_NAME"
+
+          if [[ "$BRANCH_NAME" == feature/* ]]; then
+            minor=$((minor+1))
+            patch=0
+          elif [[ "$BRANCH_NAME" == hotfix/* || "$BRANCH_NAME" == bugfix/* ]]; then
+            patch=$((patch+1))
+          elif [[ "$BRANCH_NAME" == refactor/* ]]; then
+            patch=$((patch+1))
+          else
+            # default: patch bump
+            patch=$((patch+1))
+          fi
+
+          NEW_TAG="v$major.$minor.$patch"
+          echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+
+      - name: Create Tag
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git tag ${{ steps.new_version.outputs.new_tag }}
+          git push origin ${{ steps.new_version.outputs.new_tag }}

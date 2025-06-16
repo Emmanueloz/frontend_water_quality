@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
+import 'package:frontend_water_quality/core/enums/meter_state.dart';
+import 'package:frontend_water_quality/core/interface/meter_item.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/workspace/main_workspace.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/organisms/main_workspace.dart';
+import 'package:frontend_water_quality/router/routes.dart';
+import 'package:go_router/go_router.dart';
 
 class ViewWorkspace extends StatelessWidget {
   final String id;
@@ -17,13 +21,29 @@ class ViewWorkspace extends StatelessWidget {
         print("Navigate to meters");
       } else if (index == 1) {
         // Navigate to alerts
+        context.goNamed(
+          Routes.alerts.name,
+          pathParameters: {
+            "id": id,
+            "type": type.name,
+          },
+        );
         print("Navigate to alerts");
       } else if (index == 2) {
         // Navigate to guests
         print("Navigate to guests");
       } else if (index == 3) {
+        // Navigate to guests
+        print("Locations meters");
+      } else if (index == 4) {
         // Navigate to settings
-        print("Navigate to settings");
+        context.goNamed(
+          Routes.updateWorkspace.name,
+          pathParameters: {
+            "type": type.name,
+            'id': id,
+          },
+        );
       }
     }
 
@@ -48,17 +68,43 @@ class ViewWorkspace extends StatelessWidget {
           selectedIcon: Icons.people,
         ),
         NavigationItem(
-          label: "Configuración",
-          icon: Icons.settings_outlined,
-          selectedIcon: Icons.settings,
+          label: "Ubicaciones",
+          icon: Icons.location_on_outlined,
+          selectedIcon: Icons.location_on,
+        ),
+        NavigationItem(
+          label: "Editar",
+          icon: Icons.edit_outlined,
+          selectedIcon: Icons.edit,
         ),
       ],
       builder: (context, screenSize) {
         return MainWorkspace(
           id: id,
-          idMeter: "1",
           type: type,
           screenSize: screenSize,
+          meters: [
+            MeterItem(
+              id: "1",
+              name: "Medidor 1",
+              state: MeterState.error,
+            ),
+            MeterItem(
+              id: "2",
+              name: "Medidor 2",
+              state: MeterState.disconnected,
+            ),
+            MeterItem(
+              id: "3",
+              name: "Medidor 3",
+              state: MeterState.sendingData,
+            ),
+            MeterItem(
+              id: "4",
+              name: "Medidor 4",
+              state: MeterState.connected,
+            ),
+          ],
         );
       },
     );

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/workspace/main_grid_workspaces.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/workspace/workspace_card.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/organisms/main_grid_workspaces.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/atoms/workspace_card.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
@@ -16,14 +16,14 @@ class ListWorkspace extends StatelessWidget {
     void onDestinationSelected(int index) {
       if (index == 0) {
         context.goNamed(
-          Routes.listWorkspace.name,
+          Routes.workspaces.name,
           pathParameters: {
             "type": ListWorkspaces.mine.name,
           },
         );
       } else if (index == 1) {
         context.goNamed(
-          Routes.listWorkspace.name,
+          Routes.workspaces.name,
           pathParameters: {
             "type": ListWorkspaces.shared.name,
           },
@@ -68,7 +68,7 @@ class ListWorkspace extends StatelessWidget {
         type: "Privado",
         onTap: () {
           context.goNamed(
-            Routes.viewWorkspace.name,
+            Routes.workspace.name,
             pathParameters: {
               "type": ListWorkspaces.mine.name,
               'id': "1",
@@ -83,7 +83,7 @@ class ListWorkspace extends StatelessWidget {
         type: "Privado",
         onTap: () {
           context.goNamed(
-            Routes.viewWorkspace.name,
+            Routes.workspace.name,
             pathParameters: {
               "type": ListWorkspaces.mine.name,
               'id': "2",
@@ -98,7 +98,7 @@ class ListWorkspace extends StatelessWidget {
         type: "Privado",
         onTap: () {
           context.goNamed(
-            Routes.viewWorkspace.name,
+            Routes.workspace.name,
             pathParameters: {
               "type": ListWorkspaces.mine.name,
               'id': "3",
@@ -113,7 +113,7 @@ class ListWorkspace extends StatelessWidget {
         type: "Privado",
         onTap: () {
           context.goNamed(
-            Routes.viewWorkspace.name,
+            Routes.workspaces.name,
             pathParameters: {
               "type": ListWorkspaces.mine.name,
               'id': "4",
@@ -133,7 +133,7 @@ class ListWorkspace extends StatelessWidget {
         type: "Privado",
         onTap: () {
           context.goNamed(
-            Routes.viewWorkspace.name,
+            Routes.workspace.name,
             pathParameters: {
               "type": ListWorkspaces.shared.name,
               'id': "5",
@@ -148,7 +148,7 @@ class ListWorkspace extends StatelessWidget {
         type: "Privado",
         onTap: () {
           context.goNamed(
-            Routes.viewWorkspace.name,
+            Routes.workspace.name,
             pathParameters: {
               "type": ListWorkspaces.shared.name,
               'id': "6",
@@ -163,7 +163,7 @@ class ListWorkspace extends StatelessWidget {
         type: "Privado",
         onTap: () {
           context.goNamed(
-            Routes.viewWorkspace.name,
+            Routes.workspace.name,
             pathParameters: {
               "type": ListWorkspaces.shared.name,
               'id': "7",

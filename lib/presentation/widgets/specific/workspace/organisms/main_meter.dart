@@ -2,57 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/base_container.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/workspace/button_actions.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/workspace/radial_gauge_meter.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/workspace/sensor_color.dart';
-import 'package:frontend_water_quality/router/routes.dart';
-import 'package:go_router/go_router.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/button_actions.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/radial_gauge_meter.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/sensor_color.dart';
 
-class MainWorkspace extends StatelessWidget {
+class MainMeter extends StatelessWidget {
   final String id;
   final String idMeter;
   final ListWorkspaces type;
   final ScreenSize screenSize;
 
-  const MainWorkspace({
+  const MainMeter({
     super.key,
     required this.idMeter,
     required this.screenSize,
     required this.id,
     required this.type,
   });
-
-  List<String> _getDropdownItems() {
-    return [
-      "Medidor 1",
-      "Medidor 2",
-      "Medidor 3",
-    ];
-  }
-
-  List<Widget> _buttonsNavigation(BuildContext context) {
-    return [
-      ElevatedButton.icon(
-        onPressed: () {},
-        icon: const Icon(Icons.add),
-        label: const Text("Agregar"),
-      ),
-      ElevatedButton.icon(
-        onPressed: () {
-          context.goNamed(
-            Routes.listRecords.name,
-            pathParameters: {
-              "id": id,
-              "idMeter": idMeter,
-              "type": type.name,
-            },
-          );
-        },
-        icon: const Icon(Icons.history),
-        label: const Text("Historial"),
-      ),
-    ];
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -157,10 +123,6 @@ class MainWorkspace extends StatelessWidget {
       ),
     ];
 
-    double maxDropdownWidth = double.infinity;
-    if (screenSize != ScreenSize.mobile) {
-      maxDropdownWidth = 300;
-    }
     return BaseContainer(
       margin: margin,
       padding: padding,
@@ -168,26 +130,14 @@ class MainWorkspace extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ButtonActions(
-            title: DropdownMenu(
-              width: maxDropdownWidth,
-              enableFilter: true,
-              initialSelection: _getDropdownItems().first,
-              dropdownMenuEntries: _getDropdownItems()
-                  .map(
-                    (item) => DropdownMenuEntry(
-                        value: item,
-                        label: item,
-                        style: MenuItemButton.styleFrom(
-                          foregroundColor:
-                              Theme.of(context).colorScheme.secondary,
-                        )),
-                  )
-                  .toList(),
-              onSelected: (value) {
-                print(value);
-              },
+            title: Text(
+              "Meter $idMeter",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
-            actions: _buttonsNavigation(context),
+            actions: [],
             screenSize: screenSize,
           ),
           const SizedBox(height: 16),
