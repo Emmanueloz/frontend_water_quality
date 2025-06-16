@@ -38,4 +38,8 @@ class Routes {
     name: "notificationDetails",
     path: "/notification/:id",
   );
+  static RouteProperties recoveryPassword = RouteProperties(
+    name: "recoveryPassword",
+    path: "/recovery-password",
+  );
 }

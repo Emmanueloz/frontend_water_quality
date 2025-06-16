@@ -2,6 +2,7 @@
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/presentation/pages/list_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/login.dart';
+import 'package:frontend_water_quality/presentation/pages/recovery_password.dart';
 import 'package:frontend_water_quality/presentation/pages/register.dart';
 import 'package:frontend_water_quality/presentation/pages/profile.dart';
 import 'package:frontend_water_quality/presentation/pages/simple.dart';
@@ -110,8 +111,14 @@ class AppRouter {
             description: "Nueva notificacion",
             qualityLevel: "buena",
             id: id,
-            );
+          );
         },
+      ),
+      GoRoute(
+        path: Routes.recoveryPassword.path,
+        name: Routes.recoveryPassword.name,
+        builder: (context, state) =>
+            const RecoveryPasswordPage(title: ' Recuperar contraseña'),
       ),
     ],
   );
