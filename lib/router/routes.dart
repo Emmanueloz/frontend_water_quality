@@ -51,4 +51,9 @@ class Routes {
     name: "notificationDetails",
     path: "/notification/:id",
   );
+  static RouteProperties listNotifications = RouteProperties(
+    name: "listNotifications",
+    path: "/notifications",
+  );
+
 }

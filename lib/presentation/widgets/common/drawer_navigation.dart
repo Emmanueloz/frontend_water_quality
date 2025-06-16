@@ -69,6 +69,14 @@ class DrawerNavigation extends StatelessWidget {
               ),
             ),
           ...?children,
+          ListTile(
+            title: const Text(
+              "Notificaciones",
+            ),
+            onTap: () {
+              context.goNamed(Routes.listNotifications.name);
+            },
+          ),
         ],
       ),
     );

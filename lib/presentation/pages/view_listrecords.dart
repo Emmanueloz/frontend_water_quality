@@ -10,7 +10,7 @@ class VieListrecords extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Layout(
-      title: "Espacio de trabajo $id",
+      title: "Medidor $id",
       builder: (context, screenSize) {
         return MainListrecords(
           id: id,
