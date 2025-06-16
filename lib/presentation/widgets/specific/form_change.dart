@@ -46,22 +46,6 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
 
-  InputDecoration _inputDecoration(String label) => InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-          borderSide: BorderSide(color: Color(0xff5accc4)),
-        ),
-        enabledBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-          borderSide: BorderSide(color: Color(0xff5accc4)),
-        ),
-        focusedBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-          borderSide: BorderSide(color: Color(0xff5accc4), width: 2),
-        ),
-      );
-
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -89,13 +73,17 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
         TextField(
           controller: _newPasswordController,
           obscureText: true,
-          decoration: _inputDecoration('Nueva contraseña'),
+          decoration: const InputDecoration(
+            labelText: 'Nueva contraseña',
+          ),
         ),
         const SizedBox(height: 20),
         TextField(
           controller: _confirmPasswordController,
           obscureText: true,
-          decoration: _inputDecoration('Confirmar contraseña'),
+          decoration: const InputDecoration(
+            labelText: 'Confirmar contraseña',
+          ),
         ),
         const SizedBox(height: 40),
         Center(

@@ -27,7 +27,7 @@ class _RecoveryPasswordFormState extends State<RecoveryPasswordForm> {
       return;
     }
 
-    // Aquí iría el llamado real al backend para enviar el correo
+    // llamado al backend para enviar el correo
     setState(() {
       showCodeForm = true;
     });
@@ -49,22 +49,6 @@ class _RecoveryPasswordFormState extends State<RecoveryPasswordForm> {
   void _showSnackBar(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
-
-  InputDecoration _inputDecoration(String label) => InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-          borderSide: BorderSide(color: Color(0xff5accc4)),
-        ),
-        enabledBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-          borderSide: BorderSide(color: Color(0xff5accc4)),
-        ),
-        focusedBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-          borderSide: BorderSide(color: Color(0xff5accc4), width: 2),
-        ),
-      );
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +76,9 @@ class _RecoveryPasswordFormState extends State<RecoveryPasswordForm> {
               TextField(
                 controller: emailController,
                 keyboardType: TextInputType.emailAddress,
-                decoration: _inputDecoration('Correo electrónico'),
+                decoration: const InputDecoration(
+                  labelText: 'Correo electrónico',
+                ),
               ),
               const SizedBox(height: 30),
               Center(
@@ -109,7 +95,9 @@ class _RecoveryPasswordFormState extends State<RecoveryPasswordForm> {
               TextField(
                 controller: codeController,
                 keyboardType: TextInputType.number,
-                decoration: _inputDecoration('Código de verificación'),
+                decoration: const InputDecoration(
+                  labelText: 'Código de verificación',
+                ),
               ),
               const SizedBox(height: 30),
               Center(
