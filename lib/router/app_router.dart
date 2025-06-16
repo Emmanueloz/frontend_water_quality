@@ -118,7 +118,7 @@ class AppRouter {
         path: Routes.recoveryPassword.path,
         name: Routes.recoveryPassword.name,
         builder: (context, state) =>
-            const RecoveryPasswordPage(title: ' Recuperar contraseña'),
+            RecoveryPasswordPage(title: 'Recovery Password'),
       ),
     ],
   );
