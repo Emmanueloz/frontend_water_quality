@@ -1,5 +1,6 @@
 // app_router.dart
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
+import 'package:frontend_water_quality/presentation/pages/change_password.dart';
 import 'package:frontend_water_quality/presentation/pages/list_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/login.dart';
 import 'package:frontend_water_quality/presentation/pages/recovery_password.dart';
@@ -120,6 +121,15 @@ class AppRouter {
         builder: (context, state) =>
             RecoveryPasswordPage(title: 'Recovery Password'),
       ),
+      GoRoute(
+        path: Routes.changePassword.path,
+        name: Routes.changePassword.name,
+        builder: (context, state) => ChangePasswordPage(
+          title: 'change Password',
+          email: '', // TODO: Provide the actual email here
+          token: '', // TODO: Provide the actual token here
+        ),
+      )
     ],
   );
 }
