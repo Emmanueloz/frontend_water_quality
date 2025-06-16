@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/base_container.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/workspace/line_graph.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/button_actions.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/radial_gauge_meter.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/sensor_color.dart';
 
-class MainListrecords extends StatelessWidget {
+class MainMeter extends StatelessWidget {
   final String id;
   final String idMeter;
+  final ListWorkspaces type;
   final ScreenSize screenSize;
 
-  const MainListrecords({
+  const MainMeter({
     super.key,
     required this.idMeter,
     required this.screenSize,
     required this.id,
+    required this.type,
   });
 
   @override
@@ -28,30 +33,34 @@ class MainListrecords extends StatelessWidget {
   Widget _buildMain(BuildContext context) {
     EdgeInsetsGeometry margin;
     EdgeInsetsGeometry padding;
+    Size meterSize;
     int crossAxisCount;
     double childAspectRatio;
 
     if (screenSize == ScreenSize.smallDesktop) {
-      margin = const EdgeInsets.all(10);
+      margin = const EdgeInsets.all(0);
       padding = const EdgeInsets.symmetric(
         horizontal: 20,
         vertical: 9,
       );
+      meterSize = const Size(300, 180);
       crossAxisCount = 3;
       childAspectRatio = 1 / 1.2;
     } else if (screenSize == ScreenSize.largeDesktop) {
-      margin = const EdgeInsets.all(10);
+      margin = const EdgeInsets.all(0);
 
       padding = const EdgeInsets.symmetric(
         horizontal: 20,
         vertical: 9,
       );
+      meterSize = const Size(300, 190);
       crossAxisCount = 3;
       childAspectRatio = 1 / 0.70;
     } else if (screenSize == ScreenSize.tablet) {
       margin = const EdgeInsets.all(10);
 
       padding = const EdgeInsets.all(12.0);
+      meterSize = const Size(300, 240);
       crossAxisCount = 2;
       childAspectRatio = 1 / 1.2;
     } else {
@@ -59,56 +68,58 @@ class MainListrecords extends StatelessWidget {
       margin = const EdgeInsets.all(10);
 
       padding = const EdgeInsets.all(10.0);
+      meterSize = const Size(340, 260);
       crossAxisCount = 1;
       childAspectRatio = 1 / 1.2;
     }
 
     // Lista de medidores de ejemplo
-    final List<Widget> linegraphs = [
-      LineGraph(
+    final List<Widget> meters = [
+      //48, 120, 171
+      SensorColor(
+        red: 48,
+        green: 120,
+        blue: 171,
+      ),
+      RadialGaugeMeter(
         sensorType: "Temperatura",
-        value: 22.5,
-        dates: ["27/05", "28/05", "29/05", "30/05", "31/05"],
-        data: [21.0, 21.5, 22.0, 23.0, 22.5],
-        minY: 20.0,
-        maxY: 25.0,
-        intervalY: 1.0,
+        value: 54,
+        min: 0,
+        max: 60,
+        interval: 10,
+        size: meterSize,
       ),
-      LineGraph(
+      RadialGaugeMeter(
         sensorType: "PH",
-        value: 7.2,
-        dates: ["27/05", "28/05", "29/05", "30/05", "31/05"],
-        data: [6.8, 7.0, 7.1, 7.3, 7.2],
-        minY: 6.5,
-        maxY: 7.5,
-        intervalY: 0.5,
+        value: 2.4,
+        min: 0,
+        max: 14,
+        interval: 1,
+        size: meterSize,
       ),
-      LineGraph(
+      RadialGaugeMeter(
         sensorType: "Total de sólidos disueltos",
-        value: 300,
-        dates: ["27/05", "28/05", "29/05", "30/05", "31/05"],
-        data: [280, 290, 310, 320, 300],
-        minY: 250,
-        maxY: 350,
-        intervalY: 10,
+        value: 7.5,
+        min: 0,
+        max: 10,
+        interval: 1,
+        size: meterSize,
       ),
-      LineGraph(
+      RadialGaugeMeter(
         sensorType: "Conductividad",
-        value: 1500,
-        dates: ["27/05", "28/05", "29/05", "30/05", "31/05"],
-        data: [1400, 1450, 1480, 1520, 1500],
-        minY: 1300,
-        maxY: 1600,
-        intervalY: 50,
+        value: 450,
+        min: 0,
+        max: 1000,
+        interval: 100,
+        size: meterSize,
       ),
-      LineGraph(
+      RadialGaugeMeter(
         sensorType: "Turbidez",
-        value: 2.5,
-        dates: ["27/05", "28/05", "29/05", "30/05", "31/05"],
-        data: [1.8, 2.0, 2.1, 2.3, 2.5],
-        minY: 1.0,
-        maxY: 3.0,
-        intervalY: 0.5,
+        value: 12,
+        min: 0,
+        max: 20,
+        interval: 2,
+        size: meterSize,
       ),
     ];
 
@@ -118,7 +129,18 @@ class MainListrecords extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Puedes mantener el título u otros botones si los necesitas:
+          ButtonActions(
+            title: Text(
+              "Meter $idMeter",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            actions: [],
+            screenSize: screenSize,
+          ),
+          const SizedBox(height: 16),
 
           // Contenedor con scroll para los medidores
           Expanded(
@@ -131,7 +153,7 @@ class MainListrecords extends StatelessWidget {
                 mainAxisSpacing: 16,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                children: linegraphs,
+                children: meters,
               ),
             ),
           ),

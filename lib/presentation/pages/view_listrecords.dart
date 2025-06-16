@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/workspace/main_listrecords.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/organisms/main_listrecords.dart';
 
 class VieListrecords extends StatelessWidget {
   final String id;
@@ -8,7 +8,6 @@ class VieListrecords extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Layout(
       title: "Espacio de trabajo $id",
       builder: (context, screenSize) {

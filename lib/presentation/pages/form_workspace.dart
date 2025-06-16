@@ -21,19 +21,25 @@ class FormWorkspace extends StatelessWidget {
       title: title,
       builder: (context, screenSize) {
         if (screenSize == ScreenSize.mobile) {
-          return _buildForm(context, screenSize, title);
+          return BaseContainer(
+            margin: EdgeInsets.all(10),
+            child: _buildForm(context, screenSize, title),
+          );
         }
 
-        return Align(
-          alignment: Alignment.topCenter,
-          child: _buildForm(context, screenSize, title),
+        return BaseContainer(
+          margin: EdgeInsets.all(10),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: _buildForm(context, screenSize, title),
+          ),
         );
       },
     );
   }
 
   Widget _buildForm(BuildContext context, ScreenSize screenSize, String title) {
-    return BaseContainer(
+    return Container(
       width: screenSize == ScreenSize.mobile ? double.infinity : 600,
       height: screenSize == ScreenSize.mobile ? double.infinity : 600,
       margin: EdgeInsets.all(10),

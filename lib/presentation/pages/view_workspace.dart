@@ -4,7 +4,7 @@ import 'package:frontend_water_quality/core/enums/meter_state.dart';
 import 'package:frontend_water_quality/core/interface/meter_item.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/workspace/main_workspace.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/organisms/main_workspace.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 

@@ -4,7 +4,7 @@ import 'package:frontend_water_quality/core/interface/alert_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/alerts/alert_card.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/alerts/alert_tile.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/workspace/button_actions.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/button_actions.dart';
 
 class MainGridAlerts extends StatelessWidget {
   final ScreenSize screenSize;
@@ -112,7 +112,9 @@ class MainGridAlerts extends StatelessWidget {
           mainAxisSpacing: gap,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          children: screenSize == ScreenSize.mobile ? _buildTileAlerts() : _buildCardAlerts(),
+          children: screenSize == ScreenSize.mobile
+              ? _buildTileAlerts()
+              : _buildCardAlerts(),
         ),
       ),
     );
