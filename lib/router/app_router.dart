@@ -1,6 +1,5 @@
 // app_router.dart
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
-import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/pages/alerts.dart';
 import 'package:frontend_water_quality/presentation/pages/form_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/list_workspace.dart';
@@ -8,10 +7,10 @@ import 'package:frontend_water_quality/presentation/pages/login.dart';
 import 'package:frontend_water_quality/presentation/pages/register.dart';
 import 'package:frontend_water_quality/presentation/pages/profile.dart';
 import 'package:frontend_water_quality/presentation/pages/splash.dart';
-import 'package:frontend_water_quality/presentation/pages/view_listnotifications.dart';
-import 'package:frontend_water_quality/presentation/pages/view_listrecords.dart';
+import 'package:frontend_water_quality/presentation/pages/view_list_notifications.dart';
+import 'package:frontend_water_quality/presentation/pages/view_list_records.dart';
 import 'package:frontend_water_quality/presentation/pages/view_meter.dart';
-import 'package:frontend_water_quality/presentation/pages/view_notificationdetails.dart';
+import 'package:frontend_water_quality/presentation/pages/view_notification_details.dart';
 import 'package:frontend_water_quality/presentation/pages/view_workspace.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
@@ -161,9 +160,7 @@ class AppRouter {
       GoRoute(
         path: Routes.listNotifications.path,
         name: Routes.listNotifications.name,
-        builder: (context, state) => const ViewListNotifications(
-          screenSize: ScreenSize.mobile,
-        ),
+        builder: (context, state) => const ViewListNotifications(),
       ),
     ],
   );
