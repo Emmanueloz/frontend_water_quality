@@ -15,6 +15,23 @@ import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
+  static ListWorkspaces _getTypeWorkspace(String typeString) {
+    ListWorkspaces type;
+
+    switch (typeString) {
+      case 'mine':
+        type = ListWorkspaces.mine;
+        break;
+      case 'shared':
+        type = ListWorkspaces.shared;
+        break;
+      default:
+        type = ListWorkspaces.mine;
+        break;
+    }
+    return type;
+  }
+
   static final GoRouter router = GoRouter(
     initialLocation: Routes.splash.path,
     //debugLogDiagnostics: true, // Útil durante el desarrollo
@@ -38,19 +55,8 @@ class AppRouter {
         path: Routes.workspaces.path,
         name: Routes.workspaces.name,
         builder: (context, state) {
-          ListWorkspaces type;
-          final typeString = state.pathParameters['type'] ?? 'mine';
-          switch (typeString) {
-            case 'mine':
-              type = ListWorkspaces.mine;
-              break;
-            case 'shared':
-              type = ListWorkspaces.shared;
-              break;
-            default:
-              type = ListWorkspaces.mine;
-              break;
-          }
+          ListWorkspaces type =
+              _getTypeWorkspace(state.pathParameters['type'] ?? 'mine');
 
           return ListWorkspace(type: type);
         },
@@ -68,20 +74,9 @@ class AppRouter {
               name: Routes.workspace.name,
               builder: (context, state) {
                 final id = state.pathParameters['id'] ?? 'default';
-                final typeString = state.pathParameters['type'] ?? 'mine';
-                ListWorkspaces type;
+                ListWorkspaces type =
+                    _getTypeWorkspace(state.pathParameters['type'] ?? 'mine');
 
-                switch (typeString) {
-                  case 'mine':
-                    type = ListWorkspaces.mine;
-                    break;
-                  case 'shared':
-                    type = ListWorkspaces.shared;
-                    break;
-                  default:
-                    type = ListWorkspaces.mine;
-                    break;
-                }
                 return ViewWorkspace(id: id, type: type);
               },
               routes: [
@@ -114,7 +109,11 @@ class AppRouter {
                         name: Routes.listRecords.name,
                         builder: (context, state) {
                           final id = state.pathParameters['id'] ?? 'default';
-                          return VieListrecords(id: id);
+                          final idMeter =
+                              state.pathParameters['idMeter'] ?? 'default';
+                            ListWorkspaces type =
+                    _getTypeWorkspace(state.pathParameters['type'] ?? 'mine');
+                          return ViewListRecords(id: id, idMeter: idMeter,type: type,);
                         },
                       ),
                     ]),
