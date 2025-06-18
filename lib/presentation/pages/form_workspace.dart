@@ -3,6 +3,7 @@ import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/enums/type_workspace.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
+import 'package:frontend_water_quality/presentation/widgets/layout/layout_workspace.dart';
 
 class FormWorkspace extends StatelessWidget {
   final String? idWorkspace;
@@ -17,23 +18,54 @@ class FormWorkspace extends StatelessWidget {
         ? "Editar espacio de trabajo"
         : "Crear espacio de trabajo";
 
+    if (idWorkspace != null) {
+      return LayoutWorkspace(
+        title: title,
+        id: idWorkspace ?? "",
+        selectedIndex: 4,
+        builder: (context, screenSize) =>
+            _builderMain(context, screenSize, title),
+      );
+    }
+
     return Layout(
       title: title,
-      builder: (context, screenSize) {
-        if (screenSize == ScreenSize.mobile) {
-          return _buildForm(context, screenSize, title);
-        }
+      builder: (context, screenSize) =>
+          _builderMain(context, screenSize, title),
+    );
+  }
 
-        return Align(
-          alignment: Alignment.topCenter,
-          child: _buildForm(context, screenSize, title),
-        );
-      },
+  Widget _builderMain(
+      BuildContext context, ScreenSize screenSize, String title) {
+    if (screenSize == ScreenSize.mobile) {
+      return BaseContainer(
+        margin: EdgeInsets.all(10),
+        child: _buildForm(context, screenSize, title),
+      );
+    }
+
+    if (idWorkspace != null) {
+      return Expanded(
+        child: BaseContainer(
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: _buildForm(context, screenSize, title),
+          ),
+        ),
+      );
+    }
+
+    return BaseContainer(
+      margin: EdgeInsets.all(10),
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: _buildForm(context, screenSize, title),
+      ),
     );
   }
 
   Widget _buildForm(BuildContext context, ScreenSize screenSize, String title) {
-    return BaseContainer(
+    return Container(
       width: screenSize == ScreenSize.mobile ? double.infinity : 600,
       height: screenSize == ScreenSize.mobile ? double.infinity : 600,
       margin: EdgeInsets.all(10),
