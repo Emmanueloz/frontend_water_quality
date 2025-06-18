@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/interface/meter_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/base_container.dart';
@@ -10,7 +9,6 @@ import 'package:go_router/go_router.dart';
 
 class MainWorkspace extends StatelessWidget {
   final String id;
-  final ListWorkspaces type;
   final ScreenSize screenSize;
   final List<MeterItem> meters;
 
@@ -18,7 +16,6 @@ class MainWorkspace extends StatelessWidget {
     super.key,
     required this.id,
     required this.screenSize,
-    required this.type,
     required this.meters,
   });
 

@@ -73,48 +73,50 @@ class AppRouter {
             },
           ),
           GoRoute(
-              path: Routes.workspace.path,
-              name: Routes.workspace.name,
-              builder: (context, state) {
-                final id = state.pathParameters['id'] ?? 'default';
-                return ViewWorkspace(id: id, type: ListWorkspaces.mine);
-              },
-              routes: [
-                GoRoute(
-                    path: Routes.meter.path,
-                    name: Routes.meter.name,
+            path: Routes.workspace.path,
+            name: Routes.workspace.name,
+            builder: (context, state) {
+              final id = state.pathParameters['id'] ?? 'default';
+              return ViewWorkspace(id: id);
+            },
+            routes: [
+              GoRoute(
+                path: Routes.meter.path,
+                name: Routes.meter.name,
+                builder: (context, state) {
+                  final id = state.pathParameters['id'] ?? 'default';
+                  final idMeter = state.pathParameters['idMeter'] ?? 'default';
+                  return ViewMeter(
+                    id: id,
+                    idMeter: idMeter,
+                  );
+                },
+                routes: [
+                  GoRoute(
+                    path: Routes.listRecords.path,
+                    name: Routes.listRecords.name,
                     builder: (context, state) {
                       final id = state.pathParameters['id'] ?? 'default';
                       final idMeter =
                           state.pathParameters['idMeter'] ?? 'default';
-                      return ViewMeter(
-                          id: id, idMeter: idMeter, type: ListWorkspaces.mine);
+                      return ViewListRecords(
+                        id: id,
+                        idMeter: idMeter,
+                      );
                     },
-                    routes: [
-                      GoRoute(
-                        path: Routes.listRecords.path,
-                        name: Routes.listRecords.name,
-                        builder: (context, state) {
-                          final id = state.pathParameters['id'] ?? 'default';
-                          final idMeter =
-                              state.pathParameters['idMeter'] ?? 'default';
-                          return ViewListRecords(
-                            id: id,
-                            idMeter: idMeter,
-                            type: ListWorkspaces.mine,
-                          );
-                        },
-                      ),
-                    ]),
-                GoRoute(
-                  path: Routes.updateWorkspace.path,
-                  name: Routes.updateWorkspace.name,
-                  builder: (context, state) {
-                    final id = state.pathParameters['id'] ?? 'default';
-                    return FormWorkspace(idWorkspace: id);
-                  },
-                ),
-              ]),
+                  ),
+                ],
+              ),
+              GoRoute(
+                path: Routes.updateWorkspace.path,
+                name: Routes.updateWorkspace.name,
+                builder: (context, state) {
+                  final id = state.pathParameters['id'] ?? 'default';
+                  return FormWorkspace(idWorkspace: id);
+                },
+              ),
+            ],
+          ),
         ],
       ),
       GoRoute(

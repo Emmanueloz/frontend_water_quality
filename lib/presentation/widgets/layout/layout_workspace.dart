@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
@@ -10,7 +9,6 @@ class LayoutWorkspace extends StatelessWidget {
   final String title;
   final String id;
   final int selectedIndex;
-  final ListWorkspaces type;
   final Widget Function(BuildContext context, ScreenSize screenSize) builder;
 
   const LayoutWorkspace({
@@ -19,7 +17,6 @@ class LayoutWorkspace extends StatelessWidget {
     required this.id,
     required this.builder,
     required this.selectedIndex,
-    this.type = ListWorkspaces.mine,
   });
 
   @override

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/meter_state.dart';
 import 'package:frontend_water_quality/core/interface/meter_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_workspace.dart';
@@ -7,8 +6,10 @@ import 'package:frontend_water_quality/presentation/widgets/specific/workspace/o
 
 class ViewWorkspace extends StatelessWidget {
   final String id;
-  final ListWorkspaces type;
-  const ViewWorkspace({super.key, required this.id, required this.type});
+  const ViewWorkspace({
+    super.key,
+    required this.id,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,11 +17,9 @@ class ViewWorkspace extends StatelessWidget {
       id: id,
       title: "Espacio de trabajo $id",
       selectedIndex: 0,
-      type: type,
       builder: (context, screenSize) {
         return MainWorkspace(
           id: id,
-          type: type,
           screenSize: screenSize,
           meters: [
             MeterItem(

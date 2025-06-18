@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
@@ -10,7 +9,6 @@ class LayoutMeters extends StatelessWidget {
   final String title;
   final String id;
   final String idMeter;
-  final ListWorkspaces type;
   final int selectedIndex;
   final Widget Function(BuildContext context, ScreenSize screenSize) builder;
 
@@ -19,7 +17,6 @@ class LayoutMeters extends StatelessWidget {
     required this.title,
     required this.id,
     required this.idMeter,
-    required this.type,
     required this.selectedIndex,
     required this.builder,
   });
