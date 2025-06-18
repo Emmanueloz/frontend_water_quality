@@ -9,9 +9,10 @@ import 'package:frontend_water_quality/presentation/pages/recovery_password.dart
 import 'package:frontend_water_quality/presentation/pages/register.dart';
 import 'package:frontend_water_quality/presentation/pages/profile.dart';
 import 'package:frontend_water_quality/presentation/pages/splash.dart';
-import 'package:frontend_water_quality/presentation/pages/view_listrecords.dart';
+import 'package:frontend_water_quality/presentation/pages/view_list_notifications.dart';
+import 'package:frontend_water_quality/presentation/pages/view_list_records.dart';
 import 'package:frontend_water_quality/presentation/pages/view_meter.dart';
-import 'package:frontend_water_quality/presentation/pages/view_notificationdetails.dart';
+import 'package:frontend_water_quality/presentation/pages/view_notification_details.dart';
 import 'package:frontend_water_quality/presentation/pages/view_workspace.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
@@ -113,9 +114,13 @@ class AppRouter {
                           final id = state.pathParameters['id'] ?? 'default';
                           final idMeter =
                               state.pathParameters['idMeter'] ?? 'default';
-                            ListWorkspaces type =
-                    _getTypeWorkspace(state.pathParameters['type'] ?? 'mine');
-                          return ViewListRecords(id: id, idMeter: idMeter,type: type,);
+                          ListWorkspaces type = _getTypeWorkspace(
+                              state.pathParameters['type'] ?? 'mine');
+                          return ViewListRecords(
+                            id: id,
+                            idMeter: idMeter,
+                            type: type,
+                          );
                         },
                       ),
                     ]),
@@ -156,6 +161,11 @@ class AppRouter {
             id: id,
           );
         },
+      ),
+      GoRoute(
+        path: Routes.listNotifications.path,
+        name: Routes.listNotifications.name,
+        builder: (context, state) => const ViewListNotifications(),
       ),
       GoRoute(
         path: Routes.recoveryPassword.path,
