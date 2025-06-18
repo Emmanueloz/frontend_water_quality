@@ -15,7 +15,7 @@ class Routes {
   );
   static RouteProperties workspaces = RouteProperties(
     name: "workspaces",
-    path: "/workspaces/:type",
+    path: "/workspaces",
   );
   static RouteProperties createWorkspace = RouteProperties(
     name: "createWorkspace",

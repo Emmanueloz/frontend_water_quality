@@ -33,7 +33,6 @@ class LayoutWorkspace extends StatelessWidget {
           Routes.workspace.name,
           pathParameters: {
             "id": id,
-            "type": type.name,
           },
         );
       } else if (index == 1) {
@@ -42,7 +41,6 @@ class LayoutWorkspace extends StatelessWidget {
           Routes.alerts.name,
           pathParameters: {
             "id": id,
-            "type": type.name,
           },
         );
         print("Navigate to alerts");
@@ -57,7 +55,6 @@ class LayoutWorkspace extends StatelessWidget {
         context.goNamed(
           Routes.updateWorkspace.name,
           pathParameters: {
-            "type": type.name,
             'id': id,
           },
         );

@@ -34,7 +34,6 @@ class LayoutMeters extends StatelessWidget {
           pathParameters: {
             "id": id,
             "idMeter": idMeter,
-            "type": type.name,
           },
         );
       } else if (index == 1) {
@@ -44,7 +43,6 @@ class LayoutMeters extends StatelessWidget {
           pathParameters: {
             "id": id,
             "idMeter": idMeter,
-            "type": type.name,
           },
         );
       } else if (index == 2) {

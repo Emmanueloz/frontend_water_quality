@@ -129,7 +129,6 @@ class MainWorkspace extends StatelessWidget {
                 pathParameters: {
                   "id": id,
                   "idMeter": meter.id,
-                  "type": type.name,
                 },
               );
             },
@@ -149,7 +148,6 @@ class MainWorkspace extends StatelessWidget {
             pathParameters: {
               "id": id,
               "idMeter": meter.id,
-              "type": type.name,
             },
           );
         },

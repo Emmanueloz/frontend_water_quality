@@ -20,14 +20,14 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
         TextButton(
           child: const Text("Espacios de trabajo"),
           onPressed: () {
-            context.goNamed(Routes.workspaces.name, pathParameters: {
-              "type": ListWorkspaces.mine.name,
-            });
+            context.goNamed(Routes.workspaces.name);
           },
         ),
-        IconButton(icon: const Icon(Icons.notifications), onPressed: () {
-          context.goNamed(Routes.listNotifications.name);
-        }),
+        IconButton(
+            icon: const Icon(Icons.notifications),
+            onPressed: () {
+              context.goNamed(Routes.listNotifications.name);
+            }),
         ButtonProfile(
           username: "Username",
           email: "email@email.com",

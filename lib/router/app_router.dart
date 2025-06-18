@@ -18,21 +18,15 @@ import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
-  static ListWorkspaces _getTypeWorkspace(String typeString) {
-    ListWorkspaces type;
-
+  static ListWorkspaces _getTypeWorkspace(String? typeString) {
     switch (typeString) {
       case 'mine':
-        type = ListWorkspaces.mine;
-        break;
+        return ListWorkspaces.mine;
       case 'shared':
-        type = ListWorkspaces.shared;
-        break;
+        return ListWorkspaces.shared;
       default:
-        type = ListWorkspaces.mine;
-        break;
+        return ListWorkspaces.mine;
     }
-    return type;
   }
 
   static final GoRouter router = GoRouter(
@@ -58,9 +52,7 @@ class AppRouter {
         path: Routes.workspaces.path,
         name: Routes.workspaces.name,
         builder: (context, state) {
-          ListWorkspaces type =
-              _getTypeWorkspace(state.pathParameters['type'] ?? 'mine');
-
+          final type = _getTypeWorkspace(state.uri.queryParameters['type']);
           return ListWorkspace(type: type);
         },
         routes: [
@@ -73,14 +65,19 @@ class AppRouter {
             },
           ),
           GoRoute(
+            path: Routes.alerts.path,
+            name: Routes.alerts.name,
+            builder: (context, state) {
+              final id = state.pathParameters['id'] ?? 'default';
+              return AlertsScreen(idWorkspace: id);
+            },
+          ),
+          GoRoute(
               path: Routes.workspace.path,
               name: Routes.workspace.name,
               builder: (context, state) {
                 final id = state.pathParameters['id'] ?? 'default';
-                ListWorkspaces type =
-                    _getTypeWorkspace(state.pathParameters['type'] ?? 'mine');
-
-                return ViewWorkspace(id: id, type: type);
+                return ViewWorkspace(id: id, type: ListWorkspaces.mine);
               },
               routes: [
                 GoRoute(
@@ -90,21 +87,8 @@ class AppRouter {
                       final id = state.pathParameters['id'] ?? 'default';
                       final idMeter =
                           state.pathParameters['idMeter'] ?? 'default';
-                      final typeString = state.pathParameters['type'] ?? 'mine';
-                      ListWorkspaces type;
-
-                      switch (typeString) {
-                        case 'mine':
-                          type = ListWorkspaces.mine;
-                          break;
-                        case 'shared':
-                          type = ListWorkspaces.shared;
-                          break;
-                        default:
-                          type = ListWorkspaces.mine;
-                          break;
-                      }
-                      return ViewMeter(id: id, idMeter: idMeter, type: type);
+                      return ViewMeter(
+                          id: id, idMeter: idMeter, type: ListWorkspaces.mine);
                     },
                     routes: [
                       GoRoute(
@@ -114,12 +98,10 @@ class AppRouter {
                           final id = state.pathParameters['id'] ?? 'default';
                           final idMeter =
                               state.pathParameters['idMeter'] ?? 'default';
-                          ListWorkspaces type = _getTypeWorkspace(
-                              state.pathParameters['type'] ?? 'mine');
                           return ViewListRecords(
                             id: id,
                             idMeter: idMeter,
-                            type: type,
+                            type: ListWorkspaces.mine,
                           );
                         },
                       ),
@@ -133,14 +115,6 @@ class AppRouter {
                   },
                 ),
               ]),
-          GoRoute(
-            path: Routes.alerts.path,
-            name: Routes.alerts.name,
-            builder: (context, state) {
-              final id = state.pathParameters['id'] ?? 'default';
-              return AlertsScreen(idWorkspace: id);
-            },
-          ),
         ],
       ),
       GoRoute(
