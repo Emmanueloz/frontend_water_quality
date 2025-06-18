@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
@@ -10,7 +9,6 @@ class LayoutWorkspace extends StatelessWidget {
   final String title;
   final String id;
   final int selectedIndex;
-  final ListWorkspaces type;
   final Widget Function(BuildContext context, ScreenSize screenSize) builder;
 
   const LayoutWorkspace({
@@ -19,7 +17,6 @@ class LayoutWorkspace extends StatelessWidget {
     required this.id,
     required this.builder,
     required this.selectedIndex,
-    this.type = ListWorkspaces.mine,
   });
 
   @override
@@ -33,7 +30,6 @@ class LayoutWorkspace extends StatelessWidget {
           Routes.workspace.name,
           pathParameters: {
             "id": id,
-            "type": type.name,
           },
         );
       } else if (index == 1) {
@@ -42,7 +38,6 @@ class LayoutWorkspace extends StatelessWidget {
           Routes.alerts.name,
           pathParameters: {
             "id": id,
-            "type": type.name,
           },
         );
         print("Navigate to alerts");
@@ -57,7 +52,6 @@ class LayoutWorkspace extends StatelessWidget {
         context.goNamed(
           Routes.updateWorkspace.name,
           pathParameters: {
-            "type": type.name,
             'id': id,
           },
         );

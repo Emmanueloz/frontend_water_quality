@@ -79,9 +79,6 @@ class MainGridWorkspaces extends StatelessWidget {
                     print("Agregar espacio de trabajo");
                     context.goNamed(
                       Routes.createWorkspace.name,
-                      pathParameters: {
-                        "type": ListWorkspaces.mine.name,
-                      },
                     );
                   },
                   icon: const Icon(Icons.add),

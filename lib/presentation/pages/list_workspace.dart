@@ -17,14 +17,14 @@ class ListWorkspace extends StatelessWidget {
       if (index == 0) {
         context.goNamed(
           Routes.workspaces.name,
-          pathParameters: {
+          queryParameters: {
             "type": ListWorkspaces.mine.name,
           },
         );
       } else if (index == 1) {
         context.goNamed(
           Routes.workspaces.name,
-          pathParameters: {
+          queryParameters: {
             "type": ListWorkspaces.shared.name,
           },
         );
@@ -70,7 +70,6 @@ class ListWorkspace extends StatelessWidget {
           context.goNamed(
             Routes.workspace.name,
             pathParameters: {
-              "type": ListWorkspaces.mine.name,
               'id': "1",
             },
           );
@@ -85,7 +84,6 @@ class ListWorkspace extends StatelessWidget {
           context.goNamed(
             Routes.workspace.name,
             pathParameters: {
-              "type": ListWorkspaces.mine.name,
               'id': "2",
             },
           );
@@ -100,7 +98,6 @@ class ListWorkspace extends StatelessWidget {
           context.goNamed(
             Routes.workspace.name,
             pathParameters: {
-              "type": ListWorkspaces.mine.name,
               'id': "3",
             },
           );
@@ -115,7 +112,6 @@ class ListWorkspace extends StatelessWidget {
           context.goNamed(
             Routes.workspaces.name,
             pathParameters: {
-              "type": ListWorkspaces.mine.name,
               'id': "4",
             },
           );
@@ -135,7 +131,6 @@ class ListWorkspace extends StatelessWidget {
           context.goNamed(
             Routes.workspace.name,
             pathParameters: {
-              "type": ListWorkspaces.shared.name,
               'id': "5",
             },
           );
@@ -150,7 +145,6 @@ class ListWorkspace extends StatelessWidget {
           context.goNamed(
             Routes.workspace.name,
             pathParameters: {
-              "type": ListWorkspaces.shared.name,
               'id': "6",
             },
           );
@@ -165,7 +159,6 @@ class ListWorkspace extends StatelessWidget {
           context.goNamed(
             Routes.workspace.name,
             pathParameters: {
-              "type": ListWorkspaces.shared.name,
               'id': "7",
             },
           );

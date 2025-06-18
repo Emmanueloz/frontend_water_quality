@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/button_profile.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
@@ -20,14 +19,14 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
         TextButton(
           child: const Text("Espacios de trabajo"),
           onPressed: () {
-            context.goNamed(Routes.workspaces.name, pathParameters: {
-              "type": ListWorkspaces.mine.name,
-            });
+            context.goNamed(Routes.workspaces.name);
           },
         ),
-        IconButton(icon: const Icon(Icons.notifications), onPressed: () {
-          context.goNamed(Routes.listNotifications.name);
-        }),
+        IconButton(
+            icon: const Icon(Icons.notifications),
+            onPressed: () {
+              context.goNamed(Routes.listNotifications.name);
+            }),
         ButtonProfile(
           username: "Username",
           email: "email@email.com",
