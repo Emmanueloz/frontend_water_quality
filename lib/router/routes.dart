@@ -37,7 +37,7 @@ class Routes {
   );
   static RouteProperties alerts = RouteProperties(
     name: "alerts",
-    path: "/:id/alerts",
+    path: "/alerts",
   );
   static RouteProperties meter = RouteProperties(
     name: "meters",
