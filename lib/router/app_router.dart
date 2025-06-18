@@ -1,9 +1,11 @@
 // app_router.dart
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/presentation/pages/alerts.dart';
+import 'package:frontend_water_quality/presentation/pages/change_password.dart';
 import 'package:frontend_water_quality/presentation/pages/form_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/list_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/login.dart';
+import 'package:frontend_water_quality/presentation/pages/recovery_password.dart';
 import 'package:frontend_water_quality/presentation/pages/register.dart';
 import 'package:frontend_water_quality/presentation/pages/profile.dart';
 import 'package:frontend_water_quality/presentation/pages/splash.dart';
@@ -155,6 +157,20 @@ class AppRouter {
           );
         },
       ),
+      GoRoute(
+        path: Routes.recoveryPassword.path,
+        name: Routes.recoveryPassword.name,
+        builder: (context, state) =>
+            RecoveryPasswordPage(title: 'Recovery Password'),
+      ),
+      GoRoute(
+        path: Routes.changePassword.path,
+        name: Routes.changePassword.name,
+        builder: (context, state) => ChangePasswordPage(
+          title: 'change Password',
+          email: '',
+        ),
+      )
     ],
   );
 }
