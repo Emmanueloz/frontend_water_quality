@@ -43,7 +43,13 @@ class LayoutMeters extends StatelessWidget {
           },
         );
       } else if (index == 2) {
-        print("Predicciones");
+        context.goNamed(
+          Routes.predictions.name,
+          pathParameters: {
+            "id": id,
+            "idMeter": idMeter,
+          },
+        );
       } else if (index == 3) {
         print("Iterpretaciones");
       } else if (index == 4) {

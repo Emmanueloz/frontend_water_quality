@@ -93,6 +93,21 @@ class Routes {
     path: "/update",
   );
 
+  static RouteProperties predictions = RouteProperties(
+    name: "prerdictions",
+    path: "/predictions",
+  );
+
+  static RouteProperties predictionCreate = RouteProperties(
+    name: "prerdictionCreate",
+    path: "/create",
+  );
+
+  static RouteProperties prediction = RouteProperties(
+    name: "predictionDetails",
+    path: "/:idPrediction",
+  );
+
   static RouteProperties createMeter = RouteProperties(
     name: "createMeter",
     path: "/meter-create",

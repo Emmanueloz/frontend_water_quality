@@ -106,6 +106,29 @@ class AppRouter {
                     },
                   ),
                   GoRoute(
+                    path: Routes.predictions.path,
+                    name: Routes.predictions.name,
+                    builder: (context, state) {
+                      return Simple(title: "Predicciones");
+                    },
+                    routes: [
+                      GoRoute(
+                        path: Routes.predictionCreate.path,
+                        name: Routes.predictionCreate.name,
+                        builder: (context, state) {
+                          return Simple(title: "Create prediction");
+                        },
+                      ),
+                      GoRoute(
+                        path: Routes.prediction.path,
+                        name: Routes.prediction.name,
+                        builder: (context, state) {
+                          return Simple(title: "Prediction Detail");
+                        },
+                      ),
+                    ],
+                  ),
+                  GoRoute(
                     path: Routes.updateMeter.path,
                     name: Routes.updateMeter.name,
                     builder: (context, state) {
