@@ -59,7 +59,13 @@ class LayoutMeters extends StatelessWidget {
           },
         );
       } else if (index == 4) {
-        print("Connecition");
+        context.goNamed(
+          Routes.connectioMeter.name,
+          pathParameters: {
+            "id": id,
+            "idMeter": idMeter,
+          },
+        );
       } else if (index == 5) {
         context.goNamed(
           Routes.updateMeter.name,
@@ -95,6 +101,11 @@ class LayoutMeters extends StatelessWidget {
           label: "Interpretación",
           icon: Icons.auto_awesome_outlined,
           selectedIcon: Icons.auto_awesome,
+        ),
+        NavigationItem(
+          label: "Conección",
+          icon: Icons.wifi_tethering_outlined,
+          selectedIcon: Icons.wifi_tethering,
         ),
         NavigationItem(
           label: "Editar",

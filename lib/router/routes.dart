@@ -128,6 +128,11 @@ class Routes {
     path: "/:idInterpretation",
   );
 
+  static RouteProperties connectioMeter = RouteProperties(
+    name: "connectionMeter",
+    path: "/connection",
+  );
+
   static RouteProperties listRecords = RouteProperties(
     name: "listRecords",
     path: "/records",

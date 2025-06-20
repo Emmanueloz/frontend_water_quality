@@ -152,6 +152,13 @@ class AppRouter {
                     ],
                   ),
                   GoRoute(
+                    path: Routes.connectioMeter.path,
+                    name: Routes.connectioMeter.name,
+                    builder: (context, state) {
+                      return Simple(title: "Conección del medidor");
+                    },
+                  ),
+                  GoRoute(
                     path: Routes.updateMeter.path,
                     name: Routes.updateMeter.name,
                     builder: (context, state) {
