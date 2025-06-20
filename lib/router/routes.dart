@@ -113,6 +113,21 @@ class Routes {
     path: "/meter-create",
   );
 
+  static RouteProperties interpretations = RouteProperties(
+    name: "interpretations",
+    path: "/interpretations",
+  );
+
+  static RouteProperties interpretationCreate = RouteProperties(
+    name: "interpretationCreate",
+    path: "/create",
+  );
+
+  static RouteProperties interpretation = RouteProperties(
+    name: "interpretationDetails",
+    path: "/:idInterpretation",
+  );
+
   static RouteProperties listRecords = RouteProperties(
     name: "listRecords",
     path: "/records",

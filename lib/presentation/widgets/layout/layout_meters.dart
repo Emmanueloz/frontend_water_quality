@@ -51,11 +51,22 @@ class LayoutMeters extends StatelessWidget {
           },
         );
       } else if (index == 3) {
-        print("Iterpretaciones");
+        context.goNamed(
+          Routes.interpretations.name,
+          pathParameters: {
+            "id": id,
+            "idMeter": idMeter,
+          },
+        );
       } else if (index == 4) {
+        print("Connecition");
+      } else if (index == 5) {
         context.goNamed(
           Routes.updateMeter.name,
-          pathParameters: {"id": id, "idMeter": idMeter},
+          pathParameters: {
+            "id": id,
+            "idMeter": idMeter,
+          },
         );
       }
     }

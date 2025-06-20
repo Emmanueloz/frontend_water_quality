@@ -129,6 +129,29 @@ class AppRouter {
                     ],
                   ),
                   GoRoute(
+                    path: Routes.interpretations.path,
+                    name: Routes.interpretations.name,
+                    builder: (context, state) {
+                      return Simple(title: "Interpretaciones");
+                    },
+                    routes: [
+                      GoRoute(
+                        path: Routes.interpretationCreate.path,
+                        name: Routes.interpretationCreate.name,
+                        builder: (context, state) {
+                          return Simple(title: "Crear interpretación");
+                        },
+                      ),
+                      GoRoute(
+                        path: Routes.interpretation.path,
+                        name: Routes.interpretation.name,
+                        builder: (context, state) {
+                          return Simple(title: "Interpretación");
+                        },
+                      ),
+                    ],
+                  ),
+                  GoRoute(
                     path: Routes.updateMeter.path,
                     name: Routes.updateMeter.name,
                     builder: (context, state) {
