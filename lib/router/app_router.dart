@@ -8,6 +8,7 @@ import 'package:frontend_water_quality/presentation/pages/login.dart';
 import 'package:frontend_water_quality/presentation/pages/recovery_password.dart';
 import 'package:frontend_water_quality/presentation/pages/register.dart';
 import 'package:frontend_water_quality/presentation/pages/profile.dart';
+import 'package:frontend_water_quality/presentation/pages/simple.dart';
 import 'package:frontend_water_quality/presentation/pages/splash.dart';
 import 'package:frontend_water_quality/presentation/pages/view_list_notifications.dart';
 import 'package:frontend_water_quality/presentation/pages/view_list_records.dart';
@@ -73,6 +74,13 @@ class AppRouter {
             },
             routes: [
               GoRoute(
+                path: Routes.createMeter.path,
+                name: Routes.createMeter.name,
+                builder: (context, state) {
+                  return Simple(title: "Create Meter");
+                },
+              ),
+              GoRoute(
                 path: Routes.meter.path,
                 name: Routes.meter.name,
                 builder: (context, state) {
@@ -97,15 +105,67 @@ class AppRouter {
                       );
                     },
                   ),
+                  GoRoute(
+                    path: Routes.predictions.path,
+                    name: Routes.predictions.name,
+                    builder: (context, state) {
+                      return Simple(title: "Predicciones");
+                    },
+                    routes: [
+                      GoRoute(
+                        path: Routes.predictionCreate.path,
+                        name: Routes.predictionCreate.name,
+                        builder: (context, state) {
+                          return Simple(title: "Create prediction");
+                        },
+                      ),
+                      GoRoute(
+                        path: Routes.prediction.path,
+                        name: Routes.prediction.name,
+                        builder: (context, state) {
+                          return Simple(title: "Prediction Detail");
+                        },
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: Routes.interpretations.path,
+                    name: Routes.interpretations.name,
+                    builder: (context, state) {
+                      return Simple(title: "Interpretaciones");
+                    },
+                    routes: [
+                      GoRoute(
+                        path: Routes.interpretationCreate.path,
+                        name: Routes.interpretationCreate.name,
+                        builder: (context, state) {
+                          return Simple(title: "Crear interpretación");
+                        },
+                      ),
+                      GoRoute(
+                        path: Routes.interpretation.path,
+                        name: Routes.interpretation.name,
+                        builder: (context, state) {
+                          return Simple(title: "Interpretación");
+                        },
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: Routes.connectioMeter.path,
+                    name: Routes.connectioMeter.name,
+                    builder: (context, state) {
+                      return Simple(title: "Conección del medidor");
+                    },
+                  ),
+                  GoRoute(
+                    path: Routes.updateMeter.path,
+                    name: Routes.updateMeter.name,
+                    builder: (context, state) {
+                      return Simple(title: "Actualizar");
+                    },
+                  ),
                 ],
-              ),
-              GoRoute(
-                path: Routes.updateWorkspace.path,
-                name: Routes.updateWorkspace.name,
-                builder: (context, state) {
-                  final id = state.pathParameters['id'] ?? 'default';
-                  return FormWorkspace(idWorkspace: id);
-                },
               ),
               GoRoute(
                 path: Routes.alerts.path,
@@ -113,6 +173,44 @@ class AppRouter {
                 builder: (context, state) {
                   final id = state.pathParameters['id'] ?? 'default';
                   return AlertsScreen(idWorkspace: id);
+                },
+                routes: [
+                  GoRoute(
+                    path: Routes.createAlerts.path,
+                    name: Routes.createAlerts.name,
+                    builder: (context, state) {
+                      return Simple(title: "Create Alert");
+                    },
+                  ),
+                  GoRoute(
+                    path: Routes.updateAlerts.path,
+                    name: Routes.updateAlerts.name,
+                    builder: (context, state) {
+                      return Simple(title: "Update Alert");
+                    },
+                  ),
+                ],
+              ),
+              GoRoute(
+                path: Routes.guests.path,
+                name: Routes.guests.name,
+                builder: (context, state) {
+                  return Simple(title: "Invitados");
+                },
+              ),
+              GoRoute(
+                path: Routes.locationMeters.path,
+                name: Routes.locationMeters.name,
+                builder: (context, state) {
+                  return Simple(title: "Ubicación");
+                },
+              ),
+              GoRoute(
+                path: Routes.updateWorkspace.path,
+                name: Routes.updateWorkspace.name,
+                builder: (context, state) {
+                  final id = state.pathParameters['id'] ?? 'default';
+                  return FormWorkspace(idWorkspace: id);
                 },
               ),
             ],

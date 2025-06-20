@@ -24,8 +24,6 @@ class LayoutWorkspace extends StatelessWidget {
     void onDestinationSelected(int index) {
       if (index == 0) {
         // Navigate to meters
-        print("Navigate to meters");
-
         context.goNamed(
           Routes.workspace.name,
           pathParameters: {
@@ -40,12 +38,22 @@ class LayoutWorkspace extends StatelessWidget {
             "id": id,
           },
         );
-        print("Navigate to alerts");
       } else if (index == 2) {
         // Navigate to guests
-        print("Navigate to guests");
+        context.goNamed(
+          Routes.guests.name,
+          pathParameters: {
+            "id": id,
+          },
+        );
       } else if (index == 3) {
-        // Navigate to guests
+        // Navigate to location
+        context.goNamed(
+          Routes.locationMeters.name,
+          pathParameters: {
+            "id": id,
+          },
+        );
         print("Locations meters");
       } else if (index == 4) {
         // Navigate to settings

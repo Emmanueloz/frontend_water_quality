@@ -13,40 +13,12 @@ class Routes {
     name: "register",
     path: "/register",
   );
-  static RouteProperties workspaces = RouteProperties(
-    name: "workspaces",
-    path: "/workspaces",
-  );
-  static RouteProperties createWorkspace = RouteProperties(
-    name: "createWorkspace",
-    path: "/create",
-    pathRoot: "/workspace/mine",
-  );
-  static RouteProperties workspace = RouteProperties(
-    name: "workspace",
-    path: "/:id",
-    pathRoot: "/workspace/",
-  );
-  static RouteProperties updateWorkspace = RouteProperties(
-    name: "updateWorkspace",
-    path: "/update",
-  );
+
   static RouteProperties profile = RouteProperties(
     name: "profile",
     path: "/profile",
   );
-  static RouteProperties alerts = RouteProperties(
-    name: "alerts",
-    path: "/alerts",
-  );
-  static RouteProperties meter = RouteProperties(
-    name: "meters",
-    path: "/meter/:idMeter",
-  );
-  static RouteProperties listRecords = RouteProperties(
-    name: "listRecords",
-    path: "/records",
-  );
+
   static RouteProperties notificationDetails = RouteProperties(
     name: "notificationDetails",
     path: "/notification/:id",
@@ -63,5 +35,106 @@ class Routes {
   static RouteProperties changePassword = RouteProperties(
     name: "changePassword",
     path: "/change-password",
+  );
+
+  // Workspace
+  static RouteProperties workspaces = RouteProperties(
+    name: "workspaces",
+    path: "/workspaces",
+  );
+  static RouteProperties createWorkspace = RouteProperties(
+    name: "createWorkspace",
+    path: "/create",
+    pathRoot: "/workspace/mine",
+  );
+  static RouteProperties workspace = RouteProperties(
+    name: "workspace",
+    path: "/:id",
+    pathRoot: "/workspace/",
+  );
+
+  static RouteProperties alerts = RouteProperties(
+    name: "alerts",
+    path: "/alerts",
+  );
+
+  static RouteProperties createAlerts = RouteProperties(
+    name: "createAlerts",
+    path: "/create",
+  );
+
+  static RouteProperties updateAlerts = RouteProperties(
+    name: "updateAlerts",
+    path: "/:idAlert/update",
+  );
+
+  static RouteProperties guests = RouteProperties(
+    name: "guests",
+    path: "/guests",
+  );
+
+  static RouteProperties locationMeters = RouteProperties(
+    name: "locationMeters",
+    path: "/locations",
+  );
+
+  static RouteProperties updateWorkspace = RouteProperties(
+    name: "updateWorkspace",
+    path: "/update",
+  );
+
+  static RouteProperties meter = RouteProperties(
+    name: "meters",
+    path: "/meter/:idMeter",
+  );
+
+  static RouteProperties updateMeter = RouteProperties(
+    name: "updateMeter",
+    path: "/update",
+  );
+
+  static RouteProperties predictions = RouteProperties(
+    name: "prerdictions",
+    path: "/predictions",
+  );
+
+  static RouteProperties predictionCreate = RouteProperties(
+    name: "prerdictionCreate",
+    path: "/create",
+  );
+
+  static RouteProperties prediction = RouteProperties(
+    name: "predictionDetails",
+    path: "/:idPrediction",
+  );
+
+  static RouteProperties createMeter = RouteProperties(
+    name: "createMeter",
+    path: "/meter-create",
+  );
+
+  static RouteProperties interpretations = RouteProperties(
+    name: "interpretations",
+    path: "/interpretations",
+  );
+
+  static RouteProperties interpretationCreate = RouteProperties(
+    name: "interpretationCreate",
+    path: "/create",
+  );
+
+  static RouteProperties interpretation = RouteProperties(
+    name: "interpretationDetails",
+    path: "/:idInterpretation",
+  );
+
+  static RouteProperties connectioMeter = RouteProperties(
+    name: "connectionMeter",
+    path: "/connection",
+  );
+
+  static RouteProperties listRecords = RouteProperties(
+    name: "listRecords",
+    path: "/records",
   );
 }

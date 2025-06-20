@@ -43,8 +43,37 @@ class LayoutMeters extends StatelessWidget {
           },
         );
       } else if (index == 2) {
-        // Navegar a editar medidor (puedes ajustar la ruta si existe)
-        // context.goNamed(Routes.editMeter.name, ...);
+        context.goNamed(
+          Routes.predictions.name,
+          pathParameters: {
+            "id": id,
+            "idMeter": idMeter,
+          },
+        );
+      } else if (index == 3) {
+        context.goNamed(
+          Routes.interpretations.name,
+          pathParameters: {
+            "id": id,
+            "idMeter": idMeter,
+          },
+        );
+      } else if (index == 4) {
+        context.goNamed(
+          Routes.connectioMeter.name,
+          pathParameters: {
+            "id": id,
+            "idMeter": idMeter,
+          },
+        );
+      } else if (index == 5) {
+        context.goNamed(
+          Routes.updateMeter.name,
+          pathParameters: {
+            "id": id,
+            "idMeter": idMeter,
+          },
+        );
       }
     }
 
@@ -54,14 +83,29 @@ class LayoutMeters extends StatelessWidget {
       onDestinationSelected: onDestinationSelected,
       destinations: [
         NavigationItem(
-          label: "Datos",
+          label: "Monitoreo",
+          icon: Icons.speed_outlined,
+          selectedIcon: Icons.speed_rounded,
+        ),
+        NavigationItem(
+          label: "Registros",
+          icon: Icons.line_axis_outlined,
+          selectedIcon: Icons.line_axis,
+        ),
+        NavigationItem(
+          label: "Predicciones",
           icon: Icons.analytics_outlined,
           selectedIcon: Icons.analytics,
         ),
         NavigationItem(
-          label: "Historial",
-          icon: Icons.history_outlined,
-          selectedIcon: Icons.history,
+          label: "Interpretación",
+          icon: Icons.auto_awesome_outlined,
+          selectedIcon: Icons.auto_awesome,
+        ),
+        NavigationItem(
+          label: "Conección",
+          icon: Icons.wifi_tethering_outlined,
+          selectedIcon: Icons.wifi_tethering,
         ),
         NavigationItem(
           label: "Editar",
