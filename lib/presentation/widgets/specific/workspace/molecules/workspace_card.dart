@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/molecules/base_card.dart';
 
 class WorkspaceCard extends StatelessWidget {
   final String id;
@@ -20,32 +21,14 @@ class WorkspaceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget iconAvatar = Icon(Icons.lock_outlined);
 
-    return Card(
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 4),
-              Text("Creador: $owner"),
-              Spacer(),
-              Chip(
-                avatar: iconAvatar,
-                label: Text(type),
-              ),
-            ],
-          ),
-        ),
+    return BaseCard(
+      title: title,
+      subtitle: "Creador: $owner",
+      chip: Chip(
+        avatar: iconAvatar,
+        label: Text(type),
       ),
+      onTap: onTap,
     );
   }
 }
