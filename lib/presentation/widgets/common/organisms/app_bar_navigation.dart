@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/presentation/widgets/common/button_profile.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/molecules/button_profile.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 

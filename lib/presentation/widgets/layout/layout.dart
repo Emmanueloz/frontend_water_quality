@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
-import 'package:frontend_water_quality/presentation/widgets/common/app_bar_navigation.dart';
-import 'package:frontend_water_quality/presentation/widgets/common/drawer_navigation.dart';
-import 'package:frontend_water_quality/presentation/widgets/common/sidebar.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/organisms/app_bar_navigation.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/organisms/drawer_navigation.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/organisms/sidebar.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
 
 class Layout extends StatelessWidget {
