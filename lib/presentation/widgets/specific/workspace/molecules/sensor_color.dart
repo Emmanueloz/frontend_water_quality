@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/sensor_container.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/atoms/sensor_container.dart';
 
 class SensorColor extends StatelessWidget {
   final int red;
