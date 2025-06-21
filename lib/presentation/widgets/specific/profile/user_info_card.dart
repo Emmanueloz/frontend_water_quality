@@ -3,7 +3,7 @@ import 'package:frontend_water_quality/core/constants/profile_ui.dart';
 import 'package:frontend_water_quality/presentation/pages/profile.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/profile/profile_info_field.dart';
 
-import '../../common/action_button.dart';
+import '../../common/atoms/action_button.dart';
 // import '../../common/base_container.dart';
 
 class UserInfoCard extends StatelessWidget {
@@ -53,23 +53,25 @@ class UserInfoCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               ActionButton(
-                  onPressed: () {
-                    // Lógica de Resetear
-                  },
-                  label: 'Resetear',
-                  style: ActionButtonStyle.outlined, // botón con borde
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                  width: _getWithActionButton(),
-                ),
+                onPressed: () {
+                  // Lógica de Resetear
+                },
+                label: 'Resetear',
+                style: ActionButtonStyle.outlined, // botón con borde
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                width: _getWithActionButton(),
+              ),
               ActionButton(
-                  onPressed: () {
-                    // Lógica de Guardar
-                  },
-                  label: 'Guardar',
-                  style: ActionButtonStyle.filled, // botón con fondo sólido
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                  width: _getWithActionButton(),
-                ),
+                onPressed: () {
+                  // Lógica de Guardar
+                },
+                label: 'Guardar',
+                style: ActionButtonStyle.filled, // botón con fondo sólido
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                width: _getWithActionButton(),
+              ),
             ],
           ),
         ],

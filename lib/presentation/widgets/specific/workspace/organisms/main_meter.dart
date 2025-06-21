@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
-import 'package:frontend_water_quality/presentation/widgets/common/base_container.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/button_actions.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/radial_gauge_meter.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/sensor_color.dart';

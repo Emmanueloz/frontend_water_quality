@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/meter_state.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/molecules/base_card.dart';
 
 class MeterCard extends StatelessWidget {
   final String id;
@@ -16,30 +17,10 @@ class MeterCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                name,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              Spacer(),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: _buildChip(context),
-              ),
-            ],
-          ),
-        ),
-      ),
+    return BaseCard(
+      title: name,
+      chip: _buildChip(context),
+      onTap: onTap,
     );
   }
 

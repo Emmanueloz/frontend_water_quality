@@ -1,31 +1,28 @@
 import 'package:flutter/material.dart';
 
-class WorkspaceCard extends StatelessWidget {
-  final String id;
+class BaseCard extends StatelessWidget {
   final String title;
-  final String owner;
-  final String type;
+  final String? subtitle;
+  final Chip? chip;
   final void Function()? onTap;
 
-  const WorkspaceCard({
+  const BaseCard({
     super.key,
-    required this.id,
     required this.title,
-    required this.owner,
-    required this.type,
+    this.subtitle,
+    this.chip,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    Widget iconAvatar = Icon(Icons.lock_outlined);
-
     return Card(
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.all(10),
           child: Column(
+            spacing: 4,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
@@ -35,13 +32,13 @@ class WorkspaceCard extends StatelessWidget {
                     .bodyLarge
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 4),
-              Text("Creador: $owner"),
+              Text(subtitle ?? ''),
               Spacer(),
-              Chip(
-                avatar: iconAvatar,
-                label: Text(type),
-              ),
+              if (chip != null)
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: chip!,
+                ),
             ],
           ),
         ),

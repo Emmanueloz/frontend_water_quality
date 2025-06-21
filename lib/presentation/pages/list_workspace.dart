@@ -3,7 +3,7 @@ import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/organisms/main_grid_workspaces.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/workspace/atoms/workspace_card.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/workspace_card.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 

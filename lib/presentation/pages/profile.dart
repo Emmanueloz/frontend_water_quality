@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/constants/profile_ui.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
-import 'package:frontend_water_quality/presentation/widgets/common/base_container.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/profile/profile_header.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/profile/user_info_card.dart';
-
 
 // Modelo para datos del usuario
 class UserProfile {
@@ -35,11 +34,12 @@ class Profile extends StatelessWidget {
 
   Widget _buildProfileContent(ScreenSize screenSize) {
     final content = _ProfileContent(screenSize: screenSize);
-    
+
     if (_isDesktop(screenSize)) {
       return Align(
         alignment: Alignment.topCenter,
-        child: content,);
+        child: content,
+      );
     }
     return SingleChildScrollView(
       child: content,
@@ -61,43 +61,45 @@ class _ProfileContent extends StatelessWidget {
 
   // Datos del usuario (en una app real vendría de un provider/bloc)
   UserProfile get _userProfile => const UserProfile(
-    name: 'Marcos esp',
-    email: 'mrlsp.452@gmail.com',
-    phone: '919 453 2398',
-    role: 'cliente',
-  );
+        name: 'Marcos esp',
+        email: 'mrlsp.452@gmail.com',
+        phone: '919 453 2398',
+        role: 'cliente',
+      );
 
   @override
   Widget build(BuildContext context) {
     return BaseContainer(
       width: _getCardWidth(),
       height: _getCardHeight(),
-      margin: EdgeInsets.symmetric(vertical: ProfileConstants.verticalPadding, horizontal: ProfileConstants.horizontalPadding),
+      margin: EdgeInsets.symmetric(
+          vertical: ProfileConstants.verticalPadding,
+          horizontal: ProfileConstants.horizontalPadding),
       child: Column(
-            children: [
-              _ProfileCard(
-                user: _userProfile,
-                width: _getCardWidth(),
-              ),
-              UserInfoCard(
-                user: _userProfile,
-                width: _getCardWidth(),
-              ),
-            ],
+        children: [
+          _ProfileCard(
+            user: _userProfile,
+            width: _getCardWidth(),
           ),
+          UserInfoCard(
+            user: _userProfile,
+            width: _getCardWidth(),
+          ),
+        ],
+      ),
     );
   }
 
   double _getCardWidth() {
-    return _isMobileOrTablet 
-        ? double.infinity 
+    return _isMobileOrTablet
+        ? double.infinity
         : ProfileConstants.profileCardWidth;
   }
 
   // TODO: funcion para obtener el height de la card
   double _getCardHeight() {
-    return _isMobileOrTablet 
-        ? ProfileConstants.profileCardHeightMobile 
+    return _isMobileOrTablet
+        ? ProfileConstants.profileCardHeightMobile
         : ProfileConstants.profileCardHeightDesktop;
   }
 }
@@ -114,7 +116,7 @@ class _ProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return Container(
       width: width,
       padding: const EdgeInsets.all(ProfileConstants.horizontalPadding),
@@ -139,11 +141,11 @@ class _ProfileAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return Container(
       width: ProfileConstants.avatarSize,
       height: ProfileConstants.avatarSize,
-      decoration:  BoxDecoration(
+      decoration: BoxDecoration(
         color: colorScheme.secondary, // Color de fondo del avatar
         shape: BoxShape.circle,
       ),

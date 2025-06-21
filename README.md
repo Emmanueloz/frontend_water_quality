@@ -51,9 +51,12 @@ lib/
 │   ├── pages/             # App screens (login, dashboard, etc.).
 │   ├── providers/         # State management using Provider.
 │   └── widgets/
-│       ├── common/        # Reusable shared widgets.
+│       ├── common/        # Reusable shared widgets. Using atomic design principles.
+│       │   ├── atoms/     # Basic building blocks (buttons, inputs, borders).
+│       │   ├── molecules/ # Combinations of atoms (card, form).
+│       │   └── organisms/ # Complex components (header, footer).
 │       ├── layout/        # Layout-specific widgets (headers, navigation).
-│       └── specific/      # Feature-specific widgets.
+│       └── specific/      # Feature-specific widgets. Using atomic design principles.
 │
 └── routes/                # App routing and navigation logic.
 ```
