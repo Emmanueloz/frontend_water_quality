@@ -110,8 +110,7 @@ class LayoutMeters extends StatelessWidget {
         NavigationItem(
           label: "Editar",
           icon: Icons.edit_outlined,
-          selectedIcon: Icons.edit,
-        ),
+          selectedIcon: Icons.edit,),
       ],
       builder: builder,
     );

@@ -2,6 +2,7 @@
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/presentation/pages/alerts.dart';
 import 'package:frontend_water_quality/presentation/pages/change_password.dart';
+import 'package:frontend_water_quality/presentation/pages/form_meters.dart';
 import 'package:frontend_water_quality/presentation/pages/form_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/list_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/login.dart';
@@ -77,7 +78,7 @@ class AppRouter {
                 path: Routes.createMeter.path,
                 name: Routes.createMeter.name,
                 builder: (context, state) {
-                  return Simple(title: "Create Meter");
+                  return FormMeters();
                 },
               ),
               GoRoute(
@@ -162,7 +163,9 @@ class AppRouter {
                     path: Routes.updateMeter.path,
                     name: Routes.updateMeter.name,
                     builder: (context, state) {
-                      return Simple(title: "Actualizar");
+                      return FormMeters(
+                        idMeter: state.pathParameters['idMeter'],
+                      );
                     },
                   ),
                 ],
