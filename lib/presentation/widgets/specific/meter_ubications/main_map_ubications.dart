@@ -87,40 +87,40 @@ class MainMapUbications extends StatelessWidget {
   }
 
   List<Marker> _buildMarkers(BuildContext context) {
-    return ubications.map((d) {
-      return Marker(
-        point: LatLng(d.latitude, d.longitude),
-        width: 40,
-        height: 40,
-        child: GestureDetector(
-          onTap: () => _showMarkerInfo(context, d.name),
-          child: Icon(
-            Icons.location_pin,
-            color: Colors.blue,
-            size: 40,
-          ),
-        ),
-      );
-    }).toList();
-  }
-
-  void _showMarkerInfo(BuildContext context, String title) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          // content: Text(description),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cerrar'),
+  return ubications.map((d) {
+    return Marker(
+      point: LatLng(d.latitude, d.longitude),
+      width: 100,   // Asegúrate de que haya espacio para el texto
+      height: 80,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 1. El “tooltip” siempre visible
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.8),
+              borderRadius: BorderRadius.circular(4),
+              boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 2)],
             ),
-          ],
-        );
-      },
+            child: Text(
+              d.name,
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            ),
+          ),
+          const SizedBox(height: 4),
+          // 2. El icono del marcador
+          Icon(
+              Icons.location_pin,
+              color: Colors.blue,
+              size: 40,
+            ),
+        ],
+      ),
     );
-  }
+  }).toList();
+}
+
 
   double _getwidht() {
     if (screenSize == ScreenSize.largeDesktop) {
