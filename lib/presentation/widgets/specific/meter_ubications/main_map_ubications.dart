@@ -25,61 +25,65 @@ class MainMapUbications extends StatelessWidget {
       ubications.first.longitude,
     );
 
+    if (screenSize == ScreenSize.smallDesktop ||
+        screenSize == ScreenSize.largeDesktop) {
+          return Expanded(
+            child: _buildMap(initialCenter, context, markers),
+          );
+    }
+    return _buildMap(initialCenter, context, markers);
+  }
+
+  Widget _buildMap(LatLng initialCenter, BuildContext context, List<Marker> markers) {
     return BaseContainer(
-      width: _getwidht(),
-      height: _getHeight(),
-      margin: const EdgeInsets.all(10),
-      child: FlutterMap(
-        options: MapOptions(
-          initialCenter: initialCenter,
-          initialZoom: kIsWeb ? 8.0 : 6.0, // Zoom más conservador en web
-          minZoom: kIsWeb ? 6.0 : 5.0, // Límites más restrictivos en web
-          maxZoom: kIsWeb ? 16.0 : 18.0, // Máximo menor en web
-          // Límites más conservadores para web
-          cameraConstraint: kIsWeb
-              ? CameraConstraint.contain(
-                  bounds: LatLngBounds(
-                    LatLng(16.0, -94.0), // SW: Sur-oeste de tu región
-                    LatLng(17.5, -91.0), // NE: Norte-este de tu región
-                  ),
-                )
-              : CameraConstraint.contain(
-                  bounds: LatLngBounds(
-                    LatLng(-90, -180),
-                    LatLng(90, 180),
-                  ),
+    width: _getwidht(),
+    height: _getHeight(),
+    margin: const EdgeInsets.all(10),
+    child: FlutterMap(
+      options: MapOptions(
+        initialCenter: initialCenter,
+        initialZoom: kIsWeb ? 8.0 : 6.0, // Zoom más conservador en web
+        minZoom: kIsWeb ? 6.0 : 5.0, // Límites más restrictivos en web
+        maxZoom: kIsWeb ? 16.0 : 18.0, // Máximo menor en web
+        // Límites más conservadores para web
+        cameraConstraint: kIsWeb
+            ? CameraConstraint.contain(
+                bounds: LatLngBounds(
+                  LatLng(-90, -180),
+                  LatLng(90, 180), // NE: Norte-este de tu región
                 ),
-          interactionOptions: InteractionOptions(
-            flags: kIsWeb
-                ? InteractiveFlag.all & ~InteractiveFlag.rotate
-                : InteractiveFlag.all,
-          ),
-        ),
-        children: [
-          TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-            userAgentPackageName: 'com.example.app',
-            maxZoom: kIsWeb ? 16 : 19,
-            minZoom: kIsWeb ? 6 : 5,
-            tileDimension: 256,
-            retinaMode: kIsWeb ? false : RetinaMode.isHighDensity(context),
-            errorTileCallback: (tile, error, stackTrace) {
-              if (kDebugMode) {
-                print('Error loading tile: $error');
-              }
-            },
-            maxNativeZoom: 18,
-            tileProvider: kIsWeb
-                ? CancellableNetworkTileProvider()
-                : NetworkTileProvider(),
-            
-          ),
-          MarkerLayer(
-            markers: markers,
-          ),
-        ],
+              )
+            : CameraConstraint.contain(
+                bounds: LatLngBounds(
+                  LatLng(-90, -180),
+                  LatLng(90, 180),
+                ),
+              ),
       ),
-    );
+      children: [
+        TileLayer(
+          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+          userAgentPackageName: 'com.example.app',
+          maxZoom: kIsWeb ? 16 : 19,
+          minZoom: kIsWeb ? 6 : 5,
+          tileDimension: 256,
+          retinaMode: kIsWeb ? false : RetinaMode.isHighDensity(context),
+          errorTileCallback: (tile, error, stackTrace) {
+            if (kDebugMode) {
+              print('Error loading tile: $error');
+            }
+          },
+          maxNativeZoom: 18,
+          tileProvider: kIsWeb
+              ? CancellableNetworkTileProvider()
+              : NetworkTileProvider(),
+        ),
+        MarkerLayer(
+          markers: markers,
+        ),
+      ],
+    ),
+  );
   }
 
   List<Marker> _buildMarkers(BuildContext context) {
@@ -118,16 +122,20 @@ class MainMapUbications extends StatelessWidget {
     );
   }
 
-  double _getwidht(){
-    if(screenSize == ScreenSize.smallDesktop || screenSize == ScreenSize.largeDesktop){
-      return 1200;
+  double _getwidht() {
+    if (screenSize == ScreenSize.largeDesktop) {
+      return 1100;
+    } else if (screenSize == ScreenSize.smallDesktop) {
+      return 800;
     }
     return double.infinity;
   }
 
   double _getHeight() {
-    if (screenSize == ScreenSize.smallDesktop || screenSize == ScreenSize.largeDesktop) {
+    if (screenSize == ScreenSize.largeDesktop) {
       return 900;
+    } else if (screenSize == ScreenSize.smallDesktop) {
+      return 600;
     }
     return double.infinity;
   }
