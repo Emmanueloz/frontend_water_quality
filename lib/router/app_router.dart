@@ -78,7 +78,10 @@ class AppRouter {
                 path: Routes.createMeter.path,
                 name: Routes.createMeter.name,
                 builder: (context, state) {
-                  return FormMeters();
+                  return FormMeters(
+                    id: state.pathParameters['id'] ?? 'default',
+                    idMeter: state.pathParameters['idMeter'],
+                  );
                 },
               ),
               GoRoute(
@@ -164,6 +167,7 @@ class AppRouter {
                     name: Routes.updateMeter.name,
                     builder: (context, state) {
                       return FormMeters(
+                        id: state.pathParameters['id'] ?? 'default',
                         idMeter: state.pathParameters['idMeter'],
                       );
                     },

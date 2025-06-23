@@ -70,8 +70,8 @@ class LayoutMeters extends StatelessWidget {
         context.goNamed(
           Routes.updateMeter.name,
           pathParameters: {
-            "id": id,
-            "idMeter": idMeter,
+            "id": "1",
+            "idMeter": "3",
           },
         );
       }
