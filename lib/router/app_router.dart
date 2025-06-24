@@ -15,6 +15,7 @@ import 'package:frontend_water_quality/presentation/pages/view_list_records.dart
 import 'package:frontend_water_quality/presentation/pages/view_meter.dart';
 import 'package:frontend_water_quality/presentation/pages/view_notification_details.dart';
 import 'package:frontend_water_quality/presentation/pages/view_workspace.dart';
+import 'package:frontend_water_quality/presentation/pages/weather_page.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
@@ -156,6 +157,17 @@ class AppRouter {
                     name: Routes.connectioMeter.name,
                     builder: (context, state) {
                       return Simple(title: "Conección del medidor");
+                    },
+                  ),
+                  GoRoute(
+                    path: Routes.weather.path,
+                    name: Routes.weather.name,
+                    builder: (context, state) {
+                      final id = state.pathParameters['id'] ?? 'default';
+                      final idMeter =
+                          state.pathParameters['idMeter'] ?? 'default';
+
+                      return WeatherPage(id: id, idMeter: idMeter);
                     },
                   ),
                   GoRoute(

@@ -116,6 +116,7 @@ class Layout extends StatelessWidget {
   Widget _buildBottomNavigationBar(BuildContext context) {
     return NavigationBar(
       selectedIndex: selectedIndex ?? 0,
+      labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       destinations: _buildNavigationDestinations(context),
       onDestinationSelected: onDestinationSelected,
     );
