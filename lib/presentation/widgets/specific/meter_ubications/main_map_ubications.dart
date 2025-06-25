@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/meter_ubications/main_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:frontend_water_quality/core/interface/meter_ubication.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
@@ -40,35 +40,45 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
   @override
   Widget build(BuildContext context) {
     final markers = _buildMarkers(context);
-    final mapWidget = _MainMap(
+    final mapWidget = MainMap(
         mapController: _mapController,
         initialCenter: _initialCenter,
         initialZoom: _initialZoom,
         markers: markers);
+    final widthBox = _getWidth(context);
+    final heightBox = _getHeight(context);
 
-
-    return Stack(
-      children: [
-        BaseContainer(
-          width: _getWidth(),
-          height: _getHeight(),
-          margin: const EdgeInsets.all(10),
-          child:  mapWidget,
-        ),
-        // Botón para resetear vista
-        Positioned(
-          top: 16,
-          right: 16,
-          child: FloatingActionButton(
-            mini: true,
-            onPressed: () {
-              _mapController.move(_initialCenter, _initialZoom);
-            },
-            tooltip: 'Volver al zoom inicial',
-            child: const Icon(Icons.refresh),
+    return Expanded(
+      child: Column(
+        children: [
+          Expanded(
+            child: Stack(
+              children: [
+                BaseContainer(
+                  width: widthBox,
+                  height: heightBox,
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                  child: mapWidget,
+                ),
+                // Botón para resetear vista
+                Positioned(
+                  top: 16,
+                  right: 16,
+                  child: FloatingActionButton(
+                    mini: true,
+                    onPressed: () {
+                      _mapController.move(_initialCenter, _initialZoom);
+                    },
+                    tooltip: 'Volver al zoom inicial',
+                    child: const Icon(Icons.refresh),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -106,60 +116,24 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
     }).toList();
   }
 
-  double _getWidth() {
-    if (widget.screenSize == ScreenSize.largeDesktop) return 1200;
-    if (widget.screenSize == ScreenSize.smallDesktop) return 900;
+  double _getWidth(BuildContext context) {
+    print("Screen size: ${widget.screenSize}");
+    if (widget.screenSize == ScreenSize.largeDesktop) {
+      return MediaQuery.of(context).size.width * 0.65;
+    }
+    if (widget.screenSize == ScreenSize.smallDesktop) {
+      return MediaQuery.of(context).size.width * 0.70;
+    }
     return double.infinity;
   }
 
-  double _getHeight() {
-    if (widget.screenSize == ScreenSize.largeDesktop) return 1000;
-    if (widget.screenSize == ScreenSize.smallDesktop) return 600;
+  double _getHeight(BuildContext context) {
+    if (widget.screenSize == ScreenSize.largeDesktop) {
+      return MediaQuery.of(context).size.height * 0.85;
+    }
+    if (widget.screenSize == ScreenSize.smallDesktop) {
+      return MediaQuery.of(context).size.height * 0.85;
+    }
     return double.infinity;
-  }
-}
-
-class _MainMap extends StatelessWidget {
-  const _MainMap({
-    required MapController mapController,
-    required LatLng initialCenter,
-    required double initialZoom,
-    required this.markers,
-  })  : _mapController = mapController,
-        _initialCenter = initialCenter,
-        _initialZoom = initialZoom;
-
-  final MapController _mapController;
-  final LatLng _initialCenter;
-  final double _initialZoom;
-  final List<Marker> markers;
-
-  @override
-  Widget build(BuildContext context) {
-    return FlutterMap(
-      mapController: _mapController,
-      options: MapOptions(
-        initialCenter: _initialCenter,
-        initialZoom: _initialZoom,
-        minZoom: kIsWeb ? 6.0 : 5.0,
-        maxZoom: kIsWeb ? 16.0 : 18.0,
-        cameraConstraint: CameraConstraint.contain(
-          bounds: LatLngBounds(LatLng(-90, -180), LatLng(90, 180)),
-        ),
-      ),
-      children: [
-        TileLayer(
-          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-          userAgentPackageName: 'com.example.app',
-          maxZoom: kIsWeb ? 16 : 19,
-          minZoom: kIsWeb ? 6 : 5,
-          tileDimension: 256,
-          retinaMode: kIsWeb ? false : RetinaMode.isHighDensity(context),
-          tileProvider:
-              kIsWeb ? CancellableNetworkTileProvider() : NetworkTileProvider(),
-        ),
-        MarkerLayer(markers: markers),
-      ],
-    );
   }
 }
