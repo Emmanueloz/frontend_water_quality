@@ -47,39 +47,43 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
         markers: markers);
     final widthBox = _getWidth(context);
     final heightBox = _getHeight(context);
-
-    return Expanded(
-      child: Column(
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                BaseContainer(
-                  width: widthBox,
-                  height: heightBox,
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                  child: mapWidget,
-                ),
-                // Botón para resetear vista
-                Positioned(
-                  top: 16,
-                  right: 16,
-                  child: FloatingActionButton(
-                    mini: true,
-                    onPressed: () {
-                      _mapController.move(_initialCenter, _initialZoom);
-                    },
-                    tooltip: 'Volver al zoom inicial',
-                    child: const Icon(Icons.refresh),
-                  ),
-                ),
-              ],
-            ),
+    final bool isDesktop = widget.screenSize == ScreenSize.smallDesktop ||
+        widget.screenSize == ScreenSize.largeDesktop;
+    final double verticalMargin = isDesktop ? 0 : 10;
+    final stackMap = Stack(
+      children: [
+        BaseContainer(
+          width: widthBox,
+          height: heightBox,
+          margin: EdgeInsets.symmetric(horizontal: 10, vertical:  verticalMargin),
+          child: mapWidget,
+        ),
+        Positioned(
+          top: 16,
+          right: 16,
+          child: FloatingActionButton(
+            mini: true,
+            onPressed: () {
+              _mapController.move(_initialCenter, _initialZoom);
+            },
+            tooltip: 'Volver al zoom inicial',
+            child: const Icon(Icons.refresh),
           ),
-        ],
-      ),
+        ),
+      ],
     );
+
+    if (isDesktop) {
+      return Expanded(
+        child: Column(
+          children: [
+            Expanded(child: stackMap),
+          ],
+        ),
+      );
+    } else {
+      return stackMap;
+    }
   }
 
   List<Marker> _buildMarkers(BuildContext context) {
@@ -117,7 +121,6 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
   }
 
   double _getWidth(BuildContext context) {
-    print("Screen size: ${widget.screenSize}");
     if (widget.screenSize == ScreenSize.largeDesktop) {
       return MediaQuery.of(context).size.width * 0.65;
     }
