@@ -49,13 +49,13 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
     final heightBox = _getHeight(context);
     final bool isDesktop = widget.screenSize == ScreenSize.smallDesktop ||
         widget.screenSize == ScreenSize.largeDesktop;
-    final double verticalMargin = isDesktop ? 0 : 10;
+
     final stackMap = Stack(
       children: [
         BaseContainer(
           width: widthBox,
           height: heightBox,
-          margin: EdgeInsets.symmetric(horizontal: 10, vertical:  verticalMargin),
+          margin: EdgeInsets.all(isDesktop ? 0 : 10),
           child: mapWidget,
         ),
         Positioned(
@@ -121,22 +121,10 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
   }
 
   double _getWidth(BuildContext context) {
-    if (widget.screenSize == ScreenSize.largeDesktop) {
-      return MediaQuery.of(context).size.width * 0.65;
-    }
-    if (widget.screenSize == ScreenSize.smallDesktop) {
-      return MediaQuery.of(context).size.width * 0.70;
-    }
     return double.infinity;
   }
 
   double _getHeight(BuildContext context) {
-    if (widget.screenSize == ScreenSize.largeDesktop) {
-      return MediaQuery.of(context).size.height * 0.85;
-    }
-    if (widget.screenSize == ScreenSize.smallDesktop) {
-      return MediaQuery.of(context).size.height * 0.85;
-    }
     return double.infinity;
   }
 }
