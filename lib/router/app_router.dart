@@ -13,6 +13,7 @@ import 'package:frontend_water_quality/presentation/pages/splash.dart';
 import 'package:frontend_water_quality/presentation/pages/view_list_notifications.dart';
 import 'package:frontend_water_quality/presentation/pages/view_list_records.dart';
 import 'package:frontend_water_quality/presentation/pages/view_meter.dart';
+import 'package:frontend_water_quality/presentation/pages/view_meter_ubications.dart';
 import 'package:frontend_water_quality/presentation/pages/view_notification_details.dart';
 import 'package:frontend_water_quality/presentation/pages/view_workspace.dart';
 import 'package:frontend_water_quality/router/routes.dart';
@@ -202,7 +203,8 @@ class AppRouter {
                 path: Routes.locationMeters.path,
                 name: Routes.locationMeters.name,
                 builder: (context, state) {
-                  return Simple(title: "Ubicación");
+                  final id = state.pathParameters['id'] ?? 'default';
+                  return ViewMeterUbications(id: id);
                 },
               ),
               GoRoute(
