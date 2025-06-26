@@ -25,7 +25,6 @@ class LayoutMeters extends StatelessWidget {
   Widget build(BuildContext context) {
     void onDestinationSelected(int index) {
       if (index == 0) {
-        // Navegar a datos del medidor (actual)
         context.goNamed(
           Routes.meter.name,
           pathParameters: {
@@ -34,7 +33,6 @@ class LayoutMeters extends StatelessWidget {
           },
         );
       } else if (index == 1) {
-        // Navegar a historial
         context.goNamed(
           Routes.listRecords.name,
           pathParameters: {
@@ -113,7 +111,8 @@ class LayoutMeters extends StatelessWidget {
           selectedIcon: Icons.edit,
         ),
       ],
-      builder: builder,
+      builder: (context, screenSize) =>
+          Expanded(child: builder(context, screenSize)),
     );
   }
 }

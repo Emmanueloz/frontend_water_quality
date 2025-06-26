@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/presentation/widgets/layout/layout_meters.dart';
+import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/organisms/main_listrecords.dart';
 
 class ViewListRecords extends StatelessWidget {
@@ -13,18 +13,11 @@ class ViewListRecords extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutMeters(
-      title: "Historial del medidor $idMeter",
+    final screenSize = ResponsiveScreenSize.getScreenSize(context);
+    return MainListrecords(
       id: id,
       idMeter: idMeter,
-      selectedIndex: 1,
-      builder: (context, screenSize) {
-        return MainListrecords(
-          id: id,
-          idMeter: idMeter,
-          screenSize: screenSize,
-        );
-      },
+      screenSize: screenSize,
     );
   }
 }

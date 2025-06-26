@@ -10,15 +10,13 @@ import 'package:frontend_water_quality/presentation/pages/register.dart';
 import 'package:frontend_water_quality/presentation/pages/profile.dart';
 import 'package:frontend_water_quality/presentation/pages/simple.dart';
 import 'package:frontend_water_quality/presentation/pages/splash.dart';
-import 'package:frontend_water_quality/presentation/pages/view_list_notifications.dart';
 import 'package:frontend_water_quality/presentation/pages/view_list_records.dart';
 import 'package:frontend_water_quality/presentation/pages/view_meter.dart';
+import 'package:frontend_water_quality/presentation/pages/view_list_notifications.dart';
 import 'package:frontend_water_quality/presentation/pages/view_meter_ubications.dart';
 import 'package:frontend_water_quality/presentation/pages/view_notification_details.dart';
 import 'package:frontend_water_quality/presentation/pages/view_workspace.dart';
-import 'package:frontend_water_quality/presentation/pages/temp_view_meter.dart';
-import 'package:frontend_water_quality/presentation/pages/temp_view_list_records.dart';
-import 'package:frontend_water_quality/presentation/widgets/layout/layout_temp_meter.dart';
+import 'package:frontend_water_quality/presentation/widgets/layout/layout_meters.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
@@ -85,93 +83,6 @@ class AppRouter {
                   return Simple(title: "Create Meter");
                 },
               ),
-              GoRoute(
-                path: Routes.meter.path,
-                name: Routes.meter.name,
-                builder: (context, state) {
-                  final id = state.pathParameters['id'] ?? 'default';
-                  final idMeter = state.pathParameters['idMeter'] ?? 'default';
-                  return ViewMeter(
-                    id: id,
-                    idMeter: idMeter,
-                  );
-                },
-                routes: [
-                  GoRoute(
-                    path: Routes.listRecords.path,
-                    name: Routes.listRecords.name,
-                    builder: (context, state) {
-                      final id = state.pathParameters['id'] ?? 'default';
-                      final idMeter =
-                          state.pathParameters['idMeter'] ?? 'default';
-                      return ViewListRecords(
-                        id: id,
-                        idMeter: idMeter,
-                      );
-                    },
-                  ),
-                  GoRoute(
-                    path: Routes.predictions.path,
-                    name: Routes.predictions.name,
-                    builder: (context, state) {
-                      return Simple(title: "Predicciones");
-                    },
-                    routes: [
-                      GoRoute(
-                        path: Routes.predictionCreate.path,
-                        name: Routes.predictionCreate.name,
-                        builder: (context, state) {
-                          return Simple(title: "Create prediction");
-                        },
-                      ),
-                      GoRoute(
-                        path: Routes.prediction.path,
-                        name: Routes.prediction.name,
-                        builder: (context, state) {
-                          return Simple(title: "Prediction Detail");
-                        },
-                      ),
-                    ],
-                  ),
-                  GoRoute(
-                    path: Routes.interpretations.path,
-                    name: Routes.interpretations.name,
-                    builder: (context, state) {
-                      return Simple(title: "Interpretaciones");
-                    },
-                    routes: [
-                      GoRoute(
-                        path: Routes.interpretationCreate.path,
-                        name: Routes.interpretationCreate.name,
-                        builder: (context, state) {
-                          return Simple(title: "Crear interpretación");
-                        },
-                      ),
-                      GoRoute(
-                        path: Routes.interpretation.path,
-                        name: Routes.interpretation.name,
-                        builder: (context, state) {
-                          return Simple(title: "Interpretación");
-                        },
-                      ),
-                    ],
-                  ),
-                  GoRoute(
-                    path: Routes.connectioMeter.path,
-                    name: Routes.connectioMeter.name,
-                    builder: (context, state) {
-                      return Simple(title: "Conección del medidor");
-                    },
-                  ),
-                  GoRoute(
-                    path: Routes.updateMeter.path,
-                    name: Routes.updateMeter.name,
-                    builder: (context, state) {
-                      return Simple(title: "Actualizar");
-                    },
-                  ),
-                ],
-              ),
               ShellRoute(
                 builder: (context, state, child) {
                   final id = state.pathParameters['id'] ?? 'default';
@@ -190,8 +101,8 @@ class AppRouter {
                   } else if (location.endsWith('/update')) {
                     selectedIndex = 5;
                   }
-                  return LayoutTempMeter(
-                    title: 'Medidor Temporal $idMeter',
+                  return LayoutMeters(
+                    title: 'Medidor $idMeter',
                     id: id,
                     idMeter: idMeter,
                     selectedIndex: selectedIndex,
@@ -200,64 +111,98 @@ class AppRouter {
                 },
                 routes: [
                   GoRoute(
-                    path: 'temp-meter/:idMeter',
-                    name: 'tempMeter',
+                    path: Routes.meter.path,
+                    name: Routes.meter.name,
                     builder: (context, state) {
                       final id = state.pathParameters['id'] ?? 'default';
                       final idMeter =
                           state.pathParameters['idMeter'] ?? 'default';
-                      return TempViewMeter(id: id, idMeter: idMeter);
+                      return ViewMeter(id: id, idMeter: idMeter);
                     },
-                  ),
-                  GoRoute(
-                    path: 'temp-meter/:idMeter/records',
-                    name: 'tempMeterRecords',
-                    builder: (context, state) {
-                      final id = state.pathParameters['id'] ?? 'default';
-                      final idMeter =
-                          state.pathParameters['idMeter'] ?? 'default';
-                      return TempViewListRecords(id: id, idMeter: idMeter);
-                    },
-                  ),
-                  GoRoute(
-                    path: 'temp-meter/:idMeter/predictions',
-                    name: 'tempMeterPredictions',
-                    builder: (context, state) {
-                      final id = state.pathParameters['id'] ?? 'default';
-                      final idMeter =
-                          state.pathParameters['idMeter'] ?? 'default';
-                      return Simple(title: 'Predicciones (Temp)');
-                    },
-                  ),
-                  GoRoute(
-                    path: 'temp-meter/:idMeter/interpretations',
-                    name: 'tempMeterInterpretations',
-                    builder: (context, state) {
-                      final id = state.pathParameters['id'] ?? 'default';
-                      final idMeter =
-                          state.pathParameters['idMeter'] ?? 'default';
-                      return Simple(title: 'Interpretaciones (Temp)');
-                    },
-                  ),
-                  GoRoute(
-                    path: 'temp-meter/:idMeter/connection',
-                    name: 'tempMeterConnection',
-                    builder: (context, state) {
-                      final id = state.pathParameters['id'] ?? 'default';
-                      final idMeter =
-                          state.pathParameters['idMeter'] ?? 'default';
-                      return Simple(title: 'Conexión (Temp)');
-                    },
-                  ),
-                  GoRoute(
-                    path: 'temp-meter/:idMeter/update',
-                    name: 'tempMeterUpdate',
-                    builder: (context, state) {
-                      final id = state.pathParameters['id'] ?? 'default';
-                      final idMeter =
-                          state.pathParameters['idMeter'] ?? 'default';
-                      return Simple(title: 'Actualizar (Temp)');
-                    },
+                    routes: [
+                      GoRoute(
+                        path: Routes.listRecords.path,
+                        name: Routes.listRecords.name,
+                        builder: (context, state) {
+                          final id = state.pathParameters['id'] ?? 'default';
+                          final idMeter =
+                              state.pathParameters['idMeter'] ?? 'default';
+                          return ViewListRecords(id: id, idMeter: idMeter);
+                        },
+                      ),
+                      GoRoute(
+                        path: Routes.predictions.path,
+                        name: Routes.predictions.name,
+                        builder: (context, state) {
+                          final id = state.pathParameters['id'] ?? 'default';
+                          final idMeter =
+                              state.pathParameters['idMeter'] ?? 'default';
+                          return Simple(title: 'Predicciones');
+                        },
+                        routes: [
+                          GoRoute(
+                            path: Routes.predictionCreate.path,
+                            name: Routes.predictionCreate.name,
+                            builder: (context, state) {
+                              return Simple(title: "Create prediction");
+                            },
+                          ),
+                          GoRoute(
+                            path: Routes.prediction.path,
+                            name: Routes.prediction.name,
+                            builder: (context, state) {
+                              return Simple(title: "Prediction Detail");
+                            },
+                          ),
+                        ],
+                      ),
+                      GoRoute(
+                        path: Routes.interpretations.path,
+                        name: Routes.interpretations.name,
+                        builder: (context, state) {
+                          final id = state.pathParameters['id'] ?? 'default';
+                          final idMeter =
+                              state.pathParameters['idMeter'] ?? 'default';
+                          return Simple(title: 'Interpretaciones');
+                        },
+                        routes: [
+                          GoRoute(
+                            path: Routes.interpretationCreate.path,
+                            name: Routes.interpretationCreate.name,
+                            builder: (context, state) {
+                              return Simple(title: "Crear interpretación");
+                            },
+                          ),
+                          GoRoute(
+                            path: Routes.interpretation.path,
+                            name: Routes.interpretation.name,
+                            builder: (context, state) {
+                              return Simple(title: "Interpretación");
+                            },
+                          ),
+                        ],
+                      ),
+                      GoRoute(
+                        path: Routes.connectioMeter.path,
+                        name: Routes.connectioMeter.name,
+                        builder: (context, state) {
+                          final id = state.pathParameters['id'] ?? 'default';
+                          final idMeter =
+                              state.pathParameters['idMeter'] ?? 'default';
+                          return Simple(title: 'Conexión del medidor');
+                        },
+                      ),
+                      GoRoute(
+                        path: Routes.updateMeter.path,
+                        name: Routes.updateMeter.name,
+                        builder: (context, state) {
+                          final id = state.pathParameters['id'] ?? 'default';
+                          final idMeter =
+                              state.pathParameters['idMeter'] ?? 'default';
+                          return Simple(title: 'Actualizar');
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -352,22 +297,4 @@ class AppRouter {
       )
     ],
   );
-}
-
-// Página sin transiciones para el shell router
-class NoTransitionPage extends Page {
-  final Widget child;
-
-  const NoTransitionPage({required this.child, super.key});
-
-  @override
-  Route createRoute(BuildContext context) {
-    return PageRouteBuilder(
-      settings: this,
-      pageBuilder: (context, animation, secondaryAnimation) => child,
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return child;
-      },
-    );
-  }
 }
