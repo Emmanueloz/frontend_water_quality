@@ -22,6 +22,11 @@ import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
+  static final GlobalKey<NavigatorState> shellMeterNavigatorKey =
+      GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> rootNavigatorKey =
+      GlobalKey<NavigatorState>();
+
   static ListWorkspaces _getTypeWorkspace(String? typeString) {
     switch (typeString) {
       case 'mine':
@@ -36,6 +41,7 @@ class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: Routes.splash.path,
     //debugLogDiagnostics: true, // Útil durante el desarrollo
+    navigatorKey: rootNavigatorKey,
     routes: [
       GoRoute(
         path: Routes.splash.path,
@@ -84,10 +90,10 @@ class AppRouter {
                 },
               ),
               ShellRoute(
+                navigatorKey: shellMeterNavigatorKey,
                 builder: (context, state, child) {
                   final id = state.pathParameters['id'] ?? 'default';
                   final idMeter = state.pathParameters['idMeter'] ?? 'default';
-
                   return LayoutMeters(
                     title: 'Medidor $idMeter',
                     id: id,
@@ -131,6 +137,7 @@ class AppRouter {
                       GoRoute(
                         path: Routes.predictionCreate.path,
                         name: Routes.predictionCreate.name,
+                        parentNavigatorKey: rootNavigatorKey,
                         builder: (context, state) {
                           return Simple(title: "Create prediction");
                         },
@@ -138,6 +145,7 @@ class AppRouter {
                       GoRoute(
                         path: Routes.prediction.path,
                         name: Routes.prediction.name,
+                        parentNavigatorKey: rootNavigatorKey,
                         builder: (context, state) {
                           return Simple(title: "Prediction Detail");
                         },
@@ -159,6 +167,7 @@ class AppRouter {
                       GoRoute(
                         path: Routes.interpretationCreate.path,
                         name: Routes.interpretationCreate.name,
+                        parentNavigatorKey: rootNavigatorKey,
                         builder: (context, state) {
                           return Simple(title: "Crear interpretación");
                         },
@@ -166,6 +175,7 @@ class AppRouter {
                       GoRoute(
                         path: Routes.interpretation.path,
                         name: Routes.interpretation.name,
+                        parentNavigatorKey: rootNavigatorKey,
                         builder: (context, state) {
                           return Simple(title: "Interpretación");
                         },
