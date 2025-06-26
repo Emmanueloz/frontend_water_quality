@@ -98,6 +98,7 @@ class AppRouter {
                 },
                 routes: [
                   GoRoute(
+                    parentNavigatorKey: rootNavigatorKey,
                     path: Routes.createMeter.path,
                     name: Routes.createMeter.name,
                     builder: (context, state) {
