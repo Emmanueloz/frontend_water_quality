@@ -58,7 +58,7 @@ class LayoutMeters extends StatelessWidget {
         );
       } else if (index == 4) {
         context.goNamed(
-          Routes.connectioMeter.name,
+          Routes.connectionMeter.name,
           pathParameters: {
             "id": id,
             "idMeter": idMeter,
