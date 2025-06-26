@@ -87,25 +87,11 @@ class AppRouter {
                 builder: (context, state, child) {
                   final id = state.pathParameters['id'] ?? 'default';
                   final idMeter = state.pathParameters['idMeter'] ?? 'default';
-                  // El selectedIndex se determina por la ruta
-                  int selectedIndex = 0;
-                  final location = state.uri.toString();
-                  if (location.endsWith('/records')) {
-                    selectedIndex = 1;
-                  } else if (location.endsWith('/predictions')) {
-                    selectedIndex = 2;
-                  } else if (location.endsWith('/interpretations')) {
-                    selectedIndex = 3;
-                  } else if (location.endsWith('/connection')) {
-                    selectedIndex = 4;
-                  } else if (location.endsWith('/update')) {
-                    selectedIndex = 5;
-                  }
+
                   return LayoutMeters(
                     title: 'Medidor $idMeter',
                     id: id,
                     idMeter: idMeter,
-                    selectedIndex: selectedIndex,
                     builder: (context, screenSize) => child,
                   );
                 },
