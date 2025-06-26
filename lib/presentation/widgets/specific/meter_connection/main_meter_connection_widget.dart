@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/meter_connection/error_view.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/meter_connection/idle_view.dart';
@@ -10,13 +11,17 @@ enum ConnectionStep { idle, showPassword, success, error }
 class MainMeterConnectionWidget extends StatefulWidget {
   final String idWorkspace;
   final String idMeter;
-  const MainMeterConnectionWidget({super.key, 
+  final ScreenSize screenSize;
+  const MainMeterConnectionWidget({
+    super.key,
     required this.idWorkspace,
     required this.idMeter,
+    required this.screenSize,
   });
 
   @override
-  _MainMeterConnectionWidgetState createState() => _MainMeterConnectionWidgetState();
+  _MainMeterConnectionWidgetState createState() =>
+      _MainMeterConnectionWidgetState();
 }
 
 class _MainMeterConnectionWidgetState extends State<MainMeterConnectionWidget> {
@@ -34,7 +39,7 @@ class _MainMeterConnectionWidgetState extends State<MainMeterConnectionWidget> {
       // Llamada al backend para generar la contraseña
       await Future.delayed(const Duration(seconds: 2));
       // Simulación de posible error:
-      if (DateTime.now().second % 5 == 0){
+      if (DateTime.now().second % 5 == 0) {
         throw Exception('Error generando contraseña');
       }
       setState(() {
@@ -60,7 +65,7 @@ class _MainMeterConnectionWidgetState extends State<MainMeterConnectionWidget> {
       // Poll/WebSocket para confirmar conexión
       await Future.delayed(const Duration(seconds: 2));
       // Simulación de posible error:
-      if (DateTime.now().millisecond % 7 == 0){
+      if (DateTime.now().millisecond % 7 == 0) {
         throw Exception('Conexión fallida en el dispositivo');
       }
       setState(() => _step = ConnectionStep.success);
@@ -89,6 +94,8 @@ class _MainMeterConnectionWidgetState extends State<MainMeterConnectionWidget> {
   @override
   Widget build(BuildContext context) {
     Widget content;
+    final bool isMobileOrTablet = widget.screenSize == ScreenSize.mobile ||
+        widget.screenSize == ScreenSize.tablet;
     switch (_step) {
       case ConnectionStep.showPassword:
         content = PasswordView(
@@ -112,12 +119,15 @@ class _MainMeterConnectionWidgetState extends State<MainMeterConnectionWidget> {
           onStart: _startConnection,
         );
     }
-
-    return BaseContainer(
+    final Widget mainContent = BaseContainer(
+      margin: isMobileOrTablet
+          ? const EdgeInsets.all(10)
+          : const EdgeInsets.all(0),
       child: Center(
         child: Card(
           elevation: 4,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           margin: const EdgeInsets.all(16),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
@@ -129,5 +139,7 @@ class _MainMeterConnectionWidgetState extends State<MainMeterConnectionWidget> {
         ),
       ),
     );
+
+    return isMobileOrTablet ? mainContent : Expanded(child: mainContent);
   }
 }

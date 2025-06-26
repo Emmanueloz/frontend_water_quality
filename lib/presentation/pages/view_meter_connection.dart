@@ -24,7 +24,7 @@ class ViewMeterConnection extends StatelessWidget {
           return MainMeterConnectionWidget(
             idWorkspace: id,
             idMeter: idMeter,
-            // screenSize: screenSize,
+            screenSize: screenSize,
           );
         });
   }
