@@ -1,35 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
+import '../../domain/models/guests.dart';
+import '../widgets/specific/guests/atoms/add-guests.dart';
+import '../widgets/specific/guests/organisms/grid_guests.dart';
 
 class GuestsPage extends StatelessWidget {
   final String title;
+
   const GuestsPage({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
-    return Layout(
-      title: title,
-      builder: (context, screenSize) => Center(
+    final List<Guest> guests = [
+      Guest(name: 'Alice Smith', email: 'alice@example.com'),
+      Guest(name: 'Bob Johnson', email: 'bob@example.com'),
+      Guest(name: 'Charlie Brown', email: 'charlie@example.com'),
+      Guest(name: 'Dana Lee', email: 'dana@example.com'),
+    ];
+
+    return Scaffold(
+      appBar: AppBar(title: Text(title)),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.group_outlined, size: 64, color: Colors.grey.shade600),
+            Align(
+              alignment: Alignment.centerRight,
+              child: AddButton(onPressed: null),
+            ),
             const SizedBox(height: 16),
-            Text(
-              'No guests yet',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Colors.grey.shade800,
-                  ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'You can add guests using the button above.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey.shade600,
-                  ),
-              textAlign: TextAlign.center,
-            ),
+            Expanded(child: GuestGrid(guests: guests)),
           ],
         ),
       ),
