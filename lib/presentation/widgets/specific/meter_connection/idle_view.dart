@@ -13,7 +13,6 @@ class IdleView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      key: const ValueKey('idle'),
       mainAxisSize: MainAxisSize.min,
       children: [
         const Text('Conectar dispositivo IoT',

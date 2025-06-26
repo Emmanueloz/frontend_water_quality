@@ -6,7 +6,6 @@ class SuccessView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      key: const ValueKey('success'),
       mainAxisSize: MainAxisSize.min,
       children: const [
         Icon(Icons.check_circle, size: 48, color: Colors.green),

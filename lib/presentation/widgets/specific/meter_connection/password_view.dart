@@ -15,7 +15,6 @@ class PasswordView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      key: const ValueKey('password'),
       mainAxisSize: MainAxisSize.min,
       children: [
         const Text('Clave generada',

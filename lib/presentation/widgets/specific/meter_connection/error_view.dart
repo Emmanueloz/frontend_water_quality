@@ -12,7 +12,6 @@ class ErrorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      key: const ValueKey('error'),
       mainAxisSize: MainAxisSize.min,
       children: [
         const Icon(Icons.error, size: 48, color: Colors.red),

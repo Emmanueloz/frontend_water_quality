@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_meters.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/meter_connection/main_meter_connection_widget.dart';
 
 class ViewMeterConnection extends StatelessWidget {
   final String title;
@@ -19,6 +20,12 @@ class ViewMeterConnection extends StatelessWidget {
         id: id,
         idMeter: idMeter,
         selectedIndex: 4,
-        builder: builder);
+        builder: (context, screenSize) {
+          return MainMeterConnectionWidget(
+            idWorkspace: id,
+            idMeter: idMeter,
+            // screenSize: screenSize,
+          );
+        });
   }
 }
