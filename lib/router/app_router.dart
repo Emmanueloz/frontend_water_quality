@@ -19,7 +19,6 @@ import 'package:frontend_water_quality/presentation/pages/view_workspace.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_meters.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter/material.dart';
 
 class AppRouter {
   static ListWorkspaces _getTypeWorkspace(String? typeString) {
@@ -137,7 +136,7 @@ class AppRouter {
                           final id = state.pathParameters['id'] ?? 'default';
                           final idMeter =
                               state.pathParameters['idMeter'] ?? 'default';
-                          return Simple(title: 'Predicciones');
+                          return Simple(title: 'Predicciones $id $idMeter');
                         },
                         routes: [
                           GoRoute(
@@ -163,7 +162,7 @@ class AppRouter {
                           final id = state.pathParameters['id'] ?? 'default';
                           final idMeter =
                               state.pathParameters['idMeter'] ?? 'default';
-                          return Simple(title: 'Interpretaciones');
+                          return Simple(title: 'Interpretaciones $id $idMeter');
                         },
                         routes: [
                           GoRoute(
@@ -189,7 +188,8 @@ class AppRouter {
                           final id = state.pathParameters['id'] ?? 'default';
                           final idMeter =
                               state.pathParameters['idMeter'] ?? 'default';
-                          return Simple(title: 'Conexión del medidor');
+                          return Simple(
+                              title: 'Conexión del medidor $id $idMeter');
                         },
                       ),
                       GoRoute(
@@ -199,7 +199,7 @@ class AppRouter {
                           final id = state.pathParameters['id'] ?? 'default';
                           final idMeter =
                               state.pathParameters['idMeter'] ?? 'default';
-                          return Simple(title: 'Actualizar');
+                          return Simple(title: 'Actualizar $id $idMeter');
                         },
                       ),
                     ],
