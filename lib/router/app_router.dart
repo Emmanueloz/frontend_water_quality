@@ -13,6 +13,7 @@ import 'package:frontend_water_quality/presentation/pages/splash.dart';
 import 'package:frontend_water_quality/presentation/pages/view_list_notifications.dart';
 import 'package:frontend_water_quality/presentation/pages/view_list_records.dart';
 import 'package:frontend_water_quality/presentation/pages/view_meter.dart';
+import 'package:frontend_water_quality/presentation/pages/view_meter_connection.dart';
 import 'package:frontend_water_quality/presentation/pages/view_meter_ubications.dart';
 import 'package:frontend_water_quality/presentation/pages/view_notification_details.dart';
 import 'package:frontend_water_quality/presentation/pages/view_workspace.dart';
@@ -156,7 +157,9 @@ class AppRouter {
                     path: Routes.connectioMeter.path,
                     name: Routes.connectioMeter.name,
                     builder: (context, state) {
-                      return Simple(title: "Conección del medidor");
+                      final id = state.pathParameters['id'] ?? 'default';
+                      final idMeter = state.pathParameters['idMeter'] ?? 'default';
+                      return ViewMeterConnection(title: "Conección del medidor", idMeter: idMeter,  id: id);
                     },
                   ),
                   GoRoute(
