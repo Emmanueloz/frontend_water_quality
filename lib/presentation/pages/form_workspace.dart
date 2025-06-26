@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/enums/type_workspace.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
-import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
-import 'package:frontend_water_quality/presentation/widgets/layout/layout_workspace.dart';
+import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
 
 class FormWorkspace extends StatelessWidget {
   final String? idWorkspace;
@@ -17,22 +16,8 @@ class FormWorkspace extends StatelessWidget {
     String title = idWorkspace != null
         ? "Editar espacio de trabajo"
         : "Crear espacio de trabajo";
-
-    if (idWorkspace != null) {
-      return LayoutWorkspace(
-        title: title,
-        id: idWorkspace ?? "",
-        selectedIndex: 4,
-        builder: (context, screenSize) =>
-            _builderMain(context, screenSize, title),
-      );
-    }
-
-    return Layout(
-      title: title,
-      builder: (context, screenSize) =>
-          _builderMain(context, screenSize, title),
-    );
+    final screenSize = ResponsiveScreenSize.getScreenSize(context);
+    return _builderMain(context, screenSize, title);
   }
 
   Widget _builderMain(

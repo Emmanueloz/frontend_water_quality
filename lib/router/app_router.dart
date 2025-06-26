@@ -18,11 +18,14 @@ import 'package:frontend_water_quality/presentation/pages/view_meter_ubications.
 import 'package:frontend_water_quality/presentation/pages/view_notification_details.dart';
 import 'package:frontend_water_quality/presentation/pages/view_workspace.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_meters.dart';
+import 'package:frontend_water_quality/presentation/widgets/layout/layout_workspace.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
   static final GlobalKey<NavigatorState> shellMeterNavigatorKey =
+      GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> shellWorkspaceNavigatorKey =
       GlobalKey<NavigatorState>();
   static final GlobalKey<NavigatorState> rootNavigatorKey =
       GlobalKey<NavigatorState>();
@@ -74,186 +77,204 @@ class AppRouter {
               return FormWorkspace();
             },
           ),
-          GoRoute(
-            path: Routes.workspace.path,
-            name: Routes.workspace.name,
-            builder: (context, state) {
+          ShellRoute(
+            navigatorKey: shellWorkspaceNavigatorKey,
+            builder: (context, state, child) {
               final id = state.pathParameters['id'] ?? 'default';
-              return ViewWorkspace(id: id);
+              // El índice seleccionado puede calcularse según la ruta activa
+              return LayoutWorkspace(
+                title: 'Espacio de trabajo $id',
+                id: id,
+                builder: (context, screenSize) => child,
+              );
             },
             routes: [
               GoRoute(
-                path: Routes.createMeter.path,
-                name: Routes.createMeter.name,
+                path: Routes.workspace.path,
+                name: Routes.workspace.name,
                 builder: (context, state) {
-                  return Simple(title: "Create Meter");
-                },
-              ),
-              ShellRoute(
-                navigatorKey: shellMeterNavigatorKey,
-                builder: (context, state, child) {
                   final id = state.pathParameters['id'] ?? 'default';
-                  final idMeter = state.pathParameters['idMeter'] ?? 'default';
-                  return LayoutMeters(
-                    title: 'Medidor $idMeter',
-                    id: id,
-                    idMeter: idMeter,
-                    builder: (context, screenSize) => child,
-                  );
+                  return ViewWorkspace(id: id);
                 },
                 routes: [
                   GoRoute(
-                    path: Routes.meter.path,
-                    name: Routes.meter.name,
+                    path: Routes.createMeter.path,
+                    name: Routes.createMeter.name,
                     builder: (context, state) {
-                      final id = state.pathParameters['id'] ?? 'default';
-                      final idMeter =
-                          state.pathParameters['idMeter'] ?? 'default';
-                      return ViewMeter(id: id, idMeter: idMeter);
+                      return Simple(title: "Create Meter");
                     },
                   ),
-                  GoRoute(
-                    path: Routes.listRecords.path,
-                    name: Routes.listRecords.name,
-                    builder: (context, state) {
+                  ShellRoute(
+                    parentNavigatorKey: rootNavigatorKey,
+                    navigatorKey: shellMeterNavigatorKey,
+                    builder: (context, state, child) {
                       final id = state.pathParameters['id'] ?? 'default';
                       final idMeter =
                           state.pathParameters['idMeter'] ?? 'default';
-                      return ViewListRecords(id: id, idMeter: idMeter);
-                    },
-                  ),
-                  GoRoute(
-                    path: Routes.predictions.path,
-                    name: Routes.predictions.name,
-                    builder: (context, state) {
-                      final id = state.pathParameters['id'] ?? 'default';
-                      final idMeter =
-                          state.pathParameters['idMeter'] ?? 'default';
-                      return SizedBox(
-                        child: Text('Predicciones $id $idMeter'),
+                      return LayoutMeters(
+                        title: 'Medidor $idMeter',
+                        id: id,
+                        idMeter: idMeter,
+                        builder: (context, screenSize) => child,
                       );
                     },
                     routes: [
                       GoRoute(
-                        path: Routes.predictionCreate.path,
-                        name: Routes.predictionCreate.name,
-                        parentNavigatorKey: rootNavigatorKey,
+                        path: Routes.meter.path,
+                        name: Routes.meter.name,
                         builder: (context, state) {
-                          return Simple(title: "Create prediction");
+                          final id = state.pathParameters['id'] ?? 'default';
+                          final idMeter =
+                              state.pathParameters['idMeter'] ?? 'default';
+                          return ViewMeter(id: id, idMeter: idMeter);
                         },
                       ),
                       GoRoute(
-                        path: Routes.prediction.path,
-                        name: Routes.prediction.name,
-                        parentNavigatorKey: rootNavigatorKey,
+                        path: Routes.listRecords.path,
+                        name: Routes.listRecords.name,
                         builder: (context, state) {
-                          return Simple(title: "Prediction Detail");
+                          final id = state.pathParameters['id'] ?? 'default';
+                          final idMeter =
+                              state.pathParameters['idMeter'] ?? 'default';
+                          return ViewListRecords(id: id, idMeter: idMeter);
+                        },
+                      ),
+                      GoRoute(
+                        path: Routes.predictions.path,
+                        name: Routes.predictions.name,
+                        builder: (context, state) {
+                          final id = state.pathParameters['id'] ?? 'default';
+                          final idMeter =
+                              state.pathParameters['idMeter'] ?? 'default';
+                          return SizedBox(
+                            child: Text('Predicciones $id $idMeter'),
+                          );
+                        },
+                        routes: [
+                          GoRoute(
+                            path: Routes.predictionCreate.path,
+                            name: Routes.predictionCreate.name,
+                            parentNavigatorKey: rootNavigatorKey,
+                            builder: (context, state) {
+                              return Simple(title: "Create prediction");
+                            },
+                          ),
+                          GoRoute(
+                            path: Routes.prediction.path,
+                            name: Routes.prediction.name,
+                            parentNavigatorKey: rootNavigatorKey,
+                            builder: (context, state) {
+                              return Simple(title: "Prediction Detail");
+                            },
+                          ),
+                        ],
+                      ),
+                      GoRoute(
+                        path: Routes.interpretations.path,
+                        name: Routes.interpretations.name,
+                        builder: (context, state) {
+                          final id = state.pathParameters['id'] ?? 'default';
+                          final idMeter =
+                              state.pathParameters['idMeter'] ?? 'default';
+                          return SizedBox(
+                            child: Text('Interpretaciones $id $idMeter'),
+                          );
+                        },
+                        routes: [
+                          GoRoute(
+                            path: Routes.interpretationCreate.path,
+                            name: Routes.interpretationCreate.name,
+                            parentNavigatorKey: rootNavigatorKey,
+                            builder: (context, state) {
+                              return Simple(title: "Crear interpretación");
+                            },
+                          ),
+                          GoRoute(
+                            path: Routes.interpretation.path,
+                            name: Routes.interpretation.name,
+                            parentNavigatorKey: rootNavigatorKey,
+                            builder: (context, state) {
+                              return Simple(title: "Interpretación");
+                            },
+                          ),
+                        ],
+                      ),
+                      GoRoute(
+                        path: Routes.connectionMeter.path,
+                        name: Routes.connectionMeter.name,
+                        builder: (context, state) {
+                          final id = state.pathParameters['id'] ?? 'default';
+                          final idMeter =
+                              state.pathParameters['idMeter'] ?? 'default';
+                          return SizedBox(
+                            child: Text('Conexión del medidor $id $idMeter'),
+                          );
+                        },
+                      ),
+                      GoRoute(
+                        path: Routes.updateMeter.path,
+                        name: Routes.updateMeter.name,
+                        builder: (context, state) {
+                          final id = state.pathParameters['id'] ?? 'default';
+                          final idMeter =
+                              state.pathParameters['idMeter'] ?? 'default';
+                          return SizedBox(
+                            child: Text('Actualizar $id $idMeter'),
+                          );
                         },
                       ),
                     ],
                   ),
                   GoRoute(
-                    path: Routes.interpretations.path,
-                    name: Routes.interpretations.name,
+                    path: Routes.alerts.path,
+                    name: Routes.alerts.name,
                     builder: (context, state) {
                       final id = state.pathParameters['id'] ?? 'default';
-                      final idMeter =
-                          state.pathParameters['idMeter'] ?? 'default';
-                      return SizedBox(
-                        child: Text('Interpretaciones $id $idMeter'),
-                      );
+                      return AlertsScreen(idWorkspace: id);
                     },
                     routes: [
                       GoRoute(
-                        path: Routes.interpretationCreate.path,
-                        name: Routes.interpretationCreate.name,
+                        path: Routes.createAlerts.path,
+                        name: Routes.createAlerts.name,
                         parentNavigatorKey: rootNavigatorKey,
                         builder: (context, state) {
-                          return Simple(title: "Crear interpretación");
+                          return Simple(title: "Create Alert");
                         },
                       ),
                       GoRoute(
-                        path: Routes.interpretation.path,
-                        name: Routes.interpretation.name,
+                        path: Routes.updateAlerts.path,
+                        name: Routes.updateAlerts.name,
                         parentNavigatorKey: rootNavigatorKey,
                         builder: (context, state) {
-                          return Simple(title: "Interpretación");
+                          return Simple(title: "Update Alert");
                         },
                       ),
                     ],
                   ),
                   GoRoute(
-                    path: Routes.connectionMeter.path,
-                    name: Routes.connectionMeter.name,
+                    path: Routes.guests.path,
+                    name: Routes.guests.name,
                     builder: (context, state) {
-                      final id = state.pathParameters['id'] ?? 'default';
-                      final idMeter =
-                          state.pathParameters['idMeter'] ?? 'default';
-                      return SizedBox(
-                        child: Text('Conexión del medidor $id $idMeter'),
-                      );
+                      return Simple(title: "Invitados");
                     },
                   ),
                   GoRoute(
-                    path: Routes.updateMeter.path,
-                    name: Routes.updateMeter.name,
+                    path: Routes.locationMeters.path,
+                    name: Routes.locationMeters.name,
                     builder: (context, state) {
                       final id = state.pathParameters['id'] ?? 'default';
-                      final idMeter =
-                          state.pathParameters['idMeter'] ?? 'default';
-                      return SizedBox(
-                        child: Text('Actualizar $id $idMeter'),
-                      );
+                      return ViewMeterUbications(id: id);
+                    },
+                  ),
+                  GoRoute(
+                    path: Routes.updateWorkspace.path,
+                    name: Routes.updateWorkspace.name,
+                    builder: (context, state) {
+                      final id = state.pathParameters['id'] ?? 'default';
+                      return FormWorkspace(idWorkspace: id);
                     },
                   ),
                 ],
-              ),
-              GoRoute(
-                path: Routes.alerts.path,
-                name: Routes.alerts.name,
-                builder: (context, state) {
-                  final id = state.pathParameters['id'] ?? 'default';
-                  return AlertsScreen(idWorkspace: id);
-                },
-                routes: [
-                  GoRoute(
-                    path: Routes.createAlerts.path,
-                    name: Routes.createAlerts.name,
-                    builder: (context, state) {
-                      return Simple(title: "Create Alert");
-                    },
-                  ),
-                  GoRoute(
-                    path: Routes.updateAlerts.path,
-                    name: Routes.updateAlerts.name,
-                    builder: (context, state) {
-                      return Simple(title: "Update Alert");
-                    },
-                  ),
-                ],
-              ),
-              GoRoute(
-                path: Routes.guests.path,
-                name: Routes.guests.name,
-                builder: (context, state) {
-                  return Simple(title: "Invitados");
-                },
-              ),
-              GoRoute(
-                path: Routes.locationMeters.path,
-                name: Routes.locationMeters.name,
-                builder: (context, state) {
-                  final id = state.pathParameters['id'] ?? 'default';
-                  return ViewMeterUbications(id: id);
-                },
-              ),
-              GoRoute(
-                path: Routes.updateWorkspace.path,
-                name: Routes.updateWorkspace.name,
-                builder: (context, state) {
-                  final id = state.pathParameters['id'] ?? 'default';
-                  return FormWorkspace(idWorkspace: id);
-                },
               ),
             ],
           ),
