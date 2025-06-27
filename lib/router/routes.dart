@@ -133,6 +133,11 @@ class Routes {
     path: "/connection",
   );
 
+  static RouteProperties weather = RouteProperties(
+    name: "weather",
+    path: "/weather",
+  );
+
   static RouteProperties listRecords = RouteProperties(
     name: "listRecords",
     path: "/records",
