@@ -11,13 +11,16 @@ class ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         const Icon(Icons.error, size: 48, color: Colors.red),
         const SizedBox(height: 8),
         Text('Ocurrió un error',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.error,
+            )),
         const SizedBox(height: 4),
         Text(message, textAlign: TextAlign.center),
         const SizedBox(height: 16),

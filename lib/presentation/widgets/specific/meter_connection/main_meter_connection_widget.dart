@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/meter_connection/error_view.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/molecules/error_view.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/molecules/success_view.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/meter_connection/idle_view.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/meter_connection/password_view.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/meter_connection/success_view.dart';
 
 enum ConnectionStep { idle, showPassword, success, error }
 
@@ -20,8 +20,7 @@ class MainMeterConnectionWidget extends StatefulWidget {
   });
 
   @override
-  _MainMeterConnectionWidgetState createState() =>
-      _MainMeterConnectionWidgetState();
+  State<MainMeterConnectionWidget> createState() =>  _MainMeterConnectionWidgetState();
 }
 
 class _MainMeterConnectionWidgetState extends State<MainMeterConnectionWidget> {
@@ -105,7 +104,7 @@ class _MainMeterConnectionWidgetState extends State<MainMeterConnectionWidget> {
         );
         break;
       case ConnectionStep.success:
-        content = SuccessView();
+        content = SuccessView(title: "Conexión exitosa", subtitle: "Medidor conectado",);
         break;
       case ConnectionStep.error:
         content = ErrorView(
