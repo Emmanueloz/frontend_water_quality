@@ -14,25 +14,19 @@ class PasswordView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Text('Clave generada',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+         Text('Clave generada',
+            style: theme.textTheme.bodyLarge),
         const SizedBox(height: 12),
         SizedBox(
           width: 200,
-          child: TextField(
-            readOnly: true,
+          child: SelectableText(
+            password,
+            style: theme.textTheme.titleLarge,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontFamily: 'Monospace', fontSize: 20),
-            decoration: InputDecoration(
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-              hintText: password,
-            ),
           ),
         ),
         const SizedBox(height: 8),

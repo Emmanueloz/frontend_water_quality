@@ -12,25 +12,31 @@ class IdleView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Text('Conectar dispositivo IoT',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-        const SizedBox(height: 8),
-        const Text('Presiona el botón para generar la clave de conexión.',
-            textAlign: TextAlign.center),
-        const SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: isLoading ? null : onStart,
-          child: isLoading
-              ? const SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(strokeWidth: 2))
-              : const Text('Iniciar conexión'),
+    final theme = Theme.of(context);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Conectar dispositivo IoT',
+                style: theme.textTheme.bodyLarge),
+            const SizedBox(height: 8),
+            const Text('Presiona el botón para generar la clave de conexión.',
+                textAlign: TextAlign.center),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: isLoading ? null : onStart,
+              child: isLoading
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Text('Iniciar conexión'),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

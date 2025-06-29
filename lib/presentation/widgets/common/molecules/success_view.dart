@@ -8,17 +8,24 @@ class SuccessView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children:  [
-        Icon(Icons.check_circle, size: 48, color: theme.colorScheme.primary),
-        SizedBox(height: 8),
-        Text(title,
-            style: theme.textTheme.bodyLarge,),
-        SizedBox(height: 4),
-        Text(subtitle,
-            textAlign: TextAlign.center),
-      ],
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24), 
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.check_circle,
+                size: 48, color: theme.colorScheme.primary),
+            SizedBox(height: 8),
+            Text(
+              title,
+              style: theme.textTheme.bodyLarge,
+            ),
+            SizedBox(height: 4),
+            Text(subtitle, textAlign: TextAlign.center),
+          ],
+        ),
+      ),
     );
   }
 }

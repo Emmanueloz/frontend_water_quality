@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/connection_step.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/molecules/error_view.dart';
@@ -6,7 +7,6 @@ import 'package:frontend_water_quality/presentation/widgets/common/molecules/suc
 import 'package:frontend_water_quality/presentation/widgets/specific/meter_connection/idle_view.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/meter_connection/password_view.dart';
 
-enum ConnectionStep { idle, showPassword, success, error }
 
 class MainMeterConnectionWidget extends StatefulWidget {
   final String idWorkspace;
@@ -123,19 +123,10 @@ class _MainMeterConnectionWidgetState extends State<MainMeterConnectionWidget> {
           ? const EdgeInsets.all(10)
           : const EdgeInsets.all(0),
       child: Center(
-        child: Card(
-          elevation: 4,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          margin: const EdgeInsets.all(16),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-            child: AnimatedSwitcher(
+        child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               child: content,
             ),
-          ),
-        ),
       ),
     );
 
