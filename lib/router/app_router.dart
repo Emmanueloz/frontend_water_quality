@@ -196,7 +196,8 @@ class AppRouter {
                 path: Routes.guests.path,
                 name: Routes.guests.name,
                 builder: (context, state) {
-                  return GuestsPage(title: "Invitados");
+                  final id = state.pathParameters['id'] ?? 'default';
+                  return GuestsPage(title: "Invitados", id: id);
                 },
               ),
               GoRoute(
