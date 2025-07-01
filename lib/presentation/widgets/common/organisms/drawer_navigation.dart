@@ -45,7 +45,7 @@ class DrawerNavigation extends StatelessWidget {
               "Espacios de trabajo",
             ),
             onTap: () {
-              context.goNamed(Routes.workspaces.name, pathParameters: {
+              context.goNamed(Routes.workspaces.name, queryParameters: {
                 "type": ListWorkspaces.mine.name,
               });
             },
