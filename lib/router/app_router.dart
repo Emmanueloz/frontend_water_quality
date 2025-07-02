@@ -3,6 +3,7 @@ import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/presentation/pages/alerts.dart';
 import 'package:frontend_water_quality/presentation/pages/change_password.dart';
 import 'package:frontend_water_quality/presentation/pages/form_workspace.dart';
+import 'package:frontend_water_quality/presentation/pages/guests.dart';
 import 'package:frontend_water_quality/presentation/pages/list_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/login.dart';
 import 'package:frontend_water_quality/presentation/pages/recovery_password.dart';
@@ -208,7 +209,8 @@ class AppRouter {
                 path: Routes.guests.path,
                 name: Routes.guests.name,
                 builder: (context, state) {
-                  return Simple(title: "Invitados");
+                  final id = state.pathParameters['id'] ?? 'default';
+                  return GuestsPage(title: "Invitados", id: id);
                 },
               ),
               GoRoute(
