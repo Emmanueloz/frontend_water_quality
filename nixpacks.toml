@@ -1,12 +1,20 @@
+providers = ["flutter"]
+
 [phases.setup]
-nixpkgs = ["flutter", "nodejs"]
+nixpkgs = ["flutter", "nodejs", "coreutils"]
+
+[phases.install]
+cmds = [
+  "flutter config --enable-web",
+  "flutter pub get"
+]
 
 [phases.build]
 cmds = [
-  "flutter config --enable-web",
-  "flutter pub get",
   "flutter build web"
 ]
 
 [phases.start]
-cmds = ["npx serve -s build/web -l ${PORT}"]
+cmds = [
+  "npx --yes serve -s build/web -l ${PORT}"
+]
