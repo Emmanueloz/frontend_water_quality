@@ -15,34 +15,38 @@ class PasswordView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-         Text('Clave generada',
-            style: theme.textTheme.bodyLarge),
-        const SizedBox(height: 12),
-        SizedBox(
-          width: 200,
-          child: SelectableText(
-            password,
-            style: theme.textTheme.titleLarge,
-            textAlign: TextAlign.center,
-          ),
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Clave generada', style: theme.textTheme.bodyLarge),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: 200,
+              child: SelectableText(
+                password,
+                style: theme.textTheme.titleLarge,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text('Ingresa esta clave en tu dispositivo.',
+                textAlign: TextAlign.center),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: isLoading ? null : onContinue,
+              child: isLoading
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Text('He ingresado la clave'),
+            ),
+          ],
         ),
-        const SizedBox(height: 8),
-        const Text('Ingresa esta clave en tu dispositivo.',
-            textAlign: TextAlign.center),
-        const SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: isLoading ? null : onContinue,
-          child: isLoading
-              ? const SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(strokeWidth: 2))
-              : const Text('He ingresado la clave'),
-        ),
-      ],
+      ),
     );
   }
 }
