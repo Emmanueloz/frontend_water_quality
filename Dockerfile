@@ -1,31 +1,28 @@
-# Etapa 1: Build de Flutter
-FROM ghcr.io/cirruslabs/flutter:stable AS build
+# Etapa de construcción de Flutter
+FROM cirruslabs/flutter:latest AS build-env
 
-WORKDIR /app
+# Habilitar soporte web (ya hecho, pero útil tenerlo aquí)
+RUN flutter config --enable-web
 
-# Copiar dependencias y descargar
-COPY pubspec.yaml pubspec.lock ./
+# Crear un directorio para tu aplicación en el contenedor
+RUN mkdir /app/
+COPY . /app/
+WORKDIR /app/
+
+# Obtener dependencias de Flutter
 RUN flutter pub get
 
-# Copiar código fuente y buildear
-COPY . .
-RUN flutter config --enable-web
+# Construir la aplicación web en modo release
 RUN flutter build web --release
 
-# Etapa 2: Servir con Nginx Alpine (muy ligero)
-FROM nginx:alpine
+# Etapa de ejecución con Nginx
+FROM nginx:1.26-alpine3.19-slim
 
-# Copiar archivos estáticos de Flutter
-COPY --from=build /app/build/web /usr/share/nginx/html
+# Copiar los archivos construidos de Flutter a la ubicación de Nginx
+COPY --from=build-env /app/build/web /usr/share/nginx/html
 
-# Configurar Nginx para SPA
-RUN echo 'server { \
-    listen 80; \
-    location / { \
-        root /usr/share/nginx/html; \
-        try_files $uri $uri/ /index.html; \
-    } \
-}' > /etc/nginx/conf.d/default.conf
-
+# Exponer el puerto 80 para el servidor web
 EXPOSE 80
+
+# Comando para iniciar Nginx
 CMD ["nginx", "-g", "daemon off;"]
