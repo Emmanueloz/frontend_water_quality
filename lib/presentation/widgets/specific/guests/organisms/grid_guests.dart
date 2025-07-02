@@ -80,7 +80,7 @@ class GuestGrid extends StatelessWidget {
     switch (screenSize) {
       case ScreenSize.mobile:
         return _GridConfig(
-            crossAxisCount: 1, childAspectRatio: 1 / 0.2, gap: 5);
+            crossAxisCount: 1, childAspectRatio: 1 / 0.5, gap: 5);
       case ScreenSize.tablet:
         return _GridConfig(
             crossAxisCount: 2, childAspectRatio: 1 / 0.6, gap: 5);
