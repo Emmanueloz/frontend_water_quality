@@ -105,7 +105,6 @@ class WeatherPage extends StatelessWidget {
               mainAxisSpacing: 10,
               childAspectRatio: 1 / .5,
               shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
               children: [
                 WeatherDetailCard(
                   label: "Humedad",
