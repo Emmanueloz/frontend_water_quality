@@ -79,13 +79,17 @@ class GuestGrid extends StatelessWidget {
   _GridConfig _gridConfig(ScreenSize screenSize) {
     switch (screenSize) {
       case ScreenSize.mobile:
-        return _GridConfig(crossAxisCount: 1, childAspectRatio: 2.7, gap: 5);
+        return _GridConfig(
+            crossAxisCount: 1, childAspectRatio: 1 / 0.2, gap: 5);
       case ScreenSize.tablet:
-        return _GridConfig(crossAxisCount: 2, childAspectRatio: 2.7, gap: 5);
+        return _GridConfig(
+            crossAxisCount: 2, childAspectRatio: 1 / 0.6, gap: 5);
       case ScreenSize.smallDesktop:
-        return _GridConfig(crossAxisCount: 3, childAspectRatio: 2.7, gap: 10);
+        return _GridConfig(
+            crossAxisCount: 3, childAspectRatio: 1 / 0.6, gap: 10);
       default:
-        return _GridConfig(crossAxisCount: 4, childAspectRatio: 2.7, gap: 16);
+        return _GridConfig(
+            crossAxisCount: 4, childAspectRatio: 1 / 0.6, gap: 16);
     }
   }
 }
