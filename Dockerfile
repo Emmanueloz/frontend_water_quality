@@ -1,28 +1,39 @@
-# Etapa de construcción de Flutter
-FROM cirruslabs/flutter:latest AS build-env
+# Etapa 1: Build de Flutter
+FROM ghcr.io/cirruslabs/flutter:stable AS build
 
-# Habilitar soporte web (ya hecho, pero útil tenerlo aquí)
-RUN flutter config --enable-web
+WORKDIR /app
 
-# Crear un directorio para tu aplicación en el contenedor
-RUN mkdir /app/
-COPY . /app/
-WORKDIR /app/
-
-# Obtener dependencias de Flutter
+# Copiar y descargar dependencias
+COPY pubspec.* ./
 RUN flutter pub get
 
-# Construir la aplicación web en modo release
+# Copiar todo el código
+COPY . .
+
+# Asegurar que sólo web está habilitado
+RUN flutter config --enable-web
+
+# Build de la app
 RUN flutter build web --release
 
-# Etapa de ejecución con Nginx
-FROM nginx:1.26-alpine3.19-slim
+# Etapa 2: Servir con Nginx Alpine
+FROM nginx:alpine
 
-# Copiar los archivos construidos de Flutter a la ubicación de Nginx
-COPY --from=build-env /app/build/web /usr/share/nginx/html
+# Copiar archivos web generados
+COPY --from=build /app/build/web /usr/share/nginx/html
 
-# Exponer el puerto 80 para el servidor web
+# Configurar Nginx para manejar rutas tipo SPA
+RUN rm /etc/nginx/conf.d/default.conf && \
+    echo 'server { \
+        listen 80; \
+        server_name localhost; \
+        root /usr/share/nginx/html; \
+        index index.html; \
+        location / { \
+            try_files $uri $uri/ /index.html; \
+        } \
+    }' > /etc/nginx/conf.d/default.conf
+
 EXPOSE 80
 
-# Comando para iniciar Nginx
 CMD ["nginx", "-g", "daemon off;"]
