@@ -9,6 +9,7 @@ class MainMap extends StatelessWidget {
   final LatLng _initialCenter;
   final double _initialZoom;
   final List<Marker> markers;
+  final void Function(TapPosition, LatLng)? onTap; 
 
   const MainMap({
     super.key,
@@ -16,6 +17,7 @@ class MainMap extends StatelessWidget {
     required LatLng initialCenter,
     required double initialZoom,
     required this.markers,
+    this.onTap, 
   })  : _mapController = mapController,
         _initialCenter = initialCenter,
         _initialZoom = initialZoom;
@@ -32,6 +34,7 @@ class MainMap extends StatelessWidget {
         cameraConstraint: CameraConstraint.contain(
           bounds: LatLngBounds(LatLng(-90, -180), LatLng(90, 180)),
         ),
+        onTap: onTap, 
       ),
       children: [
         TileLayer(
@@ -41,8 +44,9 @@ class MainMap extends StatelessWidget {
           minZoom: kIsWeb ? 6 : 5,
           tileDimension: 256,
           retinaMode: kIsWeb ? false : RetinaMode.isHighDensity(context),
-          tileProvider:
-              kIsWeb ? CancellableNetworkTileProvider() : NetworkTileProvider(),
+          tileProvider: kIsWeb
+              ? CancellableNetworkTileProvider()
+              : NetworkTileProvider(),
         ),
         MarkerLayer(markers: markers),
       ],
