@@ -68,7 +68,6 @@ class _FormMetersState extends State<FormMeters> {
         widget.idMeter != null ? "Editar medidor" : "Crear medidor";
 
     if (widget.idMeter != null) {
-      
       return LayoutMeters(
         title: title,
         id: widget.id,
@@ -85,10 +84,26 @@ class _FormMetersState extends State<FormMeters> {
           _builderMain(context, screenSize, title),
     );
   }
-  
 
   Widget _builderMain(
       BuildContext context, ScreenSize screenSize, String title) {
+    if (screenSize == ScreenSize.mobile) {
+      return BaseContainer(
+        margin: EdgeInsets.all(10),
+        child: _buildForm(context, screenSize, title),
+      );
+    }
+    if (widget.idMeter != null) {
+      return Expanded(
+        child: BaseContainer(
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: _buildForm(context, screenSize, title),
+          ),
+        ),
+      );
+    }
+
     return BaseContainer(
       margin: const EdgeInsets.all(10),
       child: Align(
@@ -107,7 +122,6 @@ class _FormMetersState extends State<FormMeters> {
       child: Form(
         key: _formKey,
         child: Column(
-          
           children: [
             Text(
               title,
