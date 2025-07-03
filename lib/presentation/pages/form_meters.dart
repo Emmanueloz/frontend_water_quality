@@ -49,12 +49,12 @@ class _FormMetersState extends State<FormMeters> {
     return await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => Scaffold(
-          appBar: AppBar(title: const Text("Seleccionar ubicación")),
-          body: SearchMap(
-            screenSize: ScreenSize.mobile,
-            onLocationSelected: (UbicacionSeleccionada data) {
-              Navigator.pop(context, data);
+        builder: (context) => Layout(
+          title: "Seleccionar ubicación",
+          builder: (context, screenSize) => SearchMap(
+            screenSize: screenSize,
+            onLocationSelected: (UbicacionSeleccionada ubicacion) {
+              Navigator.pop(context, ubicacion);
             },
           ),
         ),
@@ -87,9 +87,11 @@ class _FormMetersState extends State<FormMeters> {
 
   Widget _builderMain(
       BuildContext context, ScreenSize screenSize, String title) {
-    if (screenSize == ScreenSize.mobile) {
+    if (screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet) {
       return BaseContainer(
         margin: EdgeInsets.all(10),
+        width: double.infinity,
+        height: double.infinity,
         child: _buildForm(context, screenSize, title),
       );
     }

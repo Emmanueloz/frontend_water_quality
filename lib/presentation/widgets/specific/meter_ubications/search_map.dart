@@ -41,9 +41,11 @@ class _SearchMapState extends State<SearchMap> {
   }
 
   Future<void> _buscarDireccion(String query) async {
-    final url = Uri.parse('https://nominatim.openstreetmap.org/search?q=$query&format=json&limit=1');
+    final url = Uri.parse(
+        'https://nominatim.openstreetmap.org/search?q=$query&format=json&limit=1');
     try {
-      final response = await http.get(url, headers: {'User-Agent': 'flutter_map_app'});
+      final response =
+          await http.get(url, headers: {'User-Agent': 'flutter_map_app'});
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data.isNotEmpty) {
@@ -63,9 +65,11 @@ class _SearchMapState extends State<SearchMap> {
   }
 
   Future<void> _buscarNombreLugar(LatLng coords) async {
-    final url = Uri.parse('https://nominatim.openstreetmap.org/reverse?lat=${coords.latitude}&lon=${coords.longitude}&format=json');
+    final url = Uri.parse(
+        'https://nominatim.openstreetmap.org/reverse?lat=${coords.latitude}&lon=${coords.longitude}&format=json');
     try {
-      final response = await http.get(url, headers: {'User-Agent': 'flutter_map_app'});
+      final response =
+          await http.get(url, headers: {'User-Agent': 'flutter_map_app'});
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
@@ -81,7 +85,8 @@ class _SearchMapState extends State<SearchMap> {
 
   void _showSnackBar(String message) {
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
     }
   }
 
@@ -105,7 +110,7 @@ class _SearchMapState extends State<SearchMap> {
         BaseContainer(
           width: double.infinity,
           height: double.infinity,
-          margin: EdgeInsets.all(isDesktop ? 0 : 10),
+          margin: EdgeInsets.all(10),
           child: MainMap(
             mapController: _mapController,
             initialCenter: _initialCenter,
@@ -125,7 +130,8 @@ class _SearchMapState extends State<SearchMap> {
           right: 70,
           child: Card(
             elevation: 4,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             child: TextField(
               controller: _searchController,
               textInputAction: TextInputAction.search,
@@ -163,13 +169,16 @@ class _SearchMapState extends State<SearchMap> {
             left: 16,
             right: 16,
             child: ElevatedButton.icon(
-              icon: Icon(Icons.check_circle_outline, size: 20, color: Theme.of(context).colorScheme.onPrimary),
-              label: Text("Confirmar ubicación", style: Theme.of(context).textTheme.labelLarge),
+              icon: Icon(Icons.check_circle_outline,
+                  size: 20, color: Theme.of(context).colorScheme.onPrimary),
+              label: Text("Confirmar ubicación",
+                  style: Theme.of(context).textTheme.labelLarge),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 minimumSize: const Size.fromHeight(36),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
                 elevation: 2,
               ),
               onPressed: () {
@@ -187,8 +196,6 @@ class _SearchMapState extends State<SearchMap> {
       ],
     );
 
-    return isDesktop
-        ? Expanded(child: Column(children: [Expanded(child: stackMap)]))
-        : stackMap;
+    return isDesktop ? Expanded(child: stackMap) : stackMap;
   }
 }
