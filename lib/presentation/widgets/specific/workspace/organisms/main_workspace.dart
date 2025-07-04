@@ -68,7 +68,12 @@ class MainWorkspace extends StatelessWidget {
             ),
             actions: [
               ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  context.goNamed(
+                    Routes.createMeter.name,
+                    pathParameters: {"id": id},
+                  );
+                },
                 icon: const Icon(Icons.add),
                 label: const Text("Agregar"),
               )
