@@ -11,11 +11,13 @@ import 'package:frontend_water_quality/presentation/widgets/specific/meter_ubica
 
 class SearchMap extends StatefulWidget {
   final ScreenSize screenSize;
+  final LatLng? initialLocation;
   final void Function(UbicacionSeleccionada)? onLocationSelected;
 
   const SearchMap({
     super.key,
     required this.screenSize,
+    this.initialLocation,
     this.onLocationSelected,
   });
 
@@ -92,9 +94,6 @@ class _SearchMapState extends State<SearchMap> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDesktop = widget.screenSize == ScreenSize.smallDesktop ||
-        widget.screenSize == ScreenSize.largeDesktop;
-
     final markers = <Marker>[
       if (_selectedLocation != null)
         Marker(
@@ -110,7 +109,7 @@ class _SearchMapState extends State<SearchMap> {
         BaseContainer(
           width: double.infinity,
           height: double.infinity,
-          margin: EdgeInsets.all(10),
+          margin: EdgeInsets.all(widget.initialLocation == null ? 0 : 0),
           child: MainMap(
             mapController: _mapController,
             initialCenter: _initialCenter,
@@ -196,6 +195,6 @@ class _SearchMapState extends State<SearchMap> {
       ],
     );
 
-    return isDesktop ? Expanded(child: stackMap) : stackMap;
+    return stackMap;
   }
 }

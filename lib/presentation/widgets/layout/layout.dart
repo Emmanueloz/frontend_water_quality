@@ -97,7 +97,9 @@ class Layout extends StatelessWidget {
           spacing: 10,
           children: [
             _buildSidebar(screenSize),
-            builder!(context, screenSize),
+            Expanded(
+              child: builder!(context, screenSize),
+            ),
           ],
         ),
       ),

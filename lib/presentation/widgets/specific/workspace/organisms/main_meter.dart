@@ -5,6 +5,8 @@ import 'package:frontend_water_quality/presentation/widgets/specific/workspace/m
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/radial_gauge_meter.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/sensor_color.dart';
 
+/// Widget principal para monitoreo de medidor.
+/// Versión mejorada con funcionalidad completa.
 class MainMeter extends StatelessWidget {
   final String id;
   final String idMeter;
@@ -19,11 +21,7 @@ class MainMeter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (screenSize == ScreenSize.smallDesktop ||
-        screenSize == ScreenSize.largeDesktop) {
-      return Expanded(child: _buildMain(context));
-    }
-
+    // Simplemente retornar el contenido, el LayoutMeters se encarga del Expanded
     return _buildMain(context);
   }
 
@@ -45,7 +43,6 @@ class MainMeter extends StatelessWidget {
       childAspectRatio = 1 / 1.2;
     } else if (screenSize == ScreenSize.largeDesktop) {
       margin = const EdgeInsets.all(0);
-
       padding = const EdgeInsets.symmetric(
         horizontal: 20,
         vertical: 9,
@@ -55,7 +52,6 @@ class MainMeter extends StatelessWidget {
       childAspectRatio = 1 / 0.70;
     } else if (screenSize == ScreenSize.tablet) {
       margin = const EdgeInsets.all(10);
-
       padding = const EdgeInsets.all(12.0);
       meterSize = const Size(300, 240);
       crossAxisCount = 2;
@@ -63,16 +59,14 @@ class MainMeter extends StatelessWidget {
     } else {
       // Mobile
       margin = const EdgeInsets.all(10);
-
       padding = const EdgeInsets.all(10.0);
       meterSize = const Size(340, 260);
       crossAxisCount = 1;
       childAspectRatio = 1 / 1.2;
     }
 
-    // Lista de medidores de ejemplo
+    // Lista de medidores de ejemplo (puedes modificarla para pruebas)
     final List<Widget> meters = [
-      //48, 120, 171
       SensorColor(
         red: 48,
         green: 120,
@@ -139,7 +133,6 @@ class MainMeter extends StatelessWidget {
             screenSize: screenSize,
           ),
           const SizedBox(height: 16),
-
           // Contenedor con scroll para los medidores
           Expanded(
             child: SingleChildScrollView(

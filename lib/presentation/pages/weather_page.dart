@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
-import 'package:frontend_water_quality/presentation/widgets/layout/layout_meters.dart';
+import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/weather/molecules/weather_detail_card.dart';
 
 class WeatherPage extends StatelessWidget {
@@ -11,19 +11,9 @@ class WeatherPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutMeters(
-      title: "Clima del medidor",
-      id: id,
-      idMeter: idMeter,
-      selectedIndex: 5,
-      builder: (context, screenSize) {
-        if (screenSize == ScreenSize.smallDesktop ||
-            screenSize == ScreenSize.largeDesktop) {
-          return Expanded(child: _buildMain(context, screenSize));
-        }
-        return _buildMain(context, screenSize);
-      },
-    );
+    final screenSize = ResponsiveScreenSize.getScreenSize(context);
+
+    return _buildMain(context, screenSize);
   }
 
   Widget _buildMain(BuildContext context, ScreenSize screenSize) {
