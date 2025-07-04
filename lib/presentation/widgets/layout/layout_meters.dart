@@ -71,6 +71,14 @@ class _LayoutMetersState extends State<LayoutMeters> {
         );
       } else if (index == 5) {
         context.goNamed(
+          Routes.weather.name,
+          pathParameters: {
+            "id": id,
+            "idMeter": idMeter,
+          },
+        );
+      } else if (index == 6) {
+        context.goNamed(
           Routes.updateMeter.name,
           pathParameters: {
             "id": widget.id,
@@ -113,6 +121,11 @@ class _LayoutMetersState extends State<LayoutMeters> {
           label: "Conección",
           icon: Icons.wifi_tethering_outlined,
           selectedIcon: Icons.wifi_tethering,
+        ),
+        NavigationItem(
+          label: "Climan",
+          icon: Icons.cloud_outlined,
+          selectedIcon: Icons.cloudy_snowing,
         ),
         NavigationItem(
           label: "Editar",

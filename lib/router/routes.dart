@@ -133,6 +133,11 @@ class Routes {
     path: "/meter-create",
   );
 
+  static RouteProperties weather = RouteProperties(
+    name: "weather",
+    path: "/weather",
+  );
+
   static RouteProperties listRecords = RouteProperties(
     name: "listRecords",
     path: "meter/:idMeter/records",

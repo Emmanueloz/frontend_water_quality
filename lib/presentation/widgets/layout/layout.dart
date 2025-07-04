@@ -73,7 +73,7 @@ class Layout extends StatelessWidget {
       endDrawer: _buildDrawer(),
       body: builder!(context, screenSize),
       bottomNavigationBar:
-          hasNavigation ? _buildBottomNavigationBar(context) : null,
+          hasNavigation ? _buildBottomNavigationBar(context, screenSize) : null,
     );
   }
 
@@ -113,9 +113,15 @@ class Layout extends StatelessWidget {
   }
 
   /// Construye la barra de navegación inferior
-  Widget _buildBottomNavigationBar(BuildContext context) {
+  Widget _buildBottomNavigationBar(
+      BuildContext context, ScreenSize screenSize) {
+    NavigationDestinationLabelBehavior labelBehavior =
+        screenSize == ScreenSize.mobile
+            ? NavigationDestinationLabelBehavior.onlyShowSelected
+            : NavigationDestinationLabelBehavior.alwaysShow;
     return NavigationBar(
       selectedIndex: selectedIndex ?? 0,
+      labelBehavior: labelBehavior,
       destinations: _buildNavigationDestinations(context),
       onDestinationSelected: onDestinationSelected,
     );
