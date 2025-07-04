@@ -104,16 +104,6 @@ class _FormMetersState extends State<FormMeters> {
         child: _buildForm(context, screenSize, title),
       );
     }
-    if (widget.idMeter != null) {
-      return Expanded(
-        child: BaseContainer(
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: _buildForm(context, screenSize, title),
-          ),
-        ),
-      );
-    }
 
     return BaseContainer(
       margin: EdgeInsets.all(widget.idMeter != null ? 0 : 10),
