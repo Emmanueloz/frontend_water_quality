@@ -135,7 +135,7 @@ class Routes {
 
   static RouteProperties weather = RouteProperties(
     name: "weather",
-    path: "/weather",
+    path: "meter/:idMeter/weather",
   );
 
   static RouteProperties listRecords = RouteProperties(

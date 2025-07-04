@@ -210,8 +210,23 @@ class AppRouter {
                           final id = state.pathParameters['id'] ?? 'default';
                           final idMeter =
                               state.pathParameters['idMeter'] ?? 'default';
-                          return SizedBox(
-                            child: Text('Conexión del medidor $id $idMeter'),
+                          return ViewMeterConnection(
+                            id: id,
+                            idMeter: idMeter,
+                            title: 'Conexión del medidor $idMeter',
+                          );
+                        },
+                      ),
+                      GoRoute(
+                        path: Routes.weather.path,
+                        name: Routes.weather.name,
+                        builder: (context, state) {
+                          final id = state.pathParameters['id'] ?? 'default';
+                          final idMeter =
+                              state.pathParameters['idMeter'] ?? 'default';
+                          return WeatherPage(
+                            id: id,
+                            idMeter: idMeter,
                           );
                         },
                       ),
@@ -259,7 +274,11 @@ class AppRouter {
                     path: Routes.guests.path,
                     name: Routes.guests.name,
                     builder: (context, state) {
-                      return Simple(title: "Invitados");
+                      String id = state.pathParameters['id'] ?? 'default';
+                      return GuestsPage(
+                        id: id,
+                        title: 'Invitados',
+                      );
                     },
                   ),
                   GoRoute(

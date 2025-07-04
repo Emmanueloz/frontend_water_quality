@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_meters.dart';
+import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/meter_connection/main_meter_connection_widget.dart';
 
 class ViewMeterConnection extends StatelessWidget {
@@ -15,17 +16,12 @@ class ViewMeterConnection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutMeters(
-        title: title,
-        id: id,
-        idMeter: idMeter,
-        selectedIndex: 4,
-        builder: (context, screenSize) {
-          return MainMeterConnectionWidget(
-            idWorkspace: id,
-            idMeter: idMeter,
-            screenSize: screenSize,
-          );
-        });
+    final screenSize = ResponsiveScreenSize.getScreenSize(context);
+
+    return MainMeterConnectionWidget(
+      idWorkspace: id,
+      idMeter: idMeter,
+      screenSize: screenSize,
+    );
   }
 }

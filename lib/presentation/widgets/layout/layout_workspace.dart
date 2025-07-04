@@ -106,9 +106,7 @@ class _LayoutWorkspaceState extends State<LayoutWorkspace> {
           selectedIcon: Icons.edit,
         ),
       ],
-      builder: (context, screenSize) => Expanded(
-        child: widget.builder(context, screenSize),
-      ),
+      builder: (context, screenSize) => widget.builder(context, screenSize),
     );
   }
 }

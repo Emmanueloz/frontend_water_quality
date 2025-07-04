@@ -70,11 +70,12 @@ class _LayoutMetersState extends State<LayoutMeters> {
           },
         );
       } else if (index == 5) {
+        print("Weather");
         context.goNamed(
           Routes.weather.name,
           pathParameters: {
-            "id": id,
-            "idMeter": idMeter,
+            "id": widget.id,
+            "idMeter": widget.idMeter,
           },
         );
       } else if (index == 6) {
@@ -133,8 +134,7 @@ class _LayoutMetersState extends State<LayoutMeters> {
           selectedIcon: Icons.edit,
         ),
       ],
-      builder: (context, screenSize) =>
-          Expanded(child: widget.builder(context, screenSize)),
+      builder: (context, screenSize) => widget.builder(context, screenSize),
     );
   }
 }

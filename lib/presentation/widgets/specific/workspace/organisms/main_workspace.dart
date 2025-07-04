@@ -21,11 +21,6 @@ class MainWorkspace extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (screenSize == ScreenSize.smallDesktop ||
-        screenSize == ScreenSize.largeDesktop) {
-      return Expanded(child: _buildMain(context));
-    }
-
     return _buildMain(context);
   }
 

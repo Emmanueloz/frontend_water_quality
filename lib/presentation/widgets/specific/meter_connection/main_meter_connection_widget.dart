@@ -7,7 +7,6 @@ import 'package:frontend_water_quality/presentation/widgets/common/molecules/suc
 import 'package:frontend_water_quality/presentation/widgets/specific/meter_connection/idle_view.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/meter_connection/password_view.dart';
 
-
 class MainMeterConnectionWidget extends StatefulWidget {
   final String idWorkspace;
   final String idMeter;
@@ -20,7 +19,8 @@ class MainMeterConnectionWidget extends StatefulWidget {
   });
 
   @override
-  State<MainMeterConnectionWidget> createState() =>  _MainMeterConnectionWidgetState();
+  State<MainMeterConnectionWidget> createState() =>
+      _MainMeterConnectionWidgetState();
 }
 
 class _MainMeterConnectionWidgetState extends State<MainMeterConnectionWidget> {
@@ -104,7 +104,10 @@ class _MainMeterConnectionWidgetState extends State<MainMeterConnectionWidget> {
         );
         break;
       case ConnectionStep.success:
-        content = SuccessView(title: "Conexión exitosa", subtitle: "Medidor conectado",);
+        content = SuccessView(
+          title: "Conexión exitosa",
+          subtitle: "Medidor conectado",
+        );
         break;
       case ConnectionStep.error:
         content = ErrorView(
@@ -119,17 +122,16 @@ class _MainMeterConnectionWidgetState extends State<MainMeterConnectionWidget> {
         );
     }
     final Widget mainContent = BaseContainer(
-      margin: isMobileOrTablet
-          ? const EdgeInsets.all(10)
-          : const EdgeInsets.all(0),
+      margin:
+          isMobileOrTablet ? const EdgeInsets.all(10) : const EdgeInsets.all(0),
       child: Center(
         child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              child: content,
-            ),
+          duration: const Duration(milliseconds: 300),
+          child: content,
+        ),
       ),
     );
 
-    return isMobileOrTablet ? mainContent : Expanded(child: mainContent);
+    return mainContent;
   }
 }

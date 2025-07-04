@@ -29,19 +29,8 @@ class FormWorkspace extends StatelessWidget {
       );
     }
 
-    if (idWorkspace != null) {
-      return Expanded(
-        child: BaseContainer(
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: _buildForm(context, screenSize, title),
-          ),
-        ),
-      );
-    }
-
     return BaseContainer(
-      margin: EdgeInsets.all(10),
+      margin: EdgeInsets.all(idWorkspace != null ? 0 : 10),
       child: Align(
         alignment: Alignment.topCenter,
         child: _buildForm(context, screenSize, title),
