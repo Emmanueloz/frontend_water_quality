@@ -134,7 +134,8 @@ class MainMeter extends StatelessWidget {
                   .bodyLarge
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
-            actions: [],
+            actions: [
+            ],
             screenSize: screenSize,
           ),
           const SizedBox(height: 16),

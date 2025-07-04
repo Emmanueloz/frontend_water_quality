@@ -78,8 +78,8 @@ class LayoutMeters extends StatelessWidget {
         context.goNamed(
           Routes.updateMeter.name,
           pathParameters: {
-            "id": id,
-            "idMeter": idMeter,
+            "id": "1",
+            "idMeter": "3",
           },
         );
       }
@@ -123,8 +123,7 @@ class LayoutMeters extends StatelessWidget {
         NavigationItem(
           label: "Editar",
           icon: Icons.edit_outlined,
-          selectedIcon: Icons.edit,
-        ),
+          selectedIcon: Icons.edit,),
       ],
       builder: builder,
     );
