@@ -106,7 +106,9 @@ class AppRouter {
                     path: Routes.createMeter.path,
                     name: Routes.createMeter.name,
                     builder: (context, state) {
-                      return Simple(title: "Create Meter");
+                      return FormMeters(
+                        id: state.pathParameters['id'] ?? 'default',
+                      );
                     },
                   ),
                   ShellRoute(
@@ -238,9 +240,7 @@ class AppRouter {
                           final id = state.pathParameters['id'] ?? 'default';
                           final idMeter =
                               state.pathParameters['idMeter'] ?? 'default';
-                          return SizedBox(
-                            child: Text('Actualizar $id $idMeter'),
-                          );
+                          return FormMeters(id: id, idMeter: idMeter);
                         },
                       ),
                     ],
