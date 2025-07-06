@@ -13,17 +13,26 @@ class AuthRepoImpl implements AuthRepo {
   @override
   Future<Result<LoginResponse>> login(User user) async {
     try {
-      final response = await _dio.post('/login', data: user.toJson());
-      return Result.success(LoginResponse.fromJson(response.data));
+      final resp = await _dio.post('/auth/login/', data: user.toJson());
+      LoginResponse loginResponse = LoginResponse.fromJson(resp.data);
+
+      if (resp.statusCode != 200) {
+        return Result.failure(loginResponse.detail ?? 'Login failed');
+      }
+
+      return Result.success(loginResponse);
     } catch (e) {
-      return Result.failure(e.toString());
+      print('Login error: $e');
+
+      return Result.failure(
+          'Fallo al iniciar sesión, por favor intenta más tarde');
     }
   }
 
   @override
   Future<Result<Response>> register(User user) async {
     try {
-      final response = await _dio.post('/register', data: user.toJson());
+      final response = await _dio.post('/auth/register', data: user.toJson());
       return Result.success(response);
     } catch (e) {
       return Result.failure(e.toString());
@@ -33,8 +42,8 @@ class AuthRepoImpl implements AuthRepo {
   @override
   Future<Result<Response>> requestPasswordReset(String email) async {
     try {
-      final response =
-          await _dio.post('/request-password-reset', data: {'email': email});
+      final response = await _dio
+          .post('/auth/request-password-reset', data: {'email': email});
       return Result.success(response);
     } catch (e) {
       return Result.failure(e.toString());
@@ -45,8 +54,8 @@ class AuthRepoImpl implements AuthRepo {
   Future<Result<VerifyCodeResponse>> verifyResetCode(
       String email, String code) async {
     try {
-      final response = await _dio
-          .post('/verify-reset-code', data: {'email': email, 'code': code});
+      final response = await _dio.post('/auth/verify-reset-code',
+          data: {'email': email, 'code': code});
       return Result.success(VerifyCodeResponse.fromJson(response.data));
     } catch (e) {
       return Result.failure(e.toString());
@@ -57,7 +66,7 @@ class AuthRepoImpl implements AuthRepo {
   Future<Result<Response>> resetPassword(
       String token, String newPassword) async {
     try {
-      final response = await _dio.post('/reset-password',
+      final response = await _dio.post('/auth/reset-password',
           data: {'token': token, 'newPassword': newPassword});
       return Result.success(response);
     } catch (e) {

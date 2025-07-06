@@ -24,7 +24,12 @@ class User {
       username: json['username'] as String?,
       phone: json['phone'] as String?,
       password: json['password'] as String?,
-      rol: json['rol'] as AppRoles? ?? AppRoles.unknown,
+      rol: json['rol'] != null
+          ? AppRoles.values.firstWhere(
+              (e) => e.name == json['rol'],
+              orElse: () => AppRoles.unknown,
+            )
+          : AppRoles.unknown,
     );
   }
 
@@ -35,7 +40,7 @@ class User {
     if (username != null) data['username'] = username;
     if (phone != null) data['phone'] = phone;
     if (password != null) data['password'] = password;
-    if (rol != null) data['rol'] = rol;
+    if (rol != null) data['rol'] = rol!.name;
     return data;
   }
 }
