@@ -9,9 +9,7 @@ import 'package:frontend_water_quality/infrastructure/local_storage_service.dart
 class AuthProvider with ChangeNotifier {
   final AuthRepo _authRepo;
 
-  AuthProvider(this._authRepo) {
-    _loadUserData();
-  }
+  AuthProvider(this._authRepo);
 
   bool isAuthenticated = false;
   bool isLoading = false;
@@ -19,7 +17,7 @@ class AuthProvider with ChangeNotifier {
   User? user;
   String? errorMessage;
 
-  Future<void> _loadUserData() async {
+  Future<void> loadSettings() async {
     token = await LocalStorageService.get(StorageKey.token);
     isAuthenticated = token != null && token!.isNotEmpty;
     notifyListeners();
