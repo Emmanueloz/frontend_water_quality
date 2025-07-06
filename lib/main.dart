@@ -7,6 +7,7 @@ import 'package:frontend_water_quality/router/app_router.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   var dio = DioProvider.createDio();
   runApp(
     MultiProvider(
