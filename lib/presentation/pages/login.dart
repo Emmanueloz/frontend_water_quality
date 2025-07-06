@@ -4,6 +4,8 @@ import 'package:frontend_water_quality/presentation/providers/auth_provider.dart
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/auth/illustration_section.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/form_login.dart';
+import 'package:frontend_water_quality/router/routes.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
@@ -61,6 +63,13 @@ class LoginPage extends StatelessWidget {
   Widget _buildLoginForm() {
     return Consumer<AuthProvider>(
       builder: (context, authProvider, child) {
+        if (authProvider.isAuthenticated) {
+          // Si ya está autenticado, redirigir a la página principal
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            context.goNamed(Routes.workspaces.name);
+          });
+        }
+
         return LoginForm(
           isLoading: authProvider.isLoading,
           errorMessage: authProvider.errorMessage ?? '',
