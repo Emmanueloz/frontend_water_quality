@@ -21,7 +21,7 @@ class LoginPage extends StatelessWidget {
           // Solo formulario sin contenedor blanco ni sombra
           return Padding(
             padding: EdgeInsets.all(24),
-            child: _buildLoginForm(),
+            child: _buildLoginForm(context),
           );
         } else {
           // Desktop / pantallas grandes con ilustración y fondo blanco + sombra
@@ -45,7 +45,7 @@ class LoginPage extends StatelessWidget {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 50),
-                      child: _buildLoginForm(),
+                      child: _buildLoginForm(context),
                     ),
                   ),
                   Expanded(
@@ -60,24 +60,26 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget _buildLoginForm() {
+  Widget _buildLoginForm(BuildContext context) {
     return Consumer<AuthProvider>(
       builder: (context, authProvider, child) {
-        if (authProvider.isAuthenticated) {
-          // Si ya está autenticado, redirigir a la página principal
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            context.goNamed(Routes.workspaces.name);
-          });
-        }
-
         return LoginForm(
           isLoading: authProvider.isLoading,
           errorMessage: authProvider.errorMessage ?? '',
           onLogin: (email, password) async {
-            await authProvider.login(email, password);
+            await _handleLogin(context, authProvider, email, password);
           },
         );
       },
     );
+  }
+
+  Future<void> _handleLogin(BuildContext context, AuthProvider authProvider,
+      String email, String password) async {
+    final success = await authProvider.login(email, password);
+
+    if (success && context.mounted) {
+      context.goNamed(Routes.workspaces.name);
+    }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:frontend_water_quality/core/enums/storage_key.dart';
+import 'package:frontend_water_quality/core/interface/response/base_response.dart';
 import 'package:frontend_water_quality/core/interface/response/login_response.dart';
 import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/domain/models/user.dart';
@@ -23,12 +24,13 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> login(String email, String password) async {
+  Future<bool> login(String email, String password) async {
     isLoading = true;
     notifyListeners();
 
     final Result<LoginResponse> result =
         await _authRepo.login(User(email: email, password: password));
+
     if (result.isSuccess) {
       isAuthenticated = true;
       token = result.value?.token;
@@ -41,7 +43,26 @@ class AuthProvider with ChangeNotifier {
       errorMessage = result.message;
     }
     isLoading = false;
+
     notifyListeners();
+    return isAuthenticated;
+  }
+
+  Future<bool> register(User user) async {
+    isLoading = true;
+    notifyListeners();
+
+    final Result<BaseResponse> result = await _authRepo.register(user);
+
+    if (result.isSuccess) {
+      errorMessage = null;
+    } else {
+      errorMessage = result.message;
+    }
+
+    isLoading = false;
+    notifyListeners();
+    return result.isSuccess;
   }
 
   void logout() {

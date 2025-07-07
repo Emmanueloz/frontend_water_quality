@@ -12,7 +12,7 @@ class LocalStorageService {
   // Consultar valor
   static Future<String?> get(StorageKey key) async {
     try {
-      return (await _box).get(key.name);
+      return (await _box).get(key.name, defaultValue: null);
     } catch (e) {
       // Manejo de errores si es necesario
       print(e.toString());

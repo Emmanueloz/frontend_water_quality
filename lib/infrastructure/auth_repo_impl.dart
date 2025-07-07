@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:frontend_water_quality/core/interface/response/base_response.dart';
 import 'package:frontend_water_quality/core/interface/response/login_response.dart';
 import 'package:frontend_water_quality/core/interface/response/verify_code_response.dart';
 import 'package:frontend_water_quality/core/interface/result.dart';
@@ -30,21 +31,21 @@ class AuthRepoImpl implements AuthRepo {
   }
 
   @override
-  Future<Result<Response>> register(User user) async {
+  Future<Result<BaseResponse>> register(User user) async {
     try {
       final response = await _dio.post('/auth/register', data: user.toJson());
-      return Result.success(response);
+      return Result.success(BaseResponse.fromJson(response.data));
     } catch (e) {
       return Result.failure(e.toString());
     }
   }
 
   @override
-  Future<Result<Response>> requestPasswordReset(String email) async {
+  Future<Result<BaseResponse>> requestPasswordReset(String email) async {
     try {
       final response = await _dio
           .post('/auth/request-password-reset', data: {'email': email});
-      return Result.success(response);
+      return Result.success(BaseResponse.fromJson(response.data));
     } catch (e) {
       return Result.failure(e.toString());
     }
@@ -63,12 +64,12 @@ class AuthRepoImpl implements AuthRepo {
   }
 
   @override
-  Future<Result<Response>> resetPassword(
+  Future<Result<BaseResponse>> resetPassword(
       String token, String newPassword) async {
     try {
       final response = await _dio.post('/auth/reset-password',
           data: {'token': token, 'newPassword': newPassword});
-      return Result.success(response);
+      return Result.success(BaseResponse.fromJson(response.data));
     } catch (e) {
       return Result.failure(e.toString());
     }
