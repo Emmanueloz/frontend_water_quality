@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/domain/models/user.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl_mobile_field/country_picker_dialog.dart';
+import 'package:intl_mobile_field/intl_mobile_field.dart';
+import 'package:intl_mobile_field/mobile_number.dart';
 
-class RegisterForm extends StatelessWidget {
+class RegisterForm extends StatefulWidget {
   final bool isLoading;
   final String errorMessage;
   final Future<void> Function(User user)? onRegister;
@@ -15,6 +18,11 @@ class RegisterForm extends StatelessWidget {
   });
 
   @override
+  State<RegisterForm> createState() => _RegisterFormState();
+}
+
+class _RegisterFormState extends State<RegisterForm> {
+  @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
 
@@ -23,6 +31,8 @@ class RegisterForm extends StatelessWidget {
     final phoneController = TextEditingController();
     final passwordController = TextEditingController();
     final confirmPasswordController = TextEditingController();
+
+    MobileNumber? number;
 
     InputDecoration inputDecoration(String label, IconData icon) {
       return InputDecoration(
@@ -73,19 +83,29 @@ class RegisterForm extends StatelessWidget {
                 return null;
               },
             ),
-            TextFormField(
+            IntlMobileField(
+              languageCode: "mx",
               controller: phoneController,
-              maxLength: 10,
-              keyboardType: TextInputType.phone,
-              decoration: inputDecoration('Teléfono', Icons.phone_outlined),
+              pickerDialogStyle: PickerDialogStyle(
+                width: 600,
+                searchFieldInputDecoration: InputDecoration(
+                  label: Text("Buscar Pais"),
+                ),
+              ),
+              initialCountryCode: "MX",
+              invalidNumberMessage: "Numero de telefono invalido",
+              decoration: inputDecoration("Telefono", Icons.phone),
               validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Porfavor ingresa un numero de telefono';
-                } else if (value.length != 10) {
-                  return 'Porfavor ingresa un número de 10 digitos';
+                if (value == null || value.number.isEmpty) {
+                  return 'Por favor, introduzca un número de móvil';
                 }
-
+                if (!RegExp(r'^[0-9]+$').hasMatch(value.number)) {
+                  return 'Solo se permiten dígitos';
+                }
                 return null;
+              },
+              onChanged: (value) {
+                number = value;
               },
             ),
             TextFormField(
@@ -124,27 +144,35 @@ class RegisterForm extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              onPressed: isLoading
+              onPressed: widget.isLoading
                   ? null
                   : () async {
+                      print(number);
                       if (formKey.currentState!.validate() &&
-                          onRegister != null) {
+                          widget.onRegister != null) {
                         final user = User(
                           username: usernameController.text.trim(),
                           email: emailController.text.trim(),
-                          phone: phoneController.text.trim(),
+                          phone: "${number?.countryCode}${number?.number}",
                           password: passwordController.text.trim(),
                         );
                         print(user.toJson());
-                        //await onRegister!(user);
+                        await widget.onRegister!(user);
                       }
                     },
-              child: isLoading
+              child: widget.isLoading
                   ? const CircularProgressIndicator(
                       color: Colors.white,
                     )
                   : const Text('Registrarse'),
             ),
+            if (widget.errorMessage.isNotEmpty)
+              Center(
+                child: Text(
+                  widget.errorMessage,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
             TextButton(
               onPressed: () => context.goNamed(Routes.login.name),
               child: const Text(
