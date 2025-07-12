@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
+import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class DrawerNavigation extends StatelessWidget {
   final String title;
@@ -14,11 +16,14 @@ class DrawerNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
+            margin: EdgeInsets.zero,
+            padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: Theme.of(context).primaryColor,
               border: Border.all(
@@ -26,9 +31,30 @@ class DrawerNavigation extends StatelessWidget {
                 color: Theme.of(context).primaryColor,
               ),
             ),
-            child: Text(
-              title,
-              style: TextStyle(fontSize: 24),
+            child: Column(
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).primaryTextTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(authProvider.user?.username ?? ""),
+                    Text(
+                      authProvider.user?.email ?? "",
+                      style: Theme.of(context).primaryTextTheme.bodyMedium,
+                    ),
+                    Chip(
+                      label: Text(
+                        authProvider.user?.rol?.name ?? "",
+                      ),
+                    ),
+                  ],
+                )
+              ],
             ),
           ),
           ListTile(
@@ -79,7 +105,10 @@ class DrawerNavigation extends StatelessWidget {
             title: const Text(
               "Cerrar sesión",
             ),
-            onTap: () {},
+            onTap: () {
+              authProvider.logout();
+              context.goNamed(Routes.login.name);
+            },
           ),
         ],
       ),
