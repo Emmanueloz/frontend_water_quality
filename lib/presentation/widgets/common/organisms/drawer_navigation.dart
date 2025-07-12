@@ -41,6 +41,7 @@ class DrawerNavigation extends StatelessWidget {
             ),
           ),
           ListTile(
+            leading: Icon(Icons.dashboard),
             title: const Text(
               "Espacios de trabajo",
             ),
@@ -51,6 +52,16 @@ class DrawerNavigation extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: Icon(Icons.notifications),
+            title: const Text(
+              "Notificaciones",
+            ),
+            onTap: () {
+              context.goNamed(Routes.listNotifications.name);
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.account_circle),
             title: const Text(
               "Perfil",
             ),
@@ -58,24 +69,17 @@ class DrawerNavigation extends StatelessWidget {
               context.goNamed(Routes.profile.name);
             },
           ),
-          if (children != null)
-            ListTile(
-              title: Text(
-                "Secciones",
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-            ),
-          ...?children,
+          Divider(
+            indent: 20,
+            endIndent: 20,
+            thickness: 0.5,
+          ),
           ListTile(
+            leading: Icon(Icons.logout),
             title: const Text(
-              "Notificaciones",
+              "Cerrar sesión",
             ),
-            onTap: () {
-              context.goNamed(Routes.listNotifications.name);
-            },
+            onTap: () {},
           ),
         ],
       ),

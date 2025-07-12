@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
+import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/organisms/app_bar_navigation.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/organisms/drawer_navigation.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/organisms/sidebar.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
+import 'package:provider/provider.dart';
 
 class Layout extends StatelessWidget {
   final String title;
@@ -15,7 +17,9 @@ class Layout extends StatelessWidget {
   final void Function(int)? onDestinationSelected;
   final Widget Function(BuildContext context, ScreenSize screenSize)? builder;
 
-  const Layout({
+  late final AuthProvider authProvider;
+
+  Layout({
     super.key,
     required this.title,
     this.body,
@@ -28,6 +32,8 @@ class Layout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    authProvider = Provider.of<AuthProvider>(context, listen: false);
+
     // Si no hay builder personalizado, usar layout básico
     if (builder == null) {
       return _buildBasicLayout();
@@ -70,7 +76,7 @@ class Layout extends StatelessWidget {
       BuildContext context, ScreenSize screenSize, bool hasNavigation) {
     return Scaffold(
       appBar: AppBar(title: Text(title)),
-      endDrawer: _buildDrawer(),
+      endDrawer: authProvider.isAuthenticated ? _buildDrawer() : null,
       body: builder!(context, screenSize),
       bottomNavigationBar:
           hasNavigation ? _buildBottomNavigationBar(context, screenSize) : null,
