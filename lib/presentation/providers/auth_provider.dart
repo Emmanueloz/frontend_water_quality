@@ -21,6 +21,11 @@ class AuthProvider with ChangeNotifier {
   Future<void> loadSettings() async {
     token = await LocalStorageService.get(StorageKey.token);
     isAuthenticated = token != null && token!.isNotEmpty;
+    String? userString = await LocalStorageService.get(StorageKey.user);
+    if (userString != null) {
+      user = User.fromString(userString);
+    }
+
     notifyListeners();
   }
 
@@ -33,11 +38,21 @@ class AuthProvider with ChangeNotifier {
 
     if (result.isSuccess) {
       isAuthenticated = true;
+      print(result.value);
       token = result.value?.token;
       user = result.value?.user;
       if (token != null) {
         await LocalStorageService.save(StorageKey.token, token!);
       }
+
+      if (user != null) {
+        await LocalStorageService.save(
+          StorageKey.user,
+          User(email: user!.email, username: user!.username, rol: user!.rol)
+              .toJsonEncode(),
+        );
+      }
+
       errorMessage = null;
     } else {
       errorMessage = result.message;
@@ -69,6 +84,7 @@ class AuthProvider with ChangeNotifier {
     isAuthenticated = false;
     token = null;
     user = null;
+    LocalStorageService.remove(StorageKey.token);
     notifyListeners();
   }
 }

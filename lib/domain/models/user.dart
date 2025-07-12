@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:frontend_water_quality/core/enums/roles.dart';
 
 class User {
@@ -33,6 +34,11 @@ class User {
     );
   }
 
+  factory User.fromString(String userString) {
+    dynamic userJson = jsonDecode(userString);
+    return User.fromJson(userJson);
+  }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     if (uid != null) data['uid'] = uid;
@@ -42,5 +48,9 @@ class User {
     if (password != null) data['password'] = password;
     if (rol != null) data['rol'] = rol!.name;
     return data;
+  }
+
+  String toJsonEncode() {
+    return jsonEncode(toJson());
   }
 }

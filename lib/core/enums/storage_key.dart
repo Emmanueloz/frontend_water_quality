@@ -1,1 +1,6 @@
-enum StorageKey { token, workspaceId, meterId }
+enum StorageKey {
+  token,
+  workspaceId,
+  meterId,
+  user,
+}
