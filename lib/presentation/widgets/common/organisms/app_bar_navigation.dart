@@ -54,6 +54,21 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
           width: 10,
         )
       ];
+    } else {
+      actions = [
+        TextButton(
+          child: const Text("Inicio de sesion"),
+          onPressed: () {
+            context.goNamed(Routes.login.name);
+          },
+        ),
+        TextButton(
+          child: const Text("Registro"),
+          onPressed: () {
+            context.goNamed(Routes.register.name);
+          },
+        )
+      ];
     }
 
     return AppBar(

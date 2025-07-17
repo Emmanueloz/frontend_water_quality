@@ -17,7 +17,7 @@ class Layout extends StatelessWidget {
   final void Function(int)? onDestinationSelected;
   final Widget Function(BuildContext context, ScreenSize screenSize)? builder;
 
-  Layout({
+  const Layout({
     super.key,
     required this.title,
     this.body,

@@ -9,7 +9,7 @@ class Splash extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Layout(
-      title: 'Water Quality App',
+      title: 'Aqua Minds',
       builder: (context, screenSize) => Column(
         children: [
           Text("Splash"),
