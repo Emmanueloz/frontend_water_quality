@@ -333,14 +333,12 @@ class AppRouter {
       GoRoute(
         path: Routes.recoveryPassword.path,
         name: Routes.recoveryPassword.name,
-        builder: (context, state) =>
-            RecoveryPasswordPage(title: 'Recovery Password'),
+        builder: (context, state) => RecoveryPasswordPage(),
       ),
       GoRoute(
         path: Routes.changePassword.path,
         name: Routes.changePassword.name,
         builder: (context, state) => ChangePasswordPage(
-          title: 'change Password',
           email: '',
         ),
       )

@@ -6,9 +6,7 @@ import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
 class RecoveryPasswordPage extends StatefulWidget {
-  final String title;
-
-  const RecoveryPasswordPage({super.key, required this.title});
+  const RecoveryPasswordPage({super.key});
 
   @override
   State<RecoveryPasswordPage> createState() => _RecoveryPasswordPageState();
@@ -34,7 +32,7 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Layout(
-      title: widget.title,
+      title: "Recuperar contraseña",
       builder: (context, screenSize) => Align(
         alignment: Alignment.center,
         child: Padding(

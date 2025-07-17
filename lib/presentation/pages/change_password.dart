@@ -5,19 +5,17 @@ import 'package:frontend_water_quality/presentation/widgets/specific/form_change
 import 'package:frontend_water_quality/router/routes.dart';
 
 class ChangePasswordPage extends StatelessWidget {
-  final String title;
   final String email;
 
   const ChangePasswordPage({
     super.key,
-    required this.title,
     required this.email,
   });
 
   @override
   Widget build(BuildContext context) {
     return Layout(
-      title: title,
+      title: "Cambiar contraseña",
       builder: (context, screenSize) => Align(
         alignment: Alignment.center,
         child: Padding(
