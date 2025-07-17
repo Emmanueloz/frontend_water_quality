@@ -1,62 +1,57 @@
 import 'package:flutter/material.dart';
 
-class EmailForm extends StatefulWidget {
+class EmailForm extends StatelessWidget {
   final void Function(String email) onValid;
 
-  const EmailForm({super.key, required this.onValid});
+  EmailForm({super.key, required this.onValid});
 
-  @override
-  State<EmailForm> createState() => _EmailFormState();
-}
-
-class _EmailFormState extends State<EmailForm> {
   final TextEditingController _controller = TextEditingController();
 
   void _submit() {
     final email = _controller.text.trim();
     if (email.isEmpty || !email.contains('@')) {
-      _showSnackBar("Correo inválido");
       return;
     }
 
-    // Simular envío de código
-    widget.onValid(email);
-  }
-
-  void _showSnackBar(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+    onValid(email);
   }
 
   @override
   Widget build(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
     final textTheme = Theme.of(context).textTheme;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Center(
-          child: Column(
-            children: [
-              const Icon(Icons.lock_reset, size: 50),
-              const SizedBox(height: 12),
-              Text('Recuperar contraseña', style: textTheme.titleMedium),
-            ],
+    return Form(
+      key: formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        spacing: 20,
+        children: [
+          const Icon(Icons.lock_reset, size: 50),
+          Text('Recuperar contraseña', style: textTheme.titleMedium),
+          TextFormField(
+            controller: _controller,
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(labelText: 'Correo electrónico'),
+            validator: (email) {
+              if (email!.isEmpty || !email.contains('@')) {
+                return "Correo inválido";
+              }
+              return null;
+            },
           ),
-        ),
-        const SizedBox(height: 40),
-        TextField(
-          controller: _controller,
-          keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(labelText: 'Correo electrónico'),
-        ),
-        const SizedBox(height: 30),
-        Center(
-          child: ElevatedButton(
-            onPressed: _submit,
-            child: const Text('Enviar código'),
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                if (formKey.currentState!.validate()) {
+                  _submit();
+                }
+              },
+              child: const Text('Enviar código'),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
