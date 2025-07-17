@@ -18,6 +18,8 @@ class AuthProvider with ChangeNotifier {
   User? user;
   String? errorMessage;
 
+  String? emailRecovery;
+
   Future<void> loadSettings() async {
     token = await LocalStorageService.get(StorageKey.token);
     isAuthenticated = token != null && token!.isNotEmpty;
@@ -71,6 +73,26 @@ class AuthProvider with ChangeNotifier {
 
     if (result.isSuccess) {
       errorMessage = null;
+    } else {
+      errorMessage = result.message;
+    }
+
+    isLoading = false;
+    notifyListeners();
+    return result.isSuccess;
+  }
+
+  Future<bool> requestPasswordReset(String email) async {
+    isLoading = true;
+    notifyListeners();
+
+    final result = await _authRepo.requestPasswordReset(email);
+
+    print(result.isSuccess);
+
+    if (result.isSuccess) {
+      errorMessage = null;
+      emailRecovery = email;
     } else {
       errorMessage = result.message;
     }

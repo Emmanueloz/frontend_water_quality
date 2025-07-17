@@ -44,10 +44,22 @@ class AuthRepoImpl implements AuthRepo {
   @override
   Future<Result<BaseResponse>> requestPasswordReset(String email) async {
     try {
-      final response = await _dio
-          .post('/auth/request-password-reset/', data: {'email': email});
+      final response = await _dio.post(
+        '/auth/request-password-reset/',
+        queryParameters: {'email': email},
+      );
+
+      if (response.statusCode != 200) {
+        print(response.data);
+        return Result.failure("Error: codigo ${response.statusCode}");
+      }
+
       return Result.success(BaseResponse.fromJson(response.data));
     } catch (e) {
+      print(e);
+      if (e is DioException) {
+        return Result.failure("Error de conexión");
+      }
       return Result.failure(e.toString());
     }
   }

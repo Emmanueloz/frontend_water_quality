@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 
 class EmailForm extends StatelessWidget {
+  final bool isLoading;
+  final String? errorMessage;
   final void Function(String email) onValid;
 
-  EmailForm({super.key, required this.onValid});
+  EmailForm({
+    super.key,
+    required this.onValid,
+    required this.isLoading,
+    this.errorMessage,
+  });
 
   final TextEditingController _controller = TextEditingController();
 
   void _submit() {
     final email = _controller.text.trim();
-    if (email.isEmpty || !email.contains('@')) {
-      return;
-    }
-
     onValid(email);
   }
 
@@ -40,6 +43,13 @@ class EmailForm extends StatelessWidget {
               return null;
             },
           ),
+          if (errorMessage != null)
+            Text(
+              errorMessage ?? "",
+              style: Theme.of(context).primaryTextTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+            ),
           Center(
             child: ElevatedButton(
               onPressed: () {
@@ -47,7 +57,9 @@ class EmailForm extends StatelessWidget {
                   _submit();
                 }
               },
-              child: const Text('Enviar código'),
+              child: isLoading
+                  ? CircularProgressIndicator()
+                  : const Text('Enviar código'),
             ),
           ),
         ],

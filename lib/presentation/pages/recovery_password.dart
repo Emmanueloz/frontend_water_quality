@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/auth/email_form.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/auth/code_form.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class RecoveryPasswordPage extends StatefulWidget {
   const RecoveryPasswordPage({super.key});
@@ -39,9 +41,24 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
           padding: const EdgeInsets.all(24),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600, maxHeight: 500),
-            child: showCodeForm
-                ? CodeForm(onValid: handleCodeValid)
-                : EmailForm(onValid: handleEmailValid),
+            child: Consumer<AuthProvider>(
+              builder: (context, authProvider, child) {
+                return showCodeForm
+                    ? CodeForm(onValid: handleCodeValid)
+                    : EmailForm(
+                        onValid: (email) async {
+                          print(email);
+                          if (await authProvider.requestPasswordReset(email)) {
+                            setState(() {
+                              showCodeForm = true;
+                            });
+                          }
+                        },
+                        isLoading: authProvider.isLoading,
+                        errorMessage: authProvider.errorMessage,
+                      );
+              },
+            ),
           ),
         ),
       ),
