@@ -20,11 +20,13 @@ import 'package:frontend_water_quality/presentation/pages/view_meter_connection.
 import 'package:frontend_water_quality/presentation/pages/view_meter_ubications.dart';
 import 'package:frontend_water_quality/presentation/pages/view_notification_details.dart';
 import 'package:frontend_water_quality/presentation/pages/view_workspace.dart';
+import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_meters.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/weather_page.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class AppRouter {
   static final GlobalKey<NavigatorState> shellMeterNavigatorKey =
@@ -331,17 +333,43 @@ class AppRouter {
       GoRoute(
         path: Routes.recoveryPassword.path,
         name: Routes.recoveryPassword.name,
-        builder: (context, state) =>
-            RecoveryPasswordPage(title: 'Recovery Password'),
+        builder: (context, state) => RecoveryPasswordPage(),
       ),
       GoRoute(
         path: Routes.changePassword.path,
         name: Routes.changePassword.name,
-        builder: (context, state) => ChangePasswordPage(
-          title: 'change Password',
-          email: '',
-        ),
+        builder: (context, state) {
+          final token = state.uri.queryParameters['token'];
+
+          return ChangePasswordPage(
+            token: token,
+          );
+        },
       )
     ],
+    redirect: (context, state) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final List<String> publicRoutes = [
+        Routes.splash.path,
+        Routes.login.path,
+        Routes.register.path,
+        Routes.recoveryPassword.path,
+        Routes.changePassword.path,
+      ];
+
+      final isOnPublicRoute = publicRoutes.contains(state.uri.path);
+
+      authProvider.cleanError();
+
+      if (!authProvider.isAuthenticated && !isOnPublicRoute) {
+        return Routes.login.path;
+      }
+
+      if (authProvider.isAuthenticated && isOnPublicRoute) {
+        return Routes.workspaces.path;
+      }
+
+      return null;
+    },
   );
 }

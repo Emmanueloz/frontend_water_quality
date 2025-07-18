@@ -1,98 +1,97 @@
 import 'package:flutter/material.dart';
 
-class ChangePasswordForm extends StatefulWidget {
-  final String email;
+class ChangePasswordForm extends StatelessWidget {
+  final bool isLoading;
+  final String? email;
+  final String? errorMessage;
   final void Function(String password) onSubmit;
 
-  const ChangePasswordForm({
+  ChangePasswordForm({
     super.key,
-    required this.email,
     required this.onSubmit,
+    required this.isLoading,
+    this.errorMessage,
+    this.email,
   });
 
-  @override
-  State<ChangePasswordForm> createState() => _ChangePasswordFormState();
-}
-
-class _ChangePasswordFormState extends State<ChangePasswordForm> {
   final _newPasswordController = TextEditingController();
+
   final _confirmPasswordController = TextEditingController();
 
   @override
-  void dispose() {
-    _newPasswordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
-  }
-
-  void _submit() {
-    final password = _newPasswordController.text.trim();
-    final confirm = _confirmPasswordController.text.trim();
-
-    if (password.length < 6) {
-      _showSnackBar('Debe tener al menos 6 caracteres');
-      return;
-    }
-
-    if (password != confirm) {
-      _showSnackBar('Las contraseñas no coinciden');
-      return;
-    }
-
-    widget.onSubmit(password);
-  }
-
-  void _showSnackBar(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
     final textTheme = Theme.of(context).textTheme;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Center(
-          child: Column(
-            children: [
-              const Icon(Icons.lock, size: 50),
-              const SizedBox(height: 12),
-              Text(
-                'Cambio de contraseña',
-                style: textTheme.titleMedium,
-              ),
-            ],
+    return Form(
+      key: formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        spacing: 20,
+        children: [
+          const Icon(Icons.lock, size: 50),
+          Text(
+            'Cambio de contraseña',
+            style: textTheme.titleMedium,
           ),
-        ),
-        const SizedBox(height: 30),
-        Center(
-          child: Text('Usuario: ${widget.email}', style: textTheme.bodyLarge),
-        ),
-        const SizedBox(height: 30),
-        TextField(
-          controller: _newPasswordController,
-          obscureText: true,
-          decoration: const InputDecoration(
-            labelText: 'Nueva contraseña',
+          if (email != null)
+            Text(
+              'Correo: $email',
+              style: textTheme.bodyMedium,
+            ),
+          TextFormField(
+            controller: _newPasswordController,
+            obscureText: true,
+            decoration: const InputDecoration(
+              labelText: 'Nueva contraseña',
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor ingresa una contraseña';
+              }
+              if (value.length < 6) {
+                return 'La contraseña debe tener al menos 6 caracteres';
+              }
+              return null;
+            },
           ),
-        ),
-        const SizedBox(height: 20),
-        TextField(
-          controller: _confirmPasswordController,
-          obscureText: true,
-          decoration: const InputDecoration(
-            labelText: 'Confirmar contraseña',
+          TextFormField(
+            controller: _confirmPasswordController,
+            obscureText: true,
+            decoration: const InputDecoration(
+              labelText: 'Confirmar contraseña',
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor confirma tu contraseña';
+              }
+              if (value != _newPasswordController.text) {
+                return 'Las contraseñas no coinciden';
+              }
+              return null;
+            },
           ),
-        ),
-        const SizedBox(height: 40),
-        Center(
-          child: ElevatedButton(
-            onPressed: _submit,
-            child: const Text('Actualizar contraseña'),
+          if (errorMessage != null)
+            Text(
+              errorMessage ?? "",
+              style: Theme.of(context).primaryTextTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+            ),
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                if (formKey.currentState!.validate()) {
+                  onSubmit(_newPasswordController.text);
+                }
+              },
+              child: isLoading
+                  ? const CircularProgressIndicator()
+                  : const Text('Cambiar contraseña'),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

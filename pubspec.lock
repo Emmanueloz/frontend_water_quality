@@ -176,6 +176,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "14.8.1"
+  hive:
+    dependency: "direct main"
+    description:
+      name: hive
+      sha256: "8dcf6db979d7933da8217edcec84e9df1bdb4e4edc7fc77dbd5aa74356d6d941"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.3"
   http:
     dependency: transitive
     description:
@@ -200,6 +208,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.20.2"
+  intl_mobile_field:
+    dependency: "direct main"
+    description:
+      name: intl_mobile_field
+      sha256: "5ae383f63e1a683ec78f2c9dbe5d599a946d67d556a038163ae12ac39d2e0af9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   latlong2:
     dependency: "direct main"
     description:
