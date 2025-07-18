@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
 class ChangePasswordForm extends StatefulWidget {
-  final String email;
   final void Function(String password) onSubmit;
 
   const ChangePasswordForm({
     super.key,
-    required this.email,
     required this.onSubmit,
   });
 
@@ -66,9 +64,6 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
           ),
         ),
         const SizedBox(height: 30),
-        Center(
-          child: Text('Usuario: ${widget.email}', style: textTheme.bodyLarge),
-        ),
         const SizedBox(height: 30),
         TextField(
           controller: _newPasswordController,

@@ -102,6 +102,26 @@ class AuthProvider with ChangeNotifier {
     return result.isSuccess;
   }
 
+  Future<String?> verifyResetCode(String code) async {
+    isLoading = true;
+    notifyListeners();
+
+    final result = await _authRepo.verifyResetCode(emailRecovery!, code);
+
+    if (result.isSuccess) {
+      errorMessage = null;
+      isLoading = false;
+      notifyListeners();
+      print(result.value!.token);
+      return result.value!.token;
+    } else {
+      errorMessage = result.message;
+      isLoading = false;
+      notifyListeners();
+      return null;
+    }
+  }
+
   void logout() {
     isAuthenticated = false;
     token = null;

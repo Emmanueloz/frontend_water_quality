@@ -46,7 +46,7 @@ class AuthRepoImpl implements AuthRepo {
     try {
       final response = await _dio.post(
         '/auth/request-password-reset/',
-        queryParameters: {'email': email},
+        data: {'email': email},
       );
 
       if (response.statusCode != 200) {
@@ -68,8 +68,18 @@ class AuthRepoImpl implements AuthRepo {
   Future<Result<VerifyCodeResponse>> verifyResetCode(
       String email, String code) async {
     try {
-      final response = await _dio.post('/auth/verify-reset-code/',
-          data: {'email': email, 'code': code});
+      final response = await _dio.post(
+        '/auth/verify-reset-code/',
+        data: {
+          'email': email,
+          'code': code,
+        },
+      );
+
+      if (response.statusCode != 200) {
+        return Result.failure("Error: codigo ${response.statusCode}");
+      }
+
       return Result.success(VerifyCodeResponse.fromJson(response.data));
     } catch (e) {
       return Result.failure(e.toString());

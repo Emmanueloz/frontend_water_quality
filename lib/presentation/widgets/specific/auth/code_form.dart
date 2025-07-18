@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 
 class CodeForm extends StatelessWidget {
+  final bool isLoading;
+  final String? errorMessage;
   final void Function(String code) onValid;
 
-  CodeForm({super.key, required this.onValid});
+  CodeForm({
+    super.key,
+    required this.onValid,
+    required this.isLoading,
+    this.errorMessage,
+  });
 
   final TextEditingController _controller = TextEditingController();
 
@@ -24,8 +31,10 @@ class CodeForm extends StatelessWidget {
         spacing: 20,
         children: [
           const Icon(Icons.lock_reset, size: 50),
-          Text('Verificar codigo',
-              style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            'Verificar codigo',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           TextFormField(
             controller: _controller,
             keyboardType: TextInputType.number,
@@ -38,6 +47,13 @@ class CodeForm extends StatelessWidget {
               return null;
             },
           ),
+          if (errorMessage != null)
+            Text(
+              errorMessage ?? "",
+              style: Theme.of(context).primaryTextTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+            ),
           Center(
             child: ElevatedButton(
               onPressed: () {

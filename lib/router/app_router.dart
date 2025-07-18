@@ -338,9 +338,12 @@ class AppRouter {
       GoRoute(
         path: Routes.changePassword.path,
         name: Routes.changePassword.name,
-        builder: (context, state) => ChangePasswordPage(
-          email: '',
-        ),
+        builder: (context, state) {
+          final token = state.uri.queryParameters['token'] ?? '';
+          return ChangePasswordPage(
+            token: token,
+          );
+        },
       )
     ],
     redirect: (context, state) {

@@ -16,18 +16,10 @@ class RecoveryPasswordPage extends StatefulWidget {
 
 class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
   bool showCodeForm = false;
-  String email = '';
 
-  void handleEmailValid(String value) {
-    setState(() {
-      email = value;
-      showCodeForm = true;
-    });
-  }
-
-  void handleCodeValid(String code) {
-    context.goNamed(Routes.changePassword.name, extra: {
-      'email': email,
+  void nextPage(String token) {
+    context.goNamed(Routes.changePassword.name, queryParameters: {
+      'token': token,
     });
   }
 
@@ -44,7 +36,18 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
             child: Consumer<AuthProvider>(
               builder: (context, authProvider, child) {
                 return showCodeForm
-                    ? CodeForm(onValid: handleCodeValid)
+                    ? CodeForm(
+                        onValid: (code) async {
+                          print(code);
+                          final token =
+                              await authProvider.verifyResetCode(code);
+                          if (token != null) {
+                            nextPage(token);
+                          }
+                        },
+                        isLoading: authProvider.isLoading,
+                        errorMessage: authProvider.errorMessage,
+                      )
                     : EmailForm(
                         onValid: (email) async {
                           print(email);

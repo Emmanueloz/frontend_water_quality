@@ -5,11 +5,11 @@ import 'package:frontend_water_quality/presentation/widgets/specific/form_change
 import 'package:frontend_water_quality/router/routes.dart';
 
 class ChangePasswordPage extends StatelessWidget {
-  final String email;
+  final String token;
 
   const ChangePasswordPage({
     super.key,
-    required this.email,
+    required this.token,
   });
 
   @override
@@ -26,7 +26,6 @@ class ChangePasswordPage extends StatelessWidget {
               maxHeight: 500,
             ),
             child: ChangePasswordForm(
-              email: email,
               onSubmit: (newPassword) {
                 context.goNamed(Routes.login.name);
               },
