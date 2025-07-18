@@ -140,6 +140,13 @@ class AuthProvider with ChangeNotifier {
     return result.isSuccess;
   }
 
+  void cleanError() {
+    if (errorMessage != null) {
+      errorMessage = null;
+      notifyListeners();
+    }
+  }
+
   void logout() {
     isAuthenticated = false;
     token = null;

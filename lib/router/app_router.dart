@@ -339,7 +339,8 @@ class AppRouter {
         path: Routes.changePassword.path,
         name: Routes.changePassword.name,
         builder: (context, state) {
-          final token = state.uri.queryParameters['token'] ?? '';
+          final token = state.uri.queryParameters['token'];
+
           return ChangePasswordPage(
             token: token,
           );
@@ -357,6 +358,8 @@ class AppRouter {
       ];
 
       final isOnPublicRoute = publicRoutes.contains(state.uri.path);
+
+      authProvider.cleanError();
 
       if (!authProvider.isAuthenticated && !isOnPublicRoute) {
         return Routes.login.path;
