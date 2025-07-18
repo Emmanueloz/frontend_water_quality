@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
-class LoginForm extends StatelessWidget {
+class LoginForm extends StatefulWidget {
   final bool isLoading;
   final String errorMessage;
   final Future<void> Function(String email, String password)? onLogin;
+
   const LoginForm({
     super.key,
     this.onLogin,
@@ -14,11 +15,23 @@ class LoginForm extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
+  State<LoginForm> createState() => _LoginFormState();
+}
 
+class _LoginFormState extends State<LoginForm> {
+  final formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Form(
         key: formKey,
@@ -71,29 +84,29 @@ class LoginForm extends StatelessWidget {
             ),
             Center(
               child: ElevatedButton(
-                onPressed: isLoading == true
+                onPressed: widget.isLoading == true
                     ? null
                     : () async {
                         if (formKey.currentState!.validate()) {
-                          if (onLogin != null) {
-                            await onLogin!(
+                          if (widget.onLogin != null) {
+                            await widget.onLogin!(
                               emailController.text,
                               passwordController.text,
                             );
                           }
                         }
                       },
-                child: isLoading
+                child: widget.isLoading
                     ? const CircularProgressIndicator(
                         color: Colors.white,
                       )
                     : const Text('Iniciar sesión'),
               ),
             ),
-            if (errorMessage.isNotEmpty)
+            if (widget.errorMessage.isNotEmpty)
               Center(
                 child: Text(
-                  errorMessage,
+                  widget.errorMessage,
                   style: const TextStyle(color: Colors.red),
                 ),
               ),

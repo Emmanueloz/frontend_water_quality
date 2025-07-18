@@ -16,7 +16,7 @@ class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Layout(
-      title: title,
+      title: "Registro",
       builder: (context, screenSize) {
         if (screenSize == ScreenSize.mobile) {
           return Padding(

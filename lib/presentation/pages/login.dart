@@ -15,7 +15,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Layout(
-      title: title,
+      title: "Inicio de sesión",
       builder: (context, screenSize) {
         if (screenSize == ScreenSize.mobile) {
           // Solo formulario sin contenedor blanco ni sombra

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/organisms/app_bar_mobile.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/organisms/app_bar_navigation.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/organisms/drawer_navigation.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/organisms/sidebar.dart';
@@ -71,7 +72,7 @@ class Layout extends StatelessWidget {
   Widget _buildMobileLayout(
       BuildContext context, ScreenSize screenSize, bool hasNavigation) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBarMobile(title: title),
       endDrawer:
           Provider.of<AuthProvider>(context, listen: false).isAuthenticated
               ? _buildDrawer()
