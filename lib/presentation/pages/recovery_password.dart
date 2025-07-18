@@ -35,8 +35,11 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
             constraints: const BoxConstraints(maxWidth: 600, maxHeight: 500),
             child: Consumer<AuthProvider>(
               builder: (context, authProvider, child) {
-                return showCodeForm
-                    ? CodeForm(
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (showCodeForm)
+                      CodeForm(
                         onValid: (code) async {
                           print(code);
                           final token =
@@ -48,7 +51,8 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
                         isLoading: authProvider.isLoading,
                         errorMessage: authProvider.errorMessage,
                       )
-                    : EmailForm(
+                    else
+                      EmailForm(
                         onValid: (email) async {
                           print(email);
                           if (await authProvider.requestPasswordReset(email)) {
@@ -59,7 +63,23 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
                         },
                         isLoading: authProvider.isLoading,
                         errorMessage: authProvider.errorMessage,
-                      );
+                      ),
+                    TextButton(
+                      onPressed: () {
+                        if (showCodeForm) {
+                          setState(() {
+                            showCodeForm = false;
+                          });
+                        } else {
+                          context.goNamed(Routes.login.name);
+                        }
+                      },
+                      child: Text(
+                        showCodeForm ? 'Volver' : 'Cancelar',
+                      ),
+                    )
+                  ],
+                );
               },
             ),
           ),
