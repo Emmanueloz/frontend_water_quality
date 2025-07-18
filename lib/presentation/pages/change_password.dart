@@ -7,11 +7,11 @@ import 'package:frontend_water_quality/router/routes.dart';
 import 'package:provider/provider.dart';
 
 class ChangePasswordPage extends StatelessWidget {
-  final String token;
+  final String? token;
 
   const ChangePasswordPage({
     super.key,
-    required this.token,
+    this.token,
   });
 
   @override
@@ -27,22 +27,39 @@ class ChangePasswordPage extends StatelessWidget {
               maxWidth: 600,
               maxHeight: 500,
             ),
-            child: Consumer<AuthProvider>(
-              builder: (context, authProvider, child) {
-                return ChangePasswordForm(
-                  isLoading: authProvider.isLoading,
-                  email: authProvider.emailRecovery,
-                  errorMessage: authProvider.errorMessage,
-                  onSubmit: (newPassword) async {
-                    final result =
-                        await authProvider.resetPassword(token, newPassword);
-                    if (result && context.mounted) {
-                      context.goNamed(Routes.login.name);
-                    }
-                  },
-                );
-              },
-            ),
+            child: token != null
+                ? Consumer<AuthProvider>(
+                    builder: (context, authProvider, child) {
+                      return ChangePasswordForm(
+                        isLoading: authProvider.isLoading,
+                        email: authProvider.emailRecovery,
+                        errorMessage: authProvider.errorMessage,
+                        onSubmit: (newPassword) async {
+                          final result = await authProvider.resetPassword(
+                              token!, newPassword);
+                          if (result && context.mounted) {
+                            context.goNamed(Routes.login.name);
+                          }
+                        },
+                      );
+                    },
+                  )
+                : Column(
+                    spacing: 20,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Token no proporcionado. Por favor, verifica el enlace de restablecimiento de contraseña.',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          context.goNamed(Routes.login.name);
+                        },
+                        child: const Text('Volver al inicio de sesión'),
+                      ),
+                    ],
+                  ),
           ),
         ),
       ),
