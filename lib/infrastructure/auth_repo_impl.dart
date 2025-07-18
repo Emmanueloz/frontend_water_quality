@@ -76,6 +76,7 @@ class AuthRepoImpl implements AuthRepo {
         },
       );
 
+      print(response.statusCode);
       if (response.statusCode != 200) {
         return Result.failure("Error: codigo ${response.statusCode}");
       }
@@ -90,8 +91,21 @@ class AuthRepoImpl implements AuthRepo {
   Future<Result<BaseResponse>> resetPassword(
       String token, String newPassword) async {
     try {
-      final response = await _dio.post('/auth/reset-password/',
-          data: {'token': token, 'newPassword': newPassword});
+      final response = await _dio.post(
+        '/auth/reset-password/',
+        queryParameters: {'token': token},
+        data: {'new_password': newPassword},
+      );
+
+      if (response.statusCode != 200) {
+        print(response.data);
+
+        if (response.statusCode == 401) {
+          return Result.failure("Token inválido");
+        }
+
+        return Result.failure("Error: codigo ${response.statusCode}");
+      }
       return Result.success(BaseResponse.fromJson(response.data));
     } catch (e) {
       return Result.failure(e.toString());

@@ -122,6 +122,24 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  Future<bool> resetPassword(String token, String newPassword) async {
+    isLoading = true;
+    notifyListeners();
+
+    final result = await _authRepo.resetPassword(token, newPassword);
+
+    if (result.isSuccess) {
+      emailRecovery = null;
+      errorMessage = null;
+    } else {
+      errorMessage = result.message;
+    }
+    isLoading = false;
+    notifyListeners();
+
+    return result.isSuccess;
+  }
+
   void logout() {
     isAuthenticated = false;
     token = null;

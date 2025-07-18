@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/form_change.dart';
 import 'package:frontend_water_quality/router/routes.dart';
+import 'package:provider/provider.dart';
 
 class ChangePasswordPage extends StatelessWidget {
   final String token;
@@ -25,9 +27,20 @@ class ChangePasswordPage extends StatelessWidget {
               maxWidth: 600,
               maxHeight: 500,
             ),
-            child: ChangePasswordForm(
-              onSubmit: (newPassword) {
-                context.goNamed(Routes.login.name);
+            child: Consumer<AuthProvider>(
+              builder: (context, authProvider, child) {
+                return ChangePasswordForm(
+                  isLoading: authProvider.isLoading,
+                  email: authProvider.emailRecovery,
+                  errorMessage: authProvider.errorMessage,
+                  onSubmit: (newPassword) async {
+                    final result =
+                        await authProvider.resetPassword(token, newPassword);
+                    if (result && context.mounted) {
+                      context.goNamed(Routes.login.name);
+                    }
+                  },
+                );
               },
             ),
           ),
