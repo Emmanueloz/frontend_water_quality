@@ -4,6 +4,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:frontend_water_quality/core/utils/config_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MainMap extends StatelessWidget {
   final MapController _mapController;
@@ -59,8 +60,23 @@ class MainMap extends StatelessWidget {
           attributions: [
             TextSourceAttribution(
               'OpenStreetMap contributors',
+              onTap: () async {
+                final url = Uri.parse('https://openstreetmap.org/copyright');
+                try {
+                  if (kIsWeb) {
+                    await launchUrl(url); // En web, abre en la misma pestaña
+                  } else {
+                    await launchUrl(
+                      url,
+                      mode: LaunchMode
+                          .externalApplication, // En móvil, abre navegador externo
+                    );
+                  }
+                } catch (e) {
+                  print('Error launching URL: $e');
+                }
+              },
             ),
-            // Also add images...
           ],
         ),
       ],
