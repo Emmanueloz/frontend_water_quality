@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Water Quality App',
+      title: 'Aqua Minds',
       theme: AppTheme.lightTheme,
       routerConfig: AppRouter.router, // Usa directamente la instancia router
       debugShowCheckedModeBanner: false,
