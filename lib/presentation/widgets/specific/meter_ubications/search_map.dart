@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:frontend_water_quality/core/utils/config_map.dart';
 import 'package:frontend_water_quality/presentation/pages/form_meters.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
@@ -47,7 +48,7 @@ class _SearchMapState extends State<SearchMap> {
         'https://nominatim.openstreetmap.org/search?q=$query&format=json&limit=1');
     try {
       final response =
-          await http.get(url, headers: {'User-Agent': 'flutter_map_app'});
+          await http.get(url, headers: {'User-Agent': ConfigMap.userAgent});
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data.isNotEmpty) {
@@ -71,7 +72,7 @@ class _SearchMapState extends State<SearchMap> {
         'https://nominatim.openstreetmap.org/reverse?lat=${coords.latitude}&lon=${coords.longitude}&format=json');
     try {
       final response =
-          await http.get(url, headers: {'User-Agent': 'flutter_map_app'});
+          await http.get(url, headers: {'User-Agent': ConfigMap.userAgent});
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
