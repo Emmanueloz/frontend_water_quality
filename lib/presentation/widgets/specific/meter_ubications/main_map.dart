@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
+import 'package:frontend_water_quality/core/utils/config_map.dart';
 import 'package:latlong2/latlong.dart';
 
 class MainMap extends StatelessWidget {
@@ -9,7 +10,7 @@ class MainMap extends StatelessWidget {
   final LatLng _initialCenter;
   final double _initialZoom;
   final List<Marker> markers;
-  final void Function(TapPosition, LatLng)? onTap; 
+  final void Function(TapPosition, LatLng)? onTap;
 
   const MainMap({
     super.key,
@@ -17,7 +18,7 @@ class MainMap extends StatelessWidget {
     required LatLng initialCenter,
     required double initialZoom,
     required this.markers,
-    this.onTap, 
+    this.onTap,
   })  : _mapController = mapController,
         _initialCenter = initialCenter,
         _initialZoom = initialZoom;
@@ -34,7 +35,7 @@ class MainMap extends StatelessWidget {
         cameraConstraint: CameraConstraint.contain(
           bounds: LatLngBounds(LatLng(-90, -180), LatLng(90, 180)),
         ),
-        onTap: onTap, 
+        onTap: onTap,
       ),
       children: [
         TileLayer(
@@ -46,9 +47,22 @@ class MainMap extends StatelessWidget {
           retinaMode: kIsWeb ? false : RetinaMode.isHighDensity(context),
           tileProvider: kIsWeb
               ? CancellableNetworkTileProvider()
-              : NetworkTileProvider(),
+              : NetworkTileProvider(
+                  headers: {
+                    'User-Agent': ConfigMap.userAgent,
+                  },
+                ),
         ),
         MarkerLayer(markers: markers),
+        RichAttributionWidget(
+          // Include a stylish prebuilt attribution widget that meets all requirments
+          attributions: [
+            TextSourceAttribution(
+              'OpenStreetMap contributors',
+            ),
+            // Also add images...
+          ],
+        ),
       ],
     );
   }
