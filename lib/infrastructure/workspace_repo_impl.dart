@@ -22,9 +22,23 @@ class WorkspaceRepoImpl implements WorkspaceRepo {
   }
 
   @override
-  Future<Result<List<Workspace>>> getAll(String userToken) {
-    // TODO: implement getAll
-    throw UnimplementedError();
+  Future<Result<List<Workspace>>> getAll(String userToken) async {
+    try {
+      final response = await _dio.get(
+        '/workspaces',
+        options: Options(headers: {'Authorization': 'Bearer $userToken'}),
+      );
+
+      if (response.statusCode != 200) {
+        return Result.failure('Error: codigo ${response.statusCode}');
+      }
+
+      final List<dynamic> data = response.data['data'] as List<dynamic>;
+      final workspaces = data.map((item) => Workspace.fromJson(item)).toList();
+      return Result.success(workspaces);
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
   }
 
   @override

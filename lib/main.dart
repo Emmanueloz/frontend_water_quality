@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/theme/theme.dart';
 import 'package:frontend_water_quality/infrastructure/auth_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/dio_provider.dart';
+import 'package:frontend_water_quality/infrastructure/workspace_repo_impl.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
+import 'package:frontend_water_quality/presentation/providers/workspace_provider.dart';
 import 'package:frontend_water_quality/router/app_router.dart';
 import 'package:provider/provider.dart';
 
@@ -11,6 +13,7 @@ void main() async {
   var dio = DioProvider.createDio();
 
   final AuthProvider authProvider = AuthProvider(AuthRepoImpl(dio));
+  final WorkspaceRepoImpl workspaceRepo = WorkspaceRepoImpl(dio);
   await authProvider.loadSettings();
 
   runApp(
@@ -19,6 +22,15 @@ void main() async {
         ChangeNotifierProvider<AuthProvider>(
           create: (_) => authProvider,
         ),
+        ChangeNotifierProxyProvider<AuthProvider, WorkspaceProvider>(
+          create: (context) => WorkspaceProvider(
+            workspaceRepo,
+            context.read<AuthProvider>(),
+          ),
+          update: (context, authProvider, workspaceProvider) {
+            return workspaceProvider!..setAuthProvider(authProvider);
+          },
+        )
       ],
       child: const MyApp(),
     ),
