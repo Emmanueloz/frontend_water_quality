@@ -1,15 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
+import 'package:frontend_water_quality/presentation/providers/workspace_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/organisms/main_grid_workspaces.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/workspace_card.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
-class ListWorkspace extends StatelessWidget {
+class ListWorkspace extends StatefulWidget {
   final ListWorkspaces type;
   const ListWorkspace({super.key, required this.type});
+
+  @override
+  State<ListWorkspace> createState() => _ListWorkspaceState();
+}
+
+class _ListWorkspaceState extends State<ListWorkspace> {
+  @override
+  void initState() {
+    super.initState();
+
+    Provider.of<WorkspaceProvider>(context, listen: false).fetchWorkspaces();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +47,7 @@ class ListWorkspace extends StatelessWidget {
 
     return Layout(
       title: "Espacios de trabajo",
-      selectedIndex: type == ListWorkspaces.mine ? 0 : 1,
+      selectedIndex: widget.type == ListWorkspaces.mine ? 0 : 1,
       onDestinationSelected: onDestinationSelected,
       destinations: [
         NavigationItem(
@@ -48,76 +62,44 @@ class ListWorkspace extends StatelessWidget {
         ),
       ],
       builder: (context, screenSize) {
-        return MainGridWorkspaces(
-          type: type,
-          screenSize: screenSize,
-          children: type == ListWorkspaces.mine
-              ? _getWorkspacesCard(context)
-              : _getWorkspacesSharedCard(context),
+        return Consumer<WorkspaceProvider>(
+          builder: (context, workspaceProvider, child) {
+            if (widget.type == ListWorkspaces.shared) {
+              return MainGridWorkspaces(
+                type: widget.type,
+                screenSize: screenSize,
+                isLoading: workspaceProvider.isLoading,
+                children: _getWorkspacesSharedCard(context),
+              );
+            }
+
+            return MainGridWorkspaces(
+              type: widget.type,
+              screenSize: screenSize,
+              isLoading: workspaceProvider.isLoading,
+              children: workspaceProvider.workspaces.map(
+                (workspace) {
+                  return WorkspaceCard(
+                    id: workspace.id ?? '',
+                    title: workspace.name ?? "Sin nombre",
+                    owner: workspace.user?.username ?? "Sin propietario",
+                    type: workspace.type ?? "Privado",
+                    onTap: () {
+                      context.goNamed(
+                        Routes.workspace.name,
+                        pathParameters: {
+                          'id': workspace.id ?? '',
+                        },
+                      );
+                    },
+                  );
+                },
+              ).toList(),
+            );
+          },
         );
       },
     );
-  }
-
-  List<Widget> _getWorkspacesCard(BuildContext context) {
-    return [
-      WorkspaceCard(
-        id: "1",
-        title: "Espacio de trabajo 1",
-        owner: "David",
-        type: "Privado",
-        onTap: () {
-          context.goNamed(
-            Routes.workspace.name,
-            pathParameters: {
-              'id': "1",
-            },
-          );
-        },
-      ),
-      WorkspaceCard(
-        id: "2",
-        title: "Espacio de trabajo 2",
-        owner: "David",
-        type: "Privado",
-        onTap: () {
-          context.goNamed(
-            Routes.workspace.name,
-            pathParameters: {
-              'id': "2",
-            },
-          );
-        },
-      ),
-      WorkspaceCard(
-        id: "3",
-        title: "Espacio de trabajo 3",
-        owner: "David",
-        type: "Privado",
-        onTap: () {
-          context.goNamed(
-            Routes.workspace.name,
-            pathParameters: {
-              'id': "3",
-            },
-          );
-        },
-      ),
-      WorkspaceCard(
-        id: "4",
-        title: "Espacio de trabajo 4",
-        owner: "David",
-        type: "Privado",
-        onTap: () {
-          context.goNamed(
-            Routes.workspace.name,
-            pathParameters: {
-              'id': "4",
-            },
-          );
-        },
-      ),
-    ];
   }
 
   List<Widget> _getWorkspacesSharedCard(BuildContext context) {

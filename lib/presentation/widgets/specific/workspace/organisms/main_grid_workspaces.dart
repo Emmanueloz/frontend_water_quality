@@ -3,6 +3,7 @@ import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/button_actions.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/organisms/grid_workspaces.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
@@ -10,11 +11,14 @@ class MainGridWorkspaces extends StatelessWidget {
   final ListWorkspaces type;
   final ScreenSize screenSize;
   final List<Widget> children;
+  final bool isLoading;
+
   const MainGridWorkspaces({
     super.key,
     required this.type,
     required this.screenSize,
     required this.children,
+    required this.isLoading,
   });
 
   @override
@@ -80,34 +84,16 @@ class MainGridWorkspaces extends StatelessWidget {
             ],
             screenSize: screenSize,
           ),
-          _gridBuilder(
-            context,
-            crossAxisCount,
-            childAspectRatio,
-            gap,
-          ),
+          if (isLoading)
+            const Center(child: CircularProgressIndicator())
+          else
+            GridWorkspaces(
+              crossAxisCount: crossAxisCount,
+              childAspectRatio: childAspectRatio,
+              gap: gap,
+              children: children,
+            ),
         ],
-      ),
-    );
-  }
-
-  Widget _gridBuilder(
-    BuildContext context,
-    int crossAxisCount,
-    double childAspectRatio,
-    double gap,
-  ) {
-    return Expanded(
-      child: SingleChildScrollView(
-        child: GridView.count(
-          crossAxisCount: crossAxisCount, // 4 cards per row
-          childAspectRatio: childAspectRatio, // Width to height ratio
-          crossAxisSpacing: gap,
-          mainAxisSpacing: gap,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          children: children,
-        ),
       ),
     );
   }

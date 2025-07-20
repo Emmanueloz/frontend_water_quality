@@ -17,11 +17,11 @@ class WorkspaceProvider with ChangeNotifier {
     _authProvider = provider;
   }
 
-  Future<void> fetchWorkspaces() async {
+  Future<List<Workspace>?> fetchWorkspaces() async {
     if (_authProvider == null || _authProvider!.token == null) {
       errorMessage = "User not authenticated";
       notifyListeners();
-      return;
+      return null;
     }
 
     isLoading = true;
@@ -31,7 +31,7 @@ class WorkspaceProvider with ChangeNotifier {
       final result = await _workspaceRepo.getAll(_authProvider!.token!);
       if (!result.isSuccess) {
         errorMessage = result.message;
-        return;
+        return null;
       }
 
       workspaces = result.value ?? [];
@@ -42,5 +42,6 @@ class WorkspaceProvider with ChangeNotifier {
       isLoading = false;
       notifyListeners();
     }
+    return workspaces;
   }
 }

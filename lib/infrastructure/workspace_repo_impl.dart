@@ -25,7 +25,7 @@ class WorkspaceRepoImpl implements WorkspaceRepo {
   Future<Result<List<Workspace>>> getAll(String userToken) async {
     try {
       final response = await _dio.get(
-        '/workspaces',
+        '/workspaces/',
         options: Options(headers: {'Authorization': 'Bearer $userToken'}),
       );
 
