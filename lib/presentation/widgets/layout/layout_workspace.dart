@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/presentation/widgets/layout/layout_skeleton.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
@@ -84,41 +85,57 @@ class _LayoutWorkspaceState extends State<LayoutWorkspace> {
       });
     }
 
-    final workspaceProvider = Provider.of<WorkspaceProvider>(context);
-    return Layout(
-      title: workspaceProvider.isLoading
-          ? "Cargando..."
-          : workspaceProvider.currentWorkspace?.name ?? "Espacio no encontrado",
-      selectedIndex: currentIndex,
-      onDestinationSelected: onDestinationSelected,
-      destinations: [
-        NavigationItem(
-          label: "Medidores",
-          icon: Icons.analytics_outlined,
-          selectedIcon: Icons.analytics,
-        ),
-        NavigationItem(
-          label: "Alertas",
-          icon: Icons.alarm_outlined,
-          selectedIcon: Icons.alarm,
-        ),
-        NavigationItem(
-          label: "Invitados",
-          icon: Icons.people_outline,
-          selectedIcon: Icons.people,
-        ),
-        NavigationItem(
-          label: "Ubicaciones",
-          icon: Icons.location_on_outlined,
-          selectedIcon: Icons.location_on,
-        ),
-        NavigationItem(
-          label: "Editar",
-          icon: Icons.edit_outlined,
-          selectedIcon: Icons.edit,
-        ),
-      ],
-      builder: (context, screenSize) => widget.builder(context, screenSize),
+    return Consumer<WorkspaceProvider>(
+      builder: (context, workspaceProvider, child) {
+        if (workspaceProvider.isLoading) {
+          return const LayoutSkeleton();
+        }
+
+        if (workspaceProvider.currentWorkspace == null) {
+          // Esto dispara el error 404 automático de GoRouter
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            GoRouter.of(context).go('/404');
+          });
+          return const SizedBox.shrink();
+        }
+
+        return Layout(
+          title: workspaceProvider.isLoading
+              ? "Cargando..."
+              : workspaceProvider.currentWorkspace?.name ??
+                  "Espacio no encontrado",
+          selectedIndex: currentIndex,
+          onDestinationSelected: onDestinationSelected,
+          destinations: [
+            NavigationItem(
+              label: "Medidores",
+              icon: Icons.analytics_outlined,
+              selectedIcon: Icons.analytics,
+            ),
+            NavigationItem(
+              label: "Alertas",
+              icon: Icons.alarm_outlined,
+              selectedIcon: Icons.alarm,
+            ),
+            NavigationItem(
+              label: "Invitados",
+              icon: Icons.people_outline,
+              selectedIcon: Icons.people,
+            ),
+            NavigationItem(
+              label: "Ubicaciones",
+              icon: Icons.location_on_outlined,
+              selectedIcon: Icons.location_on,
+            ),
+            NavigationItem(
+              label: "Editar",
+              icon: Icons.edit_outlined,
+              selectedIcon: Icons.edit,
+            ),
+          ],
+          builder: (context, screenSize) => widget.builder(context, screenSize),
+        );
+      },
     );
   }
 }
