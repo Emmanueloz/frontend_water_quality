@@ -4,7 +4,7 @@ import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/presentation/pages/alerts.dart';
 import 'package:frontend_water_quality/presentation/pages/change_password.dart';
 import 'package:frontend_water_quality/presentation/pages/form_meters.dart';
-import 'package:frontend_water_quality/presentation/pages/form_workspace.dart';
+import 'package:frontend_water_quality/presentation/pages/form_workspace_page.dart';
 import 'package:frontend_water_quality/presentation/pages/guests.dart';
 import 'package:frontend_water_quality/presentation/pages/list_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/login.dart';
@@ -42,6 +42,8 @@ class AppRouter {
         return ListWorkspaces.mine;
       case 'shared':
         return ListWorkspaces.shared;
+      case 'all':
+        return ListWorkspaces.all;
       default:
         return ListWorkspaces.mine;
     }
@@ -79,8 +81,7 @@ class AppRouter {
             path: Routes.createWorkspace.path,
             name: Routes.createWorkspace.name,
             builder: (context, state) {
-              print("Create Workspace");
-              return FormWorkspace();
+              return FormWorkspacePage();
             },
           ),
           ShellRoute(
@@ -297,7 +298,7 @@ class AppRouter {
                     name: Routes.updateWorkspace.name,
                     builder: (context, state) {
                       final id = state.pathParameters['id'] ?? 'default';
-                      return FormWorkspace(idWorkspace: id);
+                      return FormWorkspacePage(idWorkspace: id);
                     },
                   ),
                 ],
