@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
-import 'package:frontend_water_quality/core/enums/type_workspace.dart';
+import 'package:frontend_water_quality/domain/models/workspace.dart';
+import 'package:frontend_water_quality/presentation/providers/workspace_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/organisms/form_workspace.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
-class FormWorkspace extends StatelessWidget {
+class FormWorkspacePage extends StatelessWidget {
   final String? idWorkspace;
-  const FormWorkspace({
+  const FormWorkspacePage({
     super.key,
     this.idWorkspace,
   });
@@ -57,58 +61,22 @@ class FormWorkspace extends StatelessWidget {
       height: screenSize == ScreenSize.mobile ? double.infinity : 600,
       margin: EdgeInsets.all(10),
       padding: EdgeInsets.all(10),
-      child: Column(
-        spacing: 10,
-        children: [
-          Text(
-            title,
-            style: Theme.of(context)
-                .textTheme
-                .titleLarge
-                ?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          TextFormField(
-            decoration: InputDecoration(
-              labelText: "Nombre del workspace",
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return "El nombre del workspace es obligatorio";
+      child: Consumer<WorkspaceProvider>(
+        builder: (context, workspaceProvider, child) {
+          return FormWorkspace(
+            title: title,
+            idWorkspace: idWorkspace,
+            errorMessage: workspaceProvider.errorMessageCreate,
+            onSubmit: (Workspace workspace) async {
+              print(workspace);
+
+              if (await workspaceProvider.createWorkspace(workspace) &&
+                  context.mounted) {
+                context.pop();
               }
-              return null;
             },
-          ),
-          DropdownButtonFormField(
-            decoration: InputDecoration(
-              labelText: "Tipo de workspace",
-            ),
-            value: TypeWorkspace.private,
-            items: [
-              DropdownMenuItem(
-                value: TypeWorkspace.private,
-                child: Text("Privado"),
-              ),
-              DropdownMenuItem(
-                value: TypeWorkspace.public,
-                child: Text("Publico"),
-              ),
-            ],
-            onChanged: (value) {},
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              OutlinedButton(
-                onPressed: () {},
-                child: Text("Restablecer"),
-              ),
-              ElevatedButton(
-                onPressed: () {},
-                child: Text("Guardar"),
-              ),
-            ],
-          ),
-        ],
+          );
+        },
       ),
     );
   }

@@ -11,8 +11,11 @@ class WorkspaceProvider with ChangeNotifier {
   List<Workspace> workspaces = [];
   List<Workspace> workspacesShared = [];
   bool isLoading = false;
+  bool isLoadingForm = false;
+  bool recharge = true;
   String? errorMessage;
   String? errorMessageShared;
+  String? errorMessageCreate;
 
   void setAuthProvider(AuthProvider? provider) {
     _authProvider = provider;
@@ -24,6 +27,8 @@ class WorkspaceProvider with ChangeNotifier {
       notifyListeners();
       return;
     }
+
+    if (!recharge) return;
 
     isLoading = true;
     notifyListeners();
@@ -52,7 +57,44 @@ class WorkspaceProvider with ChangeNotifier {
       errorMessageShared = e.toString();
     } finally {
       isLoading = false;
+      recharge = false;
       notifyListeners();
+    }
+  }
+
+  Future<bool> createWorkspace(Workspace workspace) async {
+    if (_authProvider == null || _authProvider!.token == null) {
+      errorMessageCreate = "User not authenticated";
+      notifyListeners();
+      return false;
+    }
+
+    isLoadingForm = true;
+    notifyListeners();
+
+    try {
+      print(workspace.toJson());
+      final result =
+          await _workspaceRepo.create(_authProvider!.token!, workspace);
+
+      print(result);
+      if (!result.isSuccess) {
+        errorMessageCreate = result.message;
+        return false;
+      }
+
+      recharge = true;
+      errorMessageCreate = null;
+      isLoadingForm = false;
+      notifyListeners();
+      await fetchWorkspaces();
+      return result.isSuccess;
+    } catch (e) {
+      errorMessageCreate = e.toString();
+      isLoadingForm = false;
+      recharge = false;
+      notifyListeners();
+      return false;
     }
   }
 }
