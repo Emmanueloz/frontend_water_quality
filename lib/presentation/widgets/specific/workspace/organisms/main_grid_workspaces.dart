@@ -13,6 +13,8 @@ class MainGridWorkspaces extends StatelessWidget {
   final ScreenSize screenSize;
   final bool isLoading;
 
+  final String? errorMessage;
+
   final int itemCount;
   final Widget Function(BuildContext, int) itemBuilder;
 
@@ -23,6 +25,7 @@ class MainGridWorkspaces extends StatelessWidget {
     required this.isLoading,
     required this.itemCount,
     required this.itemBuilder,
+    this.errorMessage,
   });
 
   @override
@@ -68,10 +71,17 @@ class MainGridWorkspaces extends StatelessWidget {
           ),
           if (isLoading)
             GridLoadingSkeleton(screenSize: screenSize)
+          else if (errorMessage != null)
+            Center(
+              child: Text(
+                errorMessage!,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            )
           else if (itemCount == 0)
             Center(
               child: Text(
-                "No hay espacios de trabajo ${type == ListWorkspaces.mine ? 'creados' : 'compartidos'}",
+                "No hay espacios de trabajo ${type == ListWorkspaces.mine ? 'creados' : type == ListWorkspaces.shared ? 'compartidos' : 'disponibles'}",
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             )

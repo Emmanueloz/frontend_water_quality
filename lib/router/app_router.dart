@@ -42,6 +42,8 @@ class AppRouter {
         return ListWorkspaces.mine;
       case 'shared':
         return ListWorkspaces.shared;
+      case 'all':
+        return ListWorkspaces.all;
       default:
         return ListWorkspaces.mine;
     }

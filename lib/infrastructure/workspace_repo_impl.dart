@@ -75,9 +75,22 @@ class WorkspaceRepoImpl implements WorkspaceRepo {
   }
 
   @override
-  Future<Result<List<Workspace>>> getFullAll(String userToken) {
-    // TODO: implement getFullAll
-    throw UnimplementedError();
+  Future<Result<List<Workspace>>> getFullAll(String userToken) async {
+    try {
+      final response = await _dio.get(
+        '/workspaces/all/',
+        options: Options(headers: {'Authorization': 'Bearer $userToken'}),
+      );
+
+      if (response.statusCode != 200) {
+        return Result.failure('Error: codigo ${response.statusCode}');
+      }
+      final List<dynamic> data = response.data['workspaces'] as List<dynamic>;
+      final workspaces = data.map((item) => Workspace.fromJson(item)).toList();
+      return Result.success(workspaces);
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
   }
 
   @override
@@ -92,7 +105,7 @@ class WorkspaceRepoImpl implements WorkspaceRepo {
         return Result.failure('Error: codigo ${response.statusCode}');
       }
 
-      final List<dynamic> data = response.data['data'] as List<dynamic>;
+      final List<dynamic> data = response.data['workspaces'] as List<dynamic>;
       final workspaces = data.map((item) => Workspace.fromJson(item)).toList();
       return Result.success(workspaces);
     } catch (e) {

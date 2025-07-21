@@ -28,7 +28,8 @@ void main() async {
             context.read<AuthProvider>(),
           ),
           update: (context, authProvider, workspaceProvider) {
-            return workspaceProvider!..setAuthProvider(authProvider);
+            workspaceProvider!.clean();
+            return workspaceProvider..setAuthProvider(authProvider);
           },
         )
       ],
