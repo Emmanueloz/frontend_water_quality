@@ -3,6 +3,7 @@ import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/organisms/grid_item_builder.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/organisms/grid_loading_skeleton.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/button_actions.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
@@ -66,7 +67,7 @@ class MainGridWorkspaces extends StatelessWidget {
             screenSize: screenSize,
           ),
           if (isLoading)
-            const Center(child: CircularProgressIndicator())
+            GridLoadingSkeleton(screenSize: screenSize)
           else if (itemCount == 0)
             Center(
               child: Text(
