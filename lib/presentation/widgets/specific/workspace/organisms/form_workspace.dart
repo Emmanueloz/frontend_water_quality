@@ -8,6 +8,7 @@ class FormWorkspace extends StatefulWidget {
   final String? name;
   final TypeWorkspace? type;
   final String? errorMessage;
+  final bool isLoading;
   final void Function(Workspace workspace)? onSubmit;
 
   const FormWorkspace({
@@ -18,6 +19,7 @@ class FormWorkspace extends StatefulWidget {
     this.name,
     this.type,
     this.errorMessage,
+    required this.isLoading,
   });
 
   @override
@@ -116,17 +118,25 @@ class _FormWorkspaceState extends State<FormWorkspace> {
                 child: Text("Restablecer"),
               ),
               ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    final workspace = Workspace(
-                      id: widget.idWorkspace,
-                      name: _nameController.text,
-                      type: _typeWorkspace.name,
-                    );
-                    widget.onSubmit?.call(workspace);
-                  }
-                },
-                child: Text("Aceptar"),
+                onPressed: widget.isLoading
+                    ? null
+                    : () {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          final workspace = Workspace(
+                            id: widget.idWorkspace,
+                            name: _nameController.text,
+                            type: _typeWorkspace,
+                          );
+                          widget.onSubmit?.call(workspace);
+                        }
+                      },
+                child: widget.isLoading
+                    ? CircularProgressIndicator(
+                        color: Colors.white,
+                      )
+                    : Text(
+                        widget.idWorkspace != null ? "Actualizar" : "Crear",
+                      ),
               ),
             ],
           ),

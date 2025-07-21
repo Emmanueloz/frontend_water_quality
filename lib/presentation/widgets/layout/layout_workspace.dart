@@ -30,8 +30,11 @@ class _LayoutWorkspaceState extends State<LayoutWorkspace> {
   @override
   void initState() {
     super.initState();
-    Provider.of<WorkspaceProvider>(context, listen: false)
-        .fetchWorkspace(widget.id);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      print("Fetching workspace with id: ${widget.id}");
+      Provider.of<WorkspaceProvider>(context, listen: false)
+          .fetchWorkspace(widget.id);
+    });
   }
 
   @override
@@ -91,10 +94,13 @@ class _LayoutWorkspaceState extends State<LayoutWorkspace> {
           return const LayoutSkeleton();
         }
 
-        if (workspaceProvider.currentWorkspace == null) {
+        if (!workspaceProvider.isLoading &&
+            workspaceProvider.currentWorkspace == null) {
           // Esto dispara el error 404 automático de GoRouter
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            GoRouter.of(context).go('/404');
+            if (!workspaceProvider.isLoading) {
+              GoRouter.of(context).go('/404');
+            }
           });
           return const SizedBox.shrink();
         }
