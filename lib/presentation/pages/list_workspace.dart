@@ -22,7 +22,9 @@ class _ListWorkspaceState extends State<ListWorkspace> {
   void initState() {
     super.initState();
 
-    Provider.of<WorkspaceProvider>(context, listen: false).fetchWorkspaces();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<WorkspaceProvider>(context, listen: false).fetchWorkspaces();
+    });
   }
 
   @override
@@ -69,7 +71,24 @@ class _ListWorkspaceState extends State<ListWorkspace> {
                 type: widget.type,
                 screenSize: screenSize,
                 isLoading: workspaceProvider.isLoading,
-                children: _getWorkspacesSharedCard(context),
+                children: workspaceProvider.workspacesShared.map(
+                  (workspace) {
+                    return WorkspaceCard(
+                      id: workspace.id ?? '',
+                      title: workspace.name ?? "Sin nombre",
+                      owner: workspace.user?.username ?? "Sin propietario",
+                      type: workspace.type ?? "Privado",
+                      onTap: () {
+                        context.goNamed(
+                          Routes.workspace.name,
+                          pathParameters: {
+                            'id': workspace.id ?? '',
+                          },
+                        );
+                      },
+                    );
+                  },
+                ).toList(),
               );
             }
 
@@ -100,52 +119,5 @@ class _ListWorkspaceState extends State<ListWorkspace> {
         );
       },
     );
-  }
-
-  List<Widget> _getWorkspacesSharedCard(BuildContext context) {
-    return [
-      WorkspaceCard(
-        id: "5",
-        title: "Espacio de trabajo 5",
-        owner: "Angel",
-        type: "Privado",
-        onTap: () {
-          context.goNamed(
-            Routes.workspace.name,
-            pathParameters: {
-              'id': "5",
-            },
-          );
-        },
-      ),
-      WorkspaceCard(
-        id: "6",
-        title: "Espacio de trabajo 6",
-        owner: "Daniel",
-        type: "Privado",
-        onTap: () {
-          context.goNamed(
-            Routes.workspace.name,
-            pathParameters: {
-              'id': "6",
-            },
-          );
-        },
-      ),
-      WorkspaceCard(
-        id: "7",
-        title: "Espacio de trabajo 7",
-        owner: "Raul",
-        type: "Privado",
-        onTap: () {
-          context.goNamed(
-            Routes.workspace.name,
-            pathParameters: {
-              'id': "7",
-            },
-          );
-        },
-      ),
-    ];
   }
 }

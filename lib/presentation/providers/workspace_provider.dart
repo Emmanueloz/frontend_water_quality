@@ -12,16 +12,17 @@ class WorkspaceProvider with ChangeNotifier {
   List<Workspace> workspacesShared = [];
   bool isLoading = false;
   String? errorMessage;
+  String? errorMessageShared;
 
   void setAuthProvider(AuthProvider? provider) {
     _authProvider = provider;
   }
 
-  Future<List<Workspace>?> fetchWorkspaces() async {
+  Future<void> fetchWorkspaces() async {
     if (_authProvider == null || _authProvider!.token == null) {
       errorMessage = "User not authenticated";
       notifyListeners();
-      return null;
+      return;
     }
 
     isLoading = true;
@@ -31,17 +32,27 @@ class WorkspaceProvider with ChangeNotifier {
       final result = await _workspaceRepo.getAll(_authProvider!.token!);
       if (!result.isSuccess) {
         errorMessage = result.message;
-        return null;
+        return;
       }
 
       workspaces = result.value ?? [];
       errorMessage = null;
+
+      final sharedResult =
+          await _workspaceRepo.getShared(_authProvider!.token!);
+      if (!sharedResult.isSuccess) {
+        errorMessageShared = sharedResult.message;
+        return;
+      }
+
+      workspacesShared = sharedResult.value ?? [];
+      errorMessageShared = null;
     } catch (e) {
       errorMessage = e.toString();
+      errorMessageShared = e.toString();
     } finally {
       isLoading = false;
       notifyListeners();
     }
-    return workspaces;
   }
 }
