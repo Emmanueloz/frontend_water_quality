@@ -10,15 +10,18 @@ import 'package:go_router/go_router.dart';
 class MainGridWorkspaces extends StatelessWidget {
   final ListWorkspaces type;
   final ScreenSize screenSize;
-  final List<Widget> children;
   final bool isLoading;
+
+  final int itemCount;
+  final Widget Function(BuildContext, int) itemBuilder;
 
   const MainGridWorkspaces({
     super.key,
     required this.type,
     required this.screenSize,
-    required this.children,
     required this.isLoading,
+    required this.itemCount,
+    required this.itemBuilder,
   });
 
   @override
@@ -64,7 +67,7 @@ class MainGridWorkspaces extends StatelessWidget {
           ),
           if (isLoading)
             const Center(child: CircularProgressIndicator())
-          else if (children.isEmpty)
+          else if (itemCount == 0)
             Center(
               child: Text(
                 "No hay espacios de trabajo ${type == ListWorkspaces.mine ? 'creados' : 'compartidos'}",
@@ -73,10 +76,8 @@ class MainGridWorkspaces extends StatelessWidget {
             )
           else
             GridItemBuilder(
-              itemCount: children.length,
-              itemBuilder: (context, index) {
-                return children[index];
-              },
+              itemCount: itemCount,
+              itemBuilder: itemBuilder,
               screenSize: screenSize,
             ),
         ],

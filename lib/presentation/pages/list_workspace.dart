@@ -71,33 +71,9 @@ class _ListWorkspaceState extends State<ListWorkspace> {
                 type: widget.type,
                 screenSize: screenSize,
                 isLoading: workspaceProvider.isLoading,
-                children: workspaceProvider.workspacesShared.map(
-                  (workspace) {
-                    return WorkspaceCard(
-                      id: workspace.id ?? '',
-                      title: workspace.name ?? "Sin nombre",
-                      owner: workspace.user?.username ?? "Sin propietario",
-                      type: workspace.type ?? "Privado",
-                      onTap: () {
-                        context.goNamed(
-                          Routes.workspace.name,
-                          pathParameters: {
-                            'id': workspace.id ?? '',
-                          },
-                        );
-                      },
-                    );
-                  },
-                ).toList(),
-              );
-            }
-
-            return MainGridWorkspaces(
-              type: widget.type,
-              screenSize: screenSize,
-              isLoading: workspaceProvider.isLoading,
-              children: workspaceProvider.workspaces.map(
-                (workspace) {
+                itemCount: workspaceProvider.workspacesShared.length,
+                itemBuilder: (context, index) {
+                  final workspace = workspaceProvider.workspacesShared[index];
                   return WorkspaceCard(
                     id: workspace.id ?? '',
                     title: workspace.name ?? "Sin nombre",
@@ -113,7 +89,31 @@ class _ListWorkspaceState extends State<ListWorkspace> {
                     },
                   );
                 },
-              ).toList(),
+              );
+            }
+
+            return MainGridWorkspaces(
+              type: widget.type,
+              screenSize: screenSize,
+              isLoading: workspaceProvider.isLoading,
+              itemCount: workspaceProvider.workspaces.length,
+              itemBuilder: (context, index) {
+                final workspace = workspaceProvider.workspaces[index];
+                return WorkspaceCard(
+                  id: workspace.id ?? '',
+                  title: workspace.name ?? "Sin nombre",
+                  owner: workspace.user?.username ?? "Sin propietario",
+                  type: workspace.type ?? "Privado",
+                  onTap: () {
+                    context.goNamed(
+                      Routes.workspace.name,
+                      pathParameters: {
+                        'id': workspace.id ?? '',
+                      },
+                    );
+                  },
+                );
+              },
             );
           },
         );
