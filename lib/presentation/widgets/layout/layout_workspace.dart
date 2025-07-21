@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
+import 'package:frontend_water_quality/presentation/providers/workspace_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/router/routes.dart';
-import 'package:go_router/go_router.dart';
 
 class LayoutWorkspace extends StatefulWidget {
   final String title;
@@ -23,6 +25,13 @@ class LayoutWorkspace extends StatefulWidget {
 
 class _LayoutWorkspaceState extends State<LayoutWorkspace> {
   int currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<WorkspaceProvider>(context, listen: false)
+        .fetchWorkspace(widget.id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,8 +84,11 @@ class _LayoutWorkspaceState extends State<LayoutWorkspace> {
       });
     }
 
+    final workspaceProvider = Provider.of<WorkspaceProvider>(context);
     return Layout(
-      title: widget.title,
+      title: workspaceProvider.isLoading
+          ? "Cargando..."
+          : workspaceProvider.currentWorkspace?.name ?? "Espacio no encontrado",
       selectedIndex: currentIndex,
       onDestinationSelected: onDestinationSelected,
       destinations: [

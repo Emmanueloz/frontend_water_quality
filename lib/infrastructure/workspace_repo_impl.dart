@@ -56,9 +56,22 @@ class WorkspaceRepoImpl implements WorkspaceRepo {
   }
 
   @override
-  Future<Result<Workspace>> getById(String userToken, String id) {
-    // TODO: implement getById
-    throw UnimplementedError();
+  Future<Result<Workspace>> getById(String userToken, String id) async {
+    try {
+      final response = await _dio.get(
+        '/workspaces/$id',
+        options: Options(headers: {'Authorization': 'Bearer $userToken'}),
+      );
+
+      if (response.statusCode != 200) {
+        return Result.failure('Error: codigo ${response.statusCode}');
+      }
+
+      final workspace = Workspace.fromJson(response.data['data']);
+      return Result.success(workspace);
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
   }
 
   @override

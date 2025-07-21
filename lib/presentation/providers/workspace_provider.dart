@@ -10,6 +10,7 @@ class WorkspaceProvider with ChangeNotifier {
 
   List<Workspace> workspaces = [];
   List<Workspace> workspacesShared = [];
+  Workspace? currentWorkspace;
   bool isLoading = false;
   bool isLoadingForm = false;
   bool recharge = true;
@@ -19,6 +20,35 @@ class WorkspaceProvider with ChangeNotifier {
 
   void setAuthProvider(AuthProvider? provider) {
     _authProvider = provider;
+  }
+
+  Future<void> fetchWorkspace(String idWorkspace) async {
+    if (_authProvider == null || _authProvider!.token == null) {
+      errorMessage = "User not authenticated";
+      notifyListeners();
+      return;
+    }
+
+    isLoading = true;
+    currentWorkspace = null;
+    notifyListeners();
+
+    try {
+      final result =
+          await _workspaceRepo.getById(_authProvider!.token!, idWorkspace);
+      if (!result.isSuccess) {
+        errorMessage = result.message;
+        return;
+      }
+
+      currentWorkspace = result.value;
+      errorMessage = null;
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> fetchWorkspaces() async {
