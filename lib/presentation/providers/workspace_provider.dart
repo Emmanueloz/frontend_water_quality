@@ -16,7 +16,7 @@ class WorkspaceProvider with ChangeNotifier {
   bool recharge = true;
   String? errorMessage;
   String? errorMessageShared;
-  String? errorMessageCreate;
+  String? errorMessageForm;
 
   void setAuthProvider(AuthProvider? provider) {
     _authProvider = provider;
@@ -94,7 +94,7 @@ class WorkspaceProvider with ChangeNotifier {
 
   Future<bool> createWorkspace(Workspace workspace) async {
     if (_authProvider == null || _authProvider!.token == null) {
-      errorMessageCreate = "User not authenticated";
+      errorMessageForm = "User not authenticated";
       notifyListeners();
       return false;
     }
@@ -109,18 +109,55 @@ class WorkspaceProvider with ChangeNotifier {
 
       print(result);
       if (!result.isSuccess) {
-        errorMessageCreate = result.message;
+        errorMessageForm = result.message;
         return false;
       }
 
       recharge = true;
-      errorMessageCreate = null;
+      errorMessageForm = null;
       isLoadingForm = false;
       notifyListeners();
       await fetchWorkspaces();
       return result.isSuccess;
     } catch (e) {
-      errorMessageCreate = e.toString();
+      errorMessageForm = e.toString();
+      isLoadingForm = false;
+      recharge = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> updateWorkspace(Workspace workspace) async {
+    if (_authProvider == null || _authProvider!.token == null) {
+      errorMessageForm = "User not authenticated";
+      notifyListeners();
+      return false;
+    }
+
+    isLoadingForm = true;
+    notifyListeners();
+
+    try {
+      final result =
+          await _workspaceRepo.update(_authProvider!.token!, workspace);
+
+      if (!result.isSuccess) {
+        errorMessageForm = result.message;
+        return false;
+      }
+
+      recharge = true;
+      errorMessageForm = null;
+      isLoadingForm = false;
+      notifyListeners();
+      await fetchWorkspaces();
+      if (currentWorkspace != null) {
+        currentWorkspace = workspace;
+      }
+      return result.isSuccess;
+    } catch (e) {
+      errorMessageForm = e.toString();
       isLoadingForm = false;
       recharge = false;
       notifyListeners();

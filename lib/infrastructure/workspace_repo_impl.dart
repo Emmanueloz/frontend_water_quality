@@ -101,8 +101,22 @@ class WorkspaceRepoImpl implements WorkspaceRepo {
   }
 
   @override
-  Future<Result<BaseResponse>> update(String userToken, Workspace workspace) {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<Result<BaseResponse>> update(
+      String userToken, Workspace workspace) async {
+    try {
+      final response = await _dio.put(
+        '/workspaces/${workspace.id}',
+        data: workspace.toJson(),
+        options: Options(headers: {'Authorization': 'Bearer $userToken'}),
+      );
+
+      if (response.statusCode != 200) {
+        return Result.failure('Error: codigo ${response.statusCode}');
+      }
+
+      return Result.success(BaseResponse.fromJson(response.data));
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
   }
 }

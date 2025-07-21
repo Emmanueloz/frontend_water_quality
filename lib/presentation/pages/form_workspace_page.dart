@@ -68,13 +68,14 @@ class FormWorkspacePage extends StatelessWidget {
             idWorkspace: idWorkspace,
             name: workspaceProvider.currentWorkspace?.name,
             type: workspaceProvider.currentWorkspace?.type,
-            errorMessage: workspaceProvider.errorMessageCreate,
+            errorMessage: workspaceProvider.errorMessageForm,
             isLoading: workspaceProvider.isLoadingForm,
             onSubmit: (Workspace workspace) async {
-              print(workspace);
+              print(workspace.toJson());
 
               if (idWorkspace != null) {
                 print("Actualizando espacio de trabajo");
+                await workspaceProvider.updateWorkspace(workspace);
               } else {
                 if (await workspaceProvider.createWorkspace(workspace) &&
                     context.mounted) {
