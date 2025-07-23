@@ -4,10 +4,13 @@ import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_co
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/button_actions.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/radial_gauge_meter.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/sensor_color.dart';
+import 'package:provider/provider.dart';
+import 'package:frontend_water_quality/presentation/providers/meter_provider.dart';
+import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 
 /// Widget principal para monitoreo de medidor.
 /// Versión mejorada con funcionalidad completa.
-class MainMeter extends StatelessWidget {
+class MainMeter extends StatefulWidget {
   final String id;
   final String idMeter;
   final ScreenSize screenSize;
@@ -20,19 +23,52 @@ class MainMeter extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    // Simplemente retornar el contenido, el LayoutMeters se encarga del Expanded
-    return _buildMain(context);
+  State<MainMeter> createState() => _MainMeterState();
+}
+
+class _MainMeterState extends State<MainMeter> {
+  @override
+  void initState() {
+    super.initState();
+    // Aquí deberías obtener el token y baseUrl de tu AuthProvider o configuración
+    final meterProvider = Provider.of<MeterProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final token = authProvider.token ?? '';
+    // Ajusta el baseUrl según tu configuración
+    const baseUrl = 'https://api.aqua-minds.org';
+    meterProvider.subscribeToMeter(
+      baseUrl: baseUrl,
+      token: token,
+      idWorkspace: widget.id,
+      idMeter: widget.idMeter,
+    );
   }
 
-  Widget _buildMain(BuildContext context) {
+  @override
+  void dispose() {
+    Provider.of<MeterProvider>(context, listen: false).unsubscribe();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<MeterProvider>(
+      builder: (context, meterProvider, _) {
+        final data = meterProvider.meterData;
+        // Si no hay datos, puedes mostrar un loader o los valores por defecto
+        return _buildMain(context, data);
+      },
+    );
+  }
+
+  Widget _buildMain(BuildContext context, dynamic data) {
     EdgeInsetsGeometry margin;
     EdgeInsetsGeometry padding;
     Size meterSize;
     int crossAxisCount;
     double childAspectRatio;
 
-    if (screenSize == ScreenSize.smallDesktop) {
+    if (widget.screenSize == ScreenSize.smallDesktop) {
       margin = const EdgeInsets.all(0);
       padding = const EdgeInsets.symmetric(
         horizontal: 20,
@@ -41,7 +77,7 @@ class MainMeter extends StatelessWidget {
       meterSize = const Size(300, 180);
       crossAxisCount = 3;
       childAspectRatio = 1 / 1.2;
-    } else if (screenSize == ScreenSize.largeDesktop) {
+    } else if (widget.screenSize == ScreenSize.largeDesktop) {
       margin = const EdgeInsets.all(0);
       padding = const EdgeInsets.symmetric(
         horizontal: 20,
@@ -50,7 +86,7 @@ class MainMeter extends StatelessWidget {
       meterSize = const Size(300, 190);
       crossAxisCount = 3;
       childAspectRatio = 1 / 0.70;
-    } else if (screenSize == ScreenSize.tablet) {
+    } else if (widget.screenSize == ScreenSize.tablet) {
       margin = const EdgeInsets.all(10);
       padding = const EdgeInsets.all(12.0);
       meterSize = const Size(300, 240);
@@ -65,6 +101,14 @@ class MainMeter extends StatelessWidget {
       childAspectRatio = 1 / 1.2;
     }
 
+    // Aquí debes mapear los datos recibidos a los valores de los medidores
+    // Ejemplo de cómo podrías hacerlo:
+    final temperatura = data?['temperatura'] ?? 0;
+    final ph = data?['ph'] ?? 0;
+    final tds = data?['tds'] ?? 0;
+    final conductividad = data?['conductividad'] ?? 0;
+    final turbidez = data?['turbidez'] ?? 0;
+
     // Lista de medidores de ejemplo (puedes modificarla para pruebas)
     final List<Widget> meters = [
       SensorColor(
@@ -74,7 +118,7 @@ class MainMeter extends StatelessWidget {
       ),
       RadialGaugeMeter(
         sensorType: "Temperatura",
-        value: 54,
+        value: temperatura,
         min: 0,
         max: 60,
         interval: 10,
@@ -82,7 +126,7 @@ class MainMeter extends StatelessWidget {
       ),
       RadialGaugeMeter(
         sensorType: "PH",
-        value: 2.4,
+        value: ph,
         min: 0,
         max: 14,
         interval: 1,
@@ -90,7 +134,7 @@ class MainMeter extends StatelessWidget {
       ),
       RadialGaugeMeter(
         sensorType: "Total de sólidos disueltos",
-        value: 7.5,
+        value: tds,
         min: 0,
         max: 10,
         interval: 1,
@@ -98,7 +142,7 @@ class MainMeter extends StatelessWidget {
       ),
       RadialGaugeMeter(
         sensorType: "Conductividad",
-        value: 450,
+        value: conductividad,
         min: 0,
         max: 1000,
         interval: 100,
@@ -106,7 +150,7 @@ class MainMeter extends StatelessWidget {
       ),
       RadialGaugeMeter(
         sensorType: "Turbidez",
-        value: 12,
+        value: turbidez,
         min: 0,
         max: 20,
         interval: 2,
@@ -122,7 +166,7 @@ class MainMeter extends StatelessWidget {
         children: [
           ButtonActions(
             title: Text(
-              "Meter $idMeter",
+              "Meter ${widget.idMeter}",
               style: Theme.of(context)
                   .textTheme
                   .bodyLarge
@@ -130,7 +174,7 @@ class MainMeter extends StatelessWidget {
             ),
             actions: [
             ],
-            screenSize: screenSize,
+            screenSize: widget.screenSize,
           ),
           const SizedBox(height: 16),
           // Contenedor con scroll para los medidores

@@ -7,6 +7,7 @@ import 'package:frontend_water_quality/presentation/providers/auth_provider.dart
 import 'package:frontend_water_quality/presentation/providers/workspace_provider.dart';
 import 'package:frontend_water_quality/router/app_router.dart';
 import 'package:provider/provider.dart';
+import 'package:frontend_water_quality/presentation/providers/meter_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,7 +32,10 @@ void main() async {
             workspaceProvider!.clean();
             return workspaceProvider..setAuthProvider(authProvider);
           },
-        )
+        ),
+        ChangeNotifierProvider<MeterProvider>(
+          create: (_) => MeterProvider(),
+        ),
       ],
       child: const MyApp(),
     ),
