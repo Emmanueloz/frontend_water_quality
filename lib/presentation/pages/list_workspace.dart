@@ -110,7 +110,7 @@ class ListWorkspace extends StatelessWidget {
         type: "Privado",
         onTap: () {
           context.goNamed(
-            Routes.workspaces.name,
+            Routes.workspace.name,
             pathParameters: {
               'id': "4",
             },

@@ -5,10 +5,9 @@ import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
-class LayoutWorkspace extends StatelessWidget {
+class LayoutWorkspace extends StatefulWidget {
   final String title;
   final String id;
-  final int selectedIndex;
   final Widget Function(BuildContext context, ScreenSize screenSize) builder;
 
   const LayoutWorkspace({
@@ -16,8 +15,14 @@ class LayoutWorkspace extends StatelessWidget {
     required this.title,
     required this.id,
     required this.builder,
-    required this.selectedIndex,
   });
+
+  @override
+  State<LayoutWorkspace> createState() => _LayoutWorkspaceState();
+}
+
+class _LayoutWorkspaceState extends State<LayoutWorkspace> {
+  int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +32,7 @@ class LayoutWorkspace extends StatelessWidget {
         context.goNamed(
           Routes.workspace.name,
           pathParameters: {
-            "id": id,
+            "id": widget.id,
           },
         );
       } else if (index == 1) {
@@ -35,7 +40,7 @@ class LayoutWorkspace extends StatelessWidget {
         context.goNamed(
           Routes.alerts.name,
           pathParameters: {
-            "id": id,
+            "id": widget.id,
           },
         );
       } else if (index == 2) {
@@ -43,7 +48,7 @@ class LayoutWorkspace extends StatelessWidget {
         context.goNamed(
           Routes.guests.name,
           pathParameters: {
-            "id": id,
+            "id": widget.id,
           },
         );
       } else if (index == 3) {
@@ -51,7 +56,7 @@ class LayoutWorkspace extends StatelessWidget {
         context.goNamed(
           Routes.locationMeters.name,
           pathParameters: {
-            "id": id,
+            "id": widget.id,
           },
         );
         print("Locations meters");
@@ -60,15 +65,19 @@ class LayoutWorkspace extends StatelessWidget {
         context.goNamed(
           Routes.updateWorkspace.name,
           pathParameters: {
-            'id': id,
+            'id': widget.id,
           },
         );
       }
+
+      setState(() {
+        currentIndex = index;
+      });
     }
 
     return Layout(
-      title: title,
-      selectedIndex: selectedIndex,
+      title: widget.title,
+      selectedIndex: currentIndex,
       onDestinationSelected: onDestinationSelected,
       destinations: [
         NavigationItem(
@@ -97,7 +106,7 @@ class LayoutWorkspace extends StatelessWidget {
           selectedIcon: Icons.edit,
         ),
       ],
-      builder: builder,
+      builder: (context, screenSize) => widget.builder(context, screenSize),
     );
   }
 }

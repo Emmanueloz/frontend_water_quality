@@ -88,18 +88,13 @@ class Routes {
     path: "/meter/:idMeter",
   );
 
-  static RouteProperties updateMeter = RouteProperties(
-    name: "updateMeter",
-    path: "/update",
-  );
-
   static RouteProperties predictions = RouteProperties(
-    name: "prerdictions",
-    path: "/predictions",
+    name: "predictions",
+    path: "meter/:idMeter/predictions",
   );
 
   static RouteProperties predictionCreate = RouteProperties(
-    name: "prerdictionCreate",
+    name: "predictionCreate",
     path: "/create",
   );
 
@@ -108,14 +103,9 @@ class Routes {
     path: "/:idPrediction",
   );
 
-  static RouteProperties createMeter = RouteProperties(
-    name: "createMeter",
-    path: "/meter-create",
-  );
-
   static RouteProperties interpretations = RouteProperties(
     name: "interpretations",
-    path: "/interpretations",
+    path: "meter/:idMeter/interpretations",
   );
 
   static RouteProperties interpretationCreate = RouteProperties(
@@ -128,18 +118,28 @@ class Routes {
     path: "/:idInterpretation",
   );
 
-  static RouteProperties connectioMeter = RouteProperties(
+  static RouteProperties connectionMeter = RouteProperties(
     name: "connectionMeter",
-    path: "/connection",
+    path: "meter/:idMeter/connection",
+  );
+
+  static RouteProperties updateMeter = RouteProperties(
+    name: "updateMeter",
+    path: "meter/:idMeter/update",
+  );
+
+  static RouteProperties createMeter = RouteProperties(
+    name: "createMeter",
+    path: "/meter-create",
   );
 
   static RouteProperties weather = RouteProperties(
     name: "weather",
-    path: "/weather",
+    path: "meter/:idMeter/weather",
   );
 
   static RouteProperties listRecords = RouteProperties(
     name: "listRecords",
-    path: "/records",
+    path: "meter/:idMeter/records",
   );
 }

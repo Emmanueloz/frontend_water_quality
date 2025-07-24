@@ -73,17 +73,7 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
       ],
     );
 
-    if (isDesktop) {
-      return Expanded(
-        child: Column(
-          children: [
-            Expanded(child: stackMap),
-          ],
-        ),
-      );
-    } else {
-      return stackMap;
-    }
+    return stackMap;
   }
 
   List<Marker> _buildMarkers(BuildContext context) {

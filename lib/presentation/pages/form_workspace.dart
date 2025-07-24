@@ -3,7 +3,7 @@ import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/enums/type_workspace.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
-import 'package:frontend_water_quality/presentation/widgets/layout/layout_workspace.dart';
+import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
 
 class FormWorkspace extends StatelessWidget {
   final String? idWorkspace;
@@ -17,46 +17,33 @@ class FormWorkspace extends StatelessWidget {
     String title = idWorkspace != null
         ? "Editar espacio de trabajo"
         : "Crear espacio de trabajo";
+    final screenSize = ResponsiveScreenSize.getScreenSize(context);
 
-    if (idWorkspace != null) {
-      return LayoutWorkspace(
+    if (idWorkspace == null) {
+      return Layout(
         title: title,
-        id: idWorkspace ?? "",
-        selectedIndex: 4,
-        builder: (context, screenSize) =>
-            _builderMain(context, screenSize, title),
+        builder: (context, screenSize) {
+          return _builderMain(context, screenSize, title);
+        },
       );
     }
 
-    return Layout(
-      title: title,
-      builder: (context, screenSize) =>
-          _builderMain(context, screenSize, title),
-    );
+    return _builderMain(context, screenSize, title);
   }
 
   Widget _builderMain(
       BuildContext context, ScreenSize screenSize, String title) {
-    if (screenSize == ScreenSize.mobile) {
+    if (screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet) {
       return BaseContainer(
         margin: EdgeInsets.all(10),
+        width: double.infinity,
+        height: double.infinity,
         child: _buildForm(context, screenSize, title),
       );
     }
 
-    if (idWorkspace != null) {
-      return Expanded(
-        child: BaseContainer(
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: _buildForm(context, screenSize, title),
-          ),
-        ),
-      );
-    }
-
     return BaseContainer(
-      margin: EdgeInsets.all(10),
+      margin: EdgeInsets.all(idWorkspace != null ? 0 : 10),
       child: Align(
         alignment: Alignment.topCenter,
         child: _buildForm(context, screenSize, title),
