@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/presentation/widgets/layout/layout_skeleton.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
+import 'package:frontend_water_quality/presentation/providers/workspace_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/router/routes.dart';
-import 'package:go_router/go_router.dart';
 
-class LayoutWorkspace extends StatelessWidget {
+class LayoutWorkspace extends StatefulWidget {
   final String title;
   final String id;
-  final int selectedIndex;
   final Widget Function(BuildContext context, ScreenSize screenSize) builder;
 
   const LayoutWorkspace({
@@ -16,8 +18,24 @@ class LayoutWorkspace extends StatelessWidget {
     required this.title,
     required this.id,
     required this.builder,
-    required this.selectedIndex,
   });
+
+  @override
+  State<LayoutWorkspace> createState() => _LayoutWorkspaceState();
+}
+
+class _LayoutWorkspaceState extends State<LayoutWorkspace> {
+  int currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      print("Fetching workspace with id: ${widget.id}");
+      Provider.of<WorkspaceProvider>(context, listen: false)
+          .fetchWorkspace(widget.id);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +45,7 @@ class LayoutWorkspace extends StatelessWidget {
         context.goNamed(
           Routes.workspace.name,
           pathParameters: {
-            "id": id,
+            "id": widget.id,
           },
         );
       } else if (index == 1) {
@@ -35,7 +53,7 @@ class LayoutWorkspace extends StatelessWidget {
         context.goNamed(
           Routes.alerts.name,
           pathParameters: {
-            "id": id,
+            "id": widget.id,
           },
         );
       } else if (index == 2) {
@@ -43,7 +61,7 @@ class LayoutWorkspace extends StatelessWidget {
         context.goNamed(
           Routes.guests.name,
           pathParameters: {
-            "id": id,
+            "id": widget.id,
           },
         );
       } else if (index == 3) {
@@ -51,7 +69,7 @@ class LayoutWorkspace extends StatelessWidget {
         context.goNamed(
           Routes.locationMeters.name,
           pathParameters: {
-            "id": id,
+            "id": widget.id,
           },
         );
         print("Locations meters");
@@ -60,44 +78,70 @@ class LayoutWorkspace extends StatelessWidget {
         context.goNamed(
           Routes.updateWorkspace.name,
           pathParameters: {
-            'id': id,
+            'id': widget.id,
           },
         );
       }
+
+      setState(() {
+        currentIndex = index;
+      });
     }
 
-    return Layout(
-      title: title,
-      selectedIndex: selectedIndex,
-      onDestinationSelected: onDestinationSelected,
-      destinations: [
-        NavigationItem(
-          label: "Medidores",
-          icon: Icons.analytics_outlined,
-          selectedIcon: Icons.analytics,
-        ),
-        NavigationItem(
-          label: "Alertas",
-          icon: Icons.alarm_outlined,
-          selectedIcon: Icons.alarm,
-        ),
-        NavigationItem(
-          label: "Invitados",
-          icon: Icons.people_outline,
-          selectedIcon: Icons.people,
-        ),
-        NavigationItem(
-          label: "Ubicaciones",
-          icon: Icons.location_on_outlined,
-          selectedIcon: Icons.location_on,
-        ),
-        NavigationItem(
-          label: "Editar",
-          icon: Icons.edit_outlined,
-          selectedIcon: Icons.edit,
-        ),
-      ],
-      builder: builder,
+    return Consumer<WorkspaceProvider>(
+      builder: (context, workspaceProvider, child) {
+        if (workspaceProvider.isLoading) {
+          return const LayoutSkeleton();
+        }
+
+        if (!workspaceProvider.isLoading &&
+            workspaceProvider.currentWorkspace == null) {
+          // Esto dispara el error 404 automático de GoRouter
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!workspaceProvider.isLoading) {
+              GoRouter.of(context).go('/404');
+            }
+          });
+          return const SizedBox.shrink();
+        }
+
+        return Layout(
+          title: workspaceProvider.isLoading
+              ? "Cargando..."
+              : workspaceProvider.currentWorkspace?.name ??
+                  "Espacio no encontrado",
+          selectedIndex: currentIndex,
+          onDestinationSelected: onDestinationSelected,
+          destinations: [
+            NavigationItem(
+              label: "Medidores",
+              icon: Icons.analytics_outlined,
+              selectedIcon: Icons.analytics,
+            ),
+            NavigationItem(
+              label: "Alertas",
+              icon: Icons.alarm_outlined,
+              selectedIcon: Icons.alarm,
+            ),
+            NavigationItem(
+              label: "Invitados",
+              icon: Icons.people_outline,
+              selectedIcon: Icons.people,
+            ),
+            NavigationItem(
+              label: "Ubicaciones",
+              icon: Icons.location_on_outlined,
+              selectedIcon: Icons.location_on,
+            ),
+            NavigationItem(
+              label: "Editar",
+              icon: Icons.edit_outlined,
+              selectedIcon: Icons.edit,
+            ),
+          ],
+          builder: (context, screenSize) => widget.builder(context, screenSize),
+        );
+      },
     );
   }
 }

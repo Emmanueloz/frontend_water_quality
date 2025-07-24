@@ -21,11 +21,6 @@ class MainWorkspace extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (screenSize == ScreenSize.smallDesktop ||
-        screenSize == ScreenSize.largeDesktop) {
-      return Expanded(child: _buildMain(context));
-    }
-
     return _buildMain(context);
   }
 
@@ -73,7 +68,12 @@ class MainWorkspace extends StatelessWidget {
             ),
             actions: [
               ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  context.goNamed(
+                    Routes.createMeter.name,
+                    pathParameters: {"id": id},
+                  );
+                },
                 icon: const Icon(Icons.add),
                 label: const Text("Agregar"),
               )

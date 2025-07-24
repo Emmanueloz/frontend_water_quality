@@ -3,6 +3,8 @@ import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/line_graph.dart';
 
+/// Widget principal para listado de registros del medidor.
+/// Versión mejorada con funcionalidad completa.
 class MainListrecords extends StatelessWidget {
   final String id;
   final String idMeter;
@@ -17,11 +19,7 @@ class MainListrecords extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (screenSize == ScreenSize.smallDesktop ||
-        screenSize == ScreenSize.largeDesktop) {
-      return Expanded(child: _buildMain(context));
-    }
-
+    // Simplemente retornar el contenido, el LayoutMeters se encarga del Expanded
     return _buildMain(context);
   }
 
@@ -41,7 +39,6 @@ class MainListrecords extends StatelessWidget {
       childAspectRatio = 1 / 1.2;
     } else if (screenSize == ScreenSize.largeDesktop) {
       margin = const EdgeInsets.all(0);
-
       padding = const EdgeInsets.symmetric(
         horizontal: 20,
         vertical: 9,
@@ -50,20 +47,18 @@ class MainListrecords extends StatelessWidget {
       childAspectRatio = 1 / 0.70;
     } else if (screenSize == ScreenSize.tablet) {
       margin = const EdgeInsets.all(10);
-
       padding = const EdgeInsets.all(12.0);
       crossAxisCount = 2;
       childAspectRatio = 1 / 1.2;
     } else {
       // Mobile
       margin = const EdgeInsets.all(10);
-
       padding = const EdgeInsets.all(10.0);
       crossAxisCount = 1;
       childAspectRatio = 1 / 1.2;
     }
 
-    // Lista de medidores de ejemplo
+    // Lista de gráficos de ejemplo (puedes modificarla para pruebas)
     final List<Widget> linegraphs = [
       LineGraph(
         sensorType: "Temperatura",
@@ -118,9 +113,16 @@ class MainListrecords extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Puedes mantener el título u otros botones si los necesitas:
-
-          // Contenedor con scroll para los medidores
+          // Título principal
+          Text(
+            "Historial del medidor $idMeter",
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge
+                ?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          // Contenedor con scroll para los gráficos
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,

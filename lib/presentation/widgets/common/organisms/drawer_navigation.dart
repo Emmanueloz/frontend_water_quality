@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
+import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class DrawerNavigation extends StatelessWidget {
   final String title;
@@ -14,11 +16,14 @@ class DrawerNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
+            margin: EdgeInsets.zero,
+            padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: Theme.of(context).primaryColor,
               border: Border.all(
@@ -26,9 +31,30 @@ class DrawerNavigation extends StatelessWidget {
                 color: Theme.of(context).primaryColor,
               ),
             ),
-            child: Text(
-              title,
-              style: TextStyle(fontSize: 24),
+            child: Column(
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).primaryTextTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(authProvider.user?.username ?? ""),
+                    Text(
+                      authProvider.user?.email ?? "",
+                      style: Theme.of(context).primaryTextTheme.bodyMedium,
+                    ),
+                    Chip(
+                      label: Text(
+                        authProvider.user?.rol?.name ?? "",
+                      ),
+                    ),
+                  ],
+                )
+              ],
             ),
           ),
           ListTile(
@@ -41,16 +67,27 @@ class DrawerNavigation extends StatelessWidget {
             ),
           ),
           ListTile(
+            leading: Icon(Icons.dashboard),
             title: const Text(
               "Espacios de trabajo",
             ),
             onTap: () {
-              context.goNamed(Routes.workspaces.name, pathParameters: {
+              context.goNamed(Routes.workspaces.name, queryParameters: {
                 "type": ListWorkspaces.mine.name,
               });
             },
           ),
           ListTile(
+            leading: Icon(Icons.notifications),
+            title: const Text(
+              "Notificaciones",
+            ),
+            onTap: () {
+              context.goNamed(Routes.listNotifications.name);
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.account_circle),
             title: const Text(
               "Perfil",
             ),
@@ -58,23 +95,19 @@ class DrawerNavigation extends StatelessWidget {
               context.goNamed(Routes.profile.name);
             },
           ),
-          if (children != null)
-            ListTile(
-              title: Text(
-                "Secciones",
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-            ),
-          ...?children,
+          Divider(
+            indent: 20,
+            endIndent: 20,
+            thickness: 0.5,
+          ),
           ListTile(
+            leading: Icon(Icons.logout),
             title: const Text(
-              "Notificaciones",
+              "Cerrar sesión",
             ),
             onTap: () {
-              context.goNamed(Routes.listNotifications.name);
+              authProvider.logout();
+              context.goNamed(Routes.login.name);
             },
           ),
         ],

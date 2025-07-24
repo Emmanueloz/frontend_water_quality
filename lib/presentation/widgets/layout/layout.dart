@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
+import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/organisms/app_bar_mobile.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/organisms/app_bar_navigation.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/organisms/drawer_navigation.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/organisms/sidebar.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
+import 'package:provider/provider.dart';
 
 class Layout extends StatelessWidget {
   final String title;
@@ -69,11 +72,14 @@ class Layout extends StatelessWidget {
   Widget _buildMobileLayout(
       BuildContext context, ScreenSize screenSize, bool hasNavigation) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      endDrawer: _buildDrawer(),
+      appBar: AppBarMobile(title: title),
+      endDrawer:
+          Provider.of<AuthProvider>(context, listen: false).isAuthenticated
+              ? _buildDrawer()
+              : null,
       body: builder!(context, screenSize),
       bottomNavigationBar:
-          hasNavigation ? _buildBottomNavigationBar(context) : null,
+          hasNavigation ? _buildBottomNavigationBar(context, screenSize) : null,
     );
   }
 
@@ -97,7 +103,9 @@ class Layout extends StatelessWidget {
           spacing: 10,
           children: [
             _buildSidebar(screenSize),
-            builder!(context, screenSize),
+            Expanded(
+              child: builder!(context, screenSize),
+            ),
           ],
         ),
       ),
@@ -113,9 +121,15 @@ class Layout extends StatelessWidget {
   }
 
   /// Construye la barra de navegación inferior
-  Widget _buildBottomNavigationBar(BuildContext context) {
+  Widget _buildBottomNavigationBar(
+      BuildContext context, ScreenSize screenSize) {
+    NavigationDestinationLabelBehavior labelBehavior =
+        screenSize == ScreenSize.mobile
+            ? NavigationDestinationLabelBehavior.onlyShowSelected
+            : NavigationDestinationLabelBehavior.alwaysShow;
     return NavigationBar(
       selectedIndex: selectedIndex ?? 0,
+      labelBehavior: labelBehavior,
       destinations: _buildNavigationDestinations(context),
       onDestinationSelected: onDestinationSelected,
     );

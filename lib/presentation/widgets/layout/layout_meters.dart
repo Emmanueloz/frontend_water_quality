@@ -5,11 +5,10 @@ import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
-class LayoutMeters extends StatelessWidget {
+class LayoutMeters extends StatefulWidget {
   final String title;
   final String id;
   final String idMeter;
-  final int selectedIndex;
   final Widget Function(BuildContext context, ScreenSize screenSize) builder;
 
   const LayoutMeters({
@@ -17,69 +16,86 @@ class LayoutMeters extends StatelessWidget {
     required this.title,
     required this.id,
     required this.idMeter,
-    required this.selectedIndex,
     required this.builder,
   });
+
+  @override
+  State<LayoutMeters> createState() => _LayoutMetersState();
+}
+
+class _LayoutMetersState extends State<LayoutMeters> {
+  int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     void onDestinationSelected(int index) {
       if (index == 0) {
-        // Navegar a datos del medidor (actual)
         context.goNamed(
           Routes.meter.name,
           pathParameters: {
-            "id": id,
-            "idMeter": idMeter,
+            "id": widget.id,
+            "idMeter": widget.idMeter,
           },
         );
       } else if (index == 1) {
-        // Navegar a historial
         context.goNamed(
           Routes.listRecords.name,
           pathParameters: {
-            "id": id,
-            "idMeter": idMeter,
+            "id": widget.id,
+            "idMeter": widget.idMeter,
           },
         );
       } else if (index == 2) {
         context.goNamed(
           Routes.predictions.name,
           pathParameters: {
-            "id": id,
-            "idMeter": idMeter,
+            "id": widget.id,
+            "idMeter": widget.idMeter,
           },
         );
       } else if (index == 3) {
         context.goNamed(
           Routes.interpretations.name,
           pathParameters: {
-            "id": id,
-            "idMeter": idMeter,
+            "id": widget.id,
+            "idMeter": widget.idMeter,
           },
         );
       } else if (index == 4) {
         context.goNamed(
-          Routes.connectioMeter.name,
+          Routes.connectionMeter.name,
           pathParameters: {
-            "id": id,
-            "idMeter": idMeter,
+            "id": widget.id,
+            "idMeter": widget.idMeter,
           },
         );
       } else if (index == 5) {
+        print("Weather");
+        context.goNamed(
+          Routes.weather.name,
+          pathParameters: {
+            "id": widget.id,
+            "idMeter": widget.idMeter,
+          },
+        );
+      } else if (index == 6) {
         context.goNamed(
           Routes.updateMeter.name,
           pathParameters: {
-            "id": id,
-            "idMeter": idMeter,
+            "id": widget.id,
+            "idMeter": widget.idMeter,
           },
         );
       }
+
+      setState(() {
+        currentIndex = index;
+      });
     }
 
     return Layout(
-      title: title,
-      selectedIndex: selectedIndex,
+      title: widget.title,
+      selectedIndex: currentIndex,
       onDestinationSelected: onDestinationSelected,
       destinations: [
         NavigationItem(
@@ -108,12 +124,17 @@ class LayoutMeters extends StatelessWidget {
           selectedIcon: Icons.wifi_tethering,
         ),
         NavigationItem(
+          label: "Climan",
+          icon: Icons.cloud_outlined,
+          selectedIcon: Icons.cloudy_snowing,
+        ),
+        NavigationItem(
           label: "Editar",
           icon: Icons.edit_outlined,
           selectedIcon: Icons.edit,
         ),
       ],
-      builder: builder,
+      builder: (context, screenSize) => widget.builder(context, screenSize),
     );
   }
 }

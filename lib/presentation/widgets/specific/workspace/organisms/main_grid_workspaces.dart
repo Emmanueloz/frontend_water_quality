@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/organisms/grid_item_builder.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/organisms/grid_loading_skeleton.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/button_actions.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
@@ -9,51 +11,34 @@ import 'package:go_router/go_router.dart';
 class MainGridWorkspaces extends StatelessWidget {
   final ListWorkspaces type;
   final ScreenSize screenSize;
-  final List<Widget> children;
+  final bool isLoading;
+
+  final String? errorMessage;
+
+  final int itemCount;
+  final Widget Function(BuildContext, int) itemBuilder;
+
   const MainGridWorkspaces({
     super.key,
     required this.type,
     required this.screenSize,
-    required this.children,
+    required this.isLoading,
+    required this.itemCount,
+    required this.itemBuilder,
+    this.errorMessage,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (screenSize == ScreenSize.smallDesktop ||
-        screenSize == ScreenSize.largeDesktop) {
-      return Expanded(
-        child: _buildMain(context),
-      );
-    }
-
     return _buildMain(context);
   }
 
   Widget _buildMain(BuildContext context) {
-    int crossAxisCount;
-    double childAspectRatio;
-    double gap;
     EdgeInsetsGeometry margin;
 
-    if (screenSize == ScreenSize.mobile) {
-      crossAxisCount = 1;
-      childAspectRatio = 1 / 0.6;
-      gap = 5;
+    if (screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet) {
       margin = const EdgeInsets.all(10);
-    } else if (screenSize == ScreenSize.tablet) {
-      crossAxisCount = 2;
-      gap = 5;
-      childAspectRatio = 1 / 0.6;
-      margin = const EdgeInsets.all(10);
-    } else if (screenSize == ScreenSize.smallDesktop) {
-      crossAxisCount = 3;
-      gap = 10;
-      childAspectRatio = 1 / 0.85;
-      margin = const EdgeInsets.all(0);
     } else {
-      crossAxisCount = 4;
-      gap = 16;
-      childAspectRatio = 1 / 0.85;
       margin = const EdgeInsets.all(0);
     }
     return BaseContainer(
@@ -64,9 +49,7 @@ class MainGridWorkspaces extends StatelessWidget {
         children: [
           ButtonActions(
             title: Text(
-              type == ListWorkspaces.mine
-                  ? "Mis espacios de trabajo"
-                  : "Espacios de trabajo",
+              "Espacios de trabajo",
               style: Theme.of(context)
                   .textTheme
                   .bodyLarge
@@ -76,7 +59,6 @@ class MainGridWorkspaces extends StatelessWidget {
               if (type == ListWorkspaces.mine)
                 ElevatedButton.icon(
                   onPressed: () {
-                    print("Agregar espacio de trabajo");
                     context.goNamed(
                       Routes.createWorkspace.name,
                     );
@@ -87,34 +69,29 @@ class MainGridWorkspaces extends StatelessWidget {
             ],
             screenSize: screenSize,
           ),
-          _gridBuilder(
-            context,
-            crossAxisCount,
-            childAspectRatio,
-            gap,
-          ),
+          if (isLoading)
+            GridLoadingSkeleton(screenSize: screenSize)
+          else if (errorMessage != null)
+            Center(
+              child: Text(
+                errorMessage!,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            )
+          else if (itemCount == 0)
+            Center(
+              child: Text(
+                "No hay espacios de trabajo ${type == ListWorkspaces.mine ? 'creados' : type == ListWorkspaces.shared ? 'compartidos' : 'disponibles'}",
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            )
+          else
+            GridItemBuilder(
+              itemCount: itemCount,
+              itemBuilder: itemBuilder,
+              screenSize: screenSize,
+            ),
         ],
-      ),
-    );
-  }
-
-  Widget _gridBuilder(
-    BuildContext context,
-    int crossAxisCount,
-    double childAspectRatio,
-    double gap,
-  ) {
-    return Expanded(
-      child: SingleChildScrollView(
-        child: GridView.count(
-          crossAxisCount: crossAxisCount, // 4 cards per row
-          childAspectRatio: childAspectRatio, // Width to height ratio
-          crossAxisSpacing: gap,
-          mainAxisSpacing: gap,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          children: children,
-        ),
       ),
     );
   }
