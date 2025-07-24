@@ -6,7 +6,7 @@ import 'package:frontend_water_quality/presentation/widgets/specific/workspace/m
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/sensor_color.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_provider.dart';
-import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
+import 'package:frontend_water_quality/domain/models/record_models.dart';
 
 /// Widget principal para monitoreo de medidor.
 /// Versión mejorada con funcionalidad completa.
@@ -32,36 +32,38 @@ class _MainMeterState extends State<MainMeter> {
     super.initState();
     // Aquí deberías obtener el token y baseUrl de tu AuthProvider o configuración
     final meterProvider = Provider.of<MeterProvider>(context, listen: false);
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final token = authProvider.token ?? '';
     // Ajusta el baseUrl según tu configuración
     const baseUrl = 'https://api.aqua-minds.org';
     meterProvider.subscribeToMeter(
       baseUrl: baseUrl,
-      token: token,
-      idWorkspace: widget.id,
-      idMeter: widget.idMeter,
+      idWorkspace: "-OV6KJon4LkGwCw8pNvh",
+      idMeter: "-OVnW46EjvIYWdpO8zPz",
     );
   }
 
-  @override
-  void dispose() {
-    Provider.of<MeterProvider>(context, listen: false).unsubscribe();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   Provider.of<MeterProvider>(context, listen: false).unsubscribe();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<MeterProvider>(
       builder: (context, meterProvider, _) {
-        final data = meterProvider.meterData;
-        // Si no hay datos, puedes mostrar un loader o los valores por defecto
-        return _buildMain(context, data);
+        final record = meterProvider.recordResponse;
+        if (meterProvider.errorMessage != null) {
+          return Center(child: Text(meterProvider.errorMessage!));
+        }
+        // if (record == null) {
+        //   return const Center(child: CircularProgressIndicator());
+        // }
+        return _buildMain(context, record);
       },
     );
   }
 
-  Widget _buildMain(BuildContext context, dynamic data) {
+  Widget _buildMain(BuildContext context, RecordResponse? record) {
     EdgeInsetsGeometry margin;
     EdgeInsetsGeometry padding;
     Size meterSize;
@@ -103,18 +105,19 @@ class _MainMeterState extends State<MainMeter> {
 
     // Aquí debes mapear los datos recibidos a los valores de los medidores
     // Ejemplo de cómo podrías hacerlo:
-    final temperatura = data?['temperatura'] ?? 0;
-    final ph = data?['ph'] ?? 0;
-    final tds = data?['tds'] ?? 0;
-    final conductividad = data?['conductividad'] ?? 0;
-    final turbidez = data?['turbidez'] ?? 0;
+    final temperatura =  record?.temperature.value ?? 0; // Valor por defecto si no está presente
+    final ph = record?.ph.value ?? 0;
+    final tds = record?.tds.value ?? 0;
+    final conductividad = record?.conductivity.value ?? 0;
+    final turbidez = record?.turbidity.value ?? 0;
+    final SRColorValue color = record?.color.value ?? SRColorValue(r: 111, g: 111, b:  111); // Color por defecto
 
     // Lista de medidores de ejemplo (puedes modificarla para pruebas)
     final List<Widget> meters = [
       SensorColor(
-        red: 48,
-        green: 120,
-        blue: 171,
+        red: color.r,
+        green: color.g,
+        blue: color.b,
       ),
       RadialGaugeMeter(
         sensorType: "Temperatura",

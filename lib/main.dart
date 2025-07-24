@@ -33,8 +33,14 @@ void main() async {
             return workspaceProvider..setAuthProvider(authProvider);
           },
         ),
-        ChangeNotifierProvider<MeterProvider>(
-          create: (_) => MeterProvider(),
+        ChangeNotifierProxyProvider<AuthProvider, MeterProvider>(
+          create: (context) => MeterProvider(
+            context.read<AuthProvider>(),
+          ),
+          update: (context, authProvider, meterProvider) {
+            meterProvider!.clean();
+            return meterProvider..setAuthProvider(authProvider);
+          },
         ),
       ],
       child: const MyApp(),
