@@ -22,18 +22,18 @@ class MeterProvider with ChangeNotifier {
     meterData = null;
     errorMessage = null;
   }
-  void subscribeToMeter({
+  void subscribeToMeter ( {
     required String baseUrl,
     required String idWorkspace,
     required String idMeter,
-  }) {
+  }) async{
     if (_authProvider == null || _authProvider!.token == null) {
       errorMessage = "User not authenticated";
       notifyListeners();
       return;
     }
     try{
-      _socketService.connect(
+      await _socketService.connect(
       baseUrl: baseUrl,
       token: _authProvider!.token!,
       idWorkspace: idWorkspace,

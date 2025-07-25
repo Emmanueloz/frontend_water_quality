@@ -1,15 +1,18 @@
+import 'dart:async';
+
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class MeterSocketService {
   IO.Socket? _socket;
 
-  void connect({
+  Future<void> connect({
     required String baseUrl,
     required String token,
     required String idWorkspace,
     required String idMeter,
     required Function(dynamic) onData,
   }) {
+    final completer = Completer<void>();
     // Limpiar socket anterior si existe
     if (_socket != null) {
       _socket!
@@ -58,6 +61,7 @@ class MeterSocketService {
 
     // Iniciar conexión
     _socket!.connect();
+    return completer.future;
   }
 
   void disconnect() {
