@@ -36,6 +36,18 @@ class AuthRepoImpl implements AuthRepo {
   Future<Result<BaseResponse>> register(User user) async {
     try {
       final response = await _dio.post('/auth/register/', data: user.toJson());
+
+      if (response.statusCode != 200) {
+        String error;
+
+        if (response.statusCode == 409) {
+          error = "El usuario ya existe";
+        } else {
+          error = "Error: codigo ${response.statusCode}";
+        }
+
+        return Result.failure(error);
+      }
       return Result.success(BaseResponse.fromJson(response.data));
     } catch (e) {
       return Result.failure(e.toString());
