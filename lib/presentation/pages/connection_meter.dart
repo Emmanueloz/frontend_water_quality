@@ -230,6 +230,7 @@ class _ConnectionMeterPageState extends State<ConnectionMeterPage> {
               ],
             ),
             child: Row(
+              spacing: 5,
               children: [
                 Expanded(
                   child: TextField(
@@ -249,7 +250,10 @@ class _ConnectionMeterPageState extends State<ConnectionMeterPage> {
                     onSubmitted: (value) => _sendMessage(blueProvider),
                   ),
                 ),
-                const SizedBox(width: 8),
+                IconButton(
+                  onPressed: blueProvider.clearMessages,
+                  icon: const Icon(Icons.cleaning_services),
+                ),
                 Container(
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,

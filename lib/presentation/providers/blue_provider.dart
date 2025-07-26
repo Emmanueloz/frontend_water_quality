@@ -108,6 +108,11 @@ class BlueProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void clearMessages() {
+    _messages = [];
+    notifyListeners();
+  }
+
   @override
   void dispose() {
     _scanSubscription?.cancel();
