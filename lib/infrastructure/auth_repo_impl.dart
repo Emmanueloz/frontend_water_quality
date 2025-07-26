@@ -16,6 +16,7 @@ class AuthRepoImpl implements AuthRepo {
     try {
       final resp = await _dio.post('/auth/login/', data: user.toJson());
       print(resp.data);
+
       LoginResponse loginResponse = LoginResponse.fromJson(resp.data);
 
       if (resp.statusCode != 200) {
