@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
@@ -25,6 +26,49 @@ class LayoutMeters extends StatefulWidget {
 
 class _LayoutMetersState extends State<LayoutMeters> {
   int currentIndex = 0;
+
+  List<NavigationItem> destinations = [
+    NavigationItem(
+      label: "Monitoreo",
+      icon: Icons.speed_outlined,
+      selectedIcon: Icons.speed_rounded,
+    ),
+    NavigationItem(
+      label: "Registros",
+      icon: Icons.line_axis_outlined,
+      selectedIcon: Icons.line_axis,
+    ),
+    NavigationItem(
+      label: "Analisis",
+      icon: Icons.analytics_outlined,
+      selectedIcon: Icons.analytics,
+    ),
+    NavigationItem(
+      label: "Climan",
+      icon: Icons.cloud_outlined,
+      selectedIcon: Icons.cloudy_snowing,
+    ),
+    NavigationItem(
+      label: "Editar",
+      icon: Icons.edit_outlined,
+      selectedIcon: Icons.edit,
+    ),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      destinations.add(
+        NavigationItem(
+          label: "Conección",
+          icon: Icons.wifi_tethering_outlined,
+          selectedIcon: Icons.wifi_tethering,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,16 +99,15 @@ class _LayoutMetersState extends State<LayoutMeters> {
         );
       } else if (index == 3) {
         context.goNamed(
-          Routes.connectionMeter.name,
+          Routes.weather.name,
           pathParameters: {
             "id": widget.id,
             "idMeter": widget.idMeter,
           },
         );
       } else if (index == 4) {
-        print("Weather");
         context.goNamed(
-          Routes.weather.name,
+          Routes.updateMeter.name,
           pathParameters: {
             "id": widget.id,
             "idMeter": widget.idMeter,
@@ -72,7 +115,7 @@ class _LayoutMetersState extends State<LayoutMeters> {
         );
       } else if (index == 5) {
         context.goNamed(
-          Routes.updateMeter.name,
+          Routes.connectionMeter.name,
           pathParameters: {
             "id": widget.id,
             "idMeter": widget.idMeter,
@@ -89,38 +132,7 @@ class _LayoutMetersState extends State<LayoutMeters> {
       title: widget.title,
       selectedIndex: currentIndex,
       onDestinationSelected: onDestinationSelected,
-      destinations: [
-        NavigationItem(
-          label: "Monitoreo",
-          icon: Icons.speed_outlined,
-          selectedIcon: Icons.speed_rounded,
-        ),
-        NavigationItem(
-          label: "Registros",
-          icon: Icons.line_axis_outlined,
-          selectedIcon: Icons.line_axis,
-        ),
-        NavigationItem(
-          label: "Analisis",
-          icon: Icons.analytics_outlined,
-          selectedIcon: Icons.analytics,
-        ),
-        NavigationItem(
-          label: "Conección",
-          icon: Icons.wifi_tethering_outlined,
-          selectedIcon: Icons.wifi_tethering,
-        ),
-        NavigationItem(
-          label: "Climan",
-          icon: Icons.cloud_outlined,
-          selectedIcon: Icons.cloudy_snowing,
-        ),
-        NavigationItem(
-          label: "Editar",
-          icon: Icons.edit_outlined,
-          selectedIcon: Icons.edit,
-        ),
-      ],
+      destinations: destinations,
       builder: (context, screenSize) => widget.builder(context, screenSize),
     );
   }

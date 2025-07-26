@@ -1,4 +1,5 @@
 // app_router.dart
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/presentation/pages/alerts.dart';
@@ -164,6 +165,12 @@ class AppRouter {
                       GoRoute(
                         path: Routes.connectionMeter.path,
                         name: Routes.connectionMeter.name,
+                        redirect: (context, state) {
+                          if (kIsWeb) {
+                            return '/404';
+                          }
+                          return null;
+                        },
                         builder: (context, state) {
                           final id = state.pathParameters['id'] ?? 'default';
                           final idMeter =
