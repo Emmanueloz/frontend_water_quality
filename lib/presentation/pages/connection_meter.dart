@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/presentation/providers/blue_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
+import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
 import 'package:provider/provider.dart';
+import 'package:frontend_water_quality/core/enums/screen_size.dart';
 
 class ConnectionMeterPage extends StatefulWidget {
   final String id;
@@ -38,16 +40,10 @@ class _ConnectionMeterPageState extends State<ConnectionMeterPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToBottom();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final screenSize = ResponsiveScreenSize.getScreenSize(context);
     return BaseContainer(
+      margin: EdgeInsets.all(screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet ? 10 : 0),
       padding: const EdgeInsets.all(16),
       child: Consumer<BlueProvider>(
         builder: (context, blueProvider, _) {
@@ -80,16 +76,16 @@ class _ConnectionMeterPageState extends State<ConnectionMeterPage> {
               if (blueProvider.isScanning)
                 const CircularProgressIndicator(strokeWidth: 2),
               FloatingActionButton.large(
-                onPressed: blueProvider.isScanning 
-                    ? blueProvider.stopScan 
+                onPressed: blueProvider.isScanning
+                    ? blueProvider.stopScan
                     : blueProvider.initScan,
-                backgroundColor: blueProvider.isScanning 
-                    ? Theme.of(context).colorScheme.error 
+                backgroundColor: blueProvider.isScanning
+                    ? Theme.of(context).colorScheme.error
                     : null,
                 child: Icon(
-                  blueProvider.isScanning 
-                      ? Icons.stop 
-                      : Icons.bluetooth_searching, 
+                  blueProvider.isScanning
+                      ? Icons.stop
+                      : Icons.bluetooth_searching,
                   size: 36,
                 ),
               ),
@@ -130,6 +126,7 @@ class _ConnectionMeterPageState extends State<ConnectionMeterPage> {
                     subtitle: Text(device.remoteId.toString()),
                     onTap: () async {
                       try {
+
                         await blueProvider.connectToDevice(device);
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -148,76 +145,126 @@ class _ConnectionMeterPageState extends State<ConnectionMeterPage> {
   }
 
   Widget _buildChatSection(BlueProvider blueProvider) {
+    // Schedule the scroll after the frame is built
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
 
-    return Column(
-      children: [
-        Expanded(
-          child: ListView.builder(
-            controller: _scrollController,
-            itemCount: blueProvider.messages.length,
-            itemBuilder: (context, index) {
-              final message = blueProvider.messages[index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Align(
-                  alignment: message.startsWith('Sent:')
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
+    return Expanded(
+      child: Column(
+        children: [
+          // Connected device info
+          Card(
+            margin: const EdgeInsets.only(bottom: 16),
+            child: ListTile(
+              leading: const Icon(Icons.bluetooth_connected),
+              title: const Text('Conectado a:'),
+              subtitle:
+                  Text(blueProvider.connectedDevice?.advName ?? 'Dispositivo'),
+              trailing: IconButton(
+                icon: const Icon(Icons.bluetooth_disabled),
+                onPressed: () => blueProvider.disconnect(),
+              ),
+            ),
+          ),
+
+          // Messages list
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              itemCount: blueProvider.messages.length,
+              itemBuilder: (context, index) {
+                final message = blueProvider.messages[index];
+                final isSent = message.startsWith('Sent:');
+
+                return Align(
+                  alignment:
+                      isSent ? Alignment.centerRight : Alignment.centerLeft,
                   child: Container(
-                    padding: const EdgeInsets.all(12),
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
                     decoration: BoxDecoration(
-                      color: message.startsWith('Sent:')
-                          ? Theme.of(context).primaryColor.withOpacity(0.2)
+                      color: isSent
+                          ? Theme.of(context)
+                              .primaryColor
+                              .withValues(alpha: 0.1)
                           : Colors.grey[200],
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isSent
+                            ? Theme.of(context)
+                                .primaryColor
+                                .withValues(alpha: 0.1)
+                            : Colors.grey[300]!,
+                      ),
                     ),
                     child: Text(
                       message
                           .replaceAll('Sent: ', '')
                           .replaceAll('Received: ', ''),
-                      style: const TextStyle(fontSize: 16),
+                      style: TextStyle(
+                        color: isSent
+                            ? Theme.of(context).primaryColor
+                            : Colors.black87,
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _messageController,
-                decoration: InputDecoration(
-                  hintText: 'Escribe un mensaje...',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+
+          // Message input
+          Container(
+            padding:
+                const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 8),
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, -2),
                 ),
-                onSubmitted: (value) => _sendMessage(blueProvider),
-              ),
+              ],
             ),
-            const SizedBox(width: 8),
-            IconButton.filled(
-              onPressed: () => _sendMessage(blueProvider),
-              icon: const Icon(Icons.send),
-              style: IconButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(16),
-              ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    decoration: InputDecoration(
+                      hintText: 'Escribe un mensaje...',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(24),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      fillColor: Theme.of(context).cardColor,
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                    ),
+                    textInputAction: TextInputAction.send,
+                    onSubmitted: (value) => _sendMessage(blueProvider),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    onPressed: () => _sendMessage(blueProvider),
+                    icon: const Icon(Icons.send, color: Colors.white),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        OutlinedButton.icon(
-          onPressed: () => blueProvider.disconnect(),
-          icon: const Icon(Icons.bluetooth_disabled),
-          label: const Text('Desconectar'),
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 

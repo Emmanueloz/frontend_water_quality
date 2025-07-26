@@ -32,27 +32,27 @@ class BLEService {
   final Guid _charUuid = Guid("1a5c9524-128c-40b9-9b13-bf435190a3a6");
 
   bool get isConnected => _device?.isConnected ?? false;
-  List<BluetoothDevice> get discoveredDevices => List.unmodifiable(_discoveredDevices);
+  List<BluetoothDevice> get discoveredDevices =>
+      List.unmodifiable(_discoveredDevices);
   bool get isScanning => _scanSubscription != null;
-  
+
   Stream<BleStatus> get status async* {
-    yield* FlutterBluePlus.adapterState
-        .map((state) {
-          if (state == BluetoothAdapterState.on) {
-            return BleStatus.poweredOn;
-          } else if (state == BluetoothAdapterState.off) {
-            return BleStatus.poweredOff;
-          } else if (state == BluetoothAdapterState.unauthorized) {
-            return BleStatus.unauthorized;
-          }
-          return BleStatus.unknown;
-        })
-        .handleError((_) => BleStatus.error);
+    yield* FlutterBluePlus.adapterState.map((state) {
+      if (state == BluetoothAdapterState.on) {
+        return BleStatus.poweredOn;
+      } else if (state == BluetoothAdapterState.off) {
+        return BleStatus.poweredOff;
+      } else if (state == BluetoothAdapterState.unauthorized) {
+        return BleStatus.unauthorized;
+      }
+      return BleStatus.unknown;
+    }).handleError((_) => BleStatus.error);
   }
 
-  Future<void> setupConnection(BluetoothDevice device, MessageCallback onMessage) async {
+  Future<void> setupConnection(
+      BluetoothDevice device, MessageCallback onMessage) async {
     _device = device;
-    
+
     // Setup connection state listener
     device.connectionState.listen((state) async {
       if (state == BluetoothConnectionState.disconnected) {
@@ -63,10 +63,11 @@ class BLEService {
     await _discoverServices(device, onMessage);
   }
 
-  Future<void> _discoverServices(BluetoothDevice device, MessageCallback onMessage) async {
+  Future<void> _discoverServices(
+      BluetoothDevice device, MessageCallback onMessage) async {
     try {
       List<BluetoothService> services = await device.discoverServices();
-      
+
       for (var service in services) {
         print(service.uuid);
         if (service.uuid == _serviceUuid) {
@@ -87,12 +88,10 @@ class BLEService {
   }
 
   Future<void> _setupCharacteristic(
-    BluetoothCharacteristic char, 
-    MessageCallback onMessage
-  ) async {
+      BluetoothCharacteristic char, MessageCallback onMessage) async {
     await _valueChangedSubscription?.cancel();
     await char.setNotifyValue(true);
-    
+
     _valueChangedSubscription = char.onValueReceived.listen(onMessage);
   }
 
@@ -100,7 +99,7 @@ class BLEService {
     if (_characteristic == null) {
       throw Exception('Not connected to any device');
     }
-    
+
     try {
       await _characteristic!.write(message.codeUnits);
     } catch (e) {
@@ -140,15 +139,16 @@ class BLEService {
           return false;
         }
       }
-      
+
       // Check if Bluetooth is on
       final bluetoothStatus = await FlutterBluePlus.adapterState.first;
       if (bluetoothStatus != BluetoothAdapterState.on) {
         return false;
       }
-      
+
       // Check if location is enabled (required for BLE on Android)
-      if (!(await FlutterBluePlus.isOn)) {
+      if (!(await FlutterBluePlus.adapterState.first ==
+          BluetoothAdapterState.on)) {
         return false;
       }
     }
@@ -164,46 +164,46 @@ class BLEService {
     // Check and request permissions
     final hasPermission = await _checkAndRequestPermissions();
     if (!hasPermission) {
-      throw Exception('Se requieren permisos de ubicación para escanear dispositivos BLE');
+      throw Exception(
+          'Se requieren permisos de ubicación para escanear dispositivos BLE');
     }
 
     _discoveredDevices.clear();
-    
+
     try {
       // Clear previous scan results
       if (_scanSubscription != null) {
         await _scanSubscription!.cancel();
         _scanSubscription = null;
       }
-      
+
       // Listen for scan results
       _scanSubscription = FlutterBluePlus.scanResults.listen((results) {
         if (results.isEmpty) return;
-        
+
         final newDevices = results
             .where((r) => r.advertisementData.advName.isNotEmpty)
             .map((r) => r.device)
             .toSet()
             .toList();
-            
+
         _discoveredDevices.clear();
         _discoveredDevices.addAll(newDevices);
         onDevicesFound(_discoveredDevices);
       });
-      
+
       // Start a new scan with timeout
       await FlutterBluePlus.startScan(
         timeout: timeout,
         androidUsesFineLocation: true,
       );
-      
+
       // Stop scan after timeout if still scanning
       Future.delayed(timeout, () async {
         if (_scanSubscription != null) {
           await stopScan();
         }
       });
-      
     } catch (e) {
       await stopScan();
       rethrow;

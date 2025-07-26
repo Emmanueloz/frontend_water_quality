@@ -10,6 +10,7 @@ class BlueProvider with ChangeNotifier {
   List<BluetoothDevice> _devices = [];
   List<String> _messages = [];
   StreamSubscription<List<ScanResult>>? _scanSubscription;
+  BluetoothDevice? _connectedDevice;
 
   BlueProvider(this._bleService);
 
@@ -17,6 +18,7 @@ class BlueProvider with ChangeNotifier {
   bool get isConnected => _isConnected;
   List<BluetoothDevice> get devices => List.unmodifiable(_devices);
   List<String> get messages => List.unmodifiable(_messages);
+  BluetoothDevice? get connectedDevice => _connectedDevice;
 
   bool get isSupported {
     if (kIsWeb) return false;
@@ -47,15 +49,19 @@ class BlueProvider with ChangeNotifier {
 
   Future<void> connectToDevice(BluetoothDevice device) async {
     try {
+      _connectedDevice = device;
       await device.connect(autoConnect: false);
       _isConnected = true;
+      _isScanning = false;
+      notifyListeners();
+      _isConnected = true;
       _addMessage('Connected to ${device.advName}');
-      
+
       // Setup message listener
       await _bleService?.setupConnection(device, (data) {
         _addMessage('Received: ${String.fromCharCodes(data)}');
       });
-      
+
       notifyListeners();
     } catch (e) {
       _addMessage('Connection failed: $e');
@@ -65,23 +71,29 @@ class BlueProvider with ChangeNotifier {
 
   Future<void> sendMessage(String message) async {
     if (message.isEmpty) return;
-    
+
     try {
       await _bleService?.send(message);
       _addMessage('Sent: $message');
     } catch (e) {
+      print(e);
       _addMessage('Failed to send: $e');
     }
   }
 
   Future<void> disconnect() async {
     try {
-      await _bleService?.disconnect();
-      _isConnected = false;
+      if (_connectedDevice != null) {
+        await _connectedDevice!.disconnect();
+      }
       _addMessage('Disconnected');
-      notifyListeners();
     } catch (e) {
       _addMessage('Error disconnecting: $e');
+    } finally {
+      _connectedDevice = null;
+      _isConnected = false;
+      _messages.clear();
+      notifyListeners();
     }
   }
 
