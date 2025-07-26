@@ -47,7 +47,7 @@ class _LayoutMetersState extends State<LayoutMeters> {
         );
       } else if (index == 2) {
         context.goNamed(
-          Routes.predictions.name,
+          Routes.analysisRecords.name,
           pathParameters: {
             "id": widget.id,
             "idMeter": widget.idMeter,
@@ -55,21 +55,13 @@ class _LayoutMetersState extends State<LayoutMeters> {
         );
       } else if (index == 3) {
         context.goNamed(
-          Routes.interpretations.name,
-          pathParameters: {
-            "id": widget.id,
-            "idMeter": widget.idMeter,
-          },
-        );
-      } else if (index == 4) {
-        context.goNamed(
           Routes.connectionMeter.name,
           pathParameters: {
             "id": widget.id,
             "idMeter": widget.idMeter,
           },
         );
-      } else if (index == 5) {
+      } else if (index == 4) {
         print("Weather");
         context.goNamed(
           Routes.weather.name,
@@ -78,7 +70,7 @@ class _LayoutMetersState extends State<LayoutMeters> {
             "idMeter": widget.idMeter,
           },
         );
-      } else if (index == 6) {
+      } else if (index == 5) {
         context.goNamed(
           Routes.updateMeter.name,
           pathParameters: {
@@ -109,14 +101,9 @@ class _LayoutMetersState extends State<LayoutMeters> {
           selectedIcon: Icons.line_axis,
         ),
         NavigationItem(
-          label: "Predicciones",
+          label: "Analisis",
           icon: Icons.analytics_outlined,
           selectedIcon: Icons.analytics,
-        ),
-        NavigationItem(
-          label: "Interpretación",
-          icon: Icons.auto_awesome_outlined,
-          selectedIcon: Icons.auto_awesome,
         ),
         NavigationItem(
           label: "Conección",

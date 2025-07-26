@@ -88,34 +88,9 @@ class Routes {
     path: "/meter/:idMeter",
   );
 
-  static RouteProperties predictions = RouteProperties(
-    name: "predictions",
-    path: "meter/:idMeter/predictions",
-  );
-
-  static RouteProperties predictionCreate = RouteProperties(
-    name: "predictionCreate",
-    path: "/create",
-  );
-
-  static RouteProperties prediction = RouteProperties(
-    name: "predictionDetails",
-    path: "/:idPrediction",
-  );
-
-  static RouteProperties interpretations = RouteProperties(
-    name: "interpretations",
-    path: "meter/:idMeter/interpretations",
-  );
-
-  static RouteProperties interpretationCreate = RouteProperties(
-    name: "interpretationCreate",
-    path: "/create",
-  );
-
-  static RouteProperties interpretation = RouteProperties(
-    name: "interpretationDetails",
-    path: "/:idInterpretation",
+  static RouteProperties analysisRecords = RouteProperties(
+    name: "analysis",
+    path: "meter/:idMeter/analysis",
   );
 
   static RouteProperties connectionMeter = RouteProperties(

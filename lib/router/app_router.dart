@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/presentation/pages/alerts.dart';
 import 'package:frontend_water_quality/presentation/pages/change_password.dart';
+import 'package:frontend_water_quality/presentation/pages/connection_meter.dart';
 import 'package:frontend_water_quality/presentation/pages/form_meters.dart';
 import 'package:frontend_water_quality/presentation/pages/form_workspace_page.dart';
 import 'package:frontend_water_quality/presentation/pages/guests.dart';
@@ -16,7 +17,6 @@ import 'package:frontend_water_quality/presentation/pages/splash.dart';
 import 'package:frontend_water_quality/presentation/pages/view_list_records.dart';
 import 'package:frontend_water_quality/presentation/pages/view_meter.dart';
 import 'package:frontend_water_quality/presentation/pages/view_list_notifications.dart';
-import 'package:frontend_water_quality/presentation/pages/view_meter_connection.dart';
 import 'package:frontend_water_quality/presentation/pages/view_meter_ubications.dart';
 import 'package:frontend_water_quality/presentation/pages/view_notification_details.dart';
 import 'package:frontend_water_quality/presentation/pages/view_workspace.dart';
@@ -150,64 +150,16 @@ class AppRouter {
                         },
                       ),
                       GoRoute(
-                        path: Routes.predictions.path,
-                        name: Routes.predictions.name,
+                        path: Routes.analysisRecords.path,
+                        name: Routes.analysisRecords.name,
                         builder: (context, state) {
                           final id = state.pathParameters['id'] ?? 'default';
                           final idMeter =
                               state.pathParameters['idMeter'] ?? 'default';
                           return SizedBox(
-                            child: Text('Predicciones $id $idMeter'),
+                            child: Text("Analisis $id $idMeter"),
                           );
                         },
-                        routes: [
-                          GoRoute(
-                            path: Routes.predictionCreate.path,
-                            name: Routes.predictionCreate.name,
-                            parentNavigatorKey: rootNavigatorKey,
-                            builder: (context, state) {
-                              return Simple(title: "Create prediction");
-                            },
-                          ),
-                          GoRoute(
-                            path: Routes.prediction.path,
-                            name: Routes.prediction.name,
-                            parentNavigatorKey: rootNavigatorKey,
-                            builder: (context, state) {
-                              return Simple(title: "Prediction Detail");
-                            },
-                          ),
-                        ],
-                      ),
-                      GoRoute(
-                        path: Routes.interpretations.path,
-                        name: Routes.interpretations.name,
-                        builder: (context, state) {
-                          final id = state.pathParameters['id'] ?? 'default';
-                          final idMeter =
-                              state.pathParameters['idMeter'] ?? 'default';
-                          return SizedBox(
-                            child: Text('Interpretaciones $id $idMeter'),
-                          );
-                        },
-                        routes: [
-                          GoRoute(
-                            path: Routes.interpretationCreate.path,
-                            name: Routes.interpretationCreate.name,
-                            parentNavigatorKey: rootNavigatorKey,
-                            builder: (context, state) {
-                              return Simple(title: "Crear interpretación");
-                            },
-                          ),
-                          GoRoute(
-                            path: Routes.interpretation.path,
-                            name: Routes.interpretation.name,
-                            parentNavigatorKey: rootNavigatorKey,
-                            builder: (context, state) {
-                              return Simple(title: "Interpretación");
-                            },
-                          ),
-                        ],
                       ),
                       GoRoute(
                         path: Routes.connectionMeter.path,
@@ -216,10 +168,9 @@ class AppRouter {
                           final id = state.pathParameters['id'] ?? 'default';
                           final idMeter =
                               state.pathParameters['idMeter'] ?? 'default';
-                          return ViewMeterConnection(
+                          return ConnectionMeterPage(
                             id: id,
                             idMeter: idMeter,
-                            title: 'Conexión del medidor $idMeter',
                           );
                         },
                       ),
