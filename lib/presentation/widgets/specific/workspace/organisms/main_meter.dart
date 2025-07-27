@@ -33,7 +33,7 @@ class _MainMeterState extends State<MainMeter> {
     // Aquí deberías obtener el token y baseUrl de tu AuthProvider o configuración
     final meterProvider = Provider.of<MeterProvider>(context, listen: false);
     // Ajusta el baseUrl según tu configuración
-    const baseUrl = 'https://api.aqua-minds.org';
+    const baseUrl = 'wss://api.aqua-minds.org';
     meterProvider.subscribeToMeter(
       baseUrl: baseUrl,
       idWorkspace: "-OV6KJon4LkGwCw8pNvh",
