@@ -7,7 +7,6 @@ class MeterProvider with ChangeNotifier {
   AuthProvider? _authProvider;
 
   final MeterSocketService _socketService = MeterSocketService();
-  dynamic meterData;
   RecordResponse? recordResponse;
   
   MeterProvider(this._authProvider);
@@ -19,8 +18,8 @@ class MeterProvider with ChangeNotifier {
   }
 
   void clean() {
-    meterData = null;
     errorMessage = null;
+    recordResponse = null;
   }
   void subscribeToMeter ( {
     required String baseUrl,
@@ -40,9 +39,7 @@ class MeterProvider with ChangeNotifier {
       idMeter: idMeter,
       onData: (data) {
         try {
-          print("Received data: $data");
           recordResponse = RecordResponse.fromJson(data);
-          meterData = data;
           errorMessage = null;
         } catch (e) {
           errorMessage = 'Error parsing data: ';
