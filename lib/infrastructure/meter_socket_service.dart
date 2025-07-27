@@ -104,24 +104,6 @@ class MeterSocketService {
       }
     });
 
-    // Listener para datos del medidor (nombre común en APIs de IoT)
-    _socket!.on('meter_data', (data) {
-      print('📊 Datos del medidor recibidos: $data');
-      try {
-        onData(data);
-      } catch (e) {
-        print('❌ Error procesando datos del medidor: $e');
-      }
-    });
-
-    // Listener para confirmación de suscripción
-    _socket!.on('subscription_confirmed', (data) {
-      print('✅ Suscripción confirmada: $data');
-    });
-
-    _socket!.on('subscription_error', (error) {
-      print('❌ Error en suscripción: $error');
-    });
 
 
     // Listener para errores específicos del backend
