@@ -33,7 +33,7 @@ class _MainMeterState extends State<MainMeter> {
     // Aquí deberías obtener el token y baseUrl de tu AuthProvider o configuración
     final meterProvider = Provider.of<MeterProvider>(context, listen: false);
     // Ajusta el baseUrl según tu configuración
-    const baseUrl = 'wss://api.aqua-minds.org';
+    const baseUrl = 'https://api.aqua-minds.org';
     meterProvider.subscribeToMeter(
       baseUrl: baseUrl,
       idWorkspace: "-OV6KJon4LkGwCw8pNvh",
@@ -105,11 +105,11 @@ class _MainMeterState extends State<MainMeter> {
 
     // Aquí debes mapear los datos recibidos a los valores de los medidores
     // Ejemplo de cómo podrías hacerlo:
-    final temperatura =  record?.temperature.value ?? 0; // Valor por defecto si no está presente
+    final temperature =  record?.temperature.value ?? 0; // Valor por defecto si no está presente
     final ph = record?.ph.value ?? 0;
     final tds = record?.tds.value ?? 0;
-    final conductividad = record?.conductivity.value ?? 0;
-    final turbidez = record?.turbidity.value ?? 0;
+    final conductivity = record?.conductivity.value ?? 0;
+    final turbidity = record?.turbidity.value ?? 0;
     final SRColorValue color = record?.color.value ?? SRColorValue(r: 111, g: 111, b:  111); // Color por defecto
 
     // Lista de medidores de ejemplo (puedes modificarla para pruebas)
@@ -121,7 +121,7 @@ class _MainMeterState extends State<MainMeter> {
       ),
       RadialGaugeMeter(
         sensorType: "Temperatura",
-        value: temperatura,
+        value: temperature,
         min: 0,
         max: 60,
         interval: 10,
@@ -145,7 +145,7 @@ class _MainMeterState extends State<MainMeter> {
       ),
       RadialGaugeMeter(
         sensorType: "Conductividad",
-        value: conductividad,
+        value: conductivity,
         min: 0,
         max: 1000,
         interval: 100,
@@ -153,7 +153,7 @@ class _MainMeterState extends State<MainMeter> {
       ),
       RadialGaugeMeter(
         sensorType: "Turbidez",
-        value: turbidez,
+        value: turbidity,
         min: 0,
         max: 20,
         interval: 2,
