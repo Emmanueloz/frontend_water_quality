@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:socket_io_client/socket_io_client.dart' as socket_io;
 
 class MeterSocketService {
-  IO.Socket? _socket;
+  socket_io.Socket? _socket;
 
   Future<void> connect({
     required String baseUrl,
@@ -28,28 +28,21 @@ class MeterSocketService {
       _socket = null;
     }
 
-    // Construir URL EXACTAMENTE como en Postman
-    // Postman muestra: (base_url)/subscribe/?id_workspace=...&id_meter=...
-    // final cleanUrl = baseUrl.endsWith('/') ? baseUrl.substring(0, baseUrl.length - 1) : baseUrl;
-
-    // NO usar namespace en la URL, solo la base
-    final socketUrl =
-        baseUrl; // https://api.aqua-minds.org SIN puerto ni namespace
+    final socketUrl = baseUrl; 
 
     print('🔌 Conectando a: $socketUrl');
     print('🔑 Token: ${token.substring(0, 20)}...');
     print('🏢 Workspace: $idWorkspace, Meter: $idMeter');
 
-    // Crear socket con configuración que coincida EXACTAMENTE con Postman
-    _socket = IO.io(
-        socketUrl,
-        IO.OptionBuilder()
-            .setTransports(['websocket']) // Ambos transportes disponibles
-            .setPath(
-                '/socket.io/subscribe/') // Path específico para el namespace subscribe
+    // Crear socket con configuración corregida - NAMESPACE SEPARADO
+    _socket = socket_io.io(
+        '$socketUrl/subscribe/', // Especificar el namespace en la URL
+        socket_io.OptionBuilder()
+            .setTransports(['websocket', 'polling'])
+            .setPath('/socket.io/') // Path estándar de Socket.IO
             .disableAutoConnect()
             .setExtraHeaders({
-              'ACCESS_TOKEN': token, // EXACTAMENTE como en Postman
+              'access-token': token,
               'Content-Type': 'application/json',
               'Accept': 'application/json',
               'User-Agent': 'Flutter-App/1.0',
@@ -57,7 +50,6 @@ class MeterSocketService {
             .setQuery({
               'id_workspace': idWorkspace,
               'id_meter': idMeter,
-              // NO incluir token en query si ya está en headers
             })
             .setTimeout(30000)
             .setReconnectionAttempts(5)
@@ -66,14 +58,6 @@ class MeterSocketService {
             .build());
 
     // Configurar eventos antes de conectar
-        _socket!.on('message', (data) {
-      print('📨 Mensaje recibido del servidor: $data');
-      try {
-        onData(data);
-      } catch (e) {
-        print('❌ Error procesando mensaje: $e');
-      }
-    });
     _setupSocketEvents(completer, onData);
 
     // Timeout manual para el completer
@@ -94,71 +78,68 @@ class MeterSocketService {
   void _setupSocketEvents(Completer<void> completer, Function(dynamic) onData) {
     // Listener de conexión exitosa
     _socket!.on('connect', (data) {
-      print('✅ Conectado exitosamente');
+      print('✅ Conectado exitosamente al socket');
       print('📊 Datos de conexión: $data');
       print('🆔 Connection ID: ${_socket!.id}');
-      // print('🚛 Transporte: ${_socket!.io.engine?.transport?.name}');
+      
+      // Esperar un momento para que el backend procese la conexión al namespace
+      Timer(Duration(seconds: 2), () {
+        if (_socket?.connected == true) {
+          print('🔄 Verificando si estamos en el namespace /subscribe/...');
+        }
+      });
 
       if (!completer.isCompleted) {
         completer.complete();
       }
     });
 
-    // Listener de mensajes del servidor
-    // _socket!.on('message', (data) {
-    //   print('📨 Mensaje recibido del servidor: $data');
-    //   try {
-    //     onData(data);
-    //   } catch (e) {
-    //     print('❌ Error procesando mensaje: $e');
-    //   }
-    // });
-    _socket!.onAny((event, data) {
-      print('📬 Evento recibido: $event, Datos: $data');
+    // Listener de mensajes del servidor - UNIFICADO
+    _socket!.on('message', (data) {
+      print('📨 Mensaje recibido del servidor: $data');
+      try {
+        onData(data);
+      } catch (e) {
+        print('❌ Error procesando mensaje: $e');
+      }
     });
 
-    // Listener de errores del servidor
+    // Listener para datos del medidor (nombre común en APIs de IoT)
+    _socket!.on('meter_data', (data) {
+      print('📊 Datos del medidor recibidos: $data');
+      try {
+        onData(data);
+      } catch (e) {
+        print('❌ Error procesando datos del medidor: $e');
+      }
+    });
+
+    // Listener para confirmación de suscripción
+    _socket!.on('subscription_confirmed', (data) {
+      print('✅ Suscripción confirmada: $data');
+    });
+
+    _socket!.on('subscription_error', (error) {
+      print('❌ Error en suscripción: $error');
+    });
+
+
+    // Listener para errores específicos del backend
     _socket!.on('error', (error) {
       print('🚨 Error del servidor: $error');
+      // El backend envía errores con este formato
     });
 
     // Listener de desconexión
     _socket!.on('disconnect', (reason) {
       print('⏹ Desconectado del socket. Razón: $reason');
-
-      // Manejar reconexión automática solo en ciertos casos
-      if (reason == 'io server disconnect') {
-        print('🔄 Servidor desconectó, intentando reconectar...');
-        Future.delayed(Duration(seconds: 2), () {
-          if (_socket?.connected != true) {
-            _socket?.connect();
-          }
-        });
-      }
+    
     });
 
     // Manejo de errores de conexión
     _socket!.on('connect_error', (error) {
-      print('❌ Error de conexión detallado:');
-      print('   Error: $error');
+      print('❌ Error de conexión detallado: $error');
 
-      // Información adicional para debugging
-
-      // Diagnosticar problemas comunes
-      final errorStr = error.toString().toLowerCase();
-      if (errorStr.contains('403')) {
-        print('🚫 Error 403: Problema de autenticación/autorización');
-        print('   - Verifica que el token ACCESS_TOKEN sea válido');
-        print(
-            '   - Verifica que el usuario tenga permisos para este workspace/meter');
-      } else if (errorStr.contains('404')) {
-        print('🚫 Error 404: Endpoint no encontrado');
-        print('   - Verifica la URL base y el path del socket');
-      } else if (errorStr.contains('cors')) {
-        print('🚫 Error CORS: Problema de políticas de origen cruzado');
-      }
-
-      // Solo completar con error en el primer intento
       if (!completer.isCompleted) {
         completer.completeError('Error de conexión: $error');
       }
@@ -172,44 +153,32 @@ class MeterSocketService {
     });
 
     _socket!.on('reconnect_failed', (error) {
-      print('❌ Reconexión fallida después de múltiples intentos: $error');
+      print('❌ Reconexión fallida: $error');
       if (!completer.isCompleted) {
         completer.completeError('Reconexión fallida: $error');
       }
     });
 
-    // Eventos adicionales para debugging
+    // Eventos de reconexión
     _socket!.on('reconnect', (attemptNumber) {
       print('🔄 Reconectado después de $attemptNumber intentos');
+      // No necesitamos re-suscribirse, el backend lo hace automáticamente
     });
 
     _socket!.on('reconnect_attempt', (attemptNumber) {
       print('🔄 Intento de reconexión #$attemptNumber');
     });
+  }
 
-    _socket!.on('reconnecting', (attemptNumber) {
-      print('🔄 Reconectando... intento #$attemptNumber');
-    });
-
-    // Listeners para eventos de autorización
-    _socket!.on('unauthorized', (error) {
-      print('🚫 Error de autorización: $error');
-      if (!completer.isCompleted) {
-        completer.completeError('Error de autorización: $error');
-      }
-    });
-
-    _socket!.on('authentication_error', (error) {
-      print('🚫 Error de autenticación: $error');
-      if (!completer.isCompleted) {
-        completer.completeError('Error de autenticación: $error');
-      }
-    });
-
-    // Event listener específico para el handshake
-    _socket!.on('connect_success', (data) {
-      print('🤝 Handshake exitoso: $data');
-    });
+  // Método para verificar el estado de la conexión
+  bool isConnected() {
+    return _socket?.connected ?? false;
+  }
+  
+  // Método para obtener información de debugging
+  String getConnectionInfo() {
+    if (_socket == null) return 'Socket no inicializado';
+    return 'Connected: ${_socket!.connected}, ID: ${_socket!.id}';
   }
 
   void disconnect() {
@@ -218,7 +187,8 @@ class MeterSocketService {
       _socket!
         ..off('connect')
         ..off('message')
-        ..off('meter_data')
+        ..off('subscription_confirmed')
+        ..off('subscription_error')
         ..off('error')
         ..off('disconnect')
         ..off('connect_error')
@@ -228,8 +198,8 @@ class MeterSocketService {
         ..off('reconnect_attempt')
         ..off('reconnecting')
         ..off('unauthorized')
-        ..off('authentication_error')
-        ..off('connect_success')
+        ..off('namespace_joined')
+        ..off('permission_denied')
         ..disconnect()
         ..destroy();
       _socket = null;
