@@ -28,34 +28,30 @@ class MeterSocketService {
       _socket = null;
     }
 
-    final socketUrl = baseUrl; 
+    final socketUrl = baseUrl;
 
     print('🔌 Conectando a: $socketUrl');
     print('🔑 Token: ${token.substring(0, 20)}...');
     print('🏢 Workspace: $idWorkspace, Meter: $idMeter');
 
+    final optionsSocket = socket_io.OptionBuilder()
+        .setTransports(['websocket', 'polling'])
+        .setPath('/socket.io/') // Path estándar de Socket.IO
+        .disableAutoConnect()
+        .setQuery({
+          'id_workspace': idWorkspace,
+          'id_meter': idMeter,
+          'access_token': token
+        })
+        .setTimeout(30000)
+        .setReconnectionAttempts(5)
+        .setReconnectionDelay(2000)
+        .setReconnectionDelayMax(10000);
+
     // Crear socket con configuración corregida - NAMESPACE SEPARADO
     _socket = socket_io.io(
         '$socketUrl/subscribe/', // Especificar el namespace en la URL
-        socket_io.OptionBuilder()
-            .setTransports(['websocket', 'polling'])
-            .setPath('/socket.io/') // Path estándar de Socket.IO
-            .disableAutoConnect()
-            .setExtraHeaders({
-              'access-token': token,
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'User-Agent': 'Flutter-App/1.0',
-            })
-            .setQuery({
-              'id_workspace': idWorkspace,
-              'id_meter': idMeter,
-            })
-            .setTimeout(30000)
-            .setReconnectionAttempts(5)
-            .setReconnectionDelay(2000)
-            .setReconnectionDelayMax(10000)
-            .build());
+        optionsSocket.build());
 
     // Configurar eventos antes de conectar
     _setupSocketEvents(completer, onData);
@@ -81,7 +77,7 @@ class MeterSocketService {
       print('✅ Conectado exitosamente al socket');
       print('📊 Datos de conexión: $data');
       print('🆔 Connection ID: ${_socket!.id}');
-      
+
       // Esperar un momento para que el backend procese la conexión al namespace
       Timer(Duration(seconds: 2), () {
         if (_socket?.connected == true) {
@@ -104,8 +100,6 @@ class MeterSocketService {
       }
     });
 
-
-
     // Listener para errores específicos del backend
     _socket!.on('error', (error) {
       print('🚨 Error del servidor: $error');
@@ -115,7 +109,6 @@ class MeterSocketService {
     // Listener de desconexión
     _socket!.on('disconnect', (reason) {
       print('⏹ Desconectado del socket. Razón: $reason');
-    
     });
 
     // Manejo de errores de conexión
@@ -156,7 +149,7 @@ class MeterSocketService {
   bool isConnected() {
     return _socket?.connected ?? false;
   }
-  
+
   // Método para obtener información de debugging
   String getConnectionInfo() {
     if (_socket == null) return 'Socket no inicializado';
