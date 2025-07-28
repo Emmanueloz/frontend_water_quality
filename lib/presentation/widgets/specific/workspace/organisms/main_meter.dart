@@ -64,7 +64,7 @@ class _MainMeterState extends State<MainMeter> {
       builder: (context, meterProvider, _) {
         final record = meterProvider.recordResponse;
         if (meterProvider.errorMessage != null) {
-          return Center(child: Text(meterProvider.errorMessage!));
+          return BaseContainer(child: Center(child: Text(meterProvider.errorMessage!)));
         }
         // if (record == null) {
         //   return const Center(child: CircularProgressIndicator());

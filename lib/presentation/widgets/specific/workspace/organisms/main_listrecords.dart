@@ -49,26 +49,28 @@ class _MainListrecordsState extends State<MainListrecords> {
     return Consumer<MeterProvider>(
       builder: (context, meterProvider, _) {
         if (meterProvider.isLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return BaseContainer(child: const Center(child: CircularProgressIndicator()));
         }
 
         if (meterProvider.errorMessage != null) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Error al cargar los registros',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 8),
-                Text(meterProvider.errorMessage!),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () => meterProvider.fetchMeterRecords(widget.id, widget.idMeter),
-                  child: const Text('Reintentar'),
-                ),
-              ],
+          return BaseContainer(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Error al cargar los registros',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(meterProvider.errorMessage!),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => meterProvider.fetchMeterRecords(widget.id, widget.idMeter),
+                    child: const Text('Reintentar'),
+                  ),
+                ],
+              ),
             ),
           );
         }
@@ -311,6 +313,6 @@ class _MainListrecordsState extends State<MainListrecords> {
     final day = dateTime.day.toString().padLeft(2, '0');
     final month = dateTime.month.toString().padLeft(2, '0');
     final year = dateTime.year.toString();
-    return '$day/$month/$year';
+    return '$day/$month';
   }
 }
