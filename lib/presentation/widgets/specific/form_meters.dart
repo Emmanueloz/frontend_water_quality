@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/domain/models/meter_model.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/meter_ubications/search_map.dart';
@@ -14,13 +15,19 @@ class UbicacionSeleccionada {
 }
 
 class FormMeters extends StatefulWidget {
-  final String id;
+  final String idWorkspace;
   final String? idMeter;
+  final bool isLoading;
+  final String errorMessage;
+  final Future<void> Function(Meter meter)? onSave;
 
   const FormMeters({
     super.key,
-    required this.id,
+    required this.idWorkspace,
     this.idMeter,
+    required this.isLoading,
+    required this.errorMessage,
+    this.onSave,
   });
 
   @override
@@ -201,21 +208,48 @@ class _FormMetersState extends State<FormMeters> {
                   child: const Text("Restablecer"),
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      if (!validarCoordenadas(selectedLocation)) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Ubicación inválida")),
-                        );
-                        return;
-                      }
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Formulario válido")),
-                      );
-                    }
-                  },
-                  child: const Text("Guardar"),
+                  onPressed: widget.isLoading
+                      ? null
+                      : () async {
+                          if (_formKey.currentState?.validate() ?? false) {
+                            final lat = double.tryParse(_latController.text);
+                            final lng = double.tryParse(_lngController.text);
+
+                            if (lat == null || lng == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text("Ubicación inválida")),
+                              );
+                              return;
+                            }
+                            final location = LatLng(lat, lng);
+
+                            if (widget.onSave != null) {
+                              final meter = Meter(
+                                id: widget.idMeter,
+                                name: _nameController.text.trim(),
+                                location: Location(
+                                  lat: location.latitude,
+                                  lon: location.longitude,
+                                ),
+                              );
+                              print(meter.toJson());
+                              await widget.onSave!(meter);
+                            }
+                          }
+                        },
+                  child: widget.isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text("Guardar"),
                 ),
+                if (widget.errorMessage.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Text(
+                      widget.errorMessage,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ),
               ],
             ),
           ],

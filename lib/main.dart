@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/theme/theme.dart';
 import 'package:frontend_water_quality/infrastructure/auth_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/dio_provider.dart';
+import 'package:frontend_water_quality/infrastructure/meter_repo_impl.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
+import 'package:frontend_water_quality/presentation/providers/meter_provider.dart';
 import 'package:frontend_water_quality/router/app_router.dart';
 import 'package:provider/provider.dart';
 
@@ -11,6 +13,7 @@ void main() async {
   var dio = DioProvider.createDio();
 
   final AuthProvider authProvider = AuthProvider(AuthRepoImpl(dio));
+  final MeterProvider meterProvider = MeterProvider(MeterRepoImpl(dio));
   await authProvider.loadSettings();
 
   runApp(
@@ -18,6 +21,9 @@ void main() async {
       providers: [
         ChangeNotifierProvider<AuthProvider>(
           create: (_) => authProvider,
+        ),
+        ChangeNotifierProvider<MeterProvider>(
+          create: (_) => meterProvider,
         ),
       ],
       child: const MyApp(),

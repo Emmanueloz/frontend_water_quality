@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/presentation/pages/alerts.dart';
 import 'package:frontend_water_quality/presentation/pages/change_password.dart';
-import 'package:frontend_water_quality/presentation/pages/form_meters.dart';
+import 'package:frontend_water_quality/presentation/pages/register_meter.dart';
 import 'package:frontend_water_quality/presentation/pages/form_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/guests.dart';
 import 'package:frontend_water_quality/presentation/pages/list_workspace.dart';
@@ -108,8 +108,8 @@ class AppRouter {
                     path: Routes.createMeter.path,
                     name: Routes.createMeter.name,
                     builder: (context, state) {
-                      return FormMeters(
-                        id: state.pathParameters['id'] ?? 'default',
+                      return RegisterMeterPage(
+                        idWorkspace: '-OVj_HeREMFpscqbEp5V',
                       );
                     },
                   ),
@@ -239,10 +239,10 @@ class AppRouter {
                         path: Routes.updateMeter.path,
                         name: Routes.updateMeter.name,
                         builder: (context, state) {
-                          final id = state.pathParameters['id'] ?? 'default';
+                          final idWorkspace = state.pathParameters['id'] ?? 'default';
                           final idMeter =
                               state.pathParameters['idMeter'] ?? 'default';
-                          return FormMeters(id: id, idMeter: idMeter);
+                          return RegisterMeterPage(idWorkspace: idWorkspace, idMeter: idMeter,);
                         },
                       ),
                     ],
