@@ -18,14 +18,15 @@ class MeterRecordsRepoImpl implements MeterRecordsRepo {
       if (response.statusCode != 200) {
         return Result.failure('Error: codigo ${response.statusCode}');
       }
-      final List<dynamic> data = response.data['records'] as List<dynamic>;
-      if (data.isEmpty) {
+      
+      final recordsData = response.data['records'] as Map<String, dynamic>;
+      if (recordsData.isEmpty) {
         return Result.failure('No records found');
       }
-      return Result.success(MeterRecordsResponse.fromJson(response.data['records']));
+      
+      return Result.success(MeterRecordsResponse.fromJson(recordsData));
     } catch (e) {
       return Result.failure(e.toString());
     }
-
   }
 }

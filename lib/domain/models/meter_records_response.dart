@@ -17,27 +17,30 @@ class MeterRecordsResponse {
     required this.turbidityRecords,
   });
 
-
   factory MeterRecordsResponse.fromJson(Map<String, dynamic> json) {
-    return MeterRecordsResponse(
-      colorRecords: (json['color'] as List)
-          .map((item) => Record<SRColorValue>.fromJson(item, (v) => SRColorValue.fromJson(v)))
+    try{
+      return MeterRecordsResponse(
+      colorRecords: (json['color'] as List<dynamic>)
+          .map((item) => Record<SRColorValue>.fromJson(item as Map<String, dynamic>, (v) => SRColorValue.fromJson(v as Map<String, dynamic>)))
           .toList(),
-      conductivityRecords: (json['conductivity'] as List)
-          .map((item) => Record<double>.fromJson(item, (v) => (v as num).toDouble()))
+      conductivityRecords: (json['conductivity'] as List<dynamic>)
+          .map((item) => Record<double>.fromJson(item as Map<String, dynamic>, (v) => (v as num).toDouble()))
           .toList(),
-      phRecords: (json['ph'] as List)
-          .map((item) => Record<double>.fromJson(item, (v) => (v as num).toDouble()))
+      phRecords: (json['ph'] as List<dynamic>)
+          .map((item) => Record<double>.fromJson(item as Map<String, dynamic>, (v) => (v as num).toDouble()))
           .toList(),
-      temperatureRecords: (json['temperature'] as List)
-          .map((item) => Record<double>.fromJson(item, (v) => (v as num).toDouble()))
+      temperatureRecords: (json['temperature'] as List<dynamic>)
+          .map((item) => Record<double>.fromJson(item as Map<String, dynamic>, (v) => (v as num).toDouble()))
           .toList(),
-      tdsRecords: (json['tds'] as List)
-          .map((item) => Record<double>.fromJson(item, (v) => (v as num).toDouble()))
+      tdsRecords: (json['tds'] as List<dynamic>)
+          .map((item) => Record<double>.fromJson(item as Map<String, dynamic>, (v) => (v as num).toDouble()))
           .toList(),
-      turbidityRecords: (json['turbidity'] as List)
-          .map((item) => Record<double>.fromJson(item, (v) => (v as num).toDouble()))
+      turbidityRecords: (json['turbidity'] as List<dynamic>)
+          .map((item) => Record<double>.fromJson(item as Map<String, dynamic>, (v) => (v as num).toDouble()))
           .toList(),
     );
+    } catch (e) {
+      throw FormatException('Error parsing MeterRecordsResponse: $e');
+    }
   }
 }

@@ -25,6 +25,7 @@ class MeterProvider with ChangeNotifier {
   void clean() {
     errorMessage = null;
     recordResponse = null;
+    meterRecordsResponse = null;
   }
   void subscribeToMeter ( {
     required String baseUrl,
@@ -67,30 +68,28 @@ class MeterProvider with ChangeNotifier {
     isLoading = true;
     meterRecordsResponse = null;
     notifyListeners();
-    try{
-    final result = await _meterRecordsRepo.fetchMeterRecords(
-      _authProvider!.token!,
-      idWorkspace,
-      idMeter,
-    );
 
-    if (!result.isSuccess) {
-      errorMessage = result.message;
-      notifyListeners();
-      return;
-    }
-    meterRecordsResponse = result.value;
-    errorMessage = null;
+    try {
+      final result = await _meterRecordsRepo.fetchMeterRecords(
+        _authProvider!.token!,
+        idWorkspace,
+        idMeter,
+      );
+      print("Result: ${result.value}");
+      if (!result.isSuccess) {
+        errorMessage = result.message;
+        notifyListeners();
+        return;
+      }
 
-    }
-    catch(e){
+      meterRecordsResponse = result.value;
+      errorMessage = null;
+    } catch (e) {
       errorMessage = e.toString();
-    }
-    finally {
+    } finally {
       isLoading = false;
       notifyListeners();
     }
-
   }
 
   void unsubscribe() {

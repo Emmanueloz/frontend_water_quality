@@ -19,15 +19,15 @@ class SRColorValue {
 class Record<T> {
   final String? id;
   final T value;
-  final DateTime datetime;
+  final String datetime;
 
   Record({this.id, required this.value, required this.datetime});
 
   factory Record.fromJson(Map<String, dynamic> json, T Function(dynamic) fromValue) {
     return Record<T>(
-      id: json['id'],
+      id: json['id'] as String?,
       value: fromValue(json['value']),
-      datetime: DateTime.parse(json['datetime']),
+      datetime: json['datetime'] as String,
     );
   }
 }
