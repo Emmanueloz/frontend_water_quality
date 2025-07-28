@@ -1,4 +1,7 @@
+
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/domain/models/meter_records_response.dart';
+import 'package:frontend_water_quality/domain/repositories/meter_records_repo.dart';
 import 'package:frontend_water_quality/infrastructure/meter_socket_service.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/domain/models/record_models.dart';
@@ -6,10 +9,12 @@ import 'package:frontend_water_quality/domain/models/record_models.dart';
 class MeterProvider with ChangeNotifier {
   AuthProvider? _authProvider;
 
-  final MeterSocketService _socketService = MeterSocketService();
+  final MeterSocketService _socketService;
+  final MeterRecordsRepo _meterRecordsRepo;
   RecordResponse? recordResponse;
-  
-  MeterProvider(this._authProvider);
+  MeterRecordsResponse? meterRecordsResponse;
+  bool isLoading = false;
+  MeterProvider( this._socketService, this._meterRecordsRepo,  this._authProvider);
   String? errorMessage;
 
 
@@ -50,6 +55,42 @@ class MeterProvider with ChangeNotifier {
     }catch(e){
       errorMessage = e.toString();
     }
+  }
+
+  Future<void> fetchMeterRecords(String idWorkspace, String idMeter) async {
+    if (_authProvider == null || _authProvider!.token == null) {
+      errorMessage = "User not authenticated";
+      notifyListeners();
+      return;
+    }
+
+    isLoading = true;
+    meterRecordsResponse = null;
+    notifyListeners();
+    try{
+    final result = await _meterRecordsRepo.fetchMeterRecords(
+      _authProvider!.token!,
+      idWorkspace,
+      idMeter,
+    );
+
+    if (!result.isSuccess) {
+      errorMessage = result.message;
+      notifyListeners();
+      return;
+    }
+    meterRecordsResponse = result.value;
+    errorMessage = null;
+
+    }
+    catch(e){
+      errorMessage = e.toString();
+    }
+    finally {
+      isLoading = false;
+      notifyListeners();
+    }
+
   }
 
   void unsubscribe() {

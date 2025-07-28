@@ -9,7 +9,6 @@ class MeterRecordsRepoImpl implements MeterRecordsRepo {
   MeterRecordsRepoImpl(this._dio);
   @override
   Future<Result<MeterRecordsResponse>> fetchMeterRecords(String userToken, String workspaceId, String meterId) async{
-    // TODO: implement fetchMeterRecords
     try {
       final response = await _dio.get(
         '/meters/records/$workspaceId/$meterId/',
@@ -19,8 +18,11 @@ class MeterRecordsRepoImpl implements MeterRecordsRepo {
       if (response.statusCode != 200) {
         return Result.failure('Error: codigo ${response.statusCode}');
       }
-
-      return Result.success(MeterRecordsResponse.fromJson(response.data));
+      final List<dynamic> data = response.data['records'] as List<dynamic>;
+      if (data.isEmpty) {
+        return Result.failure('No records found');
+      }
+      return Result.success(MeterRecordsResponse.fromJson(response.data['records']));
     } catch (e) {
       return Result.failure(e.toString());
     }

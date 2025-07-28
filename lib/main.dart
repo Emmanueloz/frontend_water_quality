@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/theme/theme.dart';
 import 'package:frontend_water_quality/infrastructure/auth_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/dio_provider.dart';
+import 'package:frontend_water_quality/infrastructure/meter_records_repo_impl.dart';
+import 'package:frontend_water_quality/infrastructure/meter_socket_service.dart';
 import 'package:frontend_water_quality/infrastructure/weather_meter_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/workspace_repo_impl.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
@@ -18,6 +20,8 @@ void main() async {
   final AuthProvider authProvider = AuthProvider(AuthRepoImpl(dio));
   final WorkspaceRepoImpl workspaceRepo = WorkspaceRepoImpl(dio);
   final WeatherMeterRepoImpl weatherMeterRepo = WeatherMeterRepoImpl(dio);
+  final MeterSocketService meterSocketService = MeterSocketService();
+  final MeterRecordsRepoImpl meterRecordsRepo = MeterRecordsRepoImpl(dio);
   await authProvider.loadSettings();
 
   runApp(
@@ -38,6 +42,8 @@ void main() async {
         ),
         ChangeNotifierProxyProvider<AuthProvider, MeterProvider>(
           create: (context) => MeterProvider(
+            meterSocketService,
+            meterRecordsRepo,
             context.read<AuthProvider>(),
           ),
           update: (context, authProvider, meterProvider) {
