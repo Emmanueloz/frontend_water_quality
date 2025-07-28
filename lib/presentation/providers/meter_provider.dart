@@ -54,5 +54,6 @@ class MeterProvider with ChangeNotifier {
 
   void unsubscribe() {
     _socketService.disconnect();
+    clean();
   }
 } 

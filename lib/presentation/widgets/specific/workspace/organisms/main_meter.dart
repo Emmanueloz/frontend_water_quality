@@ -8,8 +8,6 @@ import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_provider.dart';
 import 'package:frontend_water_quality/domain/models/record_models.dart';
 
-/// Widget principal para monitoreo de medidor.
-/// Versión mejorada con funcionalidad completa.
 class MainMeter extends StatefulWidget {
   final String id;
   final String idMeter;
@@ -27,25 +25,38 @@ class MainMeter extends StatefulWidget {
 }
 
 class _MainMeterState extends State<MainMeter> {
+  MeterProvider? _meterProvider; // Referencia guardada del provider
+  final String baseUrl = 'https://api.aqua-minds.org';
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _meterProvider = Provider.of<MeterProvider>(context, listen: false);
+  }
+
   @override
   void initState() {
     super.initState();
-    // Aquí deberías obtener el token y baseUrl de tu AuthProvider o configuración
-    final meterProvider = Provider.of<MeterProvider>(context, listen: false);
-    // Ajusta el baseUrl según tu configuración
-    const baseUrl = 'https://api.aqua-minds.org';
-    meterProvider.subscribeToMeter(
-      baseUrl: baseUrl,
-      idWorkspace: "-OV6KJon4LkGwCw8pNvh",
-      idMeter: "-OVnW46EjvIYWdpO8zPz",
-    );
+    // Nota: No podemos acceder al Provider aquí porque didChangeDependencies 
+    // aún no se ha ejecutado. Movemos la suscripción a didChangeDependencies
+    // o usamos un WidgetsBinding.instance.addPostFrameCallback
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_meterProvider != null) {
+        _meterProvider!.subscribeToMeter(
+          baseUrl: baseUrl,
+          idWorkspace: "-OV6KJon4LkGwCw8pNvh",
+          idMeter: "-OVnW46EjvIYWdpO8zPz",
+        );
+      }
+    });
   }
 
-  // @override
-  // void dispose() {
-  //   Provider.of<MeterProvider>(context, listen: false).unsubscribe();
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    // Usar la referencia guardada en lugar de acceder al Provider
+    _meterProvider?.unsubscribe();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
