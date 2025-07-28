@@ -14,7 +14,8 @@ class WeatherMeterRepoImpl implements WeatherMeterRepo {
       final response = await _dio.get('/meters/$workspaceId/weather/$meterId/', 
         options: Options(headers: {'Authorization': 'Bearer $userToken'}),
       );
-      final WeatherMeter weatherMeter = WeatherMeter.fromJson(response.data);
+      print("Response: ${response.data['data']}");
+      final WeatherMeter weatherMeter = WeatherMeter.fromJson(response.data['data']);
       if (response.statusCode == 200) {
         return Result.success(weatherMeter);
       } else {
