@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/core/interface/meter_setup.dart';
 import 'package:frontend_water_quality/presentation/providers/blue_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
@@ -57,7 +56,23 @@ class _ConnectionMeterPageState extends State<ConnectionMeterPage> {
             return InitialMeterSetup(
               idWorkspace: widget.id,
               idMeter: widget.idMeter,
-              onSendData: (message) {},
+              nameDevice: blueProvider.connectedDevice!.advName,
+              onSaveWifi: (String ssid, String password) async {
+                blueProvider.sendMessage("cSsid=$ssid,cPassword=$password");
+              },
+              onSaveManualCalibration: (double ph4, double ph6) async {
+                blueProvider.sendMessage("cSetPh4=$ph4,cSetPh6=$ph6");
+              },
+              onCalibratePh4: () async {
+                blueProvider.sendMessage("cPhCalibration=4");
+              },
+              onCalibratePh6: () async {
+                blueProvider.sendMessage("cPhCalibration=6");
+              },
+              onDisconnect: () async {
+                blueProvider.disconnect();
+              },
+              onResetCalibration: () async {},
             );
           },
         ),
@@ -69,6 +84,7 @@ class _ConnectionMeterPageState extends State<ConnectionMeterPage> {
     return Column(
       spacing: 10,
       mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
           onPressed: blueProvider.isScanning
@@ -93,40 +109,33 @@ class _ConnectionMeterPageState extends State<ConnectionMeterPage> {
             "Dispositivos encontrados:",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: blueProvider.devices.length,
-              itemBuilder: (context, index) {
-                final device = blueProvider.devices[index];
-                return ListTile(
-                  leading: const Icon(Icons.bluetooth_audio),
-                  title: Text(device.advName.isNotEmpty
-                      ? device.advName
-                      : 'Dispositivo desconocido'),
-                  subtitle: Text(device.remoteId.toString()),
-                  onTap: () async {
-                    try {
-                      await blueProvider.connectToDevice(device);
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Error al conectar: $e')),
-                      );
-                    }
-                  },
-                );
-              },
-            ),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: blueProvider.devices.length,
+            itemBuilder: (context, index) {
+              final device = blueProvider.devices[index];
+              return ListTile(
+                leading: const Icon(Icons.bluetooth_audio),
+                title: Text(device.advName.isNotEmpty
+                    ? device.advName
+                    : 'Dispositivo desconocido'),
+                subtitle: Text(device.remoteId.toString()),
+                onTap: () async {
+                  try {
+                    await blueProvider.connectToDevice(device);
+                  } catch (e) {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error al conectar: $e')),
+                    );
+                  }
+                },
+              );
+            },
           ),
         ],
       ],
     );
-  }
-
-  void _sendMessage(BlueProvider blueProvider) {
-    final message = _messageController.text.trim();
-    if (message.isNotEmpty) {
-      blueProvider.sendMessage(message);
-      _messageController.clear();
-    }
   }
 }

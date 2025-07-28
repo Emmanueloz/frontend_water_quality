@@ -6,10 +6,10 @@ class MeterSetup {
   final double? ph6;
 
   MeterSetup({
-    required this.ssidWifi,
-    required this.passwordWifi,
-    required this.token,
-    required this.ph4,
-    required this.ph6,
+    this.ssidWifi,
+    this.passwordWifi,
+    this.token,
+    this.ph4,
+    this.ph6,
   });
 }
