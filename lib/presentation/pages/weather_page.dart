@@ -30,7 +30,7 @@ class _WeatherPageState extends State<WeatherPage> {
     // Cargar datos del clima cuando se inicializa la página
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_weatherProvider != null) {
-        _weatherProvider!.fetchWeather(widget.id, "-OVnW46EjvIYWdpO8zPz");
+        _weatherProvider!.fetchWeather(widget.id, widget.idMeter);
       }
     });
   }

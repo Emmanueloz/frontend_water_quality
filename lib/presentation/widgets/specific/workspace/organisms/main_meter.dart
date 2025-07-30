@@ -44,8 +44,8 @@ class _MainMeterState extends State<MainMeter> {
       if (_meterProvider != null) {
         _meterProvider!.subscribeToMeter(
           baseUrl: baseUrl,
-          idWorkspace: "-OV6KJon4LkGwCw8pNvh",
-          idMeter: "-OVnW46EjvIYWdpO8zPz",
+          idWorkspace: widget.id,
+          idMeter: widget.idMeter,
         );
       }
     });

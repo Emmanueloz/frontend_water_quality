@@ -39,7 +39,7 @@ class _MainListrecordsState extends State<MainListrecords> {
     // Cargar registros cuando se inicializa la página
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_meterProvider != null) {
-        _meterProvider!.fetchMeterRecords("-OV6KJon4LkGwCw8pNvh", "-OVnW46EjvIYWdpO8zPz");
+        _meterProvider!.fetchMeterRecords(widget.id, widget.idMeter);
       }
     });
   }
