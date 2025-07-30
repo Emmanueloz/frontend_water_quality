@@ -75,7 +75,6 @@ class MeterProvider with ChangeNotifier {
         idWorkspace,
         idMeter,
       );
-      print("Result: ${result.value}");
       if (!result.isSuccess) {
         errorMessage = result.message;
         notifyListeners();
@@ -94,6 +93,5 @@ class MeterProvider with ChangeNotifier {
 
   void unsubscribe() {
     _socketService.disconnect();
-    clean();
   }
 } 
