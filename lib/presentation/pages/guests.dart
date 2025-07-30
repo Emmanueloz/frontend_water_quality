@@ -4,7 +4,7 @@ import 'package:frontend_water_quality/presentation/providers/guest_provider.dar
 import 'package:frontend_water_quality/presentation/widgets/common/molecules/empty_state_view.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/organisms/grid_loading_skeleton.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/guests/molecules/invite_guest_modal.dart';
+import 'package:frontend_water_quality/presentation/pages/form_invite_guest.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/guests/organisms/grid_guests.dart';
 import 'package:provider/provider.dart';
 
@@ -29,15 +29,17 @@ class _GuestsPageState extends State<GuestsPage> {
     });
   }
 
-  void _showInviteModal() {
-    print('GuestsPage: _showInviteModal called');
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => InviteGuestModal(workspaceId: widget.id),
+  void _navigateToInviteForm() {
+    print('GuestsPage: _navigateToInviteForm called');
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => FormInviteGuestPage(
+          workspaceId: widget.id,
+          workspaceTitle: widget.title,
+        ),
+      ),
     ).then((_) {
-      print('GuestsPage: modal closed, reloading guests');
-      // Recargar la lista después de cerrar el modal
+      print('GuestsPage: form page closed, reloading guests');
       final guestProvider = context.read<GuestProvider>();
       guestProvider.loadGuests(widget.id);
     });
@@ -52,7 +54,9 @@ class _GuestsPageState extends State<GuestsPage> {
       return GridLoadingSkeleton(screenSize: screenSize);
     }
 
-    if (guestProvider.errorMessage != null) {
+    // Solo mostrar error real (no estado vacío)
+    if (guestProvider.errorMessage != null && 
+        guestProvider.errorMessage != 'No se encontraron invitados') {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -83,22 +87,12 @@ class _GuestsPageState extends State<GuestsPage> {
       );
     }
 
-    if (guestProvider.guests.isEmpty) {
-      return EmptyStateView(
-        title: 'No se encontraron invitados',
-        subtitle: 'Los invitados aparecerán aquí cuando sean agregados',
-        icon: Icons.people_outline,
-        onAction: _showInviteModal,
-        actionText: 'Invitar invitado',
-      );
-    }
-
     return GuestGrid(
       guests: guestProvider.guests,
       screenSize: screenSize,
       title: widget.title,
       workspaceId: widget.id,
-      onAddPressed: _showInviteModal,
+      onAddPressed: _navigateToInviteForm,
     );
   }
 }

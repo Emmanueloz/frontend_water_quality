@@ -39,7 +39,7 @@ void main() async {
             final authProvider = context.read<AuthProvider>();
             final dio = DioProvider.createDio();
             if (authProvider.token != null) {
-              dio.options.headers['Authorization'] = 'Bearer ${authProvider.token}';
+            dio.options.headers['Authorization'] = 'Bearer ${authProvider.token}';
             }
             final guestProvider = GuestProvider(
               GuestRepositoryImpl(dio),
@@ -50,7 +50,7 @@ void main() async {
           update: (context, authProvider, previousGuestProvider) {
             final dio = DioProvider.createDio();
             if (authProvider.token != null) {
-              dio.options.headers['Authorization'] = 'Bearer ${authProvider.token}';
+            dio.options.headers['Authorization'] = 'Bearer ${authProvider.token}';
             }
             final guestProvider = GuestProvider(
               GuestRepositoryImpl(dio),

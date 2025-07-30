@@ -9,7 +9,7 @@ import 'package:frontend_water_quality/infrastructure/guest_repo_impl.dart';
 class GuestProvider with ChangeNotifier {
   AuthProvider? _authProvider;
   GuestRepository? _guestRepository;
-  
+
   GuestProvider(this._guestRepository, this._authProvider);
 
   List<Guest> _guests = [];
@@ -20,7 +20,7 @@ class GuestProvider with ChangeNotifier {
 
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
- 
+
   bool _recharge = true;
   bool get recharge => _recharge;
  
@@ -90,7 +90,7 @@ class GuestProvider with ChangeNotifier {
       if (result.isSuccess) {
         _guests = result.value ?? [];
         if (_guests.isEmpty) {
-          _errorMessage = 'No se encontraron invitados';
+        _errorMessage = 'No se encontraron invitados';
         } else {
           _errorMessage = null;
         }
@@ -140,8 +140,8 @@ class GuestProvider with ChangeNotifier {
         _guests.add(result.value!);
         _errorMessage = null;
         print('GuestProvider: inviteGuest successful, guests count=${_guests.length}');
-        notifyListeners();
-        return true;
+      notifyListeners();
+      return true;
       } else {
         _errorMessage = result.message ?? 'Error al invitar al invitado';
         print('GuestProvider: inviteGuest failed: $_errorMessage');
@@ -181,8 +181,8 @@ class GuestProvider with ChangeNotifier {
       final result = await _guestRepository!.updateGuestRole(workspaceId, guestId, role);
       
       if (result.isSuccess) {
-        final index = _guests.indexWhere((g) => g.id == guestId);
-        if (index != -1) {
+      final index = _guests.indexWhere((g) => g.id == guestId);
+      if (index != -1) {
           _guests[index] = result.value!;
           notifyListeners();
         }
@@ -231,7 +231,7 @@ class GuestProvider with ChangeNotifier {
         _guests.removeWhere((g) => g.id == guestId);
         print('GuestProvider: deleteGuest successful, guests count=${_guests.length}');
         notifyListeners();
-        return true;
+      return true;
       } else {
         _errorMessage = result.message ?? 'Error al eliminar el invitado';
         print('GuestProvider: deleteGuest failed: $_errorMessage');

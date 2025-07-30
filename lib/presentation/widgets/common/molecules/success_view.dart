@@ -11,8 +11,8 @@ class SuccessView extends StatelessWidget {
     
     return Card(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-        child: Column(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24), 
+        child: Column(  
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.check_circle,

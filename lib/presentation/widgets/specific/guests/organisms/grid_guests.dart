@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/domain/models/guests.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/molecules/empty_state_view.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/button_actions.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/guests/molecules/guests_cards.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
@@ -54,27 +55,36 @@ class GuestGrid extends StatelessWidget {
             screenSize: screenSize,
           ),
           const SizedBox(height: 16),
-          _gridBuilder(context, config),
+          Expanded(
+            child: guests.isEmpty 
+                ? EmptyStateView(
+                    title: 'No se encontraron invitados',
+                    subtitle: 'Los invitados aparecerán aquí cuando sean agregados',
+                    icon: Icons.people_outline,
+                    onAction: onAddPressed,
+                    actionText: 'Invitar invitado',
+                  )
+                : _gridBuilder(context, config),
+          ),
         ],
       ),
     );
   }
 
   Widget _gridBuilder(BuildContext context, _GridConfig config) {
-    return Expanded(
-      child: SingleChildScrollView(
-        child: GridView.count(
-          crossAxisCount: config.crossAxisCount,
-          childAspectRatio: config.childAspectRatio,
-          crossAxisSpacing: config.gap,
-          mainAxisSpacing: config.gap,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          children: guests.map((guest) => GuestCard(
-            guest: guest,
-            workspaceId: workspaceId,
-          )).toList(),
-        ),
+    return SingleChildScrollView(
+      child: GridView.count(
+        crossAxisCount: config.crossAxisCount,
+        childAspectRatio: config.childAspectRatio,
+        crossAxisSpacing: config.gap,
+        mainAxisSpacing: config.gap,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        children: guests.map((guest) => GuestCard(
+          guest: guest,
+          workspaceId: workspaceId,
+          workspaceTitle: title,
+        )).toList(),
       ),
     );
   }

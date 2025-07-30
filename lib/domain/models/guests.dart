@@ -82,7 +82,7 @@ class Guest {
       name: getName(),
       email: getStringValue('email'),
       role: getRole(),
-    );
+      );
   }
 
   Map<String, dynamic> toJson() => {

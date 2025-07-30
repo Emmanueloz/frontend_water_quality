@@ -218,7 +218,7 @@ class GuestRepositoryImpl implements GuestRepository {
       print('Deleting guest: workspaceId=$workspaceId, guestId=$guestId');
       
       // Intentar con DELETE primero
-      try {
+    try {
         final response = await _dio.delete(
           '/workspaces/$workspaceId/guest/$guestId',
         );
