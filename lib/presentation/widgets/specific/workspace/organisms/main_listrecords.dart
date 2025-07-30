@@ -97,8 +97,8 @@ class _MainListrecordsState extends State<MainListrecords> {
         horizontal: 20,
         vertical: 9,
       );
-      crossAxisCount = 3;
-      childAspectRatio = 1 / 1.2;
+      crossAxisCount = 2;
+      childAspectRatio = 1 / 0.8;
     } else if (widget.screenSize == ScreenSize.largeDesktop) {
       margin = const EdgeInsets.all(0);
       padding = const EdgeInsets.symmetric(
@@ -106,18 +106,18 @@ class _MainListrecordsState extends State<MainListrecords> {
         vertical: 9,
       );
       crossAxisCount = 3;
-      childAspectRatio = 1 / 0.70;
+      childAspectRatio = 1 / 0.6;
     } else if (widget.screenSize == ScreenSize.tablet) {
       margin = const EdgeInsets.all(10);
       padding = const EdgeInsets.all(12.0);
       crossAxisCount = 2;
-      childAspectRatio = 1 / 1.2;
+      childAspectRatio = 1 / 0.8;
     } else {
       // Mobile
       margin = const EdgeInsets.all(10);
       padding = const EdgeInsets.all(10.0);
       crossAxisCount = 1;
-      childAspectRatio = 1 / 1.2;
+      childAspectRatio = 1 / 0.8;
     }
 
     // Mapear los datos de registros a los gráficos
@@ -129,13 +129,37 @@ class _MainListrecordsState extends State<MainListrecords> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Título principal
-          Text(
-            "Historial del medidor ${widget.idMeter}",
-            style: Theme.of(context)
-                .textTheme
-                .bodyLarge
-                ?.copyWith(fontWeight: FontWeight.bold),
+          // Header con título y botón de recarga
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  "Historial del medidor ${widget.idMeter}",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+              ),
+              Consumer<MeterProvider>(
+                builder: (context, meterProvider, _) {
+                  return IconButton(
+                    onPressed: meterProvider.isLoading 
+                        ? null 
+                        : () => meterProvider.refreshMeterRecords(),
+                    icon: meterProvider.isLoading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.refresh),
+                    tooltip: 'Recargar registros',
+                  );
+                },
+              ),
+            ],
           ),
           const SizedBox(height: 16),
           // Contenedor con scroll para los gráficos
