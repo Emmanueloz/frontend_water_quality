@@ -178,7 +178,7 @@ class _MainListrecordsState extends State<MainListrecords> {
     final data = temperatureRecords.map((r) => r.value).toList().cast<double>();
     final currentValue = data.isNotEmpty ? data.last : 0.0;
     final minY = 0.0;
-    final maxY = 50.0;
+    final maxY = 35.0;
 
     return LineGraph(
       sensorType: "Temperatura",
@@ -201,7 +201,7 @@ class _MainListrecordsState extends State<MainListrecords> {
     final data = phRecords.map((r) => r.value).toList().cast<double>();
     final currentValue = data.isNotEmpty ? data.last : 0.0;
     final minY =  0.0;
-    final maxY =  14.0;
+    final maxY =  10.0;
 
     return LineGraph(
       sensorType: "PH",
@@ -224,7 +224,7 @@ class _MainListrecordsState extends State<MainListrecords> {
     final data = tdsRecords.map((r) => r.value).toList().cast<double>();
     final currentValue = data.isNotEmpty ? data.last : 0.0;
     final minY =  0.0;
-    final maxY =  1000.0;
+    final maxY =  500.0;
 
     return LineGraph(
       sensorType: "Total de sólidos disueltos",
@@ -247,7 +247,7 @@ class _MainListrecordsState extends State<MainListrecords> {
     final data = conductivityRecords.map((r) => r.value).toList().cast<double>();
     final currentValue = data.isNotEmpty ? data.last : 0.0;
     final minY =  0.0;
-    final maxY =  2000.0;
+    final maxY =  3000.0;
 
     return LineGraph(
       sensorType: "Conductividad",
