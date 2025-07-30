@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/domain/models/guests.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/guests/atoms/add-guests.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/button_actions.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/guests/molecules/guests_cards.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 
@@ -9,12 +9,14 @@ class GuestGrid extends StatelessWidget {
   final List<Guest> guests;
   final ScreenSize screenSize;
   final String title;
+  final String workspaceId;
   final VoidCallback? onAddPressed;
 
   const GuestGrid({
     super.key,
     required this.guests,
     required this.screenSize,
+    required this.workspaceId,
     this.title = "Invitados",
     this.onAddPressed,
   });
@@ -35,17 +37,21 @@ class GuestGrid extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+          ButtonActions(
+            title: Text(
+              title,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.bold,
               ),
-              if (onAddPressed != null) AddButton(onPressed: onAddPressed!),
-            ],
+            ),
+            actions: onAddPressed != null ? [
+              ElevatedButton.icon(
+                onPressed: onAddPressed!,
+                icon: const Icon(Icons.person_add),
+                label: const Text("Agregar Invitado"),
+              ),
+            ] : [],
+            screenSize: screenSize,
           ),
           const SizedBox(height: 16),
           _gridBuilder(context, config),
@@ -64,7 +70,10 @@ class GuestGrid extends StatelessWidget {
           mainAxisSpacing: config.gap,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          children: guests.map((guest) => GuestCard(guest: guest)).toList(),
+          children: guests.map((guest) => GuestCard(
+            guest: guest,
+            workspaceId: workspaceId,
+          )).toList(),
         ),
       ),
     );
