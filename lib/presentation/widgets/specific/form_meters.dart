@@ -15,19 +15,32 @@ class UbicacionSeleccionada {
 }
 
 class FormMeters extends StatefulWidget {
+  final String title;
   final String idWorkspace;
   final String? idMeter;
   final bool isLoading;
   final String errorMessage;
   final Future<void> Function(Meter meter)? onSave;
+  
+  // Parámetros opcionales para edición
+  final String? name;
+  final double? lat;
+  final double? lng;
+  final String? placeName;
 
   const FormMeters({
     super.key,
+    required this.title,
     required this.idWorkspace,
     this.idMeter,
     required this.isLoading,
     required this.errorMessage,
     this.onSave,
+    // Parámetros opcionales para edición
+    this.name,
+    this.lat,
+    this.lng,
+    this.placeName,
   });
 
   @override
@@ -36,12 +49,34 @@ class FormMeters extends StatefulWidget {
 
 class _FormMetersState extends State<FormMeters> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _latController = TextEditingController();
-  final TextEditingController _lngController = TextEditingController();
-  final TextEditingController _placeNameController = TextEditingController();
+  late TextEditingController _nameController;
+  late TextEditingController _latController;
+  late TextEditingController _lngController;
+  late TextEditingController _placeNameController;
 
   LatLng? selectedLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.name ?? '');
+    _latController = TextEditingController(text: widget.lat?.toStringAsFixed(6) ?? '');
+    _lngController = TextEditingController(text: widget.lng?.toStringAsFixed(6) ?? '');
+    _placeNameController = TextEditingController(text: widget.placeName ?? '');
+    
+    if (widget.lat != null && widget.lng != null) {
+      selectedLocation = LatLng(widget.lat!, widget.lng!);
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _latController.dispose();
+    _lngController.dispose();
+    _placeNameController.dispose();
+    super.dispose();
+  }
 
   bool validarCoordenadas(LatLng? location) {
     if (location == null) return false;
@@ -53,7 +88,6 @@ class _FormMetersState extends State<FormMeters> {
 
   Future<UbicacionSeleccionada?> showMapSelectionScreen(
       BuildContext context, LatLng? initial) async {
-    print(initial);
     return await Navigator.push(
       context,
       MaterialPageRoute(
@@ -86,19 +120,9 @@ class _FormMetersState extends State<FormMeters> {
 
   @override
   Widget build(BuildContext context) {
-    final String title =
-        widget.idMeter != null ? "Editar medidor" : "Crear medidor";
-
+    
     final screenSize = ResponsiveScreenSize.getScreenSize(context);
-    if (widget.idMeter == null) {
-      return Layout(
-        title: title,
-        builder: (context, screenSize) {
-          return _builderMain(context, screenSize, title);
-        },
-      );
-    }
-    return _builderMain(context, screenSize, title);
+    return _builderMain(context, screenSize, widget.title);
   }
 
   Widget _builderMain(
@@ -122,12 +146,7 @@ class _FormMetersState extends State<FormMeters> {
   }
 
   Widget _buildForm(BuildContext context, ScreenSize screenSize, String title) {
-    return Container(
-      width: screenSize == ScreenSize.mobile ? double.infinity : 600,
-      height: screenSize == ScreenSize.mobile ? double.infinity : 600,
-      margin: const EdgeInsets.all(10),
-      padding: const EdgeInsets.all(10),
-      child: Form(
+    return Form(
         key: _formKey,
         child: Column(
           children: [
@@ -175,12 +194,7 @@ class _FormMetersState extends State<FormMeters> {
               onPressed: () async {
                 final result = await showMapSelectionScreen(
                     context,
-                    widget.idMeter != null
-                        ? LatLng(
-                            16.76665940722355,
-                            -93.05139011695141,
-                          )
-                        : null);
+                    selectedLocation);
                 if (result != null) {
                   setState(() {
                     _latController.text =
@@ -188,6 +202,7 @@ class _FormMetersState extends State<FormMeters> {
                     _lngController.text =
                         result.coordenadas.longitude.toStringAsFixed(6);
                     _placeNameController.text = result.nombreLugar;
+                    selectedLocation = result.coordenadas;
                   });
                 }
               },
@@ -233,14 +248,13 @@ class _FormMetersState extends State<FormMeters> {
                                   lon: location.longitude,
                                 ),
                               );
-                              print(meter.toJson());
                               await widget.onSave!(meter);
                             }
                           }
                         },
                   child: widget.isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text("Guardar"),
+                      : Text(widget.idMeter != null ? "Actualizar" : "Guardar"),
                 ),
                 if (widget.errorMessage.isNotEmpty)
                   Padding(
@@ -254,7 +268,6 @@ class _FormMetersState extends State<FormMeters> {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }

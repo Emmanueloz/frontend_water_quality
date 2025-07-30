@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/presentation/pages/alerts.dart';
 import 'package:frontend_water_quality/presentation/pages/change_password.dart';
-import 'package:frontend_water_quality/presentation/pages/register_meter.dart';
-import 'package:frontend_water_quality/presentation/pages/form_workspace.dart';
+import 'package:frontend_water_quality/presentation/pages/form_workspace_page.dart';
 import 'package:frontend_water_quality/presentation/pages/guests.dart';
 import 'package:frontend_water_quality/presentation/pages/list_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/login.dart';
 import 'package:frontend_water_quality/presentation/pages/recovery_password.dart';
 import 'package:frontend_water_quality/presentation/pages/register.dart';
 import 'package:frontend_water_quality/presentation/pages/profile.dart';
+import 'package:frontend_water_quality/presentation/pages/form_meter_page.dart';
 import 'package:frontend_water_quality/presentation/pages/simple.dart';
 import 'package:frontend_water_quality/presentation/pages/splash.dart';
 import 'package:frontend_water_quality/presentation/pages/view_list_records.dart';
@@ -19,7 +19,7 @@ import 'package:frontend_water_quality/presentation/pages/view_list_notification
 import 'package:frontend_water_quality/presentation/pages/view_meter_connection.dart';
 import 'package:frontend_water_quality/presentation/pages/view_meter_ubications.dart';
 import 'package:frontend_water_quality/presentation/pages/view_notification_details.dart';
-import 'package:frontend_water_quality/presentation/pages/view_workspace.dart';
+import 'package:frontend_water_quality/presentation/pages/list_meter.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_meters.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_workspace.dart';
@@ -42,6 +42,8 @@ class AppRouter {
         return ListWorkspaces.mine;
       case 'shared':
         return ListWorkspaces.shared;
+      case 'all':
+        return ListWorkspaces.all;
       default:
         return ListWorkspaces.mine;
     }
@@ -79,8 +81,7 @@ class AppRouter {
             path: Routes.createWorkspace.path,
             name: Routes.createWorkspace.name,
             builder: (context, state) {
-              print("Create Workspace");
-              return FormWorkspace();
+              return FormWorkspacePage();
             },
           ),
           ShellRoute(
@@ -100,7 +101,7 @@ class AppRouter {
                 name: Routes.workspace.name,
                 builder: (context, state) {
                   final id = state.pathParameters['id'] ?? 'default';
-                  return ViewWorkspace(id: id);
+                  return ListMeter(idWorkspace: id,);
                 },
                 routes: [
                   GoRoute(
@@ -108,8 +109,8 @@ class AppRouter {
                     path: Routes.createMeter.path,
                     name: Routes.createMeter.name,
                     builder: (context, state) {
-                      return RegisterMeterPage(
-                        idWorkspace: '-OVj_HeREMFpscqbEp5V',
+                      return FormMeterPage(
+                        idWorkspace: state.pathParameters['id'] ?? 'default',
                       );
                     },
                   ),
@@ -239,10 +240,10 @@ class AppRouter {
                         path: Routes.updateMeter.path,
                         name: Routes.updateMeter.name,
                         builder: (context, state) {
-                          final idWorkspace = state.pathParameters['id'] ?? 'default';
+                          final id = state.pathParameters['id'] ?? 'default';
                           final idMeter =
                               state.pathParameters['idMeter'] ?? 'default';
-                          return RegisterMeterPage(idWorkspace: idWorkspace, idMeter: idMeter,);
+                          return FormMeterPage(idWorkspace: id, idMeter: idMeter);
                         },
                       ),
                     ],
@@ -297,7 +298,7 @@ class AppRouter {
                     name: Routes.updateWorkspace.name,
                     builder: (context, state) {
                       final id = state.pathParameters['id'] ?? 'default';
-                      return FormWorkspace(idWorkspace: id);
+                      return FormWorkspacePage(idWorkspace: id);
                     },
                   ),
                 ],
