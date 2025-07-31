@@ -3,9 +3,12 @@ import 'package:frontend_water_quality/presentation/providers/blue_provider.dart
 
 class ScanSection extends StatelessWidget {
   final BlueProvider blueProvider;
+  final void Function() onTap;
+
   const ScanSection({
     super.key,
     required this.blueProvider,
+    required this.onTap,
   });
 
   @override
@@ -52,6 +55,7 @@ class ScanSection extends StatelessWidget {
                 subtitle: Text(device.remoteId.toString()),
                 onTap: () async {
                   try {
+                    onTap();
                     await blueProvider.connectToDevice(device);
                   } catch (e) {
                     if (!context.mounted) return;

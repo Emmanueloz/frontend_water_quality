@@ -56,6 +56,7 @@ class BlueProvider with ChangeNotifier {
       _isConnected = true;
       _isScanning = false;
       notifyListeners();
+      await sendMessage("getConfig");
       _isConnected = true;
 
       // Setup message listener
@@ -77,7 +78,6 @@ class BlueProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print(e);
-      print(data);
     }
   }
 
