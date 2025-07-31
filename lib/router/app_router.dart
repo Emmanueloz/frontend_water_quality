@@ -5,6 +5,7 @@ import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/presentation/pages/alerts.dart';
 import 'package:frontend_water_quality/presentation/pages/change_password.dart';
 import 'package:frontend_water_quality/presentation/pages/connection_meter.dart';
+import 'package:frontend_water_quality/presentation/pages/device_meter.dart';
 import 'package:frontend_water_quality/presentation/pages/form_meters.dart';
 import 'package:frontend_water_quality/presentation/pages/form_workspace_page.dart';
 import 'package:frontend_water_quality/presentation/pages/guests.dart';
@@ -176,6 +177,25 @@ class AppRouter {
                           final idMeter =
                               state.pathParameters['idMeter'] ?? 'default';
                           return ConnectionMeterPage(
+                            id: id,
+                            idMeter: idMeter,
+                          );
+                        },
+                      ),
+                      GoRoute(
+                        path: Routes.connectionMeterDevice.path,
+                        name: Routes.connectionMeterDevice.name,
+                        redirect: (context, state) {
+                          if (kIsWeb) {
+                            return '/404';
+                          }
+                          return null;
+                        },
+                        builder: (context, state) {
+                          final id = state.pathParameters['id'] ?? 'default';
+                          final idMeter =
+                              state.pathParameters['idMeter'] ?? 'default';
+                          return DeviceMeter(
                             id: id,
                             idMeter: idMeter,
                           );

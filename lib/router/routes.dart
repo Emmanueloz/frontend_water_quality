@@ -98,6 +98,11 @@ class Routes {
     path: "meter/:idMeter/connection",
   );
 
+  static RouteProperties connectionMeterDevice = RouteProperties(
+    name: "connectionDevice",
+    path: "meter/:idMeter/connection/device",
+  );
+
   static RouteProperties updateMeter = RouteProperties(
     name: "updateMeter",
     path: "meter/:idMeter/update",
