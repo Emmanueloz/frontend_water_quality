@@ -24,8 +24,12 @@ class MeterSetup {
         ssidWifi: json['wifiSSID'],
         passwordWifi: json['wifiPassword'],
         token: json['apiKey'],
-        ph4: json['calibrationVol4'],
-        ph6: json['calibrationVol6'],
+        ph4: json['calibrationVol4'] != null
+            ? double.tryParse(json['calibrationVol4'])
+            : null,
+        ph6: json['calibrationVol6'] != null
+            ? double.tryParse(json['calibrationVol6'])
+            : null,
         state: json['state'],
       );
 }
