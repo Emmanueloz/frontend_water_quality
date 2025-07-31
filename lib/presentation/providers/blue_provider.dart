@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:frontend_water_quality/core/interface/meter_setup.dart';
 import 'package:frontend_water_quality/infrastructure/ble_service.dart';
 
 class BlueProvider with ChangeNotifier {
@@ -8,17 +9,18 @@ class BlueProvider with ChangeNotifier {
   bool _isScanning = false;
   bool _isConnected = false;
   List<BluetoothDevice> _devices = [];
-  List<String> _messages = [];
   StreamSubscription<List<ScanResult>>? _scanSubscription;
   BluetoothDevice? _connectedDevice;
+
+  MeterSetup? _currentMeterSetup;
 
   BlueProvider(this._bleService);
 
   bool get isScanning => _isScanning;
   bool get isConnected => _isConnected;
   List<BluetoothDevice> get devices => List.unmodifiable(_devices);
-  List<String> get messages => List.unmodifiable(_messages);
   BluetoothDevice? get connectedDevice => _connectedDevice;
+  MeterSetup? get currentMeterSetup => _currentMeterSetup;
 
   bool get isSupported {
     if (kIsWeb) return false;
@@ -55,17 +57,27 @@ class BlueProvider with ChangeNotifier {
       _isScanning = false;
       notifyListeners();
       _isConnected = true;
-      _addMessage('Connected to ${device.advName}');
 
       // Setup message listener
       await _bleService?.setupConnection(device, (data) {
-        _addMessage('Received: ${String.fromCharCodes(data)}');
+        _callbackMessage(String.fromCharCodes(data));
       });
 
       notifyListeners();
     } catch (e) {
-      _addMessage('Connection failed: $e');
+      print(e.toString());
       rethrow;
+    }
+  }
+
+  void _callbackMessage(String data) {
+    print(data);
+    try {
+      _currentMeterSetup = MeterSetup.fromString(data);
+      notifyListeners();
+    } catch (e) {
+      print(e);
+      print(data);
     }
   }
 
@@ -74,10 +86,8 @@ class BlueProvider with ChangeNotifier {
 
     try {
       await _bleService?.send(message);
-      _addMessage('Sent: $message');
     } catch (e) {
       print(e);
-      _addMessage('Failed to send: $e');
     }
   }
 
@@ -86,13 +96,11 @@ class BlueProvider with ChangeNotifier {
       if (_connectedDevice != null) {
         await _connectedDevice!.disconnect();
       }
-      _addMessage('Disconnected');
     } catch (e) {
-      _addMessage('Error disconnecting: $e');
+      print(e.toString());
     } finally {
       _connectedDevice = null;
       _isConnected = false;
-      _messages.clear();
       notifyListeners();
     }
   }
@@ -100,16 +108,6 @@ class BlueProvider with ChangeNotifier {
   Future<void> stopScan() async {
     await _bleService?.stopScan();
     _isScanning = false;
-    notifyListeners();
-  }
-
-  void _addMessage(String message) {
-    _messages = [..._messages, message];
-    notifyListeners();
-  }
-
-  void clearMessages() {
-    _messages = [];
     notifyListeners();
   }
 
