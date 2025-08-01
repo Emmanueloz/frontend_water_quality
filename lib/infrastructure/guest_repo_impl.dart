@@ -100,30 +100,18 @@ class GuestRepositoryImpl implements GuestRepository {
         '/workspaces/$workspaceId/guest/',
         data: {
           'guest': email,  // La API espera 'guest' en lugar de 'email'
-          'rol': 'visitor', // Siempre usar 'visitor' como rol
+          'rol': role,     // Usar el rol que se pasa como parámetro
         },
       );
 
       print('Invite response status: ${response.statusCode}');
       print('Invite response data: ${response.data}');
 
-      if (response.statusCode != 200 && response.statusCode != 201) {
-        final errorMessage = response.data['message'] ?? 'Error al invitar al invitado';
-        print('Invite error: $errorMessage');
-        return Result.failure(errorMessage);
-      }
-
-      // Debug: Imprimir el formato de respuesta
-      print('Invite response data type: ${response.data.runtimeType}');
-      print('Invite response data: ${response.data}');
-
       // Manejar diferentes formatos de respuesta
       Map<String, dynamic> guestData;
-      
       if (response.data is Map<String, dynamic>) {
         final data = response.data as Map<String, dynamic>;
         print('Invite response is Map with keys: ${data.keys.toList()}');
-        
         if (data.containsKey('data')) {
           guestData = data['data'] as Map<String, dynamic>;
           print('Found data key in invite response');
@@ -160,41 +148,29 @@ class GuestRepositoryImpl implements GuestRepository {
       
       final response = await _dio.put(
         '/workspaces/$workspaceId/guest/$guestId',
-        data: {'rol': 'visitor'},  // Siempre usar 'visitor' como rol
+        data: {'rol': role},  // Usar el rol que se pasa como parámetro
       );
 
-      print('Update response status: ${response.statusCode}');
-      print('Update response data: ${response.data}');
-
-      if (response.statusCode != 200) {
-        final errorMessage = response.data['message'] ?? 'Error al actualizar el rol del invitado';
-        print('Update error: $errorMessage');
-        return Result.failure(errorMessage);
-      }
-
-      // Debug: Imprimir el formato de respuesta
-      print('Update response data type: ${response.data.runtimeType}');
-      print('Update response data: ${response.data}');
+      print('Update role response status: ${response.statusCode}');
+      print('Update role response data: ${response.data}');
 
       // Manejar diferentes formatos de respuesta
       Map<String, dynamic> guestData;
-      
       if (response.data is Map<String, dynamic>) {
         final data = response.data as Map<String, dynamic>;
-        print('Update response is Map with keys: ${data.keys.toList()}');
-        
+        print('Update role response is Map with keys: ${data.keys.toList()}');
         if (data.containsKey('data')) {
           guestData = data['data'] as Map<String, dynamic>;
-          print('Found data key in update response');
+          print('Found data key in update role response');
         } else if (data.containsKey('guest')) {
           guestData = data['guest'] as Map<String, dynamic>;
-          print('Found guest key in update response');
+          print('Found guest key in update role response');
         } else {
           guestData = data;
-          print('Using update response data directly');
+          print('Using response data directly');
         }
       } else {
-        print('Unknown update response format: ${response.data.runtimeType}');
+        print('Unknown update role response format: ${response.data.runtimeType}');
         return Result.failure('Formato de respuesta no válido');
       }
 
@@ -202,12 +178,12 @@ class GuestRepositoryImpl implements GuestRepository {
       print('Parsed updated guest: $guest');
       return Result.success(guest);
     } on DioException catch (e) {
-      print('Update DioException: ${e.message}');
-      print('Update DioException type: ${e.type}');
-      print('Update DioException response: ${e.response?.data}');
+      print('Update role DioException: ${e.message}');
+      print('Update role DioException type: ${e.type}');
+      print('Update role DioException response: ${e.response?.data}');
       return Result.failure(_handleDioError(e));
     } catch (e) {
-      print('Update unexpected error: $e');
+      print('Update role unexpected error: $e');
       return Result.failure('Error inesperado: $e');
     }
   }

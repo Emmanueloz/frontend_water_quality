@@ -12,6 +12,7 @@ class GuestGrid extends StatelessWidget {
   final String title;
   final String workspaceId;
   final VoidCallback? onAddPressed;
+  final VoidCallback? onReloadPressed;
 
   const GuestGrid({
     super.key,
@@ -20,6 +21,7 @@ class GuestGrid extends StatelessWidget {
     required this.workspaceId,
     this.title = "Invitados",
     this.onAddPressed,
+    this.onReloadPressed,
   });
 
   @override
@@ -45,13 +47,20 @@ class GuestGrid extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            actions: onAddPressed != null ? [
-              ElevatedButton.icon(
-                onPressed: onAddPressed!,
-                icon: const Icon(Icons.person_add),
-                label: const Text("Agregar Invitado"),
-              ),
-            ] : [],
+            actions: [
+              if (onAddPressed != null)
+                ElevatedButton.icon(
+                  onPressed: onAddPressed!,
+                  icon: const Icon(Icons.person_add),
+                  label: const Text("Agregar Invitado"),
+                ),
+              if (onReloadPressed != null)
+                ElevatedButton.icon(
+                  onPressed: onReloadPressed!,
+                  icon: const Icon(Icons.refresh),
+                  label: const Text("Recargar"),
+                ),
+            ],
             screenSize: screenSize,
           ),
           const SizedBox(height: 16),
@@ -64,57 +73,65 @@ class GuestGrid extends StatelessWidget {
                     onAction: onAddPressed,
                     actionText: 'Invitar invitado',
                   )
-                : _gridBuilder(context, config),
+                : SingleChildScrollView(
+                    child: GridView.count(
+                      crossAxisCount: config.crossAxisCount,
+                      childAspectRatio: config.childAspectRatio,
+                      crossAxisSpacing: config.gap,
+                      mainAxisSpacing: config.gap,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: guests.map((guest) => GuestCard(
+                        guest: guest,
+                        workspaceId: workspaceId,
+                        workspaceTitle: title,
+                      )).toList(),
+                    ),
+                  ),
           ),
         ],
       ),
     );
   }
 
-  Widget _gridBuilder(BuildContext context, _GridConfig config) {
-    return SingleChildScrollView(
-      child: GridView.count(
-        crossAxisCount: config.crossAxisCount,
-        childAspectRatio: config.childAspectRatio,
-        crossAxisSpacing: config.gap,
-        mainAxisSpacing: config.gap,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        children: guests.map((guest) => GuestCard(
-          guest: guest,
-          workspaceId: workspaceId,
-          workspaceTitle: title,
-        )).toList(),
-      ),
-    );
-  }
-
-  _GridConfig _gridConfig(ScreenSize screenSize) {
+  GridConfig _gridConfig(ScreenSize screenSize) {
     switch (screenSize) {
       case ScreenSize.mobile:
-        return _GridConfig(
-            crossAxisCount: 1, childAspectRatio: 1 / 0.5, gap: 5);
+        return GridConfig(
+          crossAxisCount: 1,
+          childAspectRatio: 1 / 0.6,
+          gap: 5,
+        );
       case ScreenSize.tablet:
-        return _GridConfig(
-            crossAxisCount: 2, childAspectRatio: 1 / 0.6, gap: 5);
+        return GridConfig(
+          crossAxisCount: 2,
+          childAspectRatio: 1 / 0.6,
+          gap: 5,
+        );
       case ScreenSize.smallDesktop:
-        return _GridConfig(
-            crossAxisCount: 3, childAspectRatio: 1 / 0.6, gap: 10);
-      default:
-        return _GridConfig(
-            crossAxisCount: 4, childAspectRatio: 1 / 0.6, gap: 16);
+        return GridConfig(
+          crossAxisCount: 3,
+          childAspectRatio: 1 / 0.85,
+          gap: 10,
+        );
+      case ScreenSize.largeDesktop:
+        return GridConfig(
+          crossAxisCount: 4,
+          childAspectRatio: 1 / 0.85,
+          gap: 16,
+        );
     }
   }
 }
 
-class _GridConfig {
+class GridConfig {
   final int crossAxisCount;
   final double childAspectRatio;
   final double gap;
 
-  _GridConfig({
+  GridConfig({
     required this.crossAxisCount,
     required this.childAspectRatio,
     required this.gap,
   });
-}
+} 

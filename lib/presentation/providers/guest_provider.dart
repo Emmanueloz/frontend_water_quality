@@ -38,16 +38,25 @@ class GuestProvider with ChangeNotifier {
   }
 
   void setWorkspaceId(String workspaceId) {
-    _currentWorkspaceId = workspaceId;
+    // Solo recargar si es un workspace diferente
+    if (_currentWorkspaceId != workspaceId) {
+      _currentWorkspaceId = workspaceId;
+      _recharge = true;
+      clean();
+    }
+  }
+
+  void forceReload() {
     _recharge = true;
-    clean();
+    if (_currentWorkspaceId != null) {
+      loadGuests(_currentWorkspaceId!);
+    }
   }
 
   void clean() {
     _guests = [];
     _isLoading = false;
     _errorMessage = null;
-    _recharge = true;
     notifyListeners();
   }
 
@@ -65,7 +74,11 @@ class GuestProvider with ChangeNotifier {
       return;
     }
 
-    if (!_recharge) return;
+    // Solo cargar si es necesario recargar o si es un workspace diferente
+    if (!_recharge && _currentWorkspaceId == workspaceId) {
+      print('GuestProvider: loadGuests skipped - no recharge needed');
+      return;
+    }
 
     // Asegurar que el repositorio tenga el token actualizado
     if (_guestRepository == null) {
@@ -90,7 +103,7 @@ class GuestProvider with ChangeNotifier {
       if (result.isSuccess) {
         _guests = result.value ?? [];
         if (_guests.isEmpty) {
-        _errorMessage = 'No se encontraron invitados';
+          _errorMessage = 'No se encontraron invitados';
         } else {
           _errorMessage = null;
         }
@@ -140,8 +153,8 @@ class GuestProvider with ChangeNotifier {
         _guests.add(result.value!);
         _errorMessage = null;
         print('GuestProvider: inviteGuest successful, guests count=${_guests.length}');
-      notifyListeners();
-      return true;
+        notifyListeners();
+        return true;
       } else {
         _errorMessage = result.message ?? 'Error al invitar al invitado';
         print('GuestProvider: inviteGuest failed: $_errorMessage');
@@ -181,8 +194,8 @@ class GuestProvider with ChangeNotifier {
       final result = await _guestRepository!.updateGuestRole(workspaceId, guestId, role);
       
       if (result.isSuccess) {
-      final index = _guests.indexWhere((g) => g.id == guestId);
-      if (index != -1) {
+        final index = _guests.indexWhere((g) => g.id == guestId);
+        if (index != -1) {
           _guests[index] = result.value!;
           notifyListeners();
         }
@@ -231,7 +244,7 @@ class GuestProvider with ChangeNotifier {
         _guests.removeWhere((g) => g.id == guestId);
         print('GuestProvider: deleteGuest successful, guests count=${_guests.length}');
         notifyListeners();
-      return true;
+        return true;
       } else {
         _errorMessage = result.message ?? 'Error al eliminar el invitado';
         print('GuestProvider: deleteGuest failed: $_errorMessage');

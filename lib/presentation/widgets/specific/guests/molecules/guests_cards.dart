@@ -11,7 +11,7 @@ class GuestCard extends StatelessWidget {
   final String workspaceTitle;
 
   const GuestCard({
-    super.key,
+    super.key, 
     required this.guest,
     required this.workspaceId,
     required this.workspaceTitle,
@@ -28,10 +28,12 @@ class GuestCard extends StatelessWidget {
   }
 
   Chip _buildChip(BuildContext context) {
+    String roleText = _translateRole(guest.role);
+    
     return Chip(
-      label: const Text(
-        "Invitado",
-        style: TextStyle(
+      label: Text(
+        roleText,
+        style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.w500,
         ),
@@ -39,6 +41,19 @@ class GuestCard extends StatelessWidget {
       backgroundColor: const Color(0xff145c57),
       visualDensity: VisualDensity.compact,
     );
+  }
+
+  String _translateRole(String role) {
+    switch (role.toLowerCase()) {
+      case 'visitor':
+        return 'VISITANTE';
+      case 'manager':
+        return 'GERENTE';
+      case 'administrator':
+        return 'ADMINISTRADOR';
+      default:
+        return role.toUpperCase();
+    }
   }
 
   void _showGuestDetails(BuildContext context) {

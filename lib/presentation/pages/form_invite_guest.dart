@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/domain/models/guests.dart';
 import 'package:frontend_water_quality/presentation/providers/guest_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
+import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
 import 'package:provider/provider.dart';
 
 class FormInviteGuestPage extends StatefulWidget {
@@ -27,6 +29,13 @@ class _FormInviteGuestPageState extends State<FormInviteGuestPage> {
   bool _isLoading = false;
   bool get _isEditMode => widget.guest != null;
 
+  // Lista de roles disponibles (se puede obtener del backend)
+  final List<Map<String, String>> _availableRoles = [
+    {'value': 'visitor', 'label': 'VISITANTE'},
+    {'value': 'manager', 'label': 'GERENTE'},
+    {'value': 'administrator', 'label': 'ADMINISTRADOR'},
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -44,136 +53,161 @@ class _FormInviteGuestPageState extends State<FormInviteGuestPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = ResponsiveScreenSize.getScreenSize(context);
+    
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: BaseContainer(
-          padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: _buildMain(context, screenSize),
+    );
+  }
+
+  Widget _buildMain(BuildContext context, ScreenSize screenSize) {
+    if (screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet) {
+      return BaseContainer(
+        margin: const EdgeInsets.all(10),
+        width: double.infinity,
+        height: double.infinity,
+        child: _buildForm(context, screenSize),
+      );
+    }
+
+    return BaseContainer(
+      margin: const EdgeInsets.all(0),
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: _buildForm(context, screenSize),
+      ),
+    );
+  }
+
+  Widget _buildForm(BuildContext context, ScreenSize screenSize) {
+    return Container(
+      width: screenSize == ScreenSize.mobile ? double.infinity : 600,
+      height: screenSize == ScreenSize.mobile ? double.infinity : 600,
+      margin: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Título
+            Text(
+              _isEditMode ? 'Detalles del Invitado' : 'Agregar Invitado',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            
+            // Email field
+            TextFormField(
+              controller: _emailController,
+              enabled: true, // Siempre editable
+              decoration: const InputDecoration(
+                labelText: 'Correo electrónico',
+                hintText: 'ejemplo@correo.com',
+                prefixIcon: Icon(Icons.email_outlined),
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.emailAddress,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingresa un correo electrónico';
+                }
+                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                  return 'Por favor ingresa un correo electrónico válido';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            
+            // Role field
+            DropdownButtonFormField<String>(
+              value: _selectedRole,
+              decoration: const InputDecoration(
+                labelText: 'Rol',
+                prefixIcon: Icon(Icons.security),
+                border: OutlineInputBorder(),
+              ),
+              items: _availableRoles.map((role) {
+                return DropdownMenuItem(
+                  value: role['value'],
+                  child: Text(role['label']!),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    _selectedRole = value;
+                  });
+                }
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor selecciona un rol';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 32),
+            
+            // Buttons
+            Row(
               children: [
-                // Título
-                Text(
-                  _isEditMode ? 'Detalles del Invitado' : 'Agregar Invitado',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
+                    child: const Text('Cancelar'),
                   ),
-                  textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 32),
-                
-                // Email field
-                TextFormField(
-                  controller: _emailController,
-                  enabled: true, // Siempre editable
-                  decoration: const InputDecoration(
-                    labelText: 'Correo electrónico',
-                    hintText: 'ejemplo@correo.com',
-                    prefixIcon: Icon(Icons.email_outlined),
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor ingresa un correo electrónico';
-                    }
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                      return 'Por favor ingresa un correo electrónico válido';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                
-                // Role field
-                DropdownButtonFormField<String>(
-                  value: _selectedRole,
-                  decoration: const InputDecoration(
-                    labelText: 'Rol',
-                    prefixIcon: Icon(Icons.security),
-                    border: OutlineInputBorder(),
-                  ),
-                  items: const [
-                    DropdownMenuItem(
-                      value: 'visitor',
-                      child: Text('Invitado'),
+                const SizedBox(width: 16),
+                if (!_isEditMode) // Solo mostrar botón de invitar en modo agregar
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _inviteGuest,
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text('Invitar'),
                     ),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        _selectedRole = value;
-                      });
-                    }
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor selecciona un rol';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 32),
-                
-                // Buttons
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-                        child: const Text('Cancelar'),
+                  ),
+                if (_isEditMode) ...[
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _saveChanges,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xff145c57),
+                        foregroundColor: Colors.white,
                       ),
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                            )
+                          : const Text('Guardar'),
                     ),
-                    const SizedBox(width: 16),
-                    if (!_isEditMode) // Solo mostrar botón de invitar en modo agregar
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: _isLoading ? null : _inviteGuest,
-                          child: _isLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
-                                )
-                              : const Text('Invitar'),
-                        ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _deleteGuest,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red[600],
+                        foregroundColor: Colors.white,
                       ),
-                    if (_isEditMode) ...[
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: _isLoading ? null : _saveChanges,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xff145c57),
-                            foregroundColor: Colors.white,
-                          ),
-                          child: _isLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                                )
-                              : const Text('Guardar'),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: _isLoading ? null : _deleteGuest,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red[600],
-                            foregroundColor: Colors.white,
-                          ),
-                          child: const Text('Eliminar'),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
+                      child: const Text('Eliminar'),
+                    ),
+                  ),
+                ],
               ],
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -308,12 +342,11 @@ class _FormInviteGuestPageState extends State<FormInviteGuestPage> {
   Future<void> _deleteGuest() async {
     print('FormInviteGuestPage: _deleteGuest called');
 
-    // Mostrar confirmación
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Eliminar Invitado'),
-        content: Text('¿Estás seguro de que quieres eliminar a ${widget.guest!.name}?'),
+        title: const Text('Confirmar eliminación'),
+        content: const Text('¿Estás seguro de que quieres eliminar este invitado?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
