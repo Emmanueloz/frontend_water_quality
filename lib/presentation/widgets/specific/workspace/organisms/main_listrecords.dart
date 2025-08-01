@@ -49,7 +49,8 @@ class _MainListrecordsState extends State<MainListrecords> {
     return Consumer<MeterProvider>(
       builder: (context, meterProvider, _) {
         if (meterProvider.isLoading) {
-          return BaseContainer(child: const Center(child: CircularProgressIndicator()));
+          return BaseContainer(
+              child: const Center(child: CircularProgressIndicator()));
         }
 
         if (meterProvider.errorMessage != null) {
@@ -66,7 +67,8 @@ class _MainListrecordsState extends State<MainListrecords> {
                   Text(meterProvider.errorMessage!),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => meterProvider.fetchMeterRecords(widget.id, widget.idMeter),
+                    onPressed: () => meterProvider.fetchMeterRecords(
+                        widget.id, widget.idMeter),
                     child: const Text('Reintentar'),
                   ),
                 ],
@@ -75,7 +77,8 @@ class _MainListrecordsState extends State<MainListrecords> {
           );
         }
 
-        final MeterRecordsResponse? records = meterProvider.meterRecordsResponse;
+        final MeterRecordsResponse? records =
+            meterProvider.meterRecordsResponse;
         if (records == null) {
           return const Center(child: Text('No hay registros disponibles'));
         }
@@ -145,8 +148,8 @@ class _MainListrecordsState extends State<MainListrecords> {
               Consumer<MeterProvider>(
                 builder: (context, meterProvider, _) {
                   return IconButton(
-                    onPressed: meterProvider.isLoading 
-                        ? null 
+                    onPressed: meterProvider.isLoading
+                        ? null
                         : () => meterProvider.refreshMeterRecords(),
                     icon: meterProvider.isLoading
                         ? const SizedBox(
@@ -198,7 +201,10 @@ class _MainListrecordsState extends State<MainListrecords> {
       return _buildEmptyGraph("Temperatura");
     }
 
-    final dates = temperatureRecords.map((r) => _formatDate(r.datetime)).toList().cast<String>();
+    final dates = temperatureRecords
+        .map((r) => _formatDate(r.datetime))
+        .toList()
+        .cast<String>();
     final data = temperatureRecords.map((r) => r.value).toList().cast<double>();
     final currentValue = data.isNotEmpty ? data.last : 0.0;
     final minY = 0.0;
@@ -221,11 +227,12 @@ class _MainListrecordsState extends State<MainListrecords> {
       return _buildEmptyGraph("PH");
     }
 
-    final dates = phRecords.map((r) => _formatDate(r.datetime)).toList().cast<String>();
+    final dates =
+        phRecords.map((r) => _formatDate(r.datetime)).toList().cast<String>();
     final data = phRecords.map((r) => r.value).toList().cast<double>();
     final currentValue = data.isNotEmpty ? data.last : 0.0;
-    final minY =  0.0;
-    final maxY =  10.0;
+    final minY = 0.0;
+    final maxY = 10.0;
 
     return LineGraph(
       sensorType: "PH",
@@ -244,11 +251,12 @@ class _MainListrecordsState extends State<MainListrecords> {
       return _buildEmptyGraph("Total de sólidos disueltos");
     }
 
-    final dates = tdsRecords.map((r) => _formatDate(r.datetime)).toList().cast<String>();
+    final dates =
+        tdsRecords.map((r) => _formatDate(r.datetime)).toList().cast<String>();
     final data = tdsRecords.map((r) => r.value).toList().cast<double>();
     final currentValue = data.isNotEmpty ? data.last : 0.0;
-    final minY =  0.0;
-    final maxY =  500.0;
+    final minY = 0.0;
+    final maxY = 500.0;
 
     return LineGraph(
       sensorType: "Total de sólidos disueltos",
@@ -267,11 +275,15 @@ class _MainListrecordsState extends State<MainListrecords> {
       return _buildEmptyGraph("Conductividad");
     }
 
-    final dates = conductivityRecords.map((r) => _formatDate(r.datetime)).toList().cast<String>();
-    final data = conductivityRecords.map((r) => r.value).toList().cast<double>();
+    final dates = conductivityRecords
+        .map((r) => _formatDate(r.datetime))
+        .toList()
+        .cast<String>();
+    final data =
+        conductivityRecords.map((r) => r.value).toList().cast<double>();
     final currentValue = data.isNotEmpty ? data.last : 0.0;
-    final minY =  0.0;
-    final maxY =  3000.0;
+    final minY = 0.0;
+    final maxY = 3000.0;
 
     return LineGraph(
       sensorType: "Conductividad",
@@ -290,11 +302,14 @@ class _MainListrecordsState extends State<MainListrecords> {
       return _buildEmptyGraph("Turbidez");
     }
 
-    final dates = turbidityRecords.map((r) => _formatDate(r.datetime)).toList().cast<String>();
+    final dates = turbidityRecords
+        .map((r) => _formatDate(r.datetime))
+        .toList()
+        .cast<String>();
     final data = turbidityRecords.map((r) => r.value).toList().cast<double>();
     final currentValue = data.isNotEmpty ? data.last : 0.0;
-    final minY =  0.0;
-    final maxY =  50.0;
+    final minY = 0.0;
+    final maxY = 50.0;
 
     return LineGraph(
       sensorType: "Turbidez",
@@ -336,7 +351,7 @@ class _MainListrecordsState extends State<MainListrecords> {
     // Formatear la fecha al formato dd/mm
     final day = dateTime.day.toString().padLeft(2, '0');
     final month = dateTime.month.toString().padLeft(2, '0');
-    final year = dateTime.year.toString();
+
     return '$day/$month';
   }
 }
