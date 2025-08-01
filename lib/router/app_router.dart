@@ -27,6 +27,9 @@ import 'package:frontend_water_quality/presentation/pages/weather_page.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:frontend_water_quality/presentation/pages/form_invite_guest.dart';
+import 'package:frontend_water_quality/presentation/providers/guest_provider.dart';
+import 'package:frontend_water_quality/domain/models/guests.dart';
 
 class AppRouter {
   static final GlobalKey<NavigatorState> shellMeterNavigatorKey =
@@ -284,6 +287,47 @@ class AppRouter {
                         title: 'Invitados',
                       );
                     },
+                    routes: [
+                      GoRoute(
+                        path: Routes.createGuest.path,
+                        name: Routes.createGuest.name,
+                        parentNavigatorKey: rootNavigatorKey,
+                        builder: (context, state) {
+                          final workspaceId = state.pathParameters['id'] ?? 'default';
+                          return FormInviteGuestPage(
+                            workspaceId: workspaceId,
+                            workspaceTitle: 'Invitados',
+                          );
+                        },
+                      ),
+                      GoRoute(
+                        path: Routes.editGuest.path,
+                        name: Routes.editGuest.name,
+                        parentNavigatorKey: rootNavigatorKey,
+                        builder: (context, state) {
+                          final workspaceId = state.pathParameters['id'] ?? 'default';
+                          final guestId = state.pathParameters['guestId'] ?? '';
+                          
+                          // Obtener el guest del provider
+                          final guestProvider = Provider.of<GuestProvider>(context, listen: false);
+                          final guest = guestProvider.guests.firstWhere(
+                            (g) => g.id == guestId,
+                            orElse: () => Guest(
+                              id: guestId,
+                              name: 'Cargando...',
+                              email: '',
+                              role: 'visitor',
+                            ),
+                          );
+                          
+                          return FormInviteGuestPage(
+                            workspaceId: workspaceId,
+                            workspaceTitle: 'Invitados',
+                            guest: guest.id == guestId ? guest : null,
+                          );
+                        },
+                      ),
+                    ],
                   ),
                   GoRoute(
                     path: Routes.locationMeters.path,

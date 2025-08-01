@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/domain/models/guests.dart';
-import 'package:frontend_water_quality/presentation/pages/form_invite_guest.dart';
 import 'package:frontend_water_quality/presentation/providers/guest_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/molecules/base_card.dart';
+import 'package:frontend_water_quality/router/routes.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class GuestCard extends StatelessWidget {
@@ -57,14 +58,12 @@ class GuestCard extends StatelessWidget {
   }
 
   void _showGuestDetails(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => FormInviteGuestPage(
-          workspaceId: workspaceId,
-          workspaceTitle: workspaceTitle,
-          guest: guest,
-        ),
-      ),
+    context.goNamed(
+      Routes.editGuest.name,
+      pathParameters: {
+        'id': workspaceId,
+        'guestId': guest.id,
+      },
     );
   }
 }

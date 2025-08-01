@@ -4,6 +4,7 @@ import 'package:frontend_water_quality/domain/models/guests.dart';
 import 'package:frontend_water_quality/presentation/providers/guest_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class FormInviteGuestPage extends StatefulWidget {
@@ -158,7 +159,7 @@ class _FormInviteGuestPageState extends State<FormInviteGuestPage> {
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
+                    onPressed: _isLoading ? null : () => context.pop(),
                     child: const Text('Cancelar'),
                   ),
                 ),
@@ -237,7 +238,7 @@ class _FormInviteGuestPageState extends State<FormInviteGuestPage> {
       if (mounted) {
         if (success) {
           print('FormInviteGuestPage: inviteGuest successful, closing page');
-          Navigator.of(context).pop();
+          context.pop();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Text('Invitado agregado exitosamente'),
@@ -300,7 +301,7 @@ class _FormInviteGuestPageState extends State<FormInviteGuestPage> {
       if (mounted) {
         if (success) {
           print('FormInviteGuestPage: updateGuestRole successful, closing page');
-          Navigator.of(context).pop();
+          context.pop();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Text('Cambios guardados exitosamente'),
@@ -381,7 +382,7 @@ class _FormInviteGuestPageState extends State<FormInviteGuestPage> {
       if (mounted) {
         if (success) {
           print('FormInviteGuestPage: deleteGuest successful, closing page');
-          Navigator.of(context).pop();
+          context.pop();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Text('Invitado eliminado exitosamente'),

@@ -6,7 +6,8 @@ import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_co
 import 'package:frontend_water_quality/presentation/widgets/common/organisms/grid_loading_skeleton.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/guests/organisms/grid_guests.dart';
-import 'package:frontend_water_quality/presentation/pages/form_invite_guest.dart';
+import 'package:frontend_water_quality/router/routes.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class GuestsPage extends StatefulWidget {
@@ -38,13 +39,9 @@ class _GuestsPageState extends State<GuestsPage> {
   }
 
   void _navigateToInviteForm() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => FormInviteGuestPage(
-          workspaceId: widget.id,
-          workspaceTitle: widget.title,
-        ),
-      ),
+    context.goNamed(
+      Routes.createGuest.name,
+      pathParameters: {'id': widget.id},
     );
   }
 
