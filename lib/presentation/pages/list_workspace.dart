@@ -27,8 +27,21 @@ class _ListWorkspaceState extends State<ListWorkspace> {
   void initState() {
     super.initState();
 
+    switch (widget.type) {
+      case ListWorkspaces.mine:
+        currentIndex = 0;
+        break;
+      case ListWorkspaces.shared:
+        currentIndex = 1;
+        break;
+      case ListWorkspaces.all:
+        currentIndex = 2;
+        break;
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<WorkspaceProvider>(context, listen: false).fetchWorkspaces();
+      Provider.of<WorkspaceProvider>(context, listen: false)
+          .fetchWorkspacesUser();
     });
   }
 
@@ -94,8 +107,10 @@ class _ListWorkspaceState extends State<ListWorkspace> {
                 type: widget.type,
                 screenSize: screenSize,
                 errorMessage: workspaceProvider.errorMessageAll,
-                isLoading: workspaceProvider.isLoading,
+                isLoading: workspaceProvider.isLoadingAll,
                 itemCount: workspaceProvider.workspacesAll.length,
+                onRefresh: () =>
+                    workspaceProvider.fetchWorkspacesAll(isRecharge: true),
                 itemBuilder: (context, index) {
                   final workspace = workspaceProvider.workspacesAll[index];
                   return WorkspaceCard(
@@ -120,9 +135,11 @@ class _ListWorkspaceState extends State<ListWorkspace> {
               return MainGridWorkspaces(
                 type: widget.type,
                 screenSize: screenSize,
-                isLoading: workspaceProvider.isLoading,
+                isLoading: workspaceProvider.isLoadingShared,
                 errorMessage: workspaceProvider.errorMessageShared,
                 itemCount: workspaceProvider.workspacesShared.length,
+                onRefresh: () =>
+                    workspaceProvider.fetchWorkspacesShare(isRecharge: true),
                 itemBuilder: (context, index) {
                   final workspace = workspaceProvider.workspacesShared[index];
                   return WorkspaceCard(
@@ -149,6 +166,8 @@ class _ListWorkspaceState extends State<ListWorkspace> {
               isLoading: workspaceProvider.isLoading,
               errorMessage: workspaceProvider.errorMessage,
               itemCount: workspaceProvider.workspaces.length,
+              onRefresh: () =>
+                  workspaceProvider.fetchWorkspaces(isRecharge: true),
               itemBuilder: (context, index) {
                 final workspace = workspaceProvider.workspaces[index];
                 return WorkspaceCard(

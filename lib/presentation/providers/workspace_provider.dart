@@ -14,8 +14,12 @@ class WorkspaceProvider with ChangeNotifier {
   List<Workspace> workspacesAll = [];
   Workspace? currentWorkspace;
   bool isLoading = false;
+  bool isLoadingShared = false;
+  bool isLoadingAll = false;
   bool isLoadingForm = false;
   bool recharge = true;
+  bool rechargeShare = true;
+  bool rechargeAll = true;
   String? errorMessage;
   String? errorMessageShared;
   String? errorMessageAll;
@@ -73,11 +77,22 @@ class WorkspaceProvider with ChangeNotifier {
     }
   }
 
-  Future<void> fetchWorkspaces() async {
+  Future<void> fetchWorkspacesUser() async {
+    await fetchWorkspaces();
+    await fetchWorkspacesShare();
+    await fetchWorkspacesAll();
+  }
+
+  Future<void> fetchWorkspaces({bool isRecharge = false}) async {
     if (_authProvider == null || _authProvider!.token == null) {
       errorMessage = "User not authenticated";
       notifyListeners();
       return;
+    }
+
+    if (isRecharge) {
+      recharge = true;
+      notifyListeners();
     }
 
     if (!recharge) return;
@@ -96,7 +111,32 @@ class WorkspaceProvider with ChangeNotifier {
 
       workspaces = result.value ?? [];
       errorMessage = null;
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+      recharge = false;
+      notifyListeners();
+    }
+  }
 
+  Future<void> fetchWorkspacesShare({bool isRecharge = false}) async {
+    if (_authProvider == null || _authProvider!.token == null) {
+      errorMessageShared = "User not authenticated";
+      notifyListeners();
+      return;
+    }
+
+    if (isRecharge) {
+      rechargeShare = true;
+      notifyListeners();
+    }
+
+    if (!rechargeShare) return;
+
+    isLoadingShared = true;
+    notifyListeners();
+    try {
       final sharedResult =
           await _workspaceRepo.getShared(_authProvider!.token!);
       if (!sharedResult.isSuccess) {
@@ -107,15 +147,40 @@ class WorkspaceProvider with ChangeNotifier {
 
       workspacesShared = sharedResult.value ?? [];
       errorMessageShared = null;
+    } catch (e) {
+      errorMessageShared = e.toString();
+    } finally {
+      isLoadingShared = false;
+      rechargeShare = false;
+      notifyListeners();
+    }
+  }
 
-      if (_authProvider?.user?.rol != AppRoles.admin) {
-        print("User is not admin");
-        workspacesAll = [];
-        errorMessageAll = null;
-        notifyListeners();
-        return;
-      }
+  Future<void> fetchWorkspacesAll({bool isRecharge = false}) async {
+    if (_authProvider == null || _authProvider!.token == null) {
+      errorMessageAll = "User not authenticated";
+      notifyListeners();
+      return;
+    }
 
+    if (_authProvider?.user?.rol != AppRoles.admin) {
+      print("User is not admin");
+      workspacesAll = [];
+      errorMessageAll = null;
+      notifyListeners();
+      return;
+    }
+
+    if (isRecharge) {
+      rechargeAll = true;
+      notifyListeners();
+    }
+
+    if (!rechargeAll) return;
+
+    isLoadingAll = true;
+    notifyListeners();
+    try {
       final allResult = await _workspaceRepo.getFullAll(_authProvider!.token!);
       print("Fetched all workspaces: ${allResult.isSuccess}");
       if (!allResult.isSuccess) {
@@ -126,13 +191,10 @@ class WorkspaceProvider with ChangeNotifier {
       workspacesAll = allResult.value ?? [];
       errorMessageAll = null;
     } catch (e) {
-      errorMessage = e.toString();
-      errorMessageShared = e.toString();
       errorMessageAll = e.toString();
-      print("Error fetching workspaces: $e");
     } finally {
-      isLoading = false;
-      recharge = false;
+      isLoadingAll = false;
+      rechargeAll = false;
       notifyListeners();
     }
   }
