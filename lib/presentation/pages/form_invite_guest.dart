@@ -231,12 +231,12 @@ class _FormInviteGuestPageState extends State<FormInviteGuestPage> {
       final guestProvider = context.read<GuestProvider>();
       print('FormInviteGuestPage: calling guestProvider.inviteGuest');
 
-      final success = await guestProvider.inviteGuest(widget.workspaceId, _emailController.text, _selectedRole);
+      await guestProvider.inviteGuest(widget.workspaceId, _emailController.text, _selectedRole);
 
-      print('FormInviteGuestPage: inviteGuest result success=$success');
+      print('FormInviteGuestPage: inviteGuest completed');
 
       if (mounted) {
-        if (success) {
+        if (guestProvider.errorMessage == null) {
           print('FormInviteGuestPage: inviteGuest successful, closing page');
           context.pop();
           ScaffoldMessenger.of(context).showSnackBar(
@@ -294,12 +294,12 @@ class _FormInviteGuestPageState extends State<FormInviteGuestPage> {
       final guestProvider = context.read<GuestProvider>();
       print('FormInviteGuestPage: calling guestProvider.updateGuestRole');
 
-      final success = await guestProvider.updateGuestRole(widget.workspaceId, widget.guest!.id, _selectedRole);
+      await guestProvider.updateGuestRole(widget.workspaceId, widget.guest!.id, _selectedRole);
 
-      print('FormInviteGuestPage: updateGuestRole result success=$success');
+      print('FormInviteGuestPage: updateGuestRole completed');
 
       if (mounted) {
-        if (success) {
+        if (guestProvider.errorMessage == null) {
           print('FormInviteGuestPage: updateGuestRole successful, closing page');
           context.pop();
           ScaffoldMessenger.of(context).showSnackBar(
@@ -375,12 +375,12 @@ class _FormInviteGuestPageState extends State<FormInviteGuestPage> {
       final guestProvider = context.read<GuestProvider>();
       print('FormInviteGuestPage: calling guestProvider.deleteGuest');
 
-      final success = await guestProvider.deleteGuest(widget.workspaceId, widget.guest!.id);
+      await guestProvider.deleteGuest(widget.workspaceId, widget.guest!.id);
 
-      print('FormInviteGuestPage: deleteGuest result success=$success');
+      print('FormInviteGuestPage: deleteGuest completed');
 
       if (mounted) {
-        if (success) {
+        if (guestProvider.errorMessage == null) {
           print('FormInviteGuestPage: deleteGuest successful, closing page');
           context.pop();
           ScaffoldMessenger.of(context).showSnackBar(

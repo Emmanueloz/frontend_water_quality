@@ -10,15 +10,14 @@ class GuestRepositoryImpl implements GuestRepository {
   GuestRepositoryImpl(this._dio);
 
   @override
-  Future<Result<List<Guest>>> listGuests(String workspaceId) async {
+  Future<Result<List<Guest>>> listGuests(String userToken, String workspaceId) async {
     try {
       print('GuestRepositoryImpl: listGuests called for workspaceId=$workspaceId');
       
-      // Verificar si el token está configurado
-      final token = _dio.options.headers['Authorization'];
-      print('GuestRepositoryImpl: Authorization header = $token');
-      
-      final response = await _dio.get('/workspaces/$workspaceId/guest/');
+      final response = await _dio.get(
+        '/workspaces/$workspaceId/guest/',
+        options: Options(headers: {'Authorization': 'Bearer $userToken'}),
+      );
       
       print('GuestRepositoryImpl: listGuests response status=${response.statusCode}');
       
@@ -92,187 +91,134 @@ class GuestRepositoryImpl implements GuestRepository {
   }
 
   @override
-  Future<Result<Guest>> inviteGuest(String workspaceId, String email, String role) async {
+  Future<Result<Guest>> inviteGuest(String userToken, String workspaceId, String email, String role) async {
     try {
       print('Inviting guest: workspaceId=$workspaceId, email=$email, role=$role');
       
       final response = await _dio.post(
         '/workspaces/$workspaceId/guest/',
         data: {
-          'guest': email,  // La API espera 'guest' en lugar de 'email'
-          'rol': role,     // Usar el rol que se pasa como parámetro
+          'guest': email,
+          'rol': role,
         },
+        options: Options(headers: {'Authorization': 'Bearer $userToken'}),
       );
 
       print('Invite response status: ${response.statusCode}');
       print('Invite response data: ${response.data}');
 
-      // Manejar diferentes formatos de respuesta
-      Map<String, dynamic> guestData;
-      if (response.data is Map<String, dynamic>) {
-        final data = response.data as Map<String, dynamic>;
-        print('Invite response is Map with keys: ${data.keys.toList()}');
-        if (data.containsKey('data')) {
-          guestData = data['data'] as Map<String, dynamic>;
-          print('Found data key in invite response');
-        } else if (data.containsKey('guest')) {
-          guestData = data['guest'] as Map<String, dynamic>;
-          print('Found guest key in invite response');
-        } else {
-          guestData = data;
-          print('Using response data directly');
-        }
-      } else {
-        print('Unknown invite response format: ${response.data.runtimeType}');
-        return Result.failure('Formato de respuesta no válido');
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        final guest = Guest.fromJson(response.data);
+        return Result.success(guest);
       }
 
-      final guest = Guest.fromJson(guestData);
-      print('Parsed guest: $guest');
-      return Result.success(guest);
+      return Result.failure('Error al invitar al invitado');
     } on DioException catch (e) {
       print('Invite DioException: ${e.message}');
-      print('Invite DioException type: ${e.type}');
-      print('Invite DioException response: ${e.response?.data}');
+      print('Invite response status: ${e.response?.statusCode}');
+      print('Invite response data: ${e.response?.data}');
       return Result.failure(_handleDioError(e));
     } catch (e) {
       print('Invite unexpected error: $e');
-      return Result.failure('Error inesperado: $e');
+      return Result.failure('Error inesperado al invitar: $e');
     }
   }
 
   @override
-  Future<Result<Guest>> updateGuestRole(String workspaceId, String guestId, String role) async {
+  Future<Result<Guest>> updateGuestRole(String userToken, String workspaceId, String guestId, String role) async {
     try {
       print('Updating guest role: workspaceId=$workspaceId, guestId=$guestId, role=$role');
       
       final response = await _dio.put(
         '/workspaces/$workspaceId/guest/$guestId',
-        data: {'rol': role},  // Usar el rol que se pasa como parámetro
+        data: {
+          'rol': role,
+        },
+        options: Options(headers: {'Authorization': 'Bearer $userToken'}),
       );
 
-      print('Update role response status: ${response.statusCode}');
-      print('Update role response data: ${response.data}');
+      print('Update response status: ${response.statusCode}');
+      print('Update response data: ${response.data}');
 
-      // Manejar diferentes formatos de respuesta
-      Map<String, dynamic> guestData;
-      if (response.data is Map<String, dynamic>) {
-        final data = response.data as Map<String, dynamic>;
-        print('Update role response is Map with keys: ${data.keys.toList()}');
-        if (data.containsKey('data')) {
-          guestData = data['data'] as Map<String, dynamic>;
-          print('Found data key in update role response');
-        } else if (data.containsKey('guest')) {
-          guestData = data['guest'] as Map<String, dynamic>;
-          print('Found guest key in update role response');
-        } else {
-          guestData = data;
-          print('Using response data directly');
-        }
-      } else {
-        print('Unknown update role response format: ${response.data.runtimeType}');
-        return Result.failure('Formato de respuesta no válido');
+      if (response.statusCode == 200) {
+        final guest = Guest.fromJson(response.data);
+        return Result.success(guest);
       }
 
-      final guest = Guest.fromJson(guestData);
-      print('Parsed updated guest: $guest');
-      return Result.success(guest);
+      return Result.failure('Error al actualizar el rol del invitado');
     } on DioException catch (e) {
-      print('Update role DioException: ${e.message}');
-      print('Update role DioException type: ${e.type}');
-      print('Update role DioException response: ${e.response?.data}');
+      print('Update DioException: ${e.message}');
+      print('Update response status: ${e.response?.statusCode}');
+      print('Update response data: ${e.response?.data}');
       return Result.failure(_handleDioError(e));
     } catch (e) {
-      print('Update role unexpected error: $e');
-      return Result.failure('Error inesperado: $e');
+      print('Update unexpected error: $e');
+      return Result.failure('Error inesperado al actualizar: $e');
     }
   }
 
   @override
-  Future<Result<bool>> deleteGuest(String workspaceId, String guestId) async {
+  Future<Result<bool>> deleteGuest(String userToken, String workspaceId, String guestId) async {
     try {
       print('Deleting guest: workspaceId=$workspaceId, guestId=$guestId');
       
-      // Intentar con DELETE primero
-    try {
+      // Attempt DELETE first
+      try {
         final response = await _dio.delete(
           '/workspaces/$workspaceId/guest/$guestId',
+          options: Options(headers: {'Authorization': 'Bearer $userToken'}),
         );
-
-        print('Delete response status: ${response.statusCode}');
-        print('Delete response data: ${response.data}');
-
         if (response.statusCode == 200 || response.statusCode == 204) {
-          print('Delete successful');
+          print('Delete successful with DELETE method');
           return Result.success(true);
         }
       } catch (e) {
         print('DELETE method failed, trying PUT with delete flag');
       }
       
-      // Si DELETE falla, intentar con PUT y un flag de eliminación
+      // If DELETE fails, try PUT with a delete flag
       final response = await _dio.put(
         '/workspaces/$workspaceId/guest/$guestId',
-        data: {'deleted': true},  // Flag para indicar eliminación
+        data: {'deleted': true},
+        options: Options(headers: {'Authorization': 'Bearer $userToken'}),
       );
 
-      print('Delete (PUT) response status: ${response.statusCode}');
-      print('Delete (PUT) response data: ${response.data}');
+      print('Delete response status: ${response.statusCode}');
+      print('Delete response data: ${response.data}');
 
-      if (response.statusCode == 200) {
-        print('Delete (PUT) successful');
+      if (response.statusCode == 200 || response.statusCode == 204) {
         return Result.success(true);
       }
 
-      final errorMessage = response.data['message'] ?? 'Error al eliminar el invitado';
-      print('Delete error: $errorMessage');
-      return Result.failure(errorMessage);
+      return Result.failure('Error al eliminar el invitado');
     } on DioException catch (e) {
       print('Delete DioException: ${e.message}');
-      print('Delete DioException type: ${e.type}');
-      print('Delete DioException response: ${e.response?.data}');
+      print('Delete response status: ${e.response?.statusCode}');
+      print('Delete response data: ${e.response?.data}');
       return Result.failure(_handleDioError(e));
     } catch (e) {
       print('Delete unexpected error: $e');
-      return Result.failure('Error inesperado: $e');
+      return Result.failure('Error inesperado al eliminar: $e');
     }
   }
 
   String _handleDioError(DioException e) {
-    if (e.response != null) {
-      final statusCode = e.response?.statusCode;
-      final data = e.response?.data;
-      
-      switch (statusCode) {
-        case 400:
-          return data['message'] ?? 'Datos inválidos';
-        case 401:
-          return 'No autorizado';
-        case 403:
-          return 'Acceso denegado';
-        case 404:
-          return 'Recurso no encontrado';
-        case 409:
-          return 'El invitado ya existe';
-        case 422:
-          return data['message'] ?? 'Datos de entrada inválidos';
-        case 500:
-          return 'Error interno del servidor';
-        default:
-          return data['message'] ?? 'Error de conexión';
+    if (e.response?.data is Map<String, dynamic>) {
+      final data = e.response!.data as Map<String, dynamic>;
+      if (data.containsKey('detail')) {
+        if (data['detail'] is String) {
+          return data['detail'] as String;
+        } else if (data['detail'] is List) {
+          final details = data['detail'] as List;
+          if (details.isNotEmpty && details.first is Map<String, dynamic>) {
+            final firstError = details.first as Map<String, dynamic>;
+            if (firstError.containsKey('msg')) {
+              return firstError['msg'] as String;
+            }
+          }
+        }
       }
     }
-    
-    if (e.type == DioExceptionType.connectionTimeout ||
-        e.type == DioExceptionType.receiveTimeout ||
-        e.type == DioExceptionType.sendTimeout) {
-      return 'Tiempo de espera agotado';
-    }
-    
-    if (e.type == DioExceptionType.connectionError) {
-      return 'Error de conexión';
-    }
-    
-    return e.message ?? 'Error desconocido';
+    return 'Error de conexión: ${e.message}';
   }
 }

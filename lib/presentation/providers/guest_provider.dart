@@ -3,12 +3,10 @@ import 'package:flutter/widgets.dart';
 import 'package:frontend_water_quality/domain/models/guests.dart';
 import 'package:frontend_water_quality/domain/repositories/guest_repo.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
-import 'package:frontend_water_quality/infrastructure/dio_provider.dart';
-import 'package:frontend_water_quality/infrastructure/guest_repo_impl.dart';
 
 class GuestProvider with ChangeNotifier {
+  final GuestRepository _guestRepository;
   AuthProvider? _authProvider;
-  GuestRepository? _guestRepository;
 
   GuestProvider(this._guestRepository, this._authProvider);
 
@@ -29,12 +27,6 @@ class GuestProvider with ChangeNotifier {
 
   void setAuthProvider(AuthProvider? provider) {
     _authProvider = provider;
-    // Recrear el repositorio con el token actualizado
-    if (provider != null && provider.token != null) {
-      final dio = DioProvider.createDio();
-      dio.options.headers['Authorization'] = 'Bearer ${provider.token}';
-      _guestRepository = GuestRepositoryImpl(dio);
-    }
   }
 
   void setWorkspaceId(String workspaceId) {
@@ -80,13 +72,6 @@ class GuestProvider with ChangeNotifier {
       return;
     }
 
-    // Asegurar que el repositorio tenga el token actualizado
-    if (_guestRepository == null) {
-      final dio = DioProvider.createDio();
-      dio.options.headers['Authorization'] = 'Bearer ${_authProvider!.token}';
-      _guestRepository = GuestRepositoryImpl(dio);
-    }
-
     _isLoading = true;
     _errorMessage = null;
     _currentWorkspaceId = workspaceId;
@@ -96,94 +81,68 @@ class GuestProvider with ChangeNotifier {
       print('GuestProvider: loadGuests called for workspaceId=$workspaceId');
       print('GuestProvider: token = ${_authProvider!.token}');
       
-      final result = await _guestRepository!.listGuests(workspaceId);
+      final result = await _guestRepository.listGuests(_authProvider!.token!, workspaceId);
       
       print('GuestProvider: loadGuests result isSuccess=${result.isSuccess}');
       
       if (result.isSuccess) {
-        _guests = result.value ?? [];
-        if (_guests.isEmpty) {
-          _errorMessage = 'No se encontraron invitados';
-        } else {
-          _errorMessage = null;
-        }
-        print('GuestProvider: loadGuests successful, guests count=${_guests.length}');
+        _guests = result.value!;
+        _recharge = false;
+        print('GuestProvider: loadGuests success, loaded ${_guests.length} guests');
       } else {
-        _errorMessage = result.message ?? 'Error al cargar invitados';
-        _guests = [];
-        print('GuestProvider: loadGuests failed: $_errorMessage');
+        _errorMessage = result.message;
+        print('GuestProvider: loadGuests failed: ${result.message}');
       }
     } catch (e) {
-      _errorMessage = 'Error inesperado: $e';
-      _guests = [];
       print('GuestProvider: loadGuests exception: $e');
+      _errorMessage = 'Error inesperado al cargar invitados: $e';
     } finally {
       _isLoading = false;
-      _recharge = false;
       notifyListeners();
     }
   }
 
-  Future<bool> inviteGuest(String workspaceId, String email, String role) async {
+  Future<void> inviteGuest(String workspaceId, String email, String role) async {
     if (_authProvider == null || _authProvider!.token == null) {
       _errorMessage = "Usuario no autenticado";
       notifyListeners();
-      return false;
+      return;
     }
 
-    // Asegurar que el repositorio tenga el token actualizado
-    if (_guestRepository == null) {
-      final dio = DioProvider.createDio();
-      dio.options.headers['Authorization'] = 'Bearer ${_authProvider!.token}';
-      _guestRepository = GuestRepositoryImpl(dio);
-    }
-
-    print('GuestProvider: inviteGuest called with workspaceId=$workspaceId, email=$email, role=$role');
-    
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      final result = await _guestRepository!.inviteGuest(workspaceId, email, role);
+      print('GuestProvider: inviteGuest called for workspaceId=$workspaceId, email=$email, role=$role');
+      
+      final result = await _guestRepository.inviteGuest(_authProvider!.token!, workspaceId, email, role);
       
       print('GuestProvider: inviteGuest result isSuccess=${result.isSuccess}');
       
       if (result.isSuccess) {
-        _guests.add(result.value!);
-        _errorMessage = null;
-        print('GuestProvider: inviteGuest successful, guests count=${_guests.length}');
-        notifyListeners();
-        return true;
+        // Recargar la lista de invitados después de invitar
+        _recharge = true;
+        await loadGuests(workspaceId);
+        print('GuestProvider: inviteGuest success');
       } else {
-        _errorMessage = result.message ?? 'Error al invitar al invitado';
-        print('GuestProvider: inviteGuest failed: $_errorMessage');
-        notifyListeners();
-        return false;
+        _errorMessage = result.message;
+        print('GuestProvider: inviteGuest failed: ${result.message}');
       }
     } catch (e) {
-      _errorMessage = 'Error inesperado: $e';
       print('GuestProvider: inviteGuest exception: $e');
-      notifyListeners();
-      return false;
+      _errorMessage = 'Error inesperado al invitar: $e';
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<bool> updateGuestRole(String workspaceId, String guestId, String role) async {
+  Future<void> updateGuestRole(String workspaceId, String guestId, String role) async {
     if (_authProvider == null || _authProvider!.token == null) {
       _errorMessage = "Usuario no autenticado";
       notifyListeners();
-      return false;
-    }
-
-    // Asegurar que el repositorio tenga el token actualizado
-    if (_guestRepository == null) {
-      final dio = DioProvider.createDio();
-      dio.options.headers['Authorization'] = 'Bearer ${_authProvider!.token}';
-      _guestRepository = GuestRepositoryImpl(dio);
+      return;
     }
 
     _isLoading = true;
@@ -191,71 +150,63 @@ class GuestProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final result = await _guestRepository!.updateGuestRole(workspaceId, guestId, role);
+      print('GuestProvider: updateGuestRole called for workspaceId=$workspaceId, guestId=$guestId, role=$role');
+      
+      final result = await _guestRepository.updateGuestRole(_authProvider!.token!, workspaceId, guestId, role);
+      
+      print('GuestProvider: updateGuestRole result isSuccess=${result.isSuccess}');
       
       if (result.isSuccess) {
-        final index = _guests.indexWhere((g) => g.id == guestId);
+        // Actualizar el invitado en la lista local
+        final index = _guests.indexWhere((guest) => guest.id == guestId);
         if (index != -1) {
           _guests[index] = result.value!;
           notifyListeners();
         }
-        return true;
+        print('GuestProvider: updateGuestRole success');
       } else {
-        _errorMessage = result.message ?? 'Error al actualizar el rol del invitado';
-        notifyListeners();
-        return false;
+        _errorMessage = result.message;
+        print('GuestProvider: updateGuestRole failed: ${result.message}');
       }
     } catch (e) {
-      _errorMessage = 'Error inesperado: $e';
-      notifyListeners();
-      return false;
+      print('GuestProvider: updateGuestRole exception: $e');
+      _errorMessage = 'Error inesperado al actualizar: $e';
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<bool> deleteGuest(String workspaceId, String guestId) async {
+  Future<void> deleteGuest(String workspaceId, String guestId) async {
     if (_authProvider == null || _authProvider!.token == null) {
       _errorMessage = "Usuario no autenticado";
       notifyListeners();
-      return false;
+      return;
     }
 
-    // Asegurar que el repositorio tenga el token actualizado
-    if (_guestRepository == null) {
-      final dio = DioProvider.createDio();
-      dio.options.headers['Authorization'] = 'Bearer ${_authProvider!.token}';
-      _guestRepository = GuestRepositoryImpl(dio);
-    }
-
-    print('GuestProvider: deleteGuest called with workspaceId=$workspaceId, guestId=$guestId');
-    
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      final result = await _guestRepository!.deleteGuest(workspaceId, guestId);
+      print('GuestProvider: deleteGuest called with workspaceId=$workspaceId, guestId=$guestId');
+      
+      final result = await _guestRepository.deleteGuest(_authProvider!.token!, workspaceId, guestId);
       
       print('GuestProvider: deleteGuest result isSuccess=${result.isSuccess}');
       
       if (result.isSuccess) {
-        _guests.removeWhere((g) => g.id == guestId);
-        print('GuestProvider: deleteGuest successful, guests count=${_guests.length}');
+        // Remover el invitado de la lista local
+        _guests.removeWhere((guest) => guest.id == guestId);
         notifyListeners();
-        return true;
+        print('GuestProvider: deleteGuest success');
       } else {
-        _errorMessage = result.message ?? 'Error al eliminar el invitado';
-        print('GuestProvider: deleteGuest failed: $_errorMessage');
-        notifyListeners();
-        return false;
+        _errorMessage = result.message;
+        print('GuestProvider: deleteGuest failed: ${result.message}');
       }
     } catch (e) {
-      _errorMessage = 'Error inesperado: $e';
       print('GuestProvider: deleteGuest exception: $e');
-      notifyListeners();
-      return false;
+      _errorMessage = 'Error inesperado al eliminar: $e';
     } finally {
       _isLoading = false;
       notifyListeners();

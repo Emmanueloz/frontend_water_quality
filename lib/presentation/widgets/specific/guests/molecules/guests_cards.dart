@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/domain/models/guests.dart';
-import 'package:frontend_water_quality/presentation/providers/guest_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/molecules/base_card.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 class GuestCard extends StatelessWidget {
   final Guest guest;

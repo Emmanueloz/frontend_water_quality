@@ -16,6 +16,7 @@ void main() async {
 
   final AuthProvider authProvider = AuthProvider(AuthRepoImpl(dio));
   final WorkspaceRepoImpl workspaceRepo = WorkspaceRepoImpl(dio);
+  final GuestRepositoryImpl guestRepo = GuestRepositoryImpl(dio);
   await authProvider.loadSettings();
 
   runApp(
@@ -37,23 +38,15 @@ void main() async {
         ChangeNotifierProxyProvider<AuthProvider, GuestProvider>(
           create: (context) {
             final authProvider = context.read<AuthProvider>();
-            final dio = DioProvider.createDio();
-            if (authProvider.token != null) {
-            dio.options.headers['Authorization'] = 'Bearer ${authProvider.token}';
-            }
             final guestProvider = GuestProvider(
-              GuestRepositoryImpl(dio),
+              guestRepo,
               authProvider,
             );
             return guestProvider;
           },
           update: (context, authProvider, previousGuestProvider) {
-            final dio = DioProvider.createDio();
-            if (authProvider.token != null) {
-            dio.options.headers['Authorization'] = 'Bearer ${authProvider.token}';
-            }
             final guestProvider = GuestProvider(
-              GuestRepositoryImpl(dio),
+              guestRepo,
               authProvider,
             );
             if (previousGuestProvider != null) {
