@@ -45,14 +45,11 @@ void main() async {
             return guestProvider;
           },
           update: (context, authProvider, previousGuestProvider) {
-            final guestProvider = GuestProvider(
-              guestRepo,
-              authProvider,
-            );
             if (previousGuestProvider != null) {
-              guestProvider.clean();
+              previousGuestProvider.setAuthProvider(authProvider);
+              previousGuestProvider.clean();
             }
-            return guestProvider;
+            return previousGuestProvider ?? GuestProvider(guestRepo, authProvider);
           },
         ),
       ],
