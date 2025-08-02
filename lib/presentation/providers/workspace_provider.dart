@@ -35,6 +35,11 @@ class WorkspaceProvider with ChangeNotifier {
     errorMessageForm = null;
   }
 
+  void cleanForm() {
+    currentWorkspace = null;
+    errorMessageForm = null;
+  }
+
   void setAuthProvider(AuthProvider? provider) {
     _authProvider = provider;
   }
