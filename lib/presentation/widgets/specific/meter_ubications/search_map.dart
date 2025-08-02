@@ -1,14 +1,12 @@
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:frontend_water_quality/core/utils/config_map.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/form_meters.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:http/http.dart' as http;
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
+import 'package:frontend_water_quality/infrastructure/maps_repo_impl.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/meter_ubications/main_map.dart'; // importa tu MainMap aquí
+import 'package:frontend_water_quality/presentation/widgets/specific/form_meters.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/meter_ubications/main_map.dart';
+import 'package:latlong2/latlong.dart';
 
 class SearchMap extends StatefulWidget {
   final ScreenSize screenSize;
@@ -44,46 +42,19 @@ class _SearchMapState extends State<SearchMap> {
   }
 
   Future<void> _buscarDireccion(String query) async {
-    final url = Uri.parse(
-        'https://nominatim.openstreetmap.org/search?q=$query&format=json&limit=1');
-    try {
-      final response =
-          await http.get(url, headers: {'User-Agent': ConfigMap.userAgent});
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        if (data.isNotEmpty) {
-          final lat = double.parse(data[0]['lat']);
-          final lon = double.parse(data[0]['lon']);
-          final result = LatLng(lat, lon);
-          _mapController.move(result, 10);
-        } else {
-          _showSnackBar("No se encontró la dirección");
-        }
-      } else {
-        _showSnackBar("Error al buscar dirección");
-      }
-    } catch (e) {
-      _showSnackBar("Error: ${e.toString()}");
+    final result = await MapsRepoImpl.buscarDireccion(query);
+    if (result != null) {
+      _mapController.move(result, 10);
+    } else {
+      _showSnackBar("No se encontró la dirección");
     }
   }
 
   Future<void> _buscarNombreLugar(LatLng coords) async {
-    final url = Uri.parse(
-        'https://nominatim.openstreetmap.org/reverse?lat=${coords.latitude}&lon=${coords.longitude}&format=json');
-    try {
-      final response =
-          await http.get(url, headers: {'User-Agent': ConfigMap.userAgent});
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        setState(() {
-          _nombreDelLugar = data['display_name'] ?? 'Ubicación sin nombre';
-        });
-      }
-    } catch (_) {
-      setState(() {
-        _nombreDelLugar = 'Ubicación sin nombre';
-      });
-    }
+    final nombre = await MapsRepoImpl.buscarNombreLugar(coords);
+    setState(() {
+      _nombreDelLugar = nombre;
+    });
   }
 
   void _showSnackBar(String message) {

@@ -23,6 +23,7 @@ class FormMeterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     String title = idMeter != null ? "Editar medidor" : "Crear medidor";
     final screenSize = ResponsiveScreenSize.getScreenSize(context);
+
     if (idMeter == null) {
       return Layout(
         title: title,

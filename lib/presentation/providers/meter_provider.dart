@@ -48,8 +48,10 @@ class MeterProvider with ChangeNotifier {
         errorMessage = result.message;
         return;
       }
+      print("Fetched meter: $result");
 
       currentMeter = result.value;
+      print("Current meter set: $currentMeter");
       errorMessage = null;
     } catch (e) {
       errorMessage = e.toString();

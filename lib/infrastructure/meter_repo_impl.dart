@@ -59,10 +59,10 @@ class MeterRepoImpl implements MeterRepo {
   }
 
   @override
-  Future<Result<Meter>> getById(String userToken, String idWorkspace , String id) async {
+  Future<Result<Meter>> getById(String userToken, String idWorkspace , String idMeter) async {
     try {
       final response = await _dio.get(
-        '/meters/$idWorkspace/$id/',
+        '/meters/$idWorkspace/$idMeter/',
         options: Options(headers: {'Authorization': 'Bearer $userToken'}),
       );
       
@@ -71,12 +71,13 @@ class MeterRepoImpl implements MeterRepo {
         return Result.failure('Error: codigo ${response.statusCode}');
       }
 
-      final meter = Meter.fromJson(response.data['data']);
+      final meter = Meter.fromJson(response.data['meter']);
       return Result.success(meter);
     } catch (e) {
       return Result.failure(e.toString());
     }
   }
+
 @override
 Future<Result<BaseResponse>> update(String userToken, String idWorkspace, Meter meter) async {
   try {

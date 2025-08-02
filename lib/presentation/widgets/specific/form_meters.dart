@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/domain/models/meter_model.dart';
+import 'package:frontend_water_quality/infrastructure/maps_repo_impl.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/meter_ubications/search_map.dart';
-import 'package:frontend_water_quality/core/enums/screen_size.dart';
-import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 
 class UbicacionSeleccionada {
@@ -21,8 +20,7 @@ class FormMeters extends StatefulWidget {
   final bool isLoading;
   final String errorMessage;
   final Future<void> Function(Meter meter)? onSave;
-  
-  // Parámetros opcionales para edición
+
   final String? name;
   final double? lat;
   final double? lng;
@@ -36,7 +34,6 @@ class FormMeters extends StatefulWidget {
     required this.isLoading,
     required this.errorMessage,
     this.onSave,
-    // Parámetros opcionales para edición
     this.name,
     this.lat,
     this.lng,
@@ -56,16 +53,32 @@ class _FormMetersState extends State<FormMeters> {
 
   LatLng? selectedLocation;
 
+  Future<void> _cargarNombreLugar(LatLng coords) async {
+    final nombre = await MapsRepoImpl.buscarNombreLugar(coords);
+    if (mounted) {
+      setState(() {
+        _placeNameController.text = nombre;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.name ?? '');
-    _latController = TextEditingController(text: widget.lat?.toStringAsFixed(6) ?? '');
-    _lngController = TextEditingController(text: widget.lng?.toStringAsFixed(6) ?? '');
+    _latController =
+        TextEditingController(text: widget.lat?.toStringAsFixed(6) ?? '');
+    _lngController =
+        TextEditingController(text: widget.lng?.toStringAsFixed(6) ?? '');
     _placeNameController = TextEditingController(text: widget.placeName ?? '');
-    
+
     if (widget.lat != null && widget.lng != null) {
       selectedLocation = LatLng(widget.lat!, widget.lng!);
+    }
+    if (_placeNameController.text.isEmpty &&
+        widget.lat != null &&
+        widget.lng != null) {
+      _cargarNombreLugar(LatLng(widget.lat!, widget.lng!));
     }
   }
 
@@ -120,154 +133,137 @@ class _FormMetersState extends State<FormMeters> {
 
   @override
   Widget build(BuildContext context) {
-    
-    final screenSize = ResponsiveScreenSize.getScreenSize(context);
-    return _builderMain(context, screenSize, widget.title);
-  }
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          Text(
+            widget.title,
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge
+                ?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          TextFormField(
+            controller: _nameController,
+            decoration: const InputDecoration(
+              labelText: "Nombre del medidor",
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "El nombre del medidor es obligatorio";
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 10),
+          TextFormField(
+            controller: _placeNameController,
+            decoration: const InputDecoration(labelText: 'Ubicación'),
+            readOnly: true,
+          ),
+          const SizedBox(height: 10),
+          TextFormField(
+            controller: _latController,
+            decoration: const InputDecoration(labelText: 'Latitud'),
+            readOnly: true,
+          ),
+          const SizedBox(height: 10),
+          TextFormField(
+            controller: _lngController,
+            decoration: const InputDecoration(labelText: 'Longitud'),
+            readOnly: true,
+          ),
+          const SizedBox(height: 10),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.map),
+            label: const Text("Seleccionar ubicación"),
+            onPressed: () async {
+              final result =
+                  await showMapSelectionScreen(context, selectedLocation);
+              if (result != null) {
+                setState(() {
+                  _latController.text =
+                      result.coordenadas.latitude.toStringAsFixed(6);
+                  _lngController.text =
+                      result.coordenadas.longitude.toStringAsFixed(6);
+                  _placeNameController.text = result.nombreLugar;
+                  selectedLocation = result.coordenadas;
+                });
+              }
+            },
+          ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              OutlinedButton(
+                onPressed: () {
+                  _formKey.currentState?.reset();
+                  _nameController.clear();
+                  _latController.clear();
+                  _lngController.clear();
+                  _placeNameController.clear();
+                  setState(() => selectedLocation = null);
+                },
+                child: const Text("Restablecer"),
+              ),
+              ElevatedButton(
+                onPressed: widget.isLoading
+                    ? null
+                    : () async {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          final lat = double.tryParse(_latController.text);
+                          final lng = double.tryParse(_lngController.text);
 
-  Widget _builderMain(
-      BuildContext context, ScreenSize screenSize, String title) {
-    if (screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet) {
-      return BaseContainer(
-        margin: EdgeInsets.all(10),
-        width: double.infinity,
-        height: double.infinity,
-        child: _buildForm(context, screenSize, title),
-      );
-    }
+                          if (lat == null || lng == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text("Ubicación inválida")),
+                            );
+                            return;
+                          }
+                          final location = LatLng(lat, lng);
 
-    return BaseContainer(
-      margin: EdgeInsets.all(widget.idMeter != null ? 0 : 10),
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: _buildForm(context, screenSize, title),
+                          if (widget.onSave != null) {
+                            final meter = Meter(
+                              id: widget.idMeter,
+                              name: _nameController.text.trim(),
+                              location: Location(
+                                lat: location.latitude,
+                                lon: location.longitude,
+                              ),
+                            );
+                            await widget.onSave!(meter);
+
+                            // Limpiar formulario después de guardar/actualizar
+                            setState(() {
+                              _formKey.currentState?.reset();
+                              _nameController.clear();
+                              _latController.clear();
+                              _lngController.clear();
+                              _placeNameController.clear();
+                              selectedLocation = null;
+                            });
+                          }
+                        }
+                      },
+                child: widget.isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : Text(widget.idMeter != null ? "Actualizar" : "Guardar"),
+              ),
+            ],
+          ),
+          if (widget.errorMessage.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Text(
+                widget.errorMessage,
+                style: const TextStyle(color: Colors.red),
+              ),
+            ),
+        ],
       ),
     );
-  }
-
-  Widget _buildForm(BuildContext context, ScreenSize screenSize, String title) {
-    return Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            Text(
-              title,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge
-                  ?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            TextFormField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: "Nombre del medidor",
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return "El nombre del medidor es obligatorio";
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 10),
-            TextFormField(
-              controller: _placeNameController,
-              decoration: const InputDecoration(labelText: 'Ubicación'),
-              readOnly: true,
-            ),
-            const SizedBox(height: 10),
-            TextFormField(
-              controller: _latController,
-              decoration: const InputDecoration(labelText: 'Latitud'),
-              readOnly: true,
-            ),
-            const SizedBox(height: 10),
-            TextFormField(
-              controller: _lngController,
-              decoration: const InputDecoration(labelText: 'Longitud'),
-              readOnly: true,
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.map),
-              label: const Text("Seleccionar ubicación"),
-              onPressed: () async {
-                final result = await showMapSelectionScreen(
-                    context,
-                    selectedLocation);
-                if (result != null) {
-                  setState(() {
-                    _latController.text =
-                        result.coordenadas.latitude.toStringAsFixed(6);
-                    _lngController.text =
-                        result.coordenadas.longitude.toStringAsFixed(6);
-                    _placeNameController.text = result.nombreLugar;
-                    selectedLocation = result.coordenadas;
-                  });
-                }
-              },
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                OutlinedButton(
-                  onPressed: () {
-                    _formKey.currentState?.reset();
-                    _nameController.clear();
-                    _latController.clear();
-                    _lngController.clear();
-                    _placeNameController.clear();
-                    setState(() => selectedLocation = null);
-                  },
-                  child: const Text("Restablecer"),
-                ),
-                ElevatedButton(
-                  onPressed: widget.isLoading
-                      ? null
-                      : () async {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            final lat = double.tryParse(_latController.text);
-                            final lng = double.tryParse(_lngController.text);
-
-                            if (lat == null || lng == null) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text("Ubicación inválida")),
-                              );
-                              return;
-                            }
-                            final location = LatLng(lat, lng);
-
-                            if (widget.onSave != null) {
-                              final meter = Meter(
-                                id: widget.idMeter,
-                                name: _nameController.text.trim(),
-                                location: Location(
-                                  lat: location.latitude,
-                                  lon: location.longitude,
-                                ),
-                              );
-                              await widget.onSave!(meter);
-                            }
-                          }
-                        },
-                  child: widget.isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : Text(widget.idMeter != null ? "Actualizar" : "Guardar"),
-                ),
-                if (widget.errorMessage.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Text(
-                      widget.errorMessage,
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                  ),
-              ],
-            ),
-          ],
-        ),
-      );
   }
 }
