@@ -22,10 +22,13 @@ class ListWorkspace extends StatefulWidget {
 
 class _ListWorkspaceState extends State<ListWorkspace> {
   int currentIndex = 0;
+  ListWorkspaces _type = ListWorkspaces.mine;
 
   @override
   void initState() {
     super.initState();
+
+    _type = widget.type;
 
     switch (widget.type) {
       case ListWorkspaces.mine:
@@ -54,6 +57,9 @@ class _ListWorkspaceState extends State<ListWorkspace> {
         currentIndex = index;
       });
       if (index == 0) {
+        setState(() {
+          _type = ListWorkspaces.mine;
+        });
         context.goNamed(
           Routes.workspaces.name,
           queryParameters: {
@@ -61,6 +67,9 @@ class _ListWorkspaceState extends State<ListWorkspace> {
           },
         );
       } else if (index == 1) {
+        setState(() {
+          _type = ListWorkspaces.shared;
+        });
         context.goNamed(
           Routes.workspaces.name,
           queryParameters: {
@@ -68,6 +77,9 @@ class _ListWorkspaceState extends State<ListWorkspace> {
           },
         );
       } else if (index == 2) {
+        setState(() {
+          _type = ListWorkspaces.all;
+        });
         context.goNamed(
           Routes.workspaces.name,
           queryParameters: {
@@ -102,9 +114,9 @@ class _ListWorkspaceState extends State<ListWorkspace> {
       builder: (context, screenSize) {
         return Consumer<WorkspaceProvider>(
           builder: (context, workspaceProvider, child) {
-            if (widget.type == ListWorkspaces.all) {
+            if (_type == ListWorkspaces.all) {
               return MainGridWorkspaces(
-                type: widget.type,
+                type: _type,
                 screenSize: screenSize,
                 errorMessage: workspaceProvider.errorMessageAll,
                 isLoading: workspaceProvider.isLoadingAll,
@@ -131,9 +143,9 @@ class _ListWorkspaceState extends State<ListWorkspace> {
               );
             }
 
-            if (widget.type == ListWorkspaces.shared) {
+            if (_type == ListWorkspaces.shared) {
               return MainGridWorkspaces(
-                type: widget.type,
+                type: _type,
                 screenSize: screenSize,
                 isLoading: workspaceProvider.isLoadingShared,
                 errorMessage: workspaceProvider.errorMessageShared,
@@ -161,7 +173,7 @@ class _ListWorkspaceState extends State<ListWorkspace> {
             }
 
             return MainGridWorkspaces(
-              type: widget.type,
+              type: _type,
               screenSize: screenSize,
               isLoading: workspaceProvider.isLoading,
               errorMessage: workspaceProvider.errorMessage,
