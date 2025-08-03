@@ -3,7 +3,7 @@ import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/domain/models/guests.dart';
 import 'package:frontend_water_quality/presentation/providers/guest_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
-import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
+import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -54,10 +54,13 @@ class _FormInviteGuestPageState extends State<FormInviteGuestPage> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = ResponsiveScreenSize.getScreenSize(context);
+    final String title = _isEditMode ? "Editar invitado" : "Crear invitado";
     
-    return Scaffold(
-      body: _buildMain(context, screenSize),
+    return Layout(
+      title: title,
+      builder: (context, screenSize) {
+        return _buildMain(context, screenSize);
+      },
     );
   }
 
@@ -72,7 +75,7 @@ class _FormInviteGuestPageState extends State<FormInviteGuestPage> {
     }
 
     return BaseContainer(
-      margin: const EdgeInsets.all(0),
+      margin: const EdgeInsets.all(10),
       child: Align(
         alignment: Alignment.topCenter,
         child: _buildForm(context, screenSize),
@@ -89,22 +92,19 @@ class _FormInviteGuestPageState extends State<FormInviteGuestPage> {
       child: Form(
         key: _formKey,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Título
             Text(
               _isEditMode ? 'Detalles del Invitado' : 'Agregar Invitado',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
-              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 32),
-            
-            // Email field
+            const SizedBox(height: 10),
+            // Campo de email
             TextFormField(
               controller: _emailController,
-              enabled: true, // Siempre editable
+              enabled: true, // Always editable
               decoration: const InputDecoration(
                 labelText: 'Correo electrónico',
                 hintText: 'ejemplo@correo.com',
@@ -114,17 +114,16 @@ class _FormInviteGuestPageState extends State<FormInviteGuestPage> {
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Por favor ingresa un correo electrónico';
+                  return 'El correo electrónico es obligatorio';
                 }
-                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                  return 'Por favor ingresa un correo electrónico válido';
+                if (!value.contains('@')) {
+                  return 'Ingrese un correo electrónico válido';
                 }
                 return null;
               },
             ),
-            const SizedBox(height: 16),
-            
-            // Role field
+            const SizedBox(height: 10),
+            // Campo de rol
             DropdownButtonFormField<String>(
               value: _selectedRole,
               decoration: const InputDecoration(
@@ -147,63 +146,45 @@ class _FormInviteGuestPageState extends State<FormInviteGuestPage> {
               },
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Por favor selecciona un rol';
+                  return 'El rol es obligatorio';
                 }
                 return null;
               },
             ),
-            const SizedBox(height: 32),
-            
-            // Buttons
+            const SizedBox(height: 20),
+            // Botones
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: _isLoading ? null : () => context.pop(),
-                    child: const Text('Cancelar'),
-                  ),
+                OutlinedButton(
+                  onPressed: _isLoading ? null : () => context.pop(),
+                  child: const Text('Cancelar'),
                 ),
-                const SizedBox(width: 16),
-                if (!_isEditMode) // Solo mostrar botón de invitar en modo agregar
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _inviteGuest,
-                      child: _isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text('Invitar'),
-                    ),
+                if (!_isEditMode)
+                  ElevatedButton(
+                    onPressed: _isLoading ? null : _inviteGuest,
+                    child: _isLoading
+                        ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                        : const Text('Invitar'),
                   ),
                 if (_isEditMode) ...[
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _saveChanges,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xff145c57),
-                        foregroundColor: Colors.white,
-                      ),
-                      child: _isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                            )
-                          : const Text('Guardar'),
+                  ElevatedButton(
+                    onPressed: _isLoading ? null : _saveChanges,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xff145c57),
+                      foregroundColor: Colors.white,
                     ),
+                    child: _isLoading
+                        ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                        : const Text('Guardar'),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _deleteGuest,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red[600],
-                        foregroundColor: Colors.white,
-                      ),
-                      child: const Text('Eliminar'),
+                  ElevatedButton(
+                    onPressed: _isLoading ? null : _deleteGuest,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red[600],
+                      foregroundColor: Colors.white,
                     ),
+                    child: const Text('Eliminar'),
                   ),
                 ],
               ],
