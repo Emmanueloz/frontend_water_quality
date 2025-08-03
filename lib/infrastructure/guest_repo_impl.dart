@@ -108,7 +108,28 @@ class GuestRepositoryImpl implements GuestRepository {
       print('Invite response data: ${response.data}');
 
       if (response.statusCode == 201 || response.statusCode == 200) {
-        final guest = Guest.fromJson(response.data);
+        // Manejar diferentes formatos de respuesta
+        Map<String, dynamic> guestData;
+        
+        if (response.data is Map<String, dynamic>) {
+          final data = response.data as Map<String, dynamic>;
+          
+          // Si la respuesta tiene un campo 'guest', usar ese
+          if (data.containsKey('guest') && data['guest'] is Map<String, dynamic>) {
+            guestData = data['guest'] as Map<String, dynamic>;
+            print('Found guest data in response.guest');
+          } else {
+            // Si no, usar toda la respuesta
+            guestData = data;
+            print('Using entire response as guest data');
+          }
+        } else {
+          print('Unexpected response format: ${response.data.runtimeType}');
+          return Result.failure('Formato de respuesta no válido');
+        }
+        
+        final guest = Guest.fromJson(guestData);
+        print('Parsed invited guest: $guest');
         return Result.success(guest);
       }
 
@@ -141,7 +162,28 @@ class GuestRepositoryImpl implements GuestRepository {
       print('Update response data: ${response.data}');
 
       if (response.statusCode == 200) {
-        final guest = Guest.fromJson(response.data);
+        // Manejar diferentes formatos de respuesta
+        Map<String, dynamic> guestData;
+        
+        if (response.data is Map<String, dynamic>) {
+          final data = response.data as Map<String, dynamic>;
+          
+          // Si la respuesta tiene un campo 'guest', usar ese
+          if (data.containsKey('guest') && data['guest'] is Map<String, dynamic>) {
+            guestData = data['guest'] as Map<String, dynamic>;
+            print('Found guest data in response.guest');
+          } else {
+            // Si no, usar toda la respuesta
+            guestData = data;
+            print('Using entire response as guest data');
+          }
+        } else {
+          print('Unexpected response format: ${response.data.runtimeType}');
+          return Result.failure('Formato de respuesta no válido');
+        }
+        
+        final guest = Guest.fromJson(guestData);
+        print('Parsed updated guest: $guest');
         return Result.success(guest);
       }
 

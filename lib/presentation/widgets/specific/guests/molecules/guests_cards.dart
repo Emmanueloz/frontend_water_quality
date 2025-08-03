@@ -56,6 +56,17 @@ class GuestCard extends StatelessWidget {
   }
 
   void _showGuestDetails(BuildContext context) {
+    // Validar que el guestId no esté vacío
+    if (guest.id.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error: ID de invitado no válido'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    
     context.goNamed(
       Routes.editGuest.name,
       pathParameters: {

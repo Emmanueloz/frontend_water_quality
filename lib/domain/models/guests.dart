@@ -37,13 +37,15 @@ class Guest {
       final lastName = json['last_name'] ?? json['lastName'] ?? '';
       
       if (firstName.isNotEmpty || lastName.isNotEmpty) {
-        return '$firstName $lastName'.trim();
+        final fullName = '$firstName $lastName'.trim();
+        return fullName;
       }
       
       // Si no hay nombre, usar el email como fallback
       final email = getStringValue('email');
       if (email.isNotEmpty) {
-        return email.split('@').first; // Usar la parte antes del @ del email
+        final emailName = email.split('@').first;
+        return emailName;
       }
       
       return 'Sin nombre';
@@ -74,6 +76,12 @@ class Guest {
         }
       }
       
+      // Si no encuentra ID, intentar usar el email como identificador temporal
+      final email = getStringValue('email');
+      if (email.isNotEmpty) {
+        return email; // Usar email como ID temporal
+      }
+      
       return ''; // ID vacío si no se encuentra
     }
 
@@ -82,7 +90,7 @@ class Guest {
       name: getName(),
       email: getStringValue('email'),
       role: getRole(),
-      );
+    );
   }
 
   Map<String, dynamic> toJson() => {

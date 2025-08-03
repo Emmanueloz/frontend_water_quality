@@ -157,13 +157,10 @@ class GuestProvider with ChangeNotifier {
       print('GuestProvider: updateGuestRole result isSuccess=${result.isSuccess}');
       
       if (result.isSuccess) {
-        // Actualizar el invitado en la lista local
-        final index = _guests.indexWhere((guest) => guest.id == guestId);
-        if (index != -1) {
-          _guests[index] = result.value!;
-          notifyListeners();
-        }
-        print('GuestProvider: updateGuestRole success');
+        // Recargar la lista de invitados después de actualizar
+        _recharge = true;
+        await loadGuests(workspaceId);
+        print('GuestProvider: updateGuestRole success, reloaded guests');
       } else {
         _errorMessage = result.message;
         print('GuestProvider: updateGuestRole failed: ${result.message}');
@@ -196,10 +193,10 @@ class GuestProvider with ChangeNotifier {
       print('GuestProvider: deleteGuest result isSuccess=${result.isSuccess}');
       
       if (result.isSuccess) {
-        // Remover el invitado de la lista local
-        _guests.removeWhere((guest) => guest.id == guestId);
-        notifyListeners();
-        print('GuestProvider: deleteGuest success');
+        // Recargar la lista de invitados después de eliminar
+        _recharge = true;
+        await loadGuests(workspaceId);
+        print('GuestProvider: deleteGuest success, reloaded guests');
       } else {
         _errorMessage = result.message;
         print('GuestProvider: deleteGuest failed: ${result.message}');
