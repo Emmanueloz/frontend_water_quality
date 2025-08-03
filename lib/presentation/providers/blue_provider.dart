@@ -8,6 +8,7 @@ class BlueProvider with ChangeNotifier {
   final BLEService? _bleService;
   bool _isScanning = false;
   bool _isConnected = false;
+  bool _isConnecting = false;
   List<BluetoothDevice> _devices = [];
   StreamSubscription<List<ScanResult>>? _scanSubscription;
   BluetoothDevice? _connectedDevice;
@@ -18,6 +19,7 @@ class BlueProvider with ChangeNotifier {
 
   bool get isScanning => _isScanning;
   bool get isConnected => _isConnected;
+  bool get isConnecting => _isConnecting;
   List<BluetoothDevice> get devices => List.unmodifiable(_devices);
   BluetoothDevice? get connectedDevice => _connectedDevice;
   MeterSetup? get currentMeterSetup => _currentMeterSetup;
@@ -43,32 +45,43 @@ class BlueProvider with ChangeNotifier {
         },
       );
     } catch (e) {
+      print(e.toString());
       _isScanning = false;
       notifyListeners();
-      rethrow;
     }
   }
 
   Future<void> connectToDevice(BluetoothDevice device) async {
     try {
+      _isConnecting = true;
       _connectedDevice = device;
-      await device.connect(autoConnect: false);
-      _isConnected = true;
       _isScanning = false;
       notifyListeners();
-      await sendMessage("getConfig");
-      _isConnected = true;
+      await device.connect(autoConnect: false);
 
       // Setup message listener
       await _bleService?.setupConnection(device, (data) {
         _callbackMessage(String.fromCharCodes(data));
       });
-
+      _isConnected = true;
+      _isConnecting = false;
       notifyListeners();
+
+      await sendMessage("getConfig");
     } catch (e) {
+      _isConnected = false;
+      _isConnecting = false;
+      notifyListeners();
       print(e.toString());
-      rethrow;
+      //rethrow;
     }
+  }
+
+  void cancelConnect() {
+    _isConnecting = false;
+    _isConnected = false;
+    _connectedDevice = null;
+    notifyListeners();
   }
 
   void _callbackMessage(String data) {

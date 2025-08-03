@@ -205,6 +205,7 @@ class BLEService {
         }
       });
     } catch (e) {
+      print(e);
       await stopScan();
       rethrow;
     }

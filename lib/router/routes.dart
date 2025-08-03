@@ -100,7 +100,7 @@ class Routes {
 
   static RouteProperties connectionMeterDevice = RouteProperties(
     name: "connectionDevice",
-    path: "meter/:idMeter/connection/device",
+    path: "/device",
   );
 
   static RouteProperties updateMeter = RouteProperties(

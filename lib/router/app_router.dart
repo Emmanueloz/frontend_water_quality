@@ -164,43 +164,47 @@ class AppRouter {
                         },
                       ),
                       GoRoute(
-                        path: Routes.connectionMeter.path,
-                        name: Routes.connectionMeter.name,
-                        redirect: (context, state) {
-                          if (kIsWeb) {
-                            return '/404';
-                          }
-                          return null;
-                        },
-                        builder: (context, state) {
-                          final id = state.pathParameters['id'] ?? 'default';
-                          final idMeter =
-                              state.pathParameters['idMeter'] ?? 'default';
-                          return ConnectionMeterPage(
-                            id: id,
-                            idMeter: idMeter,
-                          );
-                        },
-                      ),
-                      GoRoute(
-                        path: Routes.connectionMeterDevice.path,
-                        name: Routes.connectionMeterDevice.name,
-                        redirect: (context, state) {
-                          if (kIsWeb) {
-                            return '/404';
-                          }
-                          return null;
-                        },
-                        builder: (context, state) {
-                          final id = state.pathParameters['id'] ?? 'default';
-                          final idMeter =
-                              state.pathParameters['idMeter'] ?? 'default';
-                          return DeviceMeter(
-                            id: id,
-                            idMeter: idMeter,
-                          );
-                        },
-                      ),
+                          path: Routes.connectionMeter.path,
+                          name: Routes.connectionMeter.name,
+                          redirect: (context, state) {
+                            if (kIsWeb) {
+                              return '/404';
+                            }
+                            return null;
+                          },
+                          builder: (context, state) {
+                            final id = state.pathParameters['id'] ?? 'default';
+                            final idMeter =
+                                state.pathParameters['idMeter'] ?? 'default';
+                            return ConnectionMeterPage(
+                              id: id,
+                              idMeter: idMeter,
+                            );
+                          },
+                          routes: [
+                            GoRoute(
+                              parentNavigatorKey: rootNavigatorKey,
+                              path: Routes.connectionMeterDevice.path,
+                              name: Routes.connectionMeterDevice.name,
+                              redirect: (context, state) {
+                                if (kIsWeb) {
+                                  return '/404';
+                                }
+                                return null;
+                              },
+                              builder: (context, state) {
+                                final id =
+                                    state.pathParameters['id'] ?? 'default';
+                                final idMeter =
+                                    state.pathParameters['idMeter'] ??
+                                        'default';
+                                return DeviceMeter(
+                                  id: id,
+                                  idMeter: idMeter,
+                                );
+                              },
+                            ),
+                          ]),
                       GoRoute(
                         path: Routes.weather.path,
                         name: Routes.weather.name,
