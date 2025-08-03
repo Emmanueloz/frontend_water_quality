@@ -33,7 +33,6 @@ class _LayoutMetersState extends State<LayoutMeters> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      print("Fetching meter with id: ${widget.idMeter}");
       Provider.of<MeterProvider>(context, listen: false)
           .fetchMeter(widget.id, widget.idMeter);
     });

@@ -19,15 +19,15 @@ class ListMeter extends StatefulWidget {
 class _ListMeterState extends State<ListMeter> {
   int currentIndex = 0;
 
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<MeterProvider>(context, listen: false)
-          .fetchMeters(widget.idWorkspace);
-    });
-  }
+@override
+void initState() {
+  super.initState();
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    final meterProvider = Provider.of<MeterProvider>(context, listen: false);
+    meterProvider.recharge = true;
+    meterProvider.fetchMeters(widget.idWorkspace);
+  });
+}
 
   @override
   Widget build(BuildContext context) {
