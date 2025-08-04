@@ -70,9 +70,9 @@ void main() async {
               previousGuestProvider.setAuthProvider(authProvider);
               previousGuestProvider.clean();
             }
-            return previousGuestProvider ?? GuestProvider(guestRepo, authProvider);
+            return previousGuestProvider ??
+                GuestProvider(guestRepo, authProvider);
           },
-        ),
         ),
         ChangeNotifierProxyProvider<AuthProvider, MeterRecordProvider>(
           create: (context) => MeterRecordProvider(
