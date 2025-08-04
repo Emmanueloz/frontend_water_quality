@@ -154,10 +154,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_map_cancellable_tile_provider
-      sha256: "801760c104a3cfd9268cda7c9b1241223247e8182613a7e060ef4ffc0d825ac8"
+      sha256: "582df422f65c68216fcbc8f2d2c335ff3e8a014d9815382cfdde23ef772b4fb0"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.0"
+    version: "3.1.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -276,10 +276,10 @@ packages:
     dependency: transitive
     description:
       name: logger
-      sha256: be4b23575aac7ebf01f225a241eb7f6b5641eeaf43c6a8613510fc2f8cf187d1
+      sha256: "2621da01aabaf223f8f961e751f2c943dbb374dc3559b982f200ccedadaa6999"
       url: "https://pub.dev"
     source: hosted
-    version: "2.5.0"
+    version: "2.6.0"
   logging:
     dependency: transitive
     description:
@@ -436,10 +436,10 @@ packages:
     dependency: transitive
     description:
       name: rikulo_commons
-      sha256: "003fdbe489d5d36bbcd17449eb75f21ce4e780dba449dc160a57ea5e3da44f0c"
+      sha256: "2526c1d2931c98ec1076e4b3e905224c8e6a5937948c0513eecb1712857d4a23"
       url: "https://pub.dev"
     source: hosted
-    version: "6.2.0+1"
+    version: "7.0.0"
   sky_engine:
     dependency: transitive
     description: flutter
