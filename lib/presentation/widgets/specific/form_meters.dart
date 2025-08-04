@@ -62,25 +62,28 @@ class _FormMetersState extends State<FormMeters> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _nameController = TextEditingController(text: widget.name ?? '');
-    _latController =
-        TextEditingController(text: widget.lat?.toStringAsFixed(6) ?? '');
-    _lngController =
-        TextEditingController(text: widget.lng?.toStringAsFixed(6) ?? '');
-    _placeNameController = TextEditingController(text: widget.placeName ?? '');
+@override
+void initState() {
+  super.initState();
+  _nameController = TextEditingController();
+  _latController = TextEditingController();
+  _lngController = TextEditingController();
+  _placeNameController = TextEditingController();
 
-    if (widget.lat != null && widget.lng != null) {
-      selectedLocation = LatLng(widget.lat!, widget.lng!);
-    }
-    if (_placeNameController.text.isEmpty &&
-        widget.lat != null &&
-        widget.lng != null) {
-      _cargarNombreLugar(LatLng(widget.lat!, widget.lng!));
+  // Rellenar solo si hay datos iniciales
+  if (widget.name != null) _nameController.text = widget.name!;
+  if (widget.lat != null) _latController.text = widget.lat!.toStringAsFixed(6);
+  if (widget.lng != null) _lngController.text = widget.lng!.toStringAsFixed(6);
+  if (widget.placeName != null) _placeNameController.text = widget.placeName!;
+
+  if (widget.lat != null && widget.lng != null) {
+    selectedLocation = LatLng(widget.lat!, widget.lng!);
+    if (_placeNameController.text.isEmpty) {
+      _cargarNombreLugar(selectedLocation!);
     }
   }
+}
+
 
   @override
   void dispose() {

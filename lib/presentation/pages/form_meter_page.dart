@@ -64,6 +64,9 @@ class FormMeterPage extends StatelessWidget {
       padding: EdgeInsets.all(10),
       child: Consumer<MeterProvider>(
         builder: (context, meterProvider, child) {
+          if (idMeter == null) {
+            meterProvider.clearCurrentMeter();
+          }
           return FormMeters(
             title: title,
             idWorkspace: idWorkspace,

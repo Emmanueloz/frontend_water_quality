@@ -26,6 +26,12 @@ class MeterProvider with ChangeNotifier {
     errorMessageForm = null;
   }
 
+  void clearCurrentMeter() {
+    currentMeter = null;
+    errorMessageForm = null;
+    notifyListeners();
+  }
+
   void setAuthProvider(AuthProvider? provider) {
     _authProvider = provider;
   }
