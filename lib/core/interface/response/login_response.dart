@@ -2,8 +2,8 @@ import 'package:frontend_water_quality/core/interface/response/base_response.dar
 import 'package:frontend_water_quality/domain/models/user.dart';
 
 class LoginResponse extends BaseResponse {
-  User user;
-  String token;
+  User? user;
+  String? token;
 
   LoginResponse({
     required this.user,
@@ -14,7 +14,7 @@ class LoginResponse extends BaseResponse {
 
   @override
   factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
-        user: User.fromJson(json["user"]),
+        user: json["user"] != null ? User.fromJson(json["user"]) : null,
         token: json["token"],
         message: json["message"],
         detail: json["detail"],

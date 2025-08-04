@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
+import 'package:frontend_water_quality/presentation/providers/meter_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
+import 'package:frontend_water_quality/presentation/widgets/layout/layout_skeleton.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class LayoutMeters extends StatefulWidget {
   final String title;
@@ -25,6 +28,15 @@ class LayoutMeters extends StatefulWidget {
 
 class _LayoutMetersState extends State<LayoutMeters> {
   int currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<MeterProvider>(context, listen: false)
+          .fetchMeter(widget.id, widget.idMeter);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,48 +105,70 @@ class _LayoutMetersState extends State<LayoutMeters> {
       });
     }
 
-    return Layout(
-      title: widget.title,
-      selectedIndex: currentIndex,
-      onDestinationSelected: onDestinationSelected,
-      destinations: [
-        NavigationItem(
-          label: "Monitoreo",
-          icon: Icons.speed_outlined,
-          selectedIcon: Icons.speed_rounded,
-        ),
-        NavigationItem(
-          label: "Registros",
-          icon: Icons.line_axis_outlined,
-          selectedIcon: Icons.line_axis,
-        ),
-        NavigationItem(
-          label: "Predicciones",
-          icon: Icons.analytics_outlined,
-          selectedIcon: Icons.analytics,
-        ),
-        NavigationItem(
-          label: "Interpretación",
-          icon: Icons.auto_awesome_outlined,
-          selectedIcon: Icons.auto_awesome,
-        ),
-        NavigationItem(
-          label: "Conección",
-          icon: Icons.wifi_tethering_outlined,
-          selectedIcon: Icons.wifi_tethering,
-        ),
-        NavigationItem(
-          label: "Climan",
-          icon: Icons.cloud_outlined,
-          selectedIcon: Icons.cloudy_snowing,
-        ),
-        NavigationItem(
-          label: "Editar",
-          icon: Icons.edit_outlined,
-          selectedIcon: Icons.edit,
-        ),
-      ],
-      builder: (context, screenSize) => widget.builder(context, screenSize),
+    return Consumer<MeterProvider>(
+      builder: (context, meterProvider, child) {
+        if (meterProvider.isLoading) {
+          return const LayoutSkeleton();
+        }
+        print("Current meter: ${meterProvider.currentMeter}");
+
+        if (!meterProvider.isLoading && meterProvider.currentMeter == null) {
+          // Esto dispara el error 404 automático de GoRouter
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!meterProvider.isLoading) {
+              GoRouter.of(context).go('/404');
+            }
+          });
+          return const SizedBox.shrink();
+        }
+
+        return Layout(
+          title: meterProvider.isLoading
+              ? "Cargando..."
+              : meterProvider.currentMeter?.name ?? 
+              "Medidor no encontrado",
+          selectedIndex: currentIndex,
+          onDestinationSelected: onDestinationSelected,
+          destinations: [
+            NavigationItem(
+              label: "Monitoreo",
+              icon: Icons.speed_outlined,
+              selectedIcon: Icons.speed_rounded,
+            ),
+            NavigationItem(
+              label: "Registros",
+              icon: Icons.line_axis_outlined,
+              selectedIcon: Icons.line_axis,
+            ),
+            NavigationItem(
+              label: "Predicciones",
+              icon: Icons.analytics_outlined,
+              selectedIcon: Icons.analytics,
+            ),
+            NavigationItem(
+              label: "Interpretación",
+              icon: Icons.auto_awesome_outlined,
+              selectedIcon: Icons.auto_awesome,
+            ),
+            NavigationItem(
+              label: "Conexión",
+              icon: Icons.wifi_tethering_outlined,
+              selectedIcon: Icons.wifi_tethering,
+            ),
+            NavigationItem(
+              label: "Climan",
+              icon: Icons.cloud_outlined,
+              selectedIcon: Icons.cloudy_snowing,
+            ),
+            NavigationItem(
+              label: "Editar",
+              icon: Icons.edit_outlined,
+              selectedIcon: Icons.edit,
+            ),
+          ],
+          builder: (context, screenSize) => widget.builder(context, screenSize),
+        );
+      },
     );
   }
 }

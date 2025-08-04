@@ -5,10 +5,14 @@ import 'package:frontend_water_quality/infrastructure/dio_provider.dart';
 import 'package:frontend_water_quality/infrastructure/meter_records_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/meter_socket_service.dart';
 import 'package:frontend_water_quality/infrastructure/weather_meter_repo_impl.dart';
+import 'package:frontend_water_quality/infrastructure/guest_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/workspace_repo_impl.dart';
+import 'package:frontend_water_quality/infrastructure/meter_repo_impl.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/weather_meter_provider.dart';
+import 'package:frontend_water_quality/presentation/providers/guest_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/workspace_provider.dart';
+import 'package:frontend_water_quality/presentation/providers/meter_provider.dart';
 import 'package:frontend_water_quality/router/app_router.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_record_provider.dart';
@@ -22,6 +26,8 @@ void main() async {
   final WeatherMeterRepoImpl weatherMeterRepo = WeatherMeterRepoImpl(dio);
   final MeterSocketService meterSocketService = MeterSocketService();
   final MeterRecordsRepoImpl meterRecordsRepo = MeterRecordsRepoImpl(dio);
+  final MeterRepoImpl meterRepo = MeterRepoImpl(dio);
+  final GuestRepositoryImpl guestRepo = GuestRepositoryImpl(dio);
   await authProvider.loadSettings();
 
   runApp(
@@ -39,6 +45,34 @@ void main() async {
             workspaceProvider!.clean();
             return workspaceProvider..setAuthProvider(authProvider);
           },
+        ),
+        ChangeNotifierProxyProvider<AuthProvider, MeterProvider>(
+          create: (context) => MeterProvider(
+            meterRepo,
+            context.read<AuthProvider>(),
+          ),
+          update: (context, authProvider, meterProvider) {
+            meterProvider!.clean();
+            return meterProvider..setAuthProvider(authProvider);
+          },
+        ),
+        ChangeNotifierProxyProvider<AuthProvider, GuestProvider>(
+          create: (context) {
+            final authProvider = context.read<AuthProvider>();
+            final guestProvider = GuestProvider(
+              guestRepo,
+              authProvider,
+            );
+            return guestProvider;
+          },
+          update: (context, authProvider, previousGuestProvider) {
+            if (previousGuestProvider != null) {
+              previousGuestProvider.setAuthProvider(authProvider);
+              previousGuestProvider.clean();
+            }
+            return previousGuestProvider ?? GuestProvider(guestRepo, authProvider);
+          },
+        ),
         ),
         ChangeNotifierProxyProvider<AuthProvider, MeterRecordProvider>(
           create: (context) => MeterRecordProvider(

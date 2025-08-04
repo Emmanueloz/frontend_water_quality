@@ -17,6 +17,7 @@ class MainGridWorkspaces extends StatelessWidget {
 
   final int itemCount;
   final Widget Function(BuildContext, int) itemBuilder;
+  final void Function()? onRefresh;
 
   const MainGridWorkspaces({
     super.key,
@@ -26,6 +27,7 @@ class MainGridWorkspaces extends StatelessWidget {
     required this.itemCount,
     required this.itemBuilder,
     this.errorMessage,
+    this.onRefresh,
   });
 
   @override
@@ -56,6 +58,10 @@ class MainGridWorkspaces extends StatelessWidget {
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
             actions: [
+              IconButton(
+                onPressed: onRefresh,
+                icon: Icon(Icons.refresh),
+              ),
               if (type == ListWorkspaces.mine)
                 ElevatedButton.icon(
                   onPressed: () {
