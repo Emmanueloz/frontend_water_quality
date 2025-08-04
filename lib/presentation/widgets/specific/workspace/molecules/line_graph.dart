@@ -67,6 +67,7 @@ class _LineGraphState extends State<LineGraph> {
       ),
     );
   }
+
   LineChartData mainData() {
     List<FlSpot> spots = [];
     for (int i = 0; i < widget.data.length; i++) {
@@ -86,7 +87,8 @@ class _LineGraphState extends State<LineGraph> {
               if (index < 0 || index >= widget.dates.length) {
                 return const SizedBox.shrink();
               }
-              return Text(widget.dates[index], style: const TextStyle(fontSize: 10));
+              return Text(widget.dates[index],
+                  style: const TextStyle(fontSize: 10));
             },
           ),
         ),
@@ -96,12 +98,14 @@ class _LineGraphState extends State<LineGraph> {
             interval: widget.intervalY,
             reservedSize: 35,
             getTitlesWidget: (value, meta) {
-              return Text(value.toStringAsFixed(1), style: const TextStyle(fontSize: 10));
+              return Text(value.toStringAsFixed(1),
+                  style: const TextStyle(fontSize: 10));
             },
           ),
         ),
         topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        rightTitles:
+            const AxisTitles(sideTitles: SideTitles(showTitles: false)),
       ),
       borderData: FlBorderData(show: true),
       minX: 0,
@@ -118,7 +122,8 @@ class _LineGraphState extends State<LineGraph> {
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
-              colors: gradientColors.map((c) => c.withOpacity(0.3)).toList(),
+              colors:
+                  gradientColors.map((c) => c.withValues(alpha: 0.3)).toList(),
             ),
           ),
         ),

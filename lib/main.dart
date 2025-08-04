@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/theme/theme.dart';
 import 'package:frontend_water_quality/infrastructure/auth_repo_impl.dart';
+import 'package:frontend_water_quality/infrastructure/ble_service.dart';
 import 'package:frontend_water_quality/infrastructure/dio_provider.dart';
 import 'package:frontend_water_quality/infrastructure/meter_records_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/meter_socket_service.dart';
@@ -11,6 +12,7 @@ import 'package:frontend_water_quality/infrastructure/meter_repo_impl.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/weather_meter_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/guest_provider.dart';
+import 'package:frontend_water_quality/presentation/providers/blue_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/workspace_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_provider.dart';
 import 'package:frontend_water_quality/router/app_router.dart';
@@ -45,6 +47,11 @@ void main() async {
             workspaceProvider!.clean();
             return workspaceProvider..setAuthProvider(authProvider);
           },
+        ),
+        ChangeNotifierProvider(
+          create: (_) => BlueProvider(
+            BLEService(),
+          ),
         ),
         ChangeNotifierProxyProvider<AuthProvider, MeterProvider>(
           create: (context) => MeterProvider(
