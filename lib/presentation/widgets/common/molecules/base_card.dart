@@ -20,7 +20,7 @@ class BaseCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(8),
           child: Column(
             spacing: 4,
             crossAxisAlignment: CrossAxisAlignment.start,
