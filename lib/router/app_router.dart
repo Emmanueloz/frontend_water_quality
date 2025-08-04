@@ -6,7 +6,6 @@ import 'package:frontend_water_quality/presentation/pages/alerts.dart';
 import 'package:frontend_water_quality/presentation/pages/change_password.dart';
 import 'package:frontend_water_quality/presentation/pages/connection_meter.dart';
 import 'package:frontend_water_quality/presentation/pages/device_meter.dart';
-import 'package:frontend_water_quality/presentation/pages/form_meters.dart';
 import 'package:frontend_water_quality/presentation/pages/form_workspace_page.dart';
 import 'package:frontend_water_quality/presentation/pages/guests.dart';
 import 'package:frontend_water_quality/presentation/pages/list_workspace.dart';
@@ -14,6 +13,7 @@ import 'package:frontend_water_quality/presentation/pages/login.dart';
 import 'package:frontend_water_quality/presentation/pages/recovery_password.dart';
 import 'package:frontend_water_quality/presentation/pages/register.dart';
 import 'package:frontend_water_quality/presentation/pages/profile.dart';
+import 'package:frontend_water_quality/presentation/pages/form_meter_page.dart';
 import 'package:frontend_water_quality/presentation/pages/simple.dart';
 import 'package:frontend_water_quality/presentation/pages/splash.dart';
 import 'package:frontend_water_quality/presentation/pages/view_list_records.dart';
@@ -21,7 +21,7 @@ import 'package:frontend_water_quality/presentation/pages/view_meter.dart';
 import 'package:frontend_water_quality/presentation/pages/view_list_notifications.dart';
 import 'package:frontend_water_quality/presentation/pages/view_meter_ubications.dart';
 import 'package:frontend_water_quality/presentation/pages/view_notification_details.dart';
-import 'package:frontend_water_quality/presentation/pages/view_workspace.dart';
+import 'package:frontend_water_quality/presentation/pages/list_meter.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_meters.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_workspace.dart';
@@ -29,6 +29,9 @@ import 'package:frontend_water_quality/presentation/pages/weather_page.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:frontend_water_quality/presentation/pages/form_invite_guest.dart';
+import 'package:frontend_water_quality/presentation/providers/guest_provider.dart';
+import 'package:frontend_water_quality/domain/models/guests.dart';
 
 class AppRouter {
   static final GlobalKey<NavigatorState> shellMeterNavigatorKey =
@@ -103,7 +106,9 @@ class AppRouter {
                 name: Routes.workspace.name,
                 builder: (context, state) {
                   final id = state.pathParameters['id'] ?? 'default';
-                  return ViewWorkspace(id: id);
+                  return ListMeter(
+                    idWorkspace: id,
+                  );
                 },
                 routes: [
                   GoRoute(
@@ -111,8 +116,8 @@ class AppRouter {
                     path: Routes.createMeter.path,
                     name: Routes.createMeter.name,
                     builder: (context, state) {
-                      return FormMeters(
-                        id: state.pathParameters['id'] ?? 'default',
+                      return FormMeterPage(
+                        idWorkspace: state.pathParameters['id'] ?? 'default',
                       );
                     },
                   ),
@@ -225,7 +230,8 @@ class AppRouter {
                           final id = state.pathParameters['id'] ?? 'default';
                           final idMeter =
                               state.pathParameters['idMeter'] ?? 'default';
-                          return FormMeters(id: id, idMeter: idMeter);
+                          return FormMeterPage(
+                              idWorkspace: id, idMeter: idMeter);
                         },
                       ),
                     ],
@@ -266,6 +272,51 @@ class AppRouter {
                         title: 'Invitados',
                       );
                     },
+                    routes: [
+                      GoRoute(
+                        path: Routes.createGuest.path,
+                        name: Routes.createGuest.name,
+                        parentNavigatorKey: rootNavigatorKey,
+                        builder: (context, state) {
+                          final workspaceId =
+                              state.pathParameters['id'] ?? 'default';
+                          return FormInviteGuestPage(
+                            workspaceId: workspaceId,
+                            workspaceTitle: 'Invitados',
+                          );
+                        },
+                      ),
+                      GoRoute(
+                        path: Routes.editGuest.path,
+                        name: Routes.editGuest.name,
+                        parentNavigatorKey: rootNavigatorKey,
+                        builder: (context, state) {
+                          final workspaceId =
+                              state.pathParameters['id'] ?? 'default';
+                          final guestId = state.pathParameters['guestId'] ?? '';
+
+                          // Obtener el guest del provider
+                          final guestProvider = Provider.of<GuestProvider>(
+                              context,
+                              listen: false);
+                          final guest = guestProvider.guests.firstWhere(
+                            (g) => g.id == guestId,
+                            orElse: () => Guest(
+                              id: guestId,
+                              name: 'Cargando...',
+                              email: '',
+                              role: 'visitor',
+                            ),
+                          );
+
+                          return FormInviteGuestPage(
+                            workspaceId: workspaceId,
+                            workspaceTitle: 'Invitados',
+                            guest: guest.id == guestId ? guest : null,
+                          );
+                        },
+                      ),
+                    ],
                   ),
                   GoRoute(
                     path: Routes.locationMeters.path,

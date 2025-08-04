@@ -4,10 +4,11 @@ import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_co
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/button_actions.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/radial_gauge_meter.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/sensor_color.dart';
+import 'package:provider/provider.dart';
+import 'package:frontend_water_quality/presentation/providers/meter_record_provider.dart';
+import 'package:frontend_water_quality/domain/models/record_models.dart';
 
-/// Widget principal para monitoreo de medidor.
-/// Versión mejorada con funcionalidad completa.
-class MainMeter extends StatelessWidget {
+class MainMeter extends StatefulWidget {
   final String id;
   final String idMeter;
   final ScreenSize screenSize;
@@ -20,19 +21,68 @@ class MainMeter extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    // Simplemente retornar el contenido, el LayoutMeters se encarga del Expanded
-    return _buildMain(context);
+  State<MainMeter> createState() => _MainMeterState();
+}
+
+class _MainMeterState extends State<MainMeter> {
+  MeterRecordProvider? _meterProvider; // Referencia guardada del provider
+  final String baseUrl = 'https://api.aqua-minds.org';
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _meterProvider = Provider.of<MeterRecordProvider>(context, listen: false);
   }
 
-  Widget _buildMain(BuildContext context) {
+  @override
+  void initState() {
+    super.initState();
+    // Nota: No podemos acceder al Provider aquí porque didChangeDependencies
+    // aún no se ha ejecutado. Movemos la suscripción a didChangeDependencies
+    // o usamos un WidgetsBinding.instance.addPostFrameCallback
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_meterProvider != null) {
+        _meterProvider!.subscribeToMeter(
+          baseUrl: baseUrl,
+          idWorkspace: widget.id,
+          idMeter: widget.idMeter,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // Usar la referencia guardada en lugar de acceder al Provider
+    _meterProvider?.unsubscribe();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<MeterRecordProvider>(
+      builder: (context, meterProvider, _) {
+        final record = meterProvider.recordResponse;
+        if (meterProvider.errorMessage != null) {
+          return BaseContainer(
+              child: Center(child: Text(meterProvider.errorMessage!)));
+        }
+        // if (record == null) {
+        //   return const Center(child: CircularProgressIndicator());
+        // }
+        return _buildMain(context, record);
+      },
+    );
+  }
+
+  Widget _buildMain(BuildContext context, RecordResponse? record) {
     EdgeInsetsGeometry margin;
     EdgeInsetsGeometry padding;
     Size meterSize;
     int crossAxisCount;
     double childAspectRatio;
 
-    if (screenSize == ScreenSize.smallDesktop) {
+    if (widget.screenSize == ScreenSize.smallDesktop) {
       margin = const EdgeInsets.all(0);
       padding = const EdgeInsets.symmetric(
         horizontal: 20,
@@ -41,7 +91,7 @@ class MainMeter extends StatelessWidget {
       meterSize = const Size(300, 180);
       crossAxisCount = 3;
       childAspectRatio = 1 / 1.2;
-    } else if (screenSize == ScreenSize.largeDesktop) {
+    } else if (widget.screenSize == ScreenSize.largeDesktop) {
       margin = const EdgeInsets.all(0);
       padding = const EdgeInsets.symmetric(
         horizontal: 20,
@@ -50,7 +100,7 @@ class MainMeter extends StatelessWidget {
       meterSize = const Size(300, 190);
       crossAxisCount = 3;
       childAspectRatio = 1 / 0.70;
-    } else if (screenSize == ScreenSize.tablet) {
+    } else if (widget.screenSize == ScreenSize.tablet) {
       margin = const EdgeInsets.all(10);
       padding = const EdgeInsets.all(12.0);
       meterSize = const Size(300, 240);
@@ -65,16 +115,27 @@ class MainMeter extends StatelessWidget {
       childAspectRatio = 1 / 1.2;
     }
 
+    // Aquí debes mapear los datos recibidos a los valores de los medidores
+    // Ejemplo de cómo podrías hacerlo:
+    final temperature =
+        record?.temperature.value ?? 0; // Valor por defecto si no está presente
+    final ph = record?.ph.value ?? 0;
+    final tds = record?.tds.value ?? 0;
+    final conductivity = record?.conductivity.value ?? 0;
+    final turbidity = record?.turbidity.value ?? 0;
+    final SRColorValue color = record?.color.value ??
+        SRColorValue(r: 111, g: 111, b: 111); // Color por defecto
+
     // Lista de medidores de ejemplo (puedes modificarla para pruebas)
     final List<Widget> meters = [
       SensorColor(
-        red: 48,
-        green: 120,
-        blue: 171,
+        red: color.r,
+        green: color.g,
+        blue: color.b,
       ),
       RadialGaugeMeter(
         sensorType: "Temperatura",
-        value: 54,
+        value: temperature,
         min: 0,
         max: 60,
         interval: 10,
@@ -82,7 +143,7 @@ class MainMeter extends StatelessWidget {
       ),
       RadialGaugeMeter(
         sensorType: "PH",
-        value: 2.4,
+        value: ph,
         min: 0,
         max: 14,
         interval: 1,
@@ -90,7 +151,7 @@ class MainMeter extends StatelessWidget {
       ),
       RadialGaugeMeter(
         sensorType: "Total de sólidos disueltos",
-        value: 7.5,
+        value: tds,
         min: 0,
         max: 10,
         interval: 1,
@@ -98,7 +159,7 @@ class MainMeter extends StatelessWidget {
       ),
       RadialGaugeMeter(
         sensorType: "Conductividad",
-        value: 450,
+        value: conductivity,
         min: 0,
         max: 1000,
         interval: 100,
@@ -106,7 +167,7 @@ class MainMeter extends StatelessWidget {
       ),
       RadialGaugeMeter(
         sensorType: "Turbidez",
-        value: 12,
+        value: turbidity,
         min: 0,
         max: 20,
         interval: 2,
@@ -122,15 +183,14 @@ class MainMeter extends StatelessWidget {
         children: [
           ButtonActions(
             title: Text(
-              "Meter $idMeter",
+              "Meter ${widget.idMeter}",
               style: Theme.of(context)
                   .textTheme
                   .bodyLarge
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
-            actions: [
-            ],
-            screenSize: screenSize,
+            actions: [],
+            screenSize: widget.screenSize,
           ),
           const SizedBox(height: 16),
           // Contenedor con scroll para los medidores

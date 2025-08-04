@@ -73,6 +73,18 @@ class Routes {
     path: "/guests",
   );
 
+  static RouteProperties createGuest = RouteProperties(
+    name: "createGuest",
+    path: "/create",
+    pathRoot: "/guests",
+  );
+
+  static RouteProperties editGuest = RouteProperties(
+    name: "editGuest",
+    path: "/:guestId/edit",
+    pathRoot: "/guests",
+  );
+
   static RouteProperties locationMeters = RouteProperties(
     name: "locationMeters",
     path: "/locations",
