@@ -11,7 +11,7 @@ import 'package:frontend_water_quality/presentation/providers/weather_meter_prov
 import 'package:frontend_water_quality/presentation/providers/workspace_provider.dart';
 import 'package:frontend_water_quality/router/app_router.dart';
 import 'package:provider/provider.dart';
-import 'package:frontend_water_quality/presentation/providers/meter_provider.dart';
+import 'package:frontend_water_quality/presentation/providers/meter_record_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,8 +40,8 @@ void main() async {
             return workspaceProvider..setAuthProvider(authProvider);
           },
         ),
-        ChangeNotifierProxyProvider<AuthProvider, MeterProvider>(
-          create: (context) => MeterProvider(
+        ChangeNotifierProxyProvider<AuthProvider, MeterRecordProvider>(
+          create: (context) => MeterRecordProvider(
             meterSocketService,
             meterRecordsRepo,
             context.read<AuthProvider>(),
@@ -61,7 +61,6 @@ void main() async {
             return weatherMeterProvider..setAuthProvider(authProvider);
           },
         ),
-        
       ],
       child: const MyApp(),
     ),

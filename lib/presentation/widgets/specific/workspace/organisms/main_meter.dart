@@ -5,7 +5,7 @@ import 'package:frontend_water_quality/presentation/widgets/specific/workspace/m
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/radial_gauge_meter.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/sensor_color.dart';
 import 'package:provider/provider.dart';
-import 'package:frontend_water_quality/presentation/providers/meter_provider.dart';
+import 'package:frontend_water_quality/presentation/providers/meter_record_provider.dart';
 import 'package:frontend_water_quality/domain/models/record_models.dart';
 
 class MainMeter extends StatefulWidget {
@@ -25,19 +25,19 @@ class MainMeter extends StatefulWidget {
 }
 
 class _MainMeterState extends State<MainMeter> {
-  MeterProvider? _meterProvider; // Referencia guardada del provider
+  MeterRecordProvider? _meterProvider; // Referencia guardada del provider
   final String baseUrl = 'https://api.aqua-minds.org';
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _meterProvider = Provider.of<MeterProvider>(context, listen: false);
+    _meterProvider = Provider.of<MeterRecordProvider>(context, listen: false);
   }
 
   @override
   void initState() {
     super.initState();
-    // Nota: No podemos acceder al Provider aquí porque didChangeDependencies 
+    // Nota: No podemos acceder al Provider aquí porque didChangeDependencies
     // aún no se ha ejecutado. Movemos la suscripción a didChangeDependencies
     // o usamos un WidgetsBinding.instance.addPostFrameCallback
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -60,11 +60,12 @@ class _MainMeterState extends State<MainMeter> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MeterProvider>(
+    return Consumer<MeterRecordProvider>(
       builder: (context, meterProvider, _) {
         final record = meterProvider.recordResponse;
         if (meterProvider.errorMessage != null) {
-          return BaseContainer(child: Center(child: Text(meterProvider.errorMessage!)));
+          return BaseContainer(
+              child: Center(child: Text(meterProvider.errorMessage!)));
         }
         // if (record == null) {
         //   return const Center(child: CircularProgressIndicator());
@@ -116,12 +117,14 @@ class _MainMeterState extends State<MainMeter> {
 
     // Aquí debes mapear los datos recibidos a los valores de los medidores
     // Ejemplo de cómo podrías hacerlo:
-    final temperature =  record?.temperature.value ?? 0; // Valor por defecto si no está presente
+    final temperature =
+        record?.temperature.value ?? 0; // Valor por defecto si no está presente
     final ph = record?.ph.value ?? 0;
     final tds = record?.tds.value ?? 0;
     final conductivity = record?.conductivity.value ?? 0;
     final turbidity = record?.turbidity.value ?? 0;
-    final SRColorValue color = record?.color.value ?? SRColorValue(r: 111, g: 111, b:  111); // Color por defecto
+    final SRColorValue color = record?.color.value ??
+        SRColorValue(r: 111, g: 111, b: 111); // Color por defecto
 
     // Lista de medidores de ejemplo (puedes modificarla para pruebas)
     final List<Widget> meters = [
@@ -186,8 +189,7 @@ class _MainMeterState extends State<MainMeter> {
                   .bodyLarge
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
-            actions: [
-            ],
+            actions: [],
             screenSize: widget.screenSize,
           ),
           const SizedBox(height: 16),

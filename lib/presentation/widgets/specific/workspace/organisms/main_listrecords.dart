@@ -4,7 +4,7 @@ import 'package:frontend_water_quality/domain/models/meter_records_response.dart
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/line_graph.dart';
 import 'package:provider/provider.dart';
-import 'package:frontend_water_quality/presentation/providers/meter_provider.dart';
+import 'package:frontend_water_quality/presentation/providers/meter_record_provider.dart';
 
 /// Widget principal para listado de registros del medidor.
 /// Versión mejorada con funcionalidad completa.
@@ -25,12 +25,12 @@ class MainListrecords extends StatefulWidget {
 }
 
 class _MainListrecordsState extends State<MainListrecords> {
-  MeterProvider? _meterProvider;
+  MeterRecordProvider? _meterProvider;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _meterProvider = Provider.of<MeterProvider>(context, listen: false);
+    _meterProvider = Provider.of<MeterRecordProvider>(context, listen: false);
   }
 
   @override
@@ -46,7 +46,7 @@ class _MainListrecordsState extends State<MainListrecords> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MeterProvider>(
+    return Consumer<MeterRecordProvider>(
       builder: (context, meterProvider, _) {
         if (meterProvider.isLoading) {
           return BaseContainer(
@@ -145,7 +145,7 @@ class _MainListrecordsState extends State<MainListrecords> {
                       ?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ),
-              Consumer<MeterProvider>(
+              Consumer<MeterRecordProvider>(
                 builder: (context, meterProvider, _) {
                   return IconButton(
                     onPressed: meterProvider.isLoading

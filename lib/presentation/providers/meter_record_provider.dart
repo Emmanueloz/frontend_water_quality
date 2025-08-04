@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/domain/models/meter_records_response.dart';
 import 'package:frontend_water_quality/domain/repositories/meter_records_repo.dart';
@@ -6,7 +5,7 @@ import 'package:frontend_water_quality/infrastructure/meter_socket_service.dart'
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/domain/models/record_models.dart';
 
-class MeterProvider with ChangeNotifier {
+class MeterRecordProvider with ChangeNotifier {
   AuthProvider? _authProvider;
 
   final MeterSocketService _socketService;
@@ -15,12 +14,13 @@ class MeterProvider with ChangeNotifier {
   MeterRecordsResponse? meterRecordsResponse;
   bool isLoading = false;
   String? errorMessage;
-  
+
   String? _currentWorkspaceId;
   String? _currentMeterId;
   bool _recordsLoaded = false;
 
-  MeterProvider(this._socketService, this._meterRecordsRepo, this._authProvider);
+  MeterRecordProvider(
+      this._socketService, this._meterRecordsRepo, this._authProvider);
 
   void setAuthProvider(AuthProvider? provider) {
     _authProvider = provider;
@@ -47,40 +47,42 @@ class MeterProvider with ChangeNotifier {
     errorMessage = null;
   }
 
-  void subscribeToMeter ( {
+  void subscribeToMeter({
     required String baseUrl,
     required String idWorkspace,
     required String idMeter,
-  }) async{
+  }) async {
     if (_authProvider == null || _authProvider!.token == null) {
       errorMessage = "User not authenticated";
       notifyListeners();
       return;
     }
-    try{
+    try {
       await _socketService.connect(
-      baseUrl: baseUrl,
-      token: _authProvider!.token!,
-      idWorkspace: idWorkspace,
-      idMeter: idMeter,
-      onData: (data) {
-        try {
-          recordResponse = RecordResponse.fromJson(data);
-          errorMessage = null;
-        } catch (e) {
-          errorMessage = 'Error parsing data: ';
-        }
-        notifyListeners();
-      },
-    );
-    }catch(e){
+        baseUrl: baseUrl,
+        token: _authProvider!.token!,
+        idWorkspace: idWorkspace,
+        idMeter: idMeter,
+        onData: (data) {
+          try {
+            recordResponse = RecordResponse.fromJson(data);
+            errorMessage = null;
+          } catch (e) {
+            errorMessage = 'Error parsing data: ';
+          }
+          notifyListeners();
+        },
+      );
+    } catch (e) {
       errorMessage = e.toString();
     }
   }
 
   Future<void> fetchMeterRecords(String idWorkspace, String idMeter) async {
     // Verificar si ya tenemos los datos para este medidor
-    if (_recordsLoaded && _currentWorkspaceId == idWorkspace && _currentMeterId == idMeter) {
+    if (_recordsLoaded &&
+        _currentWorkspaceId == idWorkspace &&
+        _currentMeterId == idMeter) {
       return; // Ya tenemos los datos, no recargar
     }
 
@@ -133,4 +135,4 @@ class MeterProvider with ChangeNotifier {
   void unsubscribe() {
     _socketService.disconnect();
   }
-} 
+}
