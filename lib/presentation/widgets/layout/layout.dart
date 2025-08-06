@@ -32,11 +32,8 @@ class Layout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Si no hay builder personalizado, usar layout básico
-    if (builder == null) {
-      return _buildBasicLayout();
-    }
-
     final screenSize = ResponsiveScreenSize.getScreenSize(context);
+
     final hasNavigation = _hasNavigationData();
 
     // Layout para dispositivos móviles y tablets
@@ -60,14 +57,6 @@ class Layout extends StatelessWidget {
     return screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet;
   }
 
-  /// Layout básico sin builder personalizado
-  Widget _buildBasicLayout() {
-    return Scaffold(
-      appBar: AppBarNavigation(title: title),
-      body: body,
-    );
-  }
-
   /// Layout para dispositivos móviles y tablets
   Widget _buildMobileLayout(
       BuildContext context, ScreenSize screenSize, bool hasNavigation) {
@@ -77,7 +66,7 @@ class Layout extends StatelessWidget {
           Provider.of<AuthProvider>(context, listen: false).isAuthenticated
               ? _buildDrawer()
               : null,
-      body: builder!(context, screenSize),
+      body: builder != null ? builder!(context, screenSize) : body,
       bottomNavigationBar:
           hasNavigation ? _buildBottomNavigationBar(context, screenSize) : null,
     );
@@ -87,7 +76,7 @@ class Layout extends StatelessWidget {
   Widget _buildDesktopLayout(BuildContext context, ScreenSize screenSize) {
     return Scaffold(
       appBar: AppBarNavigation(title: title),
-      body: builder!(context, screenSize),
+      body: builder != null ? builder!(context, screenSize) : body,
     );
   }
 
@@ -104,7 +93,7 @@ class Layout extends StatelessWidget {
           children: [
             _buildSidebar(screenSize),
             Expanded(
-              child: builder!(context, screenSize),
+              child: builder != null ? builder!(context, screenSize) : body!,
             ),
           ],
         ),

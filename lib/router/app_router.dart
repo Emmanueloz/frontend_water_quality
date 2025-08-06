@@ -6,6 +6,7 @@ import 'package:frontend_water_quality/presentation/pages/alerts.dart';
 import 'package:frontend_water_quality/presentation/pages/change_password.dart';
 import 'package:frontend_water_quality/presentation/pages/connection_meter.dart';
 import 'package:frontend_water_quality/presentation/pages/device_meter.dart';
+import 'package:frontend_water_quality/presentation/pages/error_page.dart';
 import 'package:frontend_water_quality/presentation/pages/form_workspace_page.dart';
 import 'package:frontend_water_quality/presentation/pages/guests.dart';
 import 'package:frontend_water_quality/presentation/pages/list_workspace.dart';
@@ -381,6 +382,7 @@ class AppRouter {
         },
       )
     ],
+    errorBuilder: (context, state) => ErrorPage(),
     redirect: (context, state) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final List<String> publicRoutes = [

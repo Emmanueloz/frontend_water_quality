@@ -15,6 +15,11 @@ class AppTheme {
       );
 
   static TextTheme get textTheme => const TextTheme(
+        headlineLarge: TextStyle(
+          color: textColor,
+          fontSize: 64,
+          fontWeight: FontWeight.bold,
+        ),
         displayLarge: TextStyle(
           color: textColor,
           fontSize: 32,
