@@ -61,7 +61,7 @@ class _LayoutMetersState extends State<LayoutMeters> {
   @override
   void initState() {
     super.initState();
-    if (defaultTargetPlatform == TargetPlatform.android) {
+    if (defaultTargetPlatform == TargetPlatform.android && !kIsWeb) {
       destinations.add(
         NavigationItem(
           label: "Conección",
