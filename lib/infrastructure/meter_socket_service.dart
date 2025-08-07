@@ -60,7 +60,7 @@ class MeterSocketService {
     Timer(Duration(seconds: 35), () {
       if (!completer.isCompleted) {
         disconnect();
-        completer.completeError('Timeout: No se pudo conectar en 35 segundos');
+        completer.completeError('Revise su conexión a internet');
       }
     });
 

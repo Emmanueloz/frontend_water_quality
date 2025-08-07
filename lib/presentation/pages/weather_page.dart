@@ -42,7 +42,9 @@ class _WeatherPageState extends State<WeatherPage> {
     return Consumer<WeatherMeterProvider>(
       builder: (context, weatherProvider, _) {
         if (weatherProvider.isLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return  BaseContainer(
+            margin: _getMargin(screenSize),
+            child: Center(child: CircularProgressIndicator()));
         }
 
         if (weatherProvider.errorMessage != null) {
@@ -207,5 +209,18 @@ class _WeatherPageState extends State<WeatherPage> {
         ],
       ),
     );
+  }
+  
+  EdgeInsets _getMargin(ScreenSize screenSize) {
+    switch(screenSize){
+      case ScreenSize.mobile:
+        return const EdgeInsets.all(10);
+      case ScreenSize.tablet:
+        return const EdgeInsets.all(10);
+      case ScreenSize.smallDesktop:
+        return const EdgeInsets.all(0);
+      case ScreenSize.largeDesktop:
+        return const EdgeInsets.all(0);
+    }
   }
 }

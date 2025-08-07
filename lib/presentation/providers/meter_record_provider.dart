@@ -13,7 +13,8 @@ class MeterRecordProvider with ChangeNotifier {
   RecordResponse? recordResponse;
   MeterRecordsResponse? meterRecordsResponse;
   bool isLoading = false;
-  String? errorMessage;
+  String? errorMessageSocket;
+  String? errorMessageRecords;
 
   String? _currentWorkspaceId;
   String? _currentMeterId;
@@ -34,7 +35,8 @@ class MeterRecordProvider with ChangeNotifier {
 
   // Método para limpiar solo datos en tiempo real (no registros)
   void cleanRealtimeData() {
-    errorMessage = null;
+    errorMessageSocket = null;
+    errorMessageRecords = null;
     recordResponse = null;
   }
 
@@ -44,7 +46,8 @@ class MeterRecordProvider with ChangeNotifier {
     _currentWorkspaceId = null;
     _currentMeterId = null;
     _recordsLoaded = false;
-    errorMessage = null;
+    errorMessageSocket = null;
+    errorMessageRecords = null;
   }
 
   void subscribeToMeter({
@@ -53,7 +56,7 @@ class MeterRecordProvider with ChangeNotifier {
     required String idMeter,
   }) async {
     if (_authProvider == null || _authProvider!.token == null) {
-      errorMessage = "User not authenticated";
+      errorMessageSocket = "User not authenticated";
       notifyListeners();
       return;
     }
@@ -66,15 +69,15 @@ class MeterRecordProvider with ChangeNotifier {
         onData: (data) {
           try {
             recordResponse = RecordResponse.fromJson(data);
-            errorMessage = null;
+            errorMessageSocket = null;
           } catch (e) {
-            errorMessage = 'Error parsing data: ';
+            errorMessageSocket = 'Error parsing data: ';
           }
           notifyListeners();
         },
       );
     } catch (e) {
-      errorMessage = e.toString();
+      errorMessageSocket = "Error connecting to socket: $e";
     }
   }
 
@@ -87,7 +90,7 @@ class MeterRecordProvider with ChangeNotifier {
     }
 
     if (_authProvider == null || _authProvider!.token == null) {
-      errorMessage = "User not authenticated";
+      errorMessageRecords = "User not authenticated";
       notifyListeners();
       return;
     }
@@ -107,7 +110,7 @@ class MeterRecordProvider with ChangeNotifier {
         idMeter,
       );
       if (!result.isSuccess) {
-        errorMessage = result.message;
+        errorMessageRecords = result.message;
         return;
       }
 
@@ -115,9 +118,9 @@ class MeterRecordProvider with ChangeNotifier {
       _currentWorkspaceId = idWorkspace;
       _currentMeterId = idMeter;
       _recordsLoaded = true;
-      errorMessage = null;
+      errorMessageRecords = null;
     } catch (e) {
-      errorMessage = e.toString();
+      errorMessageRecords = e.toString();
     } finally {
       isLoading = false;
       notifyListeners();

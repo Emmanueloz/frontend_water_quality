@@ -50,11 +50,13 @@ class _MainListrecordsState extends State<MainListrecords> {
       builder: (context, meterProvider, _) {
         if (meterProvider.isLoading) {
           return BaseContainer(
+              margin: _getMargin(),
               child: const Center(child: CircularProgressIndicator()));
         }
 
-        if (meterProvider.errorMessage != null) {
+        if (meterProvider.errorMessageRecords != null) {
           return BaseContainer(
+            margin: _getMargin(),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -64,7 +66,7 @@ class _MainListrecordsState extends State<MainListrecords> {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 8),
-                  Text(meterProvider.errorMessage!),
+                  Text(meterProvider.errorMessageRecords!),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => meterProvider.fetchMeterRecords(
@@ -353,5 +355,18 @@ class _MainListrecordsState extends State<MainListrecords> {
     final month = dateTime.month.toString().padLeft(2, '0');
 
     return '$day/$month';
+  }
+
+  EdgeInsets _getMargin() {
+    switch (widget.screenSize) {
+      case ScreenSize.mobile:
+        return const EdgeInsets.all(10);
+      case ScreenSize.tablet:
+        return const EdgeInsets.all(10);
+      case ScreenSize.smallDesktop:
+        return const EdgeInsets.all(0);
+      case ScreenSize.largeDesktop:
+        return const EdgeInsets.all(0);
+    }
   }
 }
