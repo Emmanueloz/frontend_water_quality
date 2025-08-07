@@ -136,7 +136,9 @@ void initState() {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
+    
+    return SingleChildScrollView(
+      child: Form(
       key: _formKey,
       child: Column(
         children: [
@@ -267,6 +269,7 @@ void initState() {
             ),
         ],
       ),
-    );
+    ),
+  );
   }
 }
