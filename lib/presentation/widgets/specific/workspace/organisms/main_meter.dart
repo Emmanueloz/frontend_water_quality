@@ -63,10 +63,10 @@ class _MainMeterState extends State<MainMeter> {
     return Consumer<MeterRecordProvider>(
       builder: (context, meterProvider, _) {
         final record = meterProvider.recordResponse;
-        if (meterProvider.errorMessage != null) {
+        if (meterProvider.errorMessageSocket != null) {
           return BaseContainer(
               margin: _getMargin(),
-              child: Center(child: Text(meterProvider.errorMessage!)));
+              child: Center(child: Text(meterProvider.errorMessageSocket!)));
         }
         // if (record == null) {
         //   return const Center(child: CircularProgressIndicator());

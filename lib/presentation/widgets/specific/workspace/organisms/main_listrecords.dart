@@ -54,7 +54,7 @@ class _MainListrecordsState extends State<MainListrecords> {
               child: const Center(child: CircularProgressIndicator()));
         }
 
-        if (meterProvider.errorMessage != null) {
+        if (meterProvider.errorMessageRecords != null) {
           return BaseContainer(
             child: Center(
               child: Column(
@@ -65,7 +65,7 @@ class _MainListrecordsState extends State<MainListrecords> {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 8),
-                  Text(meterProvider.errorMessage!),
+                  Text(meterProvider.errorMessageRecords!),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => meterProvider.fetchMeterRecords(
