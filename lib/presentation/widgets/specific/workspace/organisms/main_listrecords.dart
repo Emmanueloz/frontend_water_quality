@@ -56,6 +56,7 @@ class _MainListrecordsState extends State<MainListrecords> {
 
         if (meterProvider.errorMessageRecords != null) {
           return BaseContainer(
+            margin: _getMargin(),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
