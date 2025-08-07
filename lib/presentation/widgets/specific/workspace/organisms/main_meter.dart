@@ -65,6 +65,7 @@ class _MainMeterState extends State<MainMeter> {
         final record = meterProvider.recordResponse;
         if (meterProvider.errorMessage != null) {
           return BaseContainer(
+              margin: _getMargin(),
               child: Center(child: Text(meterProvider.errorMessage!)));
         }
         // if (record == null) {
@@ -211,5 +212,18 @@ class _MainMeterState extends State<MainMeter> {
         ],
       ),
     );
+  }
+
+  EdgeInsets _getMargin() {
+    switch (widget.screenSize) {
+      case ScreenSize.mobile:
+        return const EdgeInsets.all(10);
+      case ScreenSize.tablet:
+        return const EdgeInsets.all(10);
+      case ScreenSize.smallDesktop:
+        return const EdgeInsets.all(0);
+      case ScreenSize.largeDesktop:
+        return const EdgeInsets.all(0);
+    }
   }
 }
