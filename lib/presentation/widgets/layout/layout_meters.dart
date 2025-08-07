@@ -152,7 +152,10 @@ class _LayoutMetersState extends State<LayoutMeters> {
         }
 
         return Layout(
-          title: widget.title,
+          title: meterProvider.isLoading
+              ? "Cargando..."
+              : meterProvider.currentMeter?.name ??
+                  "Medidor no encontrado",
           selectedIndex: currentIndex,
           onDestinationSelected: onDestinationSelected,
           destinations: destinations,
