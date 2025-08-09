@@ -13,6 +13,7 @@ class MeterRecordProvider with ChangeNotifier {
   RecordResponse? recordResponse;
   MeterRecordsResponse? meterRecordsResponse;
   bool isLoading = false;
+  bool? isSuccessSocketConnect;
   String? errorMessageSocket;
   String? errorMessageRecords;
 
@@ -29,6 +30,7 @@ class MeterRecordProvider with ChangeNotifier {
 
   void clean() {
     recordResponse = null;
+    isSuccessSocketConnect = null;
     // Limpiar registros también cuando se hace clean general
     cleanRecords();
   }
@@ -71,13 +73,13 @@ class MeterRecordProvider with ChangeNotifier {
             recordResponse = RecordResponse.fromJson(data);
             errorMessageSocket = null;
           } catch (e) {
-            errorMessageSocket = 'Error parsing data: ';
+            errorMessageSocket = 'Error al procesar datos';
           }
           notifyListeners();
         },
       );
     } catch (e) {
-      errorMessageSocket = "Error connecting to socket: $e";
+      errorMessageSocket = "Error al conectar al servidor: ${e.toString()}";
     }
   }
 
