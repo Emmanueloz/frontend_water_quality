@@ -17,7 +17,6 @@ class SensorColor extends StatelessWidget {
     return SensorContainer(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
-        spacing: 10,
         children: [
           Text(
             "Color del agua",

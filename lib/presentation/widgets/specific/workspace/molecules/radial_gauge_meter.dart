@@ -33,7 +33,6 @@ class RadialGaugeMeter extends StatelessWidget {
     return SensorContainer(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
-        spacing: 10,
         children: [
           Text(
             sensorType,
@@ -42,7 +41,6 @@ class RadialGaugeMeter extends StatelessWidget {
               fontSize: 16,
             ),
           ),
-          const SizedBox(height: 5),
           Expanded(
             child: GxRadialGauge(
               showValueAtCenter: false,

@@ -66,7 +66,8 @@ class _MainMeterState extends State<MainMeter> {
         if (meterProvider.errorMessageSocket != null) {
           return BaseContainer(
               margin: _getMargin(),
-              child: Center(child: Column(
+              child: Center(
+                  child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(meterProvider.errorMessageSocket!),
@@ -153,7 +154,7 @@ class _MainMeterState extends State<MainMeter> {
         value: temperature,
         min: 0,
         max: 60,
-        interval: 10,
+        interval: 5,
         size: meterSize,
       ),
       RadialGaugeMeter(
@@ -165,27 +166,27 @@ class _MainMeterState extends State<MainMeter> {
         size: meterSize,
       ),
       RadialGaugeMeter(
-        sensorType: "Total de sólidos disueltos",
+        sensorType: "TDS",
         value: tds,
         min: 0,
-        max: 10,
-        interval: 1,
+        max: 500,
+        interval: 50,
         size: meterSize,
       ),
       RadialGaugeMeter(
         sensorType: "Conductividad",
         value: conductivity,
         min: 0,
-        max: 1000,
-        interval: 100,
+        max: 3000,
+        interval: 250,
         size: meterSize,
       ),
       RadialGaugeMeter(
         sensorType: "Turbidez",
         value: turbidity,
         min: 0,
-        max: 20,
-        interval: 2,
+        max: 50,
+        interval: 5,
         size: meterSize,
       ),
     ];
