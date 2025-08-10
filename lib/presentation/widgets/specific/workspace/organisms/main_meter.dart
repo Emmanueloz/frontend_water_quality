@@ -66,7 +66,21 @@ class _MainMeterState extends State<MainMeter> {
         if (meterProvider.errorMessageSocket != null) {
           return BaseContainer(
               margin: _getMargin(),
-              child: Center(child: Text(meterProvider.errorMessageSocket!)));
+              child: Center(child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(meterProvider.errorMessageSocket!),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => meterProvider.subscribeToMeter(
+                      baseUrl: baseUrl,
+                      idWorkspace: widget.id,
+                      idMeter: widget.idMeter,
+                    ),
+                    child: const Text('Reintentar'),
+                  ),
+                ],
+              )));
         }
         // if (record == null) {
         //   return const Center(child: CircularProgressIndicator());

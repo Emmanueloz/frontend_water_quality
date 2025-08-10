@@ -4,6 +4,7 @@ import 'package:socket_io_client/socket_io_client.dart' as socket_io;
 
 class MeterSocketService {
   socket_io.Socket? _socket;
+  Timer? _connectionTimer;
 
   Future<void> connect({
     required String baseUrl,
@@ -57,7 +58,7 @@ class MeterSocketService {
     _setupSocketEvents(completer, onData);
 
     // Timeout manual para el completer
-    Timer(Duration(seconds: 35), () {
+    _connectionTimer = Timer(Duration(seconds: 65), () {
       if (!completer.isCompleted) {
         disconnect();
         completer.completeError('Revise su conexión a internet');
@@ -92,6 +93,12 @@ class MeterSocketService {
 
     // Listener de mensajes del servidor - UNIFICADO
     _socket!.on('message', (data) {
+      // Verificar si realmente deberíamos procesar este mensaje
+      if (_socket == null || !_socket!.connected) {
+        print('🚫 Mensaje ignorado - socket desconectado');
+        return;
+      }
+
       print('📨 Mensaje recibido del servidor: $data');
       try {
         onData(data);
@@ -159,6 +166,8 @@ class MeterSocketService {
   void disconnect() {
     if (_socket != null) {
       print('🔌 Desconectando socket...');
+      _connectionTimer?.cancel();
+      _connectionTimer = null;
       _socket!
         ..off('connect')
         ..off('message')
