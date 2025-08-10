@@ -217,7 +217,6 @@ class _MainMeterState extends State<MainMeter> {
                 childAspectRatio: childAspectRatio,
                 crossAxisCount: crossAxisCount,
                 crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 children: meters,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/workspace/atoms/sensor_container.dart';
 
 class SensorColor extends StatelessWidget {
   final int red;
@@ -14,34 +13,31 @@ class SensorColor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SensorContainer(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text(
-            "Color del agua",
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text(
+          "Color del agua",
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
           ),
-          const SizedBox(height: 5),
-          Expanded(
-            child: Container(
-              height: 200,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color.fromRGBO(
-                  red,
-                  green,
-                  blue,
-                  1,
-                ),
+        ),
+        Expanded(
+          child: Container(
+            height: 200,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Color.fromRGBO(
+                red,
+                green,
+                blue,
+                1,
               ),
             ),
-          )
-        ],
-      ),
+          ),
+        )
+      ],
     );
   }
 }
