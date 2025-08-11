@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/button_actions.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/radial_gauge_meter.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/sensor_color.dart';
-import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_record_provider.dart';
 import 'package:frontend_water_quality/domain/models/record_models.dart';
 
@@ -65,13 +65,13 @@ class _MainMeterState extends State<MainMeter> {
         final record = meterProvider.recordResponse;
         if (meterProvider.errorMessageSocket != null) {
           return BaseContainer(
-              margin: _getMargin(),
-              child: Center(
-                  child: Column(
+            margin: _getMargin(),
+            child: Center(
+              child: Column(
+                spacing: 10,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(meterProvider.errorMessageSocket!),
-                  const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => meterProvider.subscribeToMeter(
                       baseUrl: baseUrl,
@@ -81,55 +81,18 @@ class _MainMeterState extends State<MainMeter> {
                     child: const Text('Reintentar'),
                   ),
                 ],
-              )));
+              ),
+            ),
+          );
         }
-        // if (record == null) {
-        //   return const Center(child: CircularProgressIndicator());
-        // }
+
         return _buildMain(context, record);
       },
     );
   }
 
   Widget _buildMain(BuildContext context, RecordResponse? record) {
-    EdgeInsetsGeometry margin;
-    EdgeInsetsGeometry padding;
-    Size meterSize;
-    int crossAxisCount;
-    double childAspectRatio;
-
-    if (widget.screenSize == ScreenSize.smallDesktop) {
-      margin = const EdgeInsets.all(0);
-      padding = const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 9,
-      );
-      meterSize = const Size(300, 180);
-      crossAxisCount = 3;
-      childAspectRatio = 1 / 1.2;
-    } else if (widget.screenSize == ScreenSize.largeDesktop) {
-      margin = const EdgeInsets.all(0);
-      padding = const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 9,
-      );
-      meterSize = const Size(300, 190);
-      crossAxisCount = 3;
-      childAspectRatio = 1 / 0.70;
-    } else if (widget.screenSize == ScreenSize.tablet) {
-      margin = const EdgeInsets.all(10);
-      padding = const EdgeInsets.all(12.0);
-      meterSize = const Size(300, 240);
-      crossAxisCount = 2;
-      childAspectRatio = 1 / 1.2;
-    } else {
-      // Mobile
-      margin = const EdgeInsets.all(10);
-      padding = const EdgeInsets.all(10.0);
-      meterSize = const Size(340, 260);
-      crossAxisCount = 1;
-      childAspectRatio = 1 / 1.2;
-    }
+    final meterSize = _getMeterSize();
 
     // Aquí debes mapear los datos recibidos a los valores de los medidores
     // Ejemplo de cómo podrías hacerlo:
@@ -192,14 +155,14 @@ class _MainMeterState extends State<MainMeter> {
     ];
 
     return BaseContainer(
-      margin: margin,
-      padding: padding,
+      margin: _getMargin(),
+      padding: _getPadding(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ButtonActions(
             title: Text(
-              "Meter ${widget.idMeter}",
+              "Monitoreo",
               style: Theme.of(context)
                   .textTheme
                   .bodyLarge
@@ -208,14 +171,12 @@ class _MainMeterState extends State<MainMeter> {
             actions: [],
             screenSize: widget.screenSize,
           ),
-          const SizedBox(height: 16),
-          // Contenedor con scroll para los medidores
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: GridView.count(
-                childAspectRatio: childAspectRatio,
-                crossAxisCount: crossAxisCount,
+                childAspectRatio: _getChildAspectRatio(),
+                crossAxisCount: _getCrossAxisCount(),
                 crossAxisSpacing: 16,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -238,6 +199,53 @@ class _MainMeterState extends State<MainMeter> {
         return const EdgeInsets.all(0);
       case ScreenSize.largeDesktop:
         return const EdgeInsets.all(0);
+    }
+  }
+
+  EdgeInsets _getPadding() {
+    switch (widget.screenSize) {
+      case ScreenSize.mobile:
+        return const EdgeInsets.all(10);
+      case ScreenSize.tablet:
+        return const EdgeInsets.all(12);
+      default:
+        return const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 9,
+        );
+    }
+  }
+
+  int _getCrossAxisCount() {
+    switch (widget.screenSize) {
+      case ScreenSize.mobile:
+        return 1;
+      case ScreenSize.tablet:
+        return 2;
+      default:
+        return 3;
+    }
+  }
+
+  double _getChildAspectRatio() {
+    switch (widget.screenSize) {
+      case ScreenSize.largeDesktop:
+        return 1 / 0.70;
+      default:
+        return 1 / 1.2;
+    }
+  }
+
+  Size _getMeterSize() {
+    switch (widget.screenSize) {
+      case ScreenSize.mobile:
+        return const Size(340, 260);
+      case ScreenSize.tablet:
+        return const Size(300, 240);
+      case ScreenSize.smallDesktop:
+        return const Size(300, 180);
+      case ScreenSize.largeDesktop:
+        return const Size(300, 190);
     }
   }
 }

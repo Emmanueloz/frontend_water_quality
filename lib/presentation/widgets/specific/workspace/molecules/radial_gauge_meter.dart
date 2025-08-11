@@ -41,7 +41,6 @@ class RadialGaugeMeter extends StatelessWidget {
         ),
         Expanded(
           child: GxRadialGauge(
-            showValueAtCenter: false,
             startAngleInDegree: 140,
             sweepAngleInDegree: 260,
             value: GaugeValue(
@@ -70,13 +69,19 @@ class RadialGaugeMeter extends StatelessWidget {
                 colors: colors,
               ),
             ),
-            needle: RadialNeedle(
-              color: Theme.of(context).colorScheme.primary,
-              shape: RadialNeedleShape.tapperedLine,
-              alignment: RadialElementAlignment.end,
-              thickness: 12,
-              topOffest: -20,
-            ),
+            pointers: [
+              RadialPointer(
+                value: valueValid,
+                shape: RadialPointerShape.circle,
+                showNeedle: false,
+                style: RadialPointerStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  paintingStyle: PaintingStyle.fill,
+                  size: 12,
+                  thickness: 2,
+                ),
+              ),
+            ],
           ),
         ),
       ],
