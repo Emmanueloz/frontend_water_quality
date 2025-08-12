@@ -26,7 +26,7 @@ class Sidebar extends StatelessWidget {
       child: NavigationRail(
         extended: isExtended,
         selectedIndex: selectedIndex,
-        minExtendedWidth: 300,
+        minExtendedWidth: 200,
         destinations: destinations ?? [],
         onDestinationSelected: onDestinationSelected,
       ),

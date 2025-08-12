@@ -20,6 +20,7 @@ import 'package:frontend_water_quality/presentation/pages/splash.dart';
 import 'package:frontend_water_quality/presentation/pages/view_list_records.dart';
 import 'package:frontend_water_quality/presentation/pages/view_meter.dart';
 import 'package:frontend_water_quality/presentation/pages/view_list_notifications.dart';
+import 'package:frontend_water_quality/presentation/pages/view_meter_full_screen.dart';
 import 'package:frontend_water_quality/presentation/pages/view_meter_ubications.dart';
 import 'package:frontend_water_quality/presentation/pages/view_notification_details.dart';
 import 'package:frontend_water_quality/presentation/pages/list_meter.dart';
@@ -146,6 +147,18 @@ class AppRouter {
                               state.pathParameters['idMeter'] ?? 'default';
                           return ViewMeter(id: id, idMeter: idMeter);
                         },
+                        routes: [
+                          GoRoute(
+                            parentNavigatorKey: rootNavigatorKey,
+                            path: Routes.meterFullscreen.path,
+                            name: Routes.meterFullscreen.name,
+                            builder: (context, state) => ViewMeterFullScreen(
+                              id: state.pathParameters['id'] ?? 'default',
+                              idMeter:
+                                  state.pathParameters['idMeter'] ?? 'default',
+                            ),
+                          )
+                        ],
                       ),
                       GoRoute(
                         path: Routes.listRecords.path,

@@ -100,6 +100,11 @@ class Routes {
     path: "/meter/:idMeter",
   );
 
+  static RouteProperties meterFullscreen = RouteProperties(
+    name: "metersFullscreen",
+    path: "/fullscreen",
+  );
+
   static RouteProperties analysisRecords = RouteProperties(
     name: "analysis",
     path: "meter/:idMeter/analysis",

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/router/routes.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
@@ -12,12 +14,14 @@ class MainMeter extends StatefulWidget {
   final String id;
   final String idMeter;
   final ScreenSize screenSize;
+  final bool isFullScreen;
 
   const MainMeter({
     super.key,
     required this.idMeter,
     required this.screenSize,
     required this.id,
+    this.isFullScreen = false,
   });
 
   @override
@@ -154,37 +158,66 @@ class _MainMeterState extends State<MainMeter> {
       ),
     ];
 
-    return BaseContainer(
-      margin: _getMargin(),
-      padding: _getPadding(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ButtonActions(
-            title: Text(
-              "Monitoreo",
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge
-                  ?.copyWith(fontWeight: FontWeight.bold),
+    return Hero(
+      tag: "main_meter",
+      child: BaseContainer(
+        width: double.infinity,
+        margin: _getMargin(),
+        padding: _getPadding(),
+        child: Align(
+          child: SizedBox(
+            width: ScreenSize.smallDesktop == widget.screenSize ||
+                    ScreenSize.largeDesktop == widget.screenSize
+                ? 1200
+                : double.infinity,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ButtonActions(
+                  title: Text(
+                    "Monitoreo",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  actions: [
+                    if (widget.isFullScreen)
+                      IconButton(
+                        onPressed: () {
+                          context.pop();
+                        },
+                        icon: Icon(Icons.fullscreen_exit),
+                      )
+                    else
+                      IconButton(
+                        onPressed: () {
+                          print("Full Screen ");
+                          context.goNamed(
+                            Routes.meterFullscreen.name,
+                            pathParameters: {
+                              "id": widget.id,
+                              "idMeter": widget.idMeter,
+                            },
+                          );
+                        },
+                        icon: Icon(Icons.fullscreen),
+                      )
+                  ],
+                  screenSize: widget.screenSize,
+                ),
+                Expanded(
+                  child: GridView.count(
+                    childAspectRatio: _getChildAspectRatio(),
+                    crossAxisCount: _getCrossAxisCount(),
+                    crossAxisSpacing: 16,
+                    children: meters,
+                  ),
+                ),
+              ],
             ),
-            actions: [],
-            screenSize: widget.screenSize,
           ),
-          Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: GridView.count(
-                childAspectRatio: _getChildAspectRatio(),
-                crossAxisCount: _getCrossAxisCount(),
-                crossAxisSpacing: 16,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: meters,
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -211,7 +244,7 @@ class _MainMeterState extends State<MainMeter> {
       default:
         return const EdgeInsets.symmetric(
           horizontal: 20,
-          vertical: 9,
+          vertical: 2,
         );
     }
   }
@@ -232,7 +265,7 @@ class _MainMeterState extends State<MainMeter> {
       case ScreenSize.largeDesktop:
         return 1 / 0.70;
       default:
-        return 1 / 1.2;
+        return 0.8 / 0.8;
     }
   }
 
