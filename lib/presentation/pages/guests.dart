@@ -112,13 +112,16 @@ class _GuestsPageState extends State<GuestsPage> {
       );
     }
 
-    return GuestGrid(
-      guests: guestProvider.guests,
-      screenSize: screenSize,
-      title: widget.title,
-      workspaceId: widget.id,
-      onAddPressed: _navigateToInviteForm,
-      onReloadPressed: _reloadGuests,
+    return Container(
+      margin: margin,
+      child: GuestGrid(
+        guests: guestProvider.guests,
+        screenSize: screenSize,
+        title: widget.title,
+        workspaceId: widget.id,
+        onAddPressed: _navigateToInviteForm,
+        onReloadPressed: _reloadGuests,
+      ),
     );
   }
 }
