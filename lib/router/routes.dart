@@ -61,11 +61,19 @@ class Routes {
   static RouteProperties createAlerts = RouteProperties(
     name: "createAlerts",
     path: "/create",
+    pathRoot: "/alerts",
   );
 
   static RouteProperties updateAlerts = RouteProperties(
     name: "updateAlerts",
     path: "/:idAlert/update",
+    pathRoot: "/alerts",
+  );
+
+  static RouteProperties alertDetails = RouteProperties(
+    name: "alertDetails",
+    path: "/:idAlert",
+    pathRoot: "/alerts",
   );
 
   static RouteProperties guests = RouteProperties(

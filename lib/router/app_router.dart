@@ -2,6 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/presentation/pages/alerts.dart';
+import 'package:frontend_water_quality/presentation/pages/form_alert.dart';
+import 'package:frontend_water_quality/presentation/pages/alert_details.dart';
+import 'package:frontend_water_quality/domain/models/alert.dart';
 import 'package:frontend_water_quality/presentation/pages/change_password.dart';
 import 'package:frontend_water_quality/presentation/pages/form_meters.dart';
 import 'package:frontend_water_quality/presentation/pages/form_workspace_page.dart';
@@ -264,7 +267,23 @@ class AppRouter {
                         name: Routes.createAlerts.name,
                         parentNavigatorKey: rootNavigatorKey,
                         builder: (context, state) {
-                          return Simple(title: "Create Alert");
+                          final workspaceId = state.pathParameters['id'] ?? 'default';
+                          return FormAlertPage(
+                            workspaceTitle: 'Alertas',
+                            workspaceId: workspaceId,
+                          );
+                        },
+                      ),
+                      GoRoute(
+                        path: Routes.alertDetails.path,
+                        name: Routes.alertDetails.name,
+                        parentNavigatorKey: rootNavigatorKey,
+                        builder: (context, state) {
+                          final alertId = state.pathParameters['idAlert'] ?? '';
+                          return AlertDetailsPage(
+                            alertId: alertId,
+                            workspaceTitle: 'Alertas',
+                          );
                         },
                       ),
                       GoRoute(
@@ -272,7 +291,15 @@ class AppRouter {
                         name: Routes.updateAlerts.name,
                         parentNavigatorKey: rootNavigatorKey,
                         builder: (context, state) {
-                          return Simple(title: "Update Alert");
+                          final alertId = state.pathParameters['idAlert'] ?? '';
+                          final workspaceId = state.pathParameters['id'] ?? 'default';
+                          final alert = state.extra as Alert?;
+                          return FormAlertPage(
+                            alertId: alertId,
+                            alert: alert,
+                            workspaceTitle: 'Alertas',
+                            workspaceId: workspaceId,
+                          );
                         },
                       ),
                     ],

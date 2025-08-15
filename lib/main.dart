@@ -3,7 +3,9 @@ import 'package:frontend_water_quality/core/theme/theme.dart';
 import 'package:frontend_water_quality/infrastructure/auth_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/dio_provider.dart';
 import 'package:frontend_water_quality/infrastructure/guest_repo_impl.dart';
+import 'package:frontend_water_quality/infrastructure/alert_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/workspace_repo_impl.dart';
+import 'package:frontend_water_quality/presentation/providers/alert_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/guest_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/workspace_provider.dart';
@@ -17,6 +19,7 @@ void main() async {
   final AuthProvider authProvider = AuthProvider(AuthRepoImpl(dio));
   final WorkspaceRepoImpl workspaceRepo = WorkspaceRepoImpl(dio);
   final GuestRepositoryImpl guestRepo = GuestRepositoryImpl(dio);
+  final AlertRepositoryImpl alertRepo = AlertRepositoryImpl(dio);
   await authProvider.loadSettings();
 
   runApp(
@@ -52,6 +55,24 @@ void main() async {
             return previousGuestProvider ?? GuestProvider(guestRepo, authProvider);
           },
         ),
+        ChangeNotifierProxyProvider<AuthProvider, AlertProvider>(
+          create: (context) {
+            final authProvider = context.read<AuthProvider>();
+            final alertProvider = AlertProvider(
+              alertRepo,
+              authProvider,
+            );
+            return alertProvider;
+          },
+          update: (context, authProvider, previousAlertProvider) {
+            if (previousAlertProvider != null) {
+              previousAlertProvider.setAuthProvider(authProvider);
+              previousAlertProvider.clean();
+            }
+            return previousAlertProvider ?? AlertProvider(alertRepo, authProvider);
+          },
+        ),
+
       ],
       child: const MyApp(),
     ),
