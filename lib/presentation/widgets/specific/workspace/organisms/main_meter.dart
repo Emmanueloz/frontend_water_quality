@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/organisms/resizable_container.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +32,8 @@ class MainMeter extends StatefulWidget {
 class _MainMeterState extends State<MainMeter> {
   MeterRecordProvider? _meterProvider; // Referencia guardada del provider
   final String baseUrl = 'https://api.aqua-minds.org';
+
+  bool _resizable = false;
 
   @override
   void didChangeDependencies() {
@@ -145,7 +148,7 @@ class _MainMeterState extends State<MainMeter> {
         value: conductivity,
         min: 0,
         max: 3000,
-        interval: 250,
+        interval: 300,
         size: meterSize,
       ),
       RadialGaugeMeter(
@@ -171,11 +174,14 @@ class _MainMeterState extends State<MainMeter> {
         margin: _getMargin(),
         padding: _getPadding(),
         child: Align(
-          child: SizedBox(
+          alignment: Alignment.topCenter,
+          child: ResizableContainer(
+            resizable: _resizable,
             width: ScreenSize.smallDesktop == widget.screenSize ||
                     ScreenSize.largeDesktop == widget.screenSize
                 ? 1200
                 : double.infinity,
+            height: 600,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -188,6 +194,26 @@ class _MainMeterState extends State<MainMeter> {
                         ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   actions: [
+                    if (widget.screenSize == ScreenSize.largeDesktop ||
+                        widget.screenSize == ScreenSize.smallDesktop)
+                      if (_resizable)
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _resizable = false;
+                            });
+                          },
+                          icon: Icon(Icons.close_fullscreen),
+                        )
+                      else
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _resizable = true;
+                            });
+                          },
+                          icon: Icon(Icons.open_in_full_sharp),
+                        ),
                     if (widget.isFullScreen)
                       IconButton(
                         onPressed: () {

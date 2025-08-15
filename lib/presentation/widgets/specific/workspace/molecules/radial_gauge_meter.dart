@@ -34,6 +34,7 @@ class RadialGaugeMeter extends StatelessWidget {
       height: size.height,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
+        spacing: 5,
         children: [
           Text(
             sensorType,
