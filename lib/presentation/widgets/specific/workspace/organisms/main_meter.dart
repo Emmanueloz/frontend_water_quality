@@ -160,6 +160,12 @@ class _MainMeterState extends State<MainMeter> {
 
     return Hero(
       tag: "main_meter",
+      flightShuttleBuilder: (context, animation, flightDirection,
+          fromHeroContext, toHeroContext) {
+        return Material(
+          child: toHeroContext.widget,
+        );
+      },
       child: BaseContainer(
         width: double.infinity,
         margin: _getMargin(),
