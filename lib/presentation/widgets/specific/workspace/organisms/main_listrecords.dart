@@ -110,7 +110,7 @@ class _MainListrecordsState extends State<MainListrecords> {
         horizontal: 20,
         vertical: 9,
       );
-      crossAxisCount = 3;
+      crossAxisCount = 2;
       childAspectRatio = 1 / 0.6;
     } else if (widget.screenSize == ScreenSize.tablet) {
       margin = const EdgeInsets.all(10);
@@ -210,7 +210,7 @@ class _MainListrecordsState extends State<MainListrecords> {
     final data = temperatureRecords.map((r) => r.value).toList().cast<double>();
     final currentValue = data.isNotEmpty ? data.last : 0.0;
     final minY = 0.0;
-    final maxY = 35.0;
+    final maxY = 60.0;
 
     return LineGraph(
       sensorType: "Temperatura",
@@ -234,7 +234,7 @@ class _MainListrecordsState extends State<MainListrecords> {
     final data = phRecords.map((r) => r.value).toList().cast<double>();
     final currentValue = data.isNotEmpty ? data.last : 0.0;
     final minY = 0.0;
-    final maxY = 10.0;
+    final maxY = 14.0;
 
     return LineGraph(
       sensorType: "PH",
@@ -294,7 +294,7 @@ class _MainListrecordsState extends State<MainListrecords> {
       data: data,
       minY: minY,
       maxY: maxY,
-      intervalY: 200.0,
+      intervalY: 250.0,
     );
   }
 

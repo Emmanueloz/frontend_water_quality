@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/organisms/resizable_container.dart';
+import 'package:frontend_water_quality/router/routes.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/button_actions.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/radial_gauge_meter.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/sensor_color.dart';
-import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_record_provider.dart';
 import 'package:frontend_water_quality/domain/models/record_models.dart';
 
@@ -12,12 +15,14 @@ class MainMeter extends StatefulWidget {
   final String id;
   final String idMeter;
   final ScreenSize screenSize;
+  final bool isFullScreen;
 
   const MainMeter({
     super.key,
     required this.idMeter,
     required this.screenSize,
     required this.id,
+    this.isFullScreen = false,
   });
 
   @override
@@ -27,6 +32,8 @@ class MainMeter extends StatefulWidget {
 class _MainMeterState extends State<MainMeter> {
   MeterRecordProvider? _meterProvider; // Referencia guardada del provider
   final String baseUrl = 'https://api.aqua-minds.org';
+
+  bool _resizable = false;
 
   @override
   void didChangeDependencies() {
@@ -65,12 +72,13 @@ class _MainMeterState extends State<MainMeter> {
         final record = meterProvider.recordResponse;
         if (meterProvider.errorMessageSocket != null) {
           return BaseContainer(
-              margin: _getMargin(),
-              child: Center(child: Column(
+            margin: _getMargin(),
+            child: Center(
+              child: Column(
+                spacing: 10,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(meterProvider.errorMessageSocket!),
-                  const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => meterProvider.subscribeToMeter(
                       baseUrl: baseUrl,
@@ -80,55 +88,18 @@ class _MainMeterState extends State<MainMeter> {
                     child: const Text('Reintentar'),
                   ),
                 ],
-              )));
+              ),
+            ),
+          );
         }
-        // if (record == null) {
-        //   return const Center(child: CircularProgressIndicator());
-        // }
+
         return _buildMain(context, record);
       },
     );
   }
 
   Widget _buildMain(BuildContext context, RecordResponse? record) {
-    EdgeInsetsGeometry margin;
-    EdgeInsetsGeometry padding;
-    Size meterSize;
-    int crossAxisCount;
-    double childAspectRatio;
-
-    if (widget.screenSize == ScreenSize.smallDesktop) {
-      margin = const EdgeInsets.all(0);
-      padding = const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 9,
-      );
-      meterSize = const Size(300, 180);
-      crossAxisCount = 3;
-      childAspectRatio = 1 / 1.2;
-    } else if (widget.screenSize == ScreenSize.largeDesktop) {
-      margin = const EdgeInsets.all(0);
-      padding = const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 9,
-      );
-      meterSize = const Size(300, 190);
-      crossAxisCount = 3;
-      childAspectRatio = 1 / 0.70;
-    } else if (widget.screenSize == ScreenSize.tablet) {
-      margin = const EdgeInsets.all(10);
-      padding = const EdgeInsets.all(12.0);
-      meterSize = const Size(300, 240);
-      crossAxisCount = 2;
-      childAspectRatio = 1 / 1.2;
-    } else {
-      // Mobile
-      margin = const EdgeInsets.all(10);
-      padding = const EdgeInsets.all(10.0);
-      meterSize = const Size(340, 260);
-      crossAxisCount = 1;
-      childAspectRatio = 1 / 1.2;
-    }
+    final meterSize = _getMeterSize();
 
     // Aquí debes mapear los datos recibidos a los valores de los medidores
     // Ejemplo de cómo podrías hacerlo:
@@ -153,7 +124,7 @@ class _MainMeterState extends State<MainMeter> {
         value: temperature,
         min: 0,
         max: 60,
-        interval: 10,
+        interval: 5,
         size: meterSize,
       ),
       RadialGaugeMeter(
@@ -165,65 +136,120 @@ class _MainMeterState extends State<MainMeter> {
         size: meterSize,
       ),
       RadialGaugeMeter(
-        sensorType: "Total de sólidos disueltos",
+        sensorType: "TDS",
         value: tds,
         min: 0,
-        max: 10,
-        interval: 1,
+        max: 500,
+        interval: 50,
         size: meterSize,
       ),
       RadialGaugeMeter(
         sensorType: "Conductividad",
         value: conductivity,
         min: 0,
-        max: 1000,
-        interval: 100,
+        max: 3000,
+        interval: 300,
         size: meterSize,
       ),
       RadialGaugeMeter(
         sensorType: "Turbidez",
         value: turbidity,
         min: 0,
-        max: 20,
-        interval: 2,
+        max: 50,
+        interval: 5,
         size: meterSize,
       ),
     ];
 
-    return BaseContainer(
-      margin: margin,
-      padding: padding,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ButtonActions(
-            title: Text(
-              "Meter ${widget.idMeter}",
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge
-                  ?.copyWith(fontWeight: FontWeight.bold),
+    return Hero(
+      tag: "main_meter",
+      flightShuttleBuilder: (context, animation, flightDirection,
+          fromHeroContext, toHeroContext) {
+        return Material(
+          child: toHeroContext.widget,
+        );
+      },
+      child: BaseContainer(
+        width: double.infinity,
+        margin: _getMargin(),
+        padding: _getPadding(),
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: ResizableContainer(
+            resizable: _resizable,
+            width: ScreenSize.smallDesktop == widget.screenSize ||
+                    ScreenSize.largeDesktop == widget.screenSize
+                ? 1200
+                : double.infinity,
+            height: 600,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ButtonActions(
+                  title: Text(
+                    "Monitoreo",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  actions: [
+                    if (widget.screenSize == ScreenSize.largeDesktop ||
+                        widget.screenSize == ScreenSize.smallDesktop)
+                      if (_resizable)
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _resizable = false;
+                            });
+                          },
+                          icon: Icon(Icons.close_fullscreen),
+                        )
+                      else
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _resizable = true;
+                            });
+                          },
+                          icon: Icon(Icons.open_in_full_sharp),
+                        ),
+                    if (widget.isFullScreen)
+                      IconButton(
+                        onPressed: () {
+                          context.pop();
+                        },
+                        icon: Icon(Icons.fullscreen_exit),
+                      )
+                    else
+                      IconButton(
+                        onPressed: () {
+                          print("Full Screen ");
+                          context.goNamed(
+                            Routes.meterFullscreen.name,
+                            pathParameters: {
+                              "id": widget.id,
+                              "idMeter": widget.idMeter,
+                            },
+                          );
+                        },
+                        icon: Icon(Icons.fullscreen),
+                      )
+                  ],
+                  screenSize: widget.screenSize,
+                ),
+                Expanded(
+                  child: GridView.count(
+                    childAspectRatio: _getChildAspectRatio(),
+                    crossAxisCount: _getCrossAxisCount(),
+                    crossAxisSpacing: 16,
+                    children: meters,
+                  ),
+                ),
+              ],
             ),
-            actions: [],
-            screenSize: widget.screenSize,
           ),
-          const SizedBox(height: 16),
-          // Contenedor con scroll para los medidores
-          Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: GridView.count(
-                childAspectRatio: childAspectRatio,
-                crossAxisCount: crossAxisCount,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: meters,
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -238,6 +264,53 @@ class _MainMeterState extends State<MainMeter> {
         return const EdgeInsets.all(0);
       case ScreenSize.largeDesktop:
         return const EdgeInsets.all(0);
+    }
+  }
+
+  EdgeInsets _getPadding() {
+    switch (widget.screenSize) {
+      case ScreenSize.mobile:
+        return const EdgeInsets.all(10);
+      case ScreenSize.tablet:
+        return const EdgeInsets.all(12);
+      default:
+        return const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 2,
+        );
+    }
+  }
+
+  int _getCrossAxisCount() {
+    switch (widget.screenSize) {
+      case ScreenSize.mobile:
+        return 1;
+      case ScreenSize.tablet:
+        return 2;
+      default:
+        return 3;
+    }
+  }
+
+  double _getChildAspectRatio() {
+    switch (widget.screenSize) {
+      case ScreenSize.largeDesktop:
+        return 1 / 0.70;
+      default:
+        return 0.8 / 0.8;
+    }
+  }
+
+  Size _getMeterSize() {
+    switch (widget.screenSize) {
+      case ScreenSize.mobile:
+        return const Size(340, 260);
+      case ScreenSize.tablet:
+        return const Size(300, 240);
+      case ScreenSize.smallDesktop:
+        return const Size(300, 180);
+      case ScreenSize.largeDesktop:
+        return const Size(300, 190);
     }
   }
 }
