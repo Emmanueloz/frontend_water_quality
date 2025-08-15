@@ -70,11 +70,7 @@ class Routes {
     pathRoot: "/alerts",
   );
 
-  static RouteProperties alertDetails = RouteProperties(
-    name: "alertDetails",
-    path: "/:idAlert",
-    pathRoot: "/alerts",
-  );
+
 
   static RouteProperties guests = RouteProperties(
     name: "guests",
@@ -108,39 +104,19 @@ class Routes {
     path: "/meter/:idMeter",
   );
 
-  static RouteProperties predictions = RouteProperties(
-    name: "predictions",
-    path: "meter/:idMeter/predictions",
-  );
-
-  static RouteProperties predictionCreate = RouteProperties(
-    name: "predictionCreate",
-    path: "/create",
-  );
-
-  static RouteProperties prediction = RouteProperties(
-    name: "predictionDetails",
-    path: "/:idPrediction",
-  );
-
-  static RouteProperties interpretations = RouteProperties(
-    name: "interpretations",
-    path: "meter/:idMeter/interpretations",
-  );
-
-  static RouteProperties interpretationCreate = RouteProperties(
-    name: "interpretationCreate",
-    path: "/create",
-  );
-
-  static RouteProperties interpretation = RouteProperties(
-    name: "interpretationDetails",
-    path: "/:idInterpretation",
+  static RouteProperties analysisRecords = RouteProperties(
+    name: "analysis",
+    path: "meter/:idMeter/analysis",
   );
 
   static RouteProperties connectionMeter = RouteProperties(
     name: "connectionMeter",
     path: "meter/:idMeter/connection",
+  );
+
+  static RouteProperties connectionMeterDevice = RouteProperties(
+    name: "connectionDevice",
+    path: "/device",
   );
 
   static RouteProperties updateMeter = RouteProperties(

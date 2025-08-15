@@ -3,22 +3,83 @@ import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/weather/molecules/weather_detail_card.dart';
+import 'package:provider/provider.dart';
+import 'package:frontend_water_quality/presentation/providers/weather_meter_provider.dart';
 
-class WeatherPage extends StatelessWidget {
+class WeatherPage extends StatefulWidget {
   final String id;
   final String idMeter;
   const WeatherPage({super.key, required this.id, required this.idMeter});
 
   @override
+  State<WeatherPage> createState() => _WeatherPageState();
+}
+
+class _WeatherPageState extends State<WeatherPage> {
+  WeatherMeterProvider? _weatherProvider;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _weatherProvider = Provider.of<WeatherMeterProvider>(context, listen: false);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Cargar datos del clima cuando se inicializa la página
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_weatherProvider != null) {
+        _weatherProvider!.fetchWeather(widget.id, widget.idMeter);
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final screenSize = ResponsiveScreenSize.getScreenSize(context);
 
-    return _buildMain(context, screenSize);
+    return Consumer<WeatherMeterProvider>(
+      builder: (context, weatherProvider, _) {
+        if (weatherProvider.isLoading) {
+          return  BaseContainer(
+            margin: _getMargin(screenSize),
+            child: Center(child: CircularProgressIndicator()));
+        }
+
+        if (weatherProvider.errorMessage != null) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Error al cargar el clima',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 8),
+                Text(weatherProvider.errorMessage!),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => weatherProvider.fetchWeather(widget.id, widget.idMeter),
+                  child: const Text('Reintentar'),
+                ),
+              ],
+            ),
+          );
+        }
+
+        final weather = weatherProvider.weatherMeter;
+        if (weather == null) {
+          return const Center(child: Text('No hay datos del clima disponibles'));
+        }
+
+        return _buildMain(context, screenSize, weather);
+      },
+    );
   }
 
-  Widget _buildMain(BuildContext context, ScreenSize screenSize) {
+  Widget _buildMain(BuildContext context, ScreenSize screenSize, weather) {
     EdgeInsetsGeometry margin = EdgeInsets.zero;
-
     int crossAxisCount = 1;
 
     if (screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet) {
@@ -32,6 +93,7 @@ class WeatherPage extends StatelessWidget {
     } else if (screenSize == ScreenSize.largeDesktop) {
       crossAxisCount = 4;
     }
+
     return BaseContainer(
       width: double.infinity,
       margin: margin,
@@ -42,14 +104,14 @@ class WeatherPage extends StatelessWidget {
           Column(
             children: [
               Text(
-                "Lequilum",
+                weather.location.name,
                 style: Theme.of(context)
                     .textTheme
                     .displayLarge
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
-              Text("Chiapas, México"),
-              Text("2025-06-23 22:05")
+              Text("${weather.location.region}, ${weather.location.country}"),
+              Text(weather.current.lastUpdated)
             ],
           ),
           Wrap(
@@ -60,24 +122,24 @@ class WeatherPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "15.5°C",
+                    "${weather.current.tempC}°C",
                     style: Theme.of(context)
                         .textTheme
                         .displayMedium
                         ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "Patchy rain nearby",
+                    weather.current.condition.text,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   Text(
-                    "Sensación térmica: 16.0°C",
+                    "Sensación térmica: ${weather.current.feelslikeC}°C",
                     style: Theme.of(context).textTheme.bodyMedium,
                   )
                 ],
               ),
               Image.network(
-                "https://cdn.weatherapi.com/weather/64x64/night/176.png",
+                "https:${weather.current.condition.icon}",
                 width: 100,
                 height: 100,
                 errorBuilder: (context, error, stackTrace) {
@@ -98,47 +160,47 @@ class WeatherPage extends StatelessWidget {
               children: [
                 WeatherDetailCard(
                   label: "Humedad",
-                  value: "60",
+                  value: weather.current.humidity.toString(),
                   unit: "%",
                 ),
                 WeatherDetailCard(
                   label: "Viento",
-                  value: "3.6",
+                  value: weather.current.windKph.toString(),
                   unit: "km/h",
                 ),
                 WeatherDetailCard(
                   label: "Presión",
-                  value: "1019.0",
+                  value: weather.current.pressureMb.toString(),
                   unit: "mb",
                 ),
                 WeatherDetailCard(
                   label: "Visibilidad",
-                  value: "10.0",
+                  value: weather.current.visKm.toString(),
                   unit: "km",
                 ),
                 WeatherDetailCard(
                   label: "Nubosidad",
-                  value: "72",
+                  value: weather.current.cloud.toString(),
                   unit: "%",
                 ),
                 WeatherDetailCard(
                   label: "Precipitación",
-                  value: "0.05",
+                  value: weather.current.precipMm.toString(),
                   unit: "mm",
                 ),
                 WeatherDetailCard(
                   label: "Punto de rocío",
-                  value: "14.6",
+                  value: weather.current.feelslikeC.toString(),
                   unit: "°C",
                 ),
                 WeatherDetailCard(
                   label: "Índice UV",
-                  value: "0",
+                  value: weather.current.uv.toString(),
                   unit: "",
                 ),
                 WeatherDetailCard(
                   label: "Ráfagas de viento",
-                  value: "6.0",
+                  value: weather.current.windKph.toString(),
                   unit: "km/h",
                 ),
               ],
@@ -147,5 +209,18 @@ class WeatherPage extends StatelessWidget {
         ],
       ),
     );
+  }
+  
+  EdgeInsets _getMargin(ScreenSize screenSize) {
+    switch(screenSize){
+      case ScreenSize.mobile:
+        return const EdgeInsets.all(10);
+      case ScreenSize.tablet:
+        return const EdgeInsets.all(10);
+      case ScreenSize.smallDesktop:
+        return const EdgeInsets.all(0);
+      case ScreenSize.largeDesktop:
+        return const EdgeInsets.all(0);
+    }
   }
 }

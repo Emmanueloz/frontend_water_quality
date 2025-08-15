@@ -42,6 +42,7 @@ class WorkspaceRepoImpl implements WorkspaceRepo {
         '/workspaces/',
         options: Options(headers: {'Authorization': 'Bearer $userToken'}),
       );
+      print(response.data);
 
       if (response.statusCode != 200) {
         return Result.failure('Error: codigo ${response.statusCode}');

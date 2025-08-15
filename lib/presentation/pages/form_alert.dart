@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/domain/models/alert.dart';
+import 'package:frontend_water_quality/domain/models/meter_model.dart';
 import 'package:frontend_water_quality/presentation/providers/alert_provider.dart';
+import 'package:frontend_water_quality/presentation/providers/meter_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 
 class FormAlertPage extends StatefulWidget {
-  final String? alertId;
-  final Alert? alert;
   final String workspaceTitle;
   final String workspaceId;
+  final Alert? alert; // Si es null, es modo crear; si tiene valor, es modo editar
 
   const FormAlertPage({
     super.key,
-    this.alertId,
-    this.alert,
     required this.workspaceTitle,
     required this.workspaceId,
+    this.alert,
   });
 
   @override
@@ -28,33 +28,35 @@ class FormAlertPage extends StatefulWidget {
 class _FormAlertPageState extends State<FormAlertPage> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
   String _selectedType = 'good';
   String _selectedMeterId = '';
   bool _isLoading = false;
-  bool _isEditMode = false;
+  bool get _isEditMode => widget.alert != null;
 
   final List<String> _alertTypes = ['good', 'moderate', 'poor', 'dangerous', 'excellent'];
   
-  // Lista de medidores disponibles (usando los IDs hardcodeados del workspace)
-  List<Map<String, String>> get _availableMeters => [
-    {'id': '1', 'name': 'Medidor 1'},
-    {'id': '2', 'name': 'Medidor 2'},
-    {'id': '3', 'name': 'Medidor 3'},
-    {'id': '4', 'name': 'Medidor 4'},
-  ];
+  // Getter para obtener medidores disponibles del MeterProvider
+  List<Meter> get _availableMeters {
+    final meterProvider = context.read<MeterProvider>();
+    return meterProvider.meters;
+  }
 
   @override
   void initState() {
     super.initState();
-    _isEditMode = widget.alert != null || widget.alertId != null;
     
-    // Seleccionar el primer medidor por defecto
-    _selectedMeterId = '1';
+    // Cargar medidores del workspace
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final meterProvider = context.read<MeterProvider>();
+      meterProvider.fetchMeters(widget.workspaceId);
+    });
     
-    if (_isEditMode && widget.alert != null) {
+    if (_isEditMode) {
+      print('FormAlertPage: Loading alert data for editing');
+      print('FormAlertPage: Alert title: "${widget.alert!.title}"');
+      print('FormAlertPage: Alert type: "${widget.alert!.type}"');
+      
       _titleController.text = widget.alert!.title;
-      _descriptionController.text = widget.alert!.description;
       _selectedType = widget.alert!.type;
       // TODO: Set meter_id from alert when available
     }
@@ -63,7 +65,6 @@ class _FormAlertPageState extends State<FormAlertPage> {
   @override
   void dispose() {
     _titleController.dispose();
-    _descriptionController.dispose();
     super.dispose();
   }
 
@@ -76,16 +77,26 @@ class _FormAlertPageState extends State<FormAlertPage> {
 
     final alertProvider = context.read<AlertProvider>();
     
+    // Usar el primer medidor disponible si no hay uno seleccionado
+    final meterId = _selectedMeterId.isNotEmpty 
+        ? _selectedMeterId 
+        : (_availableMeters.isNotEmpty ? _availableMeters.first.id : widget.workspaceId);
+    
     final alertData = {
       'title': _titleController.text.trim(),
-      'description': _descriptionController.text.trim(),
       'type': _selectedType,
       'workspace_id': widget.workspaceId,
-      'meter_id': _selectedMeterId,
+      'meter_id': meterId,
     };
+    
+    print('FormAlertPage: alertData keys: ${alertData.keys.toList()}');
+    print('FormAlertPage: alertData values: ${alertData.values.toList()}');
+    
+    print('FormAlertPage: Creating alert with data: $alertData');
+    print('FormAlertPage: Available meters: ${_availableMeters.map((m) => '${m.id}: ${m.name}').toList()}');
 
     if (_isEditMode) {
-      final alertId = widget.alert?.id ?? widget.alertId!;
+      final alertId = widget.alert!.id;
       await alertProvider.updateAlert(alertId, alertData);
     } else {
       await alertProvider.createAlert(alertData);
@@ -132,7 +143,11 @@ class _FormAlertPageState extends State<FormAlertPage> {
           onPressed: () => context.pop(),
         ),
       ),
-      body: _buildForm(context, screenSize),
+      body: Consumer<MeterProvider>(
+        builder: (context, meterProvider, child) {
+          return _buildForm(context, screenSize);
+        },
+      ),
     );
   }
 
@@ -140,8 +155,8 @@ class _FormAlertPageState extends State<FormAlertPage> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 600),
+        child: SizedBox(
+          width: 600,
           child: Form(
             key: _formKey,
             child: Column(
@@ -176,38 +191,19 @@ class _FormAlertPageState extends State<FormAlertPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // Campo Descripción
-                TextFormField(
-                  controller: _descriptionController,
-                  decoration: const InputDecoration(
-                    labelText: 'Descripción',
-                    border: OutlineInputBorder(),
-                    hintText: 'Ingrese la descripción de la alerta',
-                  ),
-                  maxLines: 3,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'La descripción es requerida';
-                    }
-                    if (value.trim().length < 10) {
-                      return 'La descripción debe tener al menos 10 caracteres';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-
                 // Campo Meter ID
                 DropdownButtonFormField<String>(
-                  value: _selectedMeterId,
+                  value: _selectedMeterId.isEmpty && _availableMeters.isNotEmpty 
+                      ? _availableMeters.first.id 
+                      : _selectedMeterId,
                   decoration: const InputDecoration(
                     labelText: 'Medidor',
                     border: OutlineInputBorder(),
                   ),
                   items: _availableMeters.map((meter) {
                     return DropdownMenuItem(
-                      value: meter['id'],
-                      child: Text(meter['name']!),
+                      value: meter.id,
+                      child: Text(meter.name),
                     );
                   }).toList(),
                   onChanged: (value) {

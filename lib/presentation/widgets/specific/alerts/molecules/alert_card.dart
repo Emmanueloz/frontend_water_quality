@@ -38,17 +38,23 @@ class AlertCard extends StatelessWidget {
       return;
     }
     
+    print('AlertCard: Navigating to edit alert');
+    print('AlertCard: Alert ID: ${alert.id}');
+    print('AlertCard: Alert title: "${alert.title}"');
+    print('AlertCard: Alert type: "${alert.type}"');
+    
     context.goNamed(
-      Routes.alertDetails.name,
+      Routes.updateAlerts.name,
       pathParameters: {
         'id': workspaceId,
         'idAlert': alert.id,
       },
+      extra: alert,
     );
   }
 
   String _buildSubtitle() {
-    return '${alert.description}\n${_formatDate(alert.createdAt)}';
+    return _formatDate(alert.createdAt);
   }
 
   Chip _buildChip(BuildContext context) {

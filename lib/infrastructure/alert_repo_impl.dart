@@ -113,6 +113,7 @@ class AlertRepositoryImpl implements AlertRepository {
   Future<Result<Alert>> createAlert(String userToken, Map<String, dynamic> alertData) async {
     try {
       print('Creating alert: data=$alertData');
+      print('Creating alert: all fields: ${alertData.keys.toList()}');
       
       final response = await _dio.post(
         '/alerts/',
@@ -162,6 +163,7 @@ class AlertRepositoryImpl implements AlertRepository {
   Future<Result<Alert>> updateAlert(String userToken, String alertId, Map<String, dynamic> alertData) async {
     try {
       print('Updating alert: alertId=$alertId, data=$alertData');
+      print('Updating alert: all fields: ${alertData.keys.toList()}');
       
       final response = await _dio.put(
         '/alerts/$alertId/',

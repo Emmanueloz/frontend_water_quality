@@ -1,12 +1,15 @@
 // app_router.dart
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/presentation/pages/alerts.dart';
 import 'package:frontend_water_quality/presentation/pages/form_alert.dart';
-import 'package:frontend_water_quality/presentation/pages/alert_details.dart';
+
 import 'package:frontend_water_quality/domain/models/alert.dart';
 import 'package:frontend_water_quality/presentation/pages/change_password.dart';
-import 'package:frontend_water_quality/presentation/pages/form_meters.dart';
+import 'package:frontend_water_quality/presentation/pages/connection_meter.dart';
+import 'package:frontend_water_quality/presentation/pages/device_meter.dart';
+import 'package:frontend_water_quality/presentation/pages/error_page.dart';
 import 'package:frontend_water_quality/presentation/pages/form_workspace_page.dart';
 import 'package:frontend_water_quality/presentation/pages/guests.dart';
 import 'package:frontend_water_quality/presentation/pages/list_workspace.dart';
@@ -14,15 +17,15 @@ import 'package:frontend_water_quality/presentation/pages/login.dart';
 import 'package:frontend_water_quality/presentation/pages/recovery_password.dart';
 import 'package:frontend_water_quality/presentation/pages/register.dart';
 import 'package:frontend_water_quality/presentation/pages/profile.dart';
+import 'package:frontend_water_quality/presentation/pages/form_meter_page.dart';
 import 'package:frontend_water_quality/presentation/pages/simple.dart';
 import 'package:frontend_water_quality/presentation/pages/splash.dart';
 import 'package:frontend_water_quality/presentation/pages/view_list_records.dart';
 import 'package:frontend_water_quality/presentation/pages/view_meter.dart';
 import 'package:frontend_water_quality/presentation/pages/view_list_notifications.dart';
-import 'package:frontend_water_quality/presentation/pages/view_meter_connection.dart';
 import 'package:frontend_water_quality/presentation/pages/view_meter_ubications.dart';
 import 'package:frontend_water_quality/presentation/pages/view_notification_details.dart';
-import 'package:frontend_water_quality/presentation/pages/view_workspace.dart';
+import 'package:frontend_water_quality/presentation/pages/list_meter.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_meters.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_workspace.dart';
@@ -107,7 +110,9 @@ class AppRouter {
                 name: Routes.workspace.name,
                 builder: (context, state) {
                   final id = state.pathParameters['id'] ?? 'default';
-                  return ViewWorkspace(id: id);
+                  return ListMeter(
+                    idWorkspace: id,
+                  );
                 },
                 routes: [
                   GoRoute(
@@ -115,8 +120,8 @@ class AppRouter {
                     path: Routes.createMeter.path,
                     name: Routes.createMeter.name,
                     builder: (context, state) {
-                      return FormMeters(
-                        id: state.pathParameters['id'] ?? 'default',
+                      return FormMeterPage(
+                        idWorkspace: state.pathParameters['id'] ?? 'default',
                       );
                     },
                   ),
@@ -156,79 +161,59 @@ class AppRouter {
                         },
                       ),
                       GoRoute(
-                        path: Routes.predictions.path,
-                        name: Routes.predictions.name,
+                        path: Routes.analysisRecords.path,
+                        name: Routes.analysisRecords.name,
                         builder: (context, state) {
                           final id = state.pathParameters['id'] ?? 'default';
                           final idMeter =
                               state.pathParameters['idMeter'] ?? 'default';
                           return SizedBox(
-                            child: Text('Predicciones $id $idMeter'),
+                            child: Text("Analisis $id $idMeter"),
                           );
                         },
-                        routes: [
-                          GoRoute(
-                            path: Routes.predictionCreate.path,
-                            name: Routes.predictionCreate.name,
-                            parentNavigatorKey: rootNavigatorKey,
-                            builder: (context, state) {
-                              return Simple(title: "Create prediction");
-                            },
-                          ),
-                          GoRoute(
-                            path: Routes.prediction.path,
-                            name: Routes.prediction.name,
-                            parentNavigatorKey: rootNavigatorKey,
-                            builder: (context, state) {
-                              return Simple(title: "Prediction Detail");
-                            },
-                          ),
-                        ],
                       ),
                       GoRoute(
-                        path: Routes.interpretations.path,
-                        name: Routes.interpretations.name,
-                        builder: (context, state) {
-                          final id = state.pathParameters['id'] ?? 'default';
-                          final idMeter =
-                              state.pathParameters['idMeter'] ?? 'default';
-                          return SizedBox(
-                            child: Text('Interpretaciones $id $idMeter'),
-                          );
-                        },
-                        routes: [
-                          GoRoute(
-                            path: Routes.interpretationCreate.path,
-                            name: Routes.interpretationCreate.name,
-                            parentNavigatorKey: rootNavigatorKey,
-                            builder: (context, state) {
-                              return Simple(title: "Crear interpretación");
-                            },
-                          ),
-                          GoRoute(
-                            path: Routes.interpretation.path,
-                            name: Routes.interpretation.name,
-                            parentNavigatorKey: rootNavigatorKey,
-                            builder: (context, state) {
-                              return Simple(title: "Interpretación");
-                            },
-                          ),
-                        ],
-                      ),
-                      GoRoute(
-                        path: Routes.connectionMeter.path,
-                        name: Routes.connectionMeter.name,
-                        builder: (context, state) {
-                          final id = state.pathParameters['id'] ?? 'default';
-                          final idMeter =
-                              state.pathParameters['idMeter'] ?? 'default';
-                          return ViewMeterConnection(
-                            id: id,
-                            idMeter: idMeter,
-                            title: 'Conexión del medidor $idMeter',
-                          );
-                        },
-                      ),
+                          path: Routes.connectionMeter.path,
+                          name: Routes.connectionMeter.name,
+                          redirect: (context, state) {
+                            if (kIsWeb) {
+                              return '/404';
+                            }
+                            return null;
+                          },
+                          builder: (context, state) {
+                            final id = state.pathParameters['id'] ?? 'default';
+                            final idMeter =
+                                state.pathParameters['idMeter'] ?? 'default';
+                            return ConnectionMeterPage(
+                              id: id,
+                              idMeter: idMeter,
+                            );
+                          },
+                          routes: [
+                            GoRoute(
+                              parentNavigatorKey: rootNavigatorKey,
+                              path: Routes.connectionMeterDevice.path,
+                              name: Routes.connectionMeterDevice.name,
+                              redirect: (context, state) {
+                                if (kIsWeb) {
+                                  return '/404';
+                                }
+                                return null;
+                              },
+                              builder: (context, state) {
+                                final id =
+                                    state.pathParameters['id'] ?? 'default';
+                                final idMeter =
+                                    state.pathParameters['idMeter'] ??
+                                        'default';
+                                return DeviceMeter(
+                                  id: id,
+                                  idMeter: idMeter,
+                                );
+                              },
+                            ),
+                          ]),
                       GoRoute(
                         path: Routes.weather.path,
                         name: Routes.weather.name,
@@ -249,7 +234,8 @@ class AppRouter {
                           final id = state.pathParameters['id'] ?? 'default';
                           final idMeter =
                               state.pathParameters['idMeter'] ?? 'default';
-                          return FormMeters(id: id, idMeter: idMeter);
+                          return FormMeterPage(
+                              idWorkspace: id, idMeter: idMeter);
                         },
                       ),
                     ],
@@ -274,34 +260,21 @@ class AppRouter {
                           );
                         },
                       ),
-                      GoRoute(
-                        path: Routes.alertDetails.path,
-                        name: Routes.alertDetails.name,
-                        parentNavigatorKey: rootNavigatorKey,
-                        builder: (context, state) {
-                          final alertId = state.pathParameters['idAlert'] ?? '';
-                          return AlertDetailsPage(
-                            alertId: alertId,
-                            workspaceTitle: 'Alertas',
-                          );
-                        },
-                      ),
-                      GoRoute(
-                        path: Routes.updateAlerts.path,
-                        name: Routes.updateAlerts.name,
-                        parentNavigatorKey: rootNavigatorKey,
-                        builder: (context, state) {
-                          final alertId = state.pathParameters['idAlert'] ?? '';
-                          final workspaceId = state.pathParameters['id'] ?? 'default';
-                          final alert = state.extra as Alert?;
-                          return FormAlertPage(
-                            alertId: alertId,
-                            alert: alert,
-                            workspaceTitle: 'Alertas',
-                            workspaceId: workspaceId,
-                          );
-                        },
-                      ),
+                      
+                                             GoRoute(
+                         path: Routes.updateAlerts.path,
+                         name: Routes.updateAlerts.name,
+                         parentNavigatorKey: rootNavigatorKey,
+                         builder: (context, state) {
+                           final workspaceId = state.pathParameters['id'] ?? 'default';
+                           final alert = state.extra as Alert?;
+                           return FormAlertPage(
+                             alert: alert,
+                             workspaceTitle: 'Alertas',
+                             workspaceId: workspaceId,
+                           );
+                         },
+                       ),
                     ],
                   ),
                   GoRoute(
@@ -320,7 +293,8 @@ class AppRouter {
                         name: Routes.createGuest.name,
                         parentNavigatorKey: rootNavigatorKey,
                         builder: (context, state) {
-                          final workspaceId = state.pathParameters['id'] ?? 'default';
+                          final workspaceId =
+                              state.pathParameters['id'] ?? 'default';
                           return FormInviteGuestPage(
                             workspaceId: workspaceId,
                             workspaceTitle: 'Invitados',
@@ -332,11 +306,14 @@ class AppRouter {
                         name: Routes.editGuest.name,
                         parentNavigatorKey: rootNavigatorKey,
                         builder: (context, state) {
-                          final workspaceId = state.pathParameters['id'] ?? 'default';
+                          final workspaceId =
+                              state.pathParameters['id'] ?? 'default';
                           final guestId = state.pathParameters['guestId'] ?? '';
-                          
+
                           // Obtener el guest del provider
-                          final guestProvider = Provider.of<GuestProvider>(context, listen: false);
+                          final guestProvider = Provider.of<GuestProvider>(
+                              context,
+                              listen: false);
                           final guest = guestProvider.guests.firstWhere(
                             (g) => g.id == guestId,
                             orElse: () => Guest(
@@ -346,7 +323,7 @@ class AppRouter {
                               role: 'visitor',
                             ),
                           );
-                          
+
                           return FormInviteGuestPage(
                             workspaceId: workspaceId,
                             workspaceTitle: 'Invitados',
@@ -419,6 +396,7 @@ class AppRouter {
         },
       )
     ],
+    errorBuilder: (context, state) => ErrorPage(),
     redirect: (context, state) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final List<String> publicRoutes = [

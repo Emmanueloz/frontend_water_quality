@@ -25,7 +25,7 @@ COPY --from=build /app/build/web /usr/share/nginx/html
 # Configurar Nginx para manejar rutas tipo SPA
 RUN rm /etc/nginx/conf.d/default.conf && \
     echo 'server { \
-        listen 80; \
+        listen 5050; \
         server_name localhost; \
         root /usr/share/nginx/html; \
         index index.html; \
@@ -35,6 +35,6 @@ RUN rm /etc/nginx/conf.d/default.conf && \
         } \
     }' > /etc/nginx/conf.d/default.conf
 
-EXPOSE 80
+EXPOSE 5050
 
 CMD ["nginx", "-g", "daemon off;"]

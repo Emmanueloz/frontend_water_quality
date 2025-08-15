@@ -1,22 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
-import 'package:frontend_water_quality/core/interface/meter_item.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/organisms/grid_item_builder.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/organisms/grid_loading_skeleton.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/button_actions.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/meter_card.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
 class MainWorkspace extends StatelessWidget {
   final String id;
   final ScreenSize screenSize;
-  final List<MeterItem> meters;
+  final bool isLoading;
+  final String? errorMessage;
+  final int itemCount;
+  final Widget Function(BuildContext, int) itemBuilder;
+
 
   const MainWorkspace({
     super.key,
     required this.id,
     required this.screenSize,
-    required this.meters,
+    this.isLoading = false,
+    this.errorMessage,
+    this.itemCount = 0,
+    required this.itemBuilder,
   });
 
   @override
@@ -25,30 +32,11 @@ class MainWorkspace extends StatelessWidget {
   }
 
   Widget _buildMain(BuildContext context) {
-    int crossAxisCount;
-    double childAspectRatio;
-    double gap;
     EdgeInsetsGeometry margin;
 
-    if (screenSize == ScreenSize.mobile) {
-      crossAxisCount = 1;
-      childAspectRatio = 1 / 0.2;
-      gap = 5;
+    if (screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet) {
       margin = const EdgeInsets.all(10);
-    } else if (screenSize == ScreenSize.tablet) {
-      crossAxisCount = 2;
-      gap = 5;
-      childAspectRatio = 1 / 0.6;
-      margin = const EdgeInsets.all(10);
-    } else if (screenSize == ScreenSize.smallDesktop) {
-      crossAxisCount = 3;
-      gap = 10;
-      childAspectRatio = 1 / 0.6;
-      margin = const EdgeInsets.all(0);
     } else {
-      crossAxisCount = 4;
-      gap = 16;
-      childAspectRatio = 1 / 0.6;
       margin = const EdgeInsets.all(0);
     }
     return BaseContainer(
@@ -80,75 +68,31 @@ class MainWorkspace extends StatelessWidget {
             ],
             screenSize: screenSize,
           ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: GridView.count(
-                crossAxisCount: crossAxisCount,
-                crossAxisSpacing: gap,
-                mainAxisSpacing: gap,
-                childAspectRatio: childAspectRatio,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: _buildMetersItem(context),
+
+          if (isLoading)
+            GridLoadingSkeleton(screenSize: screenSize)
+          else if (errorMessage != null)
+            Center(
+              child: Text(
+                errorMessage!,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
+            )
+          else if (itemCount == 0)
+            Center(
+              child: Text(
+                "No hay medidores en este espacio de trabajo.",
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            )
+          else
+            GridItemBuilder(
+              itemCount: itemCount,
+              itemBuilder: itemBuilder,
+              screenSize: screenSize,
             ),
-          ),
         ],
       ),
     );
-  }
-
-  List<Widget> _buildMetersItem(BuildContext context) {
-    if (screenSize == ScreenSize.mobile) {
-      return meters.map((meter) {
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: Theme.of(context).colorScheme.primary,
-              width: 2,
-            ),
-          ),
-          child: ListTile(
-            title: Text(
-              meter.name,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge
-                  ?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            trailing: Chip(
-              label: Text(meter.state.name),
-            ),
-            onTap: () {
-              context.goNamed(
-                Routes.meter.name,
-                pathParameters: {
-                  "id": id,
-                  "idMeter": meter.id,
-                },
-              );
-            },
-          ),
-        );
-      }).toList();
-    }
-
-    return meters.map((meter) {
-      return MeterCard(
-        id: meter.id,
-        name: meter.name,
-        state: meter.state,
-        onTap: () {
-          context.goNamed(
-            Routes.meter.name,
-            pathParameters: {
-              "id": id,
-              "idMeter": meter.id,
-            },
-          );
-        },
-      );
-    }).toList();
   }
 }
