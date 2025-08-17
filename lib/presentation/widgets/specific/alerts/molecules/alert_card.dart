@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/theme/theme.dart';
 import 'package:frontend_water_quality/domain/models/alert.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/molecules/base_card.dart';
 import 'package:frontend_water_quality/router/routes.dart';
@@ -62,12 +63,16 @@ class AlertCard extends StatelessWidget {
     String chipText;
 
     switch (alert.type.toLowerCase()) {
+      case 'excellent':
+        chipColor = AppTheme.colorScheme.primary;
+        chipText = 'EXCELENTE';
+        break;
       case 'good':
-        chipColor = Colors.green;
+        chipColor = AppTheme.colorScheme.secondary;
         chipText = 'BUENO';
         break;
       case 'moderate':
-        chipColor = Colors.blue;
+        chipColor = AppTheme.colorScheme.tertiary;
         chipText = 'MODERADO';
         break;
       case 'poor':
@@ -77,10 +82,6 @@ class AlertCard extends StatelessWidget {
       case 'dangerous':
         chipColor = Colors.red;
         chipText = 'PELIGROSO';
-        break;
-      case 'excellent':
-        chipColor = Colors.green[700]!;
-        chipText = 'EXCELENTE';
         break;
       default:
         chipColor = Colors.grey;
@@ -92,12 +93,15 @@ class AlertCard extends StatelessWidget {
         chipText,
         style: const TextStyle(
           color: Colors.white,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
           fontSize: 10,
         ),
       ),
       backgroundColor: alert.isActive ? chipColor : Colors.grey[600],
       visualDensity: VisualDensity.compact,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
     );
   }
 
@@ -112,7 +116,7 @@ class AlertCard extends StatelessWidget {
     } else if (difference.inMinutes > 0) {
       return '${difference.inMinutes} minuto${difference.inMinutes > 1 ? 's' : ''} atrás';
     } else {
-      return 'Ahora mismo';
+      return '';
     }
   }
 } 
