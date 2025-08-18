@@ -181,7 +181,12 @@ class _MainMeterState extends State<MainMeter> {
                     ScreenSize.largeDesktop == widget.screenSize
                 ? 1200
                 : double.infinity,
-            height: 600,
+            height: ScreenSize.smallDesktop == widget.screenSize ||
+                    ScreenSize.largeDesktop == widget.screenSize
+                ? 700
+                : double.infinity,
+            minWidth: ScreenSize.largeDesktop == widget.screenSize ? 900 : 600,
+            minHeight: 450,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -242,7 +247,7 @@ class _MainMeterState extends State<MainMeter> {
                   child: GridView.count(
                     childAspectRatio: _getChildAspectRatio(),
                     crossAxisCount: _getCrossAxisCount(),
-                    crossAxisSpacing: 16,
+                    crossAxisSpacing: 10,
                     children: meters,
                   ),
                 ),
