@@ -4,6 +4,7 @@ import 'package:frontend_water_quality/domain/models/alert.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/molecules/empty_state_view.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/organisms/grid_item_builder.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/organisms/grid_loading_skeleton.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/alerts/molecules/alert_card.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/button_actions.dart';
 
@@ -12,6 +13,7 @@ class AlertGrid extends StatelessWidget {
   final ScreenSize screenSize;
   final String title;
   final String workspaceId;
+  final bool isLoading;
   final VoidCallback? onAddPressed;
   final VoidCallback? onReloadPressed;
 
@@ -23,6 +25,7 @@ class AlertGrid extends StatelessWidget {
     required this.workspaceId,
     this.onAddPressed,
     this.onReloadPressed,
+    this.isLoading = false,
   });
 
   @override
@@ -31,9 +34,10 @@ class AlertGrid extends StatelessWidget {
   }
 
   Widget _buildMain(BuildContext context) {
-    final margin = screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet
-        ? const EdgeInsets.all(10)
-        : EdgeInsets.zero;
+    final margin =
+        screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet
+            ? const EdgeInsets.all(10)
+            : EdgeInsets.zero;
 
     return BaseContainer(
       margin: margin,
@@ -46,8 +50,8 @@ class AlertGrid extends StatelessWidget {
             title: Text(
               title,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             actions: [
               if (onReloadPressed != null)
@@ -64,7 +68,9 @@ class AlertGrid extends StatelessWidget {
             ],
             screenSize: screenSize,
           ),
-          if (alerts.isEmpty)
+          if (isLoading)
+            GridLoadingSkeleton(screenSize: screenSize)
+          else if (alerts.isEmpty)
             Expanded(
               child: EmptyStateView(
                 title: 'No se encontraron alertas',
@@ -90,4 +96,4 @@ class AlertGrid extends StatelessWidget {
       ),
     );
   }
-} 
+}

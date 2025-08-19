@@ -45,67 +45,63 @@ class _AlertsPageState extends State<AlertsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final alertProvider = context.watch<AlertProvider>();
     final screenSize = ResponsiveScreenSize.getScreenSize(context);
 
-    return _buildMain(context, screenSize, alertProvider);
+    return _buildMain(context, screenSize);
   }
 
-  Widget _buildMain(BuildContext context, ScreenSize screenSize, AlertProvider alertProvider) {
-    // Configurar márgenes responsivos
-    final margin = screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet
-        ? const EdgeInsets.all(10)
-        : EdgeInsets.zero;
-
-    if (alertProvider.isLoading) {
-      return BaseContainer(
-        margin: margin,
-        child: GridLoadingSkeleton(screenSize: screenSize),
-      );
-    }
-
-    // Solo mostrar error real (no estado vacío)
-    if (alertProvider.errorMessage != null && 
-        alertProvider.errorMessage != 'No se encontraron alertas') {
-      return BaseContainer(
-        margin: margin,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 16,
-            children: [
-              Icon(
-                Icons.error_outline,
-                size: 64,
-                color: Colors.grey[600],
+  Widget _buildMain(BuildContext context, ScreenSize screenSize) {
+    final margin =
+        screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet
+            ? const EdgeInsets.all(10)
+            : EdgeInsets.zero;
+    return Consumer<AlertProvider>(
+      builder: (context, alertProvider, child) {
+        // Solo mostrar error real (no estado vacío)
+        if (alertProvider.errorMessage != null &&
+            alertProvider.errorMessage != 'No se encontraron alertas') {
+          return BaseContainer(
+            margin: margin,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 16,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: Colors.grey[600],
+                  ),
+                  Text(
+                    alertProvider.errorMessage!,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Colors.grey[600],
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      alertProvider.cleanError();
+                      alertProvider.loadAlerts();
+                    },
+                    child: const Text('Reintentar'),
+                  ),
+                ],
               ),
-              Text(
-                alertProvider.errorMessage!,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey[600],
-                ),
-                textAlign: TextAlign.center,
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  alertProvider.cleanError();
-                  alertProvider.loadAlerts();
-                },
-                child: const Text('Reintentar'),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+            ),
+          );
+        }
 
-    return AlertGrid(
-      alerts: alertProvider.alerts,
-      screenSize: screenSize,
-      title: 'Alertas',
-      workspaceId: widget.idWorkspace,
-      onAddPressed: _navigateToCreateForm,
-      onReloadPressed: _reloadAlerts,
+        return AlertGrid(
+          alerts: alertProvider.alerts,
+          screenSize: screenSize,
+          title: 'Alertas',
+          workspaceId: widget.idWorkspace,
+          onAddPressed: _navigateToCreateForm,
+          onReloadPressed: _reloadAlerts,
+          isLoading: alertProvider.isLoading,
+        );
+      },
     );
   }
 }
