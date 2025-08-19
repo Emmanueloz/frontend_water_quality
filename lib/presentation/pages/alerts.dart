@@ -60,13 +60,7 @@ class _AlertsPageState extends State<AlertsPage> {
     if (alertProvider.isLoading) {
       return BaseContainer(
         margin: margin,
-        child: Column(
-          children: [
-            Expanded(
-              child: GridLoadingSkeleton(screenSize: screenSize),
-            ),
-          ],
-        ),
+        child: GridLoadingSkeleton(screenSize: screenSize),
       );
     }
 
