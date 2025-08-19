@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/presentation/pages/alerts.dart';
 import 'package:frontend_water_quality/presentation/pages/form_alert.dart';
-
 import 'package:frontend_water_quality/domain/models/alert.dart';
 import 'package:frontend_water_quality/presentation/pages/change_password.dart';
 import 'package:frontend_water_quality/presentation/pages/connection_meter.dart';
@@ -18,7 +17,6 @@ import 'package:frontend_water_quality/presentation/pages/recovery_password.dart
 import 'package:frontend_water_quality/presentation/pages/register.dart';
 import 'package:frontend_water_quality/presentation/pages/profile.dart';
 import 'package:frontend_water_quality/presentation/pages/form_meter_page.dart';
-import 'package:frontend_water_quality/presentation/pages/simple.dart';
 import 'package:frontend_water_quality/presentation/pages/splash.dart';
 import 'package:frontend_water_quality/presentation/pages/view_list_records.dart';
 import 'package:frontend_water_quality/presentation/pages/view_meter.dart';
