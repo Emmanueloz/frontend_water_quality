@@ -72,13 +72,13 @@ class _AlertsPageState extends State<AlertsPage> {
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 16,
             children: [
               Icon(
                 Icons.error_outline,
                 size: 64,
                 color: Colors.grey[600],
               ),
-              const SizedBox(height: 16),
               Text(
                 alertProvider.errorMessage!,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -86,7 +86,6 @@ class _AlertsPageState extends State<AlertsPage> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
                   alertProvider.cleanError();

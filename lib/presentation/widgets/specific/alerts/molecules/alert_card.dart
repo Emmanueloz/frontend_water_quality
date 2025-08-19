@@ -38,12 +38,6 @@ class AlertCard extends StatelessWidget {
       );
       return;
     }
-    
-    print('AlertCard: Navigating to edit alert');
-    print('AlertCard: Alert ID: ${alert.id}');
-    print('AlertCard: Alert title: "${alert.title}"');
-    print('AlertCard: Alert type: "${alert.type.nameSpanish}"');
-    
     context.goNamed(
       Routes.updateAlerts.name,
       pathParameters: {

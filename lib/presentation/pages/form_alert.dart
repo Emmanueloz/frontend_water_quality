@@ -174,6 +174,7 @@ class _FormAlertPageState extends State<FormAlertPage> {
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: 16,
               children: [
                 // Título
                 Text(
@@ -182,7 +183,6 @@ class _FormAlertPageState extends State<FormAlertPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Container(height: 24),
 
                 // Campo Título
                 TextFormField(
@@ -202,7 +202,6 @@ class _FormAlertPageState extends State<FormAlertPage> {
                     return null;
                   },
                 ),
-                Container(height: 16),
 
                 // Campo Meter ID
                 DropdownButtonFormField<String>(
@@ -233,7 +232,6 @@ class _FormAlertPageState extends State<FormAlertPage> {
                     return null;
                   },
                 ),
-                Container(height: 16),
 
                 // Campo Tipo
                 DropdownButtonFormField<AlertType>(
@@ -262,7 +260,6 @@ class _FormAlertPageState extends State<FormAlertPage> {
                     return null;
                   },
                 ),
-                Container(height: 32),
 
                 // Botones
                 ElevatedButton(
@@ -272,7 +269,6 @@ class _FormAlertPageState extends State<FormAlertPage> {
                       : Text(_isEditMode ? 'Actualizar' : 'Crear'),
                 ),
                 if (_isEditMode) ...[
-                  Container(height: 16),
                   OutlinedButton(
                     onPressed: _isLoading ? null : () => context.pop(),
                     child: const Text('Cancelar'),

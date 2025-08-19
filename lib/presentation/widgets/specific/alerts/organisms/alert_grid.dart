@@ -40,6 +40,7 @@ class AlertGrid extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: 16,
         children: [
           ButtonActions(
             title: Text(
@@ -63,7 +64,6 @@ class AlertGrid extends StatelessWidget {
             ],
             screenSize: screenSize,
           ),
-          const SizedBox(height: 16),
           if (alerts.isEmpty)
             Expanded(
               child: EmptyStateView(
