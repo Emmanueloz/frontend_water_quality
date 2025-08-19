@@ -1,7 +1,9 @@
+import 'package:frontend_water_quality/core/enums/alert_type.dart';
+
 class Alert {
   final String id;
   final String title;
-  final String type;
+  final AlertType type;
   final String workspaceId;
   final DateTime createdAt;
   final bool isActive;
@@ -16,12 +18,12 @@ class Alert {
   });
 
   factory Alert.fromJson(Map<String, dynamic> json) {
-
-    
     return Alert(
       id: json['id'] ?? '',
       title: json['title'] ?? '',
-      type: json['type'] ?? '',
+      type: json['type'] == null 
+          ? AlertType.good 
+          : AlertTypeExtension.fromName(json['type']),
       workspaceId: json['workspace_id'] ?? '',
       createdAt: DateTime.parse(json['created_at'] ?? DateTime.now().toIso8601String()),
       isActive: json['is_active'] ?? true,
@@ -32,7 +34,7 @@ class Alert {
     final json = {
       'id': id,
       'title': title,
-      'type': type,
+      'type': type.name,
       'workspace_id': workspaceId,
       'created_at': createdAt.toIso8601String(),
       'is_active': isActive,
@@ -44,7 +46,7 @@ class Alert {
   Alert copyWith({
     String? id,
     String? title,
-    String? type,
+    AlertType? type,
     String? workspaceId,
     DateTime? createdAt,
     bool? isActive,

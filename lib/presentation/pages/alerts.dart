@@ -1,25 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
-import 'package:frontend_water_quality/domain/models/alert.dart';
 import 'package:frontend_water_quality/presentation/providers/alert_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/organisms/grid_loading_skeleton.dart';
-import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/alerts/organisms/alert_grid.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 
-class AlertsScreen extends StatefulWidget {
+class AlertsPage extends StatefulWidget {
   final String idWorkspace;
-  const AlertsScreen({super.key, required this.idWorkspace});
+  const AlertsPage({super.key, required this.idWorkspace});
 
   @override
-  State<AlertsScreen> createState() => _AlertsScreenState();
+  State<AlertsPage> createState() => _AlertsPageState();
 }
 
-class _AlertsScreenState extends State<AlertsScreen> {
+class _AlertsPageState extends State<AlertsPage> {
   @override
   void initState() {
     super.initState();
@@ -44,8 +42,6 @@ class _AlertsScreenState extends State<AlertsScreen> {
     final alertProvider = context.read<AlertProvider>();
     alertProvider.forceReload();
   }
-
-
 
   @override
   Widget build(BuildContext context) {

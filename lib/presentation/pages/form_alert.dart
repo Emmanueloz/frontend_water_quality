@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/alert_type.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/domain/models/alert.dart';
 import 'package:frontend_water_quality/domain/models/meter_model.dart';
 import 'package:frontend_water_quality/presentation/providers/alert_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_provider.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
-import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 
@@ -28,12 +29,12 @@ class FormAlertPage extends StatefulWidget {
 class _FormAlertPageState extends State<FormAlertPage> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
-  String _selectedType = 'good';
+  AlertType _selectedType = AlertType.good;
   String _selectedMeterId = '';
   bool _isLoading = false;
   bool get _isEditMode => widget.alert != null;
 
-  final List<String> _alertTypes = ['good', 'moderate', 'poor', 'dangerous', 'excellent'];
+  final List<AlertType> _alertTypes = AlertType.values;
   
   // Getter para obtener medidores disponibles del MeterProvider
   List<Meter> get _availableMeters {
@@ -54,7 +55,7 @@ class _FormAlertPageState extends State<FormAlertPage> {
     if (_isEditMode) {
       print('FormAlertPage: Loading alert data for editing');
       print('FormAlertPage: Alert title: "${widget.alert!.title}"');
-      print('FormAlertPage: Alert type: "${widget.alert!.type}"');
+      print('FormAlertPage: Alert type: "${widget.alert!.type.nameSpanish}"');
       
       _titleController.text = widget.alert!.title;
       _selectedType = widget.alert!.type;
@@ -84,7 +85,7 @@ class _FormAlertPageState extends State<FormAlertPage> {
     
     final alertData = {
       'title': _titleController.text.trim(),
-      'type': _selectedType,
+      'type': _selectedType.name,
       'workspace_id': widget.workspaceId,
       'meter_id': meterId,
     };
@@ -133,31 +134,43 @@ class _FormAlertPageState extends State<FormAlertPage> {
   @override
   Widget build(BuildContext context) {
     final String title = _isEditMode ? "Editar alerta" : "Crear alerta";
-    final screenSize = ResponsiveScreenSize.getScreenSize(context);
     
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
-      ),
-      body: Consumer<MeterProvider>(
-        builder: (context, meterProvider, child) {
-          return _buildForm(context, screenSize);
-        },
+    return Layout(
+      title: title,
+      builder: (context, screenSize) {
+        return _buildMain(context, screenSize);
+      },
+    );
+  }
+
+  Widget _buildMain(BuildContext context, ScreenSize screenSize) {
+    if (screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet) {
+      return BaseContainer(
+        margin: const EdgeInsets.all(10),
+        width: double.infinity,
+        height: double.infinity,
+        child: _buildForm(context, screenSize),
+      );
+    }
+
+    return BaseContainer(
+      margin: const EdgeInsets.all(10),
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: _buildForm(context, screenSize),
       ),
     );
   }
 
-  Widget _buildForm(BuildContext context, screenSize) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Center(
-        child: SizedBox(
-          width: 600,
-          child: Form(
+  Widget _buildForm(BuildContext context, ScreenSize screenSize) {
+    return Container(
+      width: screenSize == ScreenSize.mobile ? double.infinity : 600,
+      height: screenSize == ScreenSize.mobile ? double.infinity : 600,
+      margin: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
+      child: Consumer<MeterProvider>(
+        builder: (context, meterProvider, child) {
+          return Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -169,7 +182,7 @@ class _FormAlertPageState extends State<FormAlertPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 24),
+                Container(height: 24),
 
                 // Campo Título
                 TextFormField(
@@ -189,7 +202,7 @@ class _FormAlertPageState extends State<FormAlertPage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                Container(height: 16),
 
                 // Campo Meter ID
                 DropdownButtonFormField<String>(
@@ -220,10 +233,10 @@ class _FormAlertPageState extends State<FormAlertPage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                Container(height: 16),
 
                 // Campo Tipo
-                DropdownButtonFormField<String>(
+                DropdownButtonFormField<AlertType>(
                   value: _selectedType,
                   decoration: const InputDecoration(
                     labelText: 'Tipo de Alerta',
@@ -232,7 +245,7 @@ class _FormAlertPageState extends State<FormAlertPage> {
                   items: _alertTypes.map((type) {
                     return DropdownMenuItem(
                       value: type,
-                      child: Text(_translateType(type)),
+                      child: Text(type.nameSpanish),
                     );
                   }).toList(),
                   onChanged: (value) {
@@ -243,13 +256,13 @@ class _FormAlertPageState extends State<FormAlertPage> {
                     }
                   },
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value == null) {
                       return 'El tipo es requerido';
                     }
                     return null;
                   },
                 ),
-                const SizedBox(height: 32),
+                Container(height: 32),
 
                 // Botones
                 ElevatedButton(
@@ -259,7 +272,7 @@ class _FormAlertPageState extends State<FormAlertPage> {
                       : Text(_isEditMode ? 'Actualizar' : 'Crear'),
                 ),
                 if (_isEditMode) ...[
-                  const SizedBox(height: 16),
+                  Container(height: 16),
                   OutlinedButton(
                     onPressed: _isLoading ? null : () => context.pop(),
                     child: const Text('Cancelar'),
@@ -267,32 +280,9 @@ class _FormAlertPageState extends State<FormAlertPage> {
                 ],
               ],
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
-  }
-
-  String _translateType(String type) {
-    switch (type.toLowerCase()) {
-      case 'good':
-        return 'Bueno';
-      case 'moderate':
-        return 'Moderado';
-      case 'poor':
-        return 'Malo';
-      case 'dangerous':
-        return 'Peligroso';
-      case 'excellent':
-        return 'Excelente';
-      default:
-        return type.capitalize();
-    }
-  }
-}
-
-extension StringExtension on String {
-  String capitalize() {
-    return "${this[0].toUpperCase()}${substring(1)}";
   }
 } 

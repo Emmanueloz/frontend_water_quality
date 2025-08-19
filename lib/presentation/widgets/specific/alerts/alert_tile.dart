@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/core/theme/theme.dart';
 
 class AlertTile extends StatelessWidget {
   final String title;
@@ -22,7 +21,7 @@ class AlertTile extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: AppTheme.colorScheme.tertiary,
+          color: colorScheme.primary,
           width: 1,
         ),
       ),
@@ -36,8 +35,8 @@ class AlertTile extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              AppTheme.colorScheme.surface,
-              AppTheme.colorScheme.tertiary.withOpacity(0.1),
+              colorScheme.surface,
+              colorScheme.primary.withOpacity(0.1),
             ],
           ),
         ),
@@ -46,25 +45,22 @@ class AlertTile extends StatelessWidget {
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           title: Text(
             title,
-            style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.textColor,
-                    ),
+            style: theme.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           subtitle: Text(
             'Tipo: $type',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: AppTheme.textColor.withOpacity(0.7),
+              color: colorScheme.onSurface.withOpacity(0.7),
             ),
           ),
           trailing: Icon(
             Icons.chevron_right,
-            color: AppTheme.colorScheme.secondary,
+            color: colorScheme.primary,
           ),
         ),
       ),

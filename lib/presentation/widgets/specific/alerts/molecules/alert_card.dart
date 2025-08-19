@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/core/theme/theme.dart';
+import 'package:frontend_water_quality/core/enums/alert_type.dart';
 import 'package:frontend_water_quality/domain/models/alert.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/molecules/base_card.dart';
 import 'package:frontend_water_quality/router/routes.dart';
@@ -42,7 +42,7 @@ class AlertCard extends StatelessWidget {
     print('AlertCard: Navigating to edit alert');
     print('AlertCard: Alert ID: ${alert.id}');
     print('AlertCard: Alert title: "${alert.title}"');
-    print('AlertCard: Alert type: "${alert.type}"');
+    print('AlertCard: Alert type: "${alert.type.nameSpanish}"');
     
     context.goNamed(
       Routes.updateAlerts.name,
@@ -59,49 +59,20 @@ class AlertCard extends StatelessWidget {
   }
 
   Chip _buildChip(BuildContext context) {
-    Color chipColor;
-    String chipText;
-
-    switch (alert.type.toLowerCase()) {
-      case 'excellent':
-        chipColor = AppTheme.colorScheme.primary;
-        chipText = 'EXCELENTE';
-        break;
-      case 'good':
-        chipColor = AppTheme.colorScheme.secondary;
-        chipText = 'BUENO';
-        break;
-      case 'moderate':
-        chipColor = AppTheme.colorScheme.tertiary;
-        chipText = 'MODERADO';
-        break;
-      case 'poor':
-        chipColor = Colors.orange;
-        chipText = 'MALO';
-        break;
-      case 'dangerous':
-        chipColor = Colors.red;
-        chipText = 'PELIGROSO';
-        break;
-      default:
-        chipColor = Colors.grey;
-        chipText = alert.type.toUpperCase();
-    }
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Chip(
       label: Text(
-        chipText,
-        style: const TextStyle(
+        alert.type.nameSpanish.toUpperCase(),
+        style: theme.textTheme.bodySmall?.copyWith(
           color: Colors.white,
           fontWeight: FontWeight.w600,
-          fontSize: 10,
         ),
       ),
-      backgroundColor: alert.isActive ? chipColor : Colors.grey[600],
-      visualDensity: VisualDensity.compact,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      backgroundColor: alert.isActive ? colorScheme.secondary : Colors.grey[600],
+      side: BorderSide.none,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     );
   }
 
@@ -116,7 +87,7 @@ class AlertCard extends StatelessWidget {
     } else if (difference.inMinutes > 0) {
       return '${difference.inMinutes} minuto${difference.inMinutes > 1 ? 's' : ''} atrás';
     } else {
-      return '';
+      return 'Ahora';
     }
   }
 } 

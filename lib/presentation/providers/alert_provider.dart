@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:frontend_water_quality/core/enums/alert_type.dart';
 import 'package:frontend_water_quality/domain/models/alert.dart';
 import 'package:frontend_water_quality/domain/repositories/alert_repo.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
@@ -156,15 +157,15 @@ class AlertProvider with ChangeNotifier {
 
     try {
       print('AlertProvider: createAlert called');
+      print('AlertProvider: alertData = $alertData');
       
       final result = await _alertRepository.createAlert(_authProvider!.token!, alertData);
       
       print('AlertProvider: createAlert result isSuccess=${result.isSuccess}');
       
       if (result.isSuccess) {
-        // Recargar la lista de alertas después de crear
-        _recharge = true;
-        await loadAlerts();
+        _alerts.add(result.value!);
+        _recharge = false;
         print('AlertProvider: createAlert success');
       } else {
         _errorMessage = result.message;
@@ -192,23 +193,17 @@ class AlertProvider with ChangeNotifier {
 
     try {
       print('AlertProvider: updateAlert called for alertId=$alertId');
+      print('AlertProvider: alertData = $alertData');
       
       final result = await _alertRepository.updateAlert(_authProvider!.token!, alertId, alertData);
       
       print('AlertProvider: updateAlert result isSuccess=${result.isSuccess}');
       
       if (result.isSuccess) {
-        // Actualizar la alerta en la lista
         final index = _alerts.indexWhere((a) => a.id == alertId);
         if (index != -1) {
           _alerts[index] = result.value!;
         }
-        
-        // Si es la alerta seleccionada, actualizarla también
-        if (_selectedAlert?.id == alertId) {
-          _selectedAlert = result.value!;
-        }
-        
         print('AlertProvider: updateAlert success');
       } else {
         _errorMessage = result.message;
@@ -242,7 +237,6 @@ class AlertProvider with ChangeNotifier {
       print('AlertProvider: deleteAlert result isSuccess=${result.isSuccess}');
       
       if (result.isSuccess) {
-        // Remover la alerta de la lista
         _alerts.removeWhere((a) => a.id == alertId);
         
         // Si es la alerta seleccionada, limpiarla
@@ -338,8 +332,10 @@ class AlertProvider with ChangeNotifier {
   int get totalCount => _alerts.length;
   
   // Métodos para filtrar por tipo
-  List<Alert> getAlertsByType(String type) => _alerts.where((a) => a.type.toLowerCase() == type.toLowerCase()).toList();
-  List<Alert> getBuenoAlerts() => getAlertsByType('bueno');
-  List<Alert> getMaloAlerts() => getAlertsByType('malo');
-  List<Alert> getInaceptableAlerts() => getAlertsByType('inaceptable');
+  List<Alert> getAlertsByType(AlertType type) => _alerts.where((a) => a.type == type).toList();
+  List<Alert> getExcellentAlerts() => getAlertsByType(AlertType.excellent);
+  List<Alert> getGoodAlerts() => getAlertsByType(AlertType.good);
+  List<Alert> getModerateAlerts() => getAlertsByType(AlertType.moderate);
+  List<Alert> getPoorAlerts() => getAlertsByType(AlertType.poor);
+  List<Alert> getDangerousAlerts() => getAlertsByType(AlertType.dangerous);
 } 

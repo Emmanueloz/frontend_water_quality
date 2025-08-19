@@ -241,11 +241,11 @@ class AppRouter {
                     ],
                   ),
                   GoRoute(
-                    path: Routes.alerts.path,
+                    path: 'alerts',
                     name: Routes.alerts.name,
                     builder: (context, state) {
                       final id = state.pathParameters['id'] ?? 'default';
-                      return AlertsScreen(idWorkspace: id);
+                      return AlertsPage(idWorkspace: id);
                     },
                     routes: [
                       GoRoute(
