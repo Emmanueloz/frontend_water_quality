@@ -7,6 +7,7 @@ import 'package:frontend_water_quality/infrastructure/meter_records_repo_impl.da
 import 'package:frontend_water_quality/infrastructure/meter_socket_service.dart';
 import 'package:frontend_water_quality/infrastructure/weather_meter_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/guest_repo_impl.dart';
+import 'package:frontend_water_quality/infrastructure/alert_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/workspace_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/meter_repo_impl.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
@@ -18,6 +19,7 @@ import 'package:frontend_water_quality/presentation/providers/meter_provider.dar
 import 'package:frontend_water_quality/router/app_router.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_record_provider.dart';
+import 'package:frontend_water_quality/presentation/providers/alert_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +32,7 @@ void main() async {
   final MeterRecordsRepoImpl meterRecordsRepo = MeterRecordsRepoImpl(dio);
   final MeterRepoImpl meterRepo = MeterRepoImpl(dio);
   final GuestRepositoryImpl guestRepo = GuestRepositoryImpl(dio);
+  final AlertRepositoryImpl alertRepo = AlertRepositoryImpl(dio);
   await authProvider.loadSettings();
 
   runApp(
@@ -100,6 +103,23 @@ void main() async {
           update: (context, authProvider, weatherMeterProvider) {
             weatherMeterProvider!.clean();
             return weatherMeterProvider..setAuthProvider(authProvider);
+          },
+        ),
+        ChangeNotifierProxyProvider<AuthProvider, AlertProvider>(
+          create: (context) {
+            final authProvider = context.read<AuthProvider>();
+            final alertProvider = AlertProvider(
+              alertRepo,
+              authProvider,
+            );
+            return alertProvider;
+          },
+          update: (context, authProvider, previousAlertProvider) {
+            if (previousAlertProvider != null) {
+              previousAlertProvider.setAuthProvider(authProvider);
+              previousAlertProvider.clean();
+            }
+            return previousAlertProvider ?? AlertProvider(alertRepo, authProvider);
           },
         ),
       ],

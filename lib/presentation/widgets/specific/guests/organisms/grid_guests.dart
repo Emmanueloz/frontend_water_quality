@@ -46,7 +46,7 @@ class GuestGrid extends StatelessWidget {
               ),
             ),
             actions: [
-              if (onAddPressed != null)
+              if (onAddPressed != null && guests.isNotEmpty)
                 ElevatedButton.icon(
                   onPressed: onAddPressed!,
                   icon: const Icon(Icons.person_add),
@@ -69,7 +69,7 @@ class GuestGrid extends StatelessWidget {
                     subtitle: 'Los invitados aparecerán aquí cuando sean agregados',
                     icon: Icons.people_outline,
                     onAction: onAddPressed,
-                    actionText: 'Invitar invitado',
+                    actionText: 'Agregar Invitado',
                   )
                 : SingleChildScrollView(
                     child: GridView.count(

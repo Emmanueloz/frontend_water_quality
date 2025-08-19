@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/presentation/pages/alerts.dart';
+import 'package:frontend_water_quality/presentation/pages/form_alert.dart';
+import 'package:frontend_water_quality/domain/models/alert.dart';
 import 'package:frontend_water_quality/presentation/pages/change_password.dart';
 import 'package:frontend_water_quality/presentation/pages/connection_meter.dart';
 import 'package:frontend_water_quality/presentation/pages/device_meter.dart';
@@ -15,7 +17,6 @@ import 'package:frontend_water_quality/presentation/pages/recovery_password.dart
 import 'package:frontend_water_quality/presentation/pages/register.dart';
 import 'package:frontend_water_quality/presentation/pages/profile.dart';
 import 'package:frontend_water_quality/presentation/pages/form_meter_page.dart';
-import 'package:frontend_water_quality/presentation/pages/simple.dart';
 import 'package:frontend_water_quality/presentation/pages/splash.dart';
 import 'package:frontend_water_quality/presentation/pages/view_list_records.dart';
 import 'package:frontend_water_quality/presentation/pages/view_meter.dart';
@@ -251,11 +252,11 @@ class AppRouter {
                     ],
                   ),
                   GoRoute(
-                    path: Routes.alerts.path,
+                    path: 'alerts',
                     name: Routes.alerts.name,
                     builder: (context, state) {
                       final id = state.pathParameters['id'] ?? 'default';
-                      return AlertsScreen(idWorkspace: id);
+                      return AlertsPage(idWorkspace: id);
                     },
                     routes: [
                       GoRoute(
@@ -263,17 +264,28 @@ class AppRouter {
                         name: Routes.createAlerts.name,
                         parentNavigatorKey: rootNavigatorKey,
                         builder: (context, state) {
-                          return Simple(title: "Create Alert");
+                          final workspaceId = state.pathParameters['id'] ?? 'default';
+                          return FormAlertPage(
+                            workspaceTitle: 'Alertas',
+                            workspaceId: workspaceId,
+                          );
                         },
                       ),
-                      GoRoute(
-                        path: Routes.updateAlerts.path,
-                        name: Routes.updateAlerts.name,
-                        parentNavigatorKey: rootNavigatorKey,
-                        builder: (context, state) {
-                          return Simple(title: "Update Alert");
-                        },
-                      ),
+                      
+                                             GoRoute(
+                         path: Routes.updateAlerts.path,
+                         name: Routes.updateAlerts.name,
+                         parentNavigatorKey: rootNavigatorKey,
+                         builder: (context, state) {
+                           final workspaceId = state.pathParameters['id'] ?? 'default';
+                           final alert = state.extra as Alert?;
+                           return FormAlertPage(
+                             alert: alert,
+                             workspaceTitle: 'Alertas',
+                             workspaceId: workspaceId,
+                           );
+                         },
+                       ),
                     ],
                   ),
                   GoRoute(
