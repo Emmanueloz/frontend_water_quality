@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/roles.dart';
-import 'package:frontend_water_quality/core/enums/type_workspace.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/workspace_provider.dart';
@@ -129,7 +128,7 @@ class _ListWorkspaceState extends State<ListWorkspace> {
                     id: workspace.id ?? '',
                     title: workspace.name ?? "Sin nombre",
                     owner: workspace.user?.username ?? "Sin propietario",
-                    type: workspace.type?.nameSpanish ?? "Privado",
+                    type: workspace.type,
                     onTap: () {
                       context.goNamed(
                         Routes.workspace.name,
@@ -158,7 +157,7 @@ class _ListWorkspaceState extends State<ListWorkspace> {
                     id: workspace.id ?? '',
                     title: workspace.name ?? "Sin nombre",
                     owner: workspace.user?.username ?? "Sin propietario",
-                    type: workspace.type?.nameSpanish ?? "Privado",
+                    type: workspace.type,
                     onTap: () {
                       context.goNamed(
                         Routes.workspace.name,
@@ -186,7 +185,7 @@ class _ListWorkspaceState extends State<ListWorkspace> {
                   id: workspace.id ?? '',
                   title: workspace.name ?? "Sin nombre",
                   owner: workspace.user?.username ?? "Sin propietario",
-                  type: workspace.type?.nameSpanish ?? "Privado",
+                  type: workspace.type,
                   onTap: () {
                     context.goNamed(
                       Routes.workspace.name,
