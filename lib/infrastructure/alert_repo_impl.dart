@@ -27,12 +27,13 @@ class AlertRepositoryImpl implements AlertRepository {
   }
 
   @override
-  Future<Result<List<Alert>>> listAlerts(String userToken) async {
+  Future<Result<List<Alert>>> listAlerts(String userToken, String workspaceId) async {
     try {
-      print('Listing alerts');
+      print('Listing alerts for workspace: $workspaceId');
       
       final response = await _dio.get(
         '/alerts/',
+        queryParameters: {'workspace_id': workspaceId},
         options: Options(headers: {'Authorization': 'Bearer $userToken'}),
       );
 

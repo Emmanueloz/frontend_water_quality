@@ -75,6 +75,12 @@ class AlertProvider with ChangeNotifier {
       return;
     }
 
+    if (_currentWorkspaceId == null) {
+      _errorMessage = "Workspace ID no disponible";
+      notifyListeners();
+      return;
+    }
+
     // Solo cargar si es necesario recargar
     if (!_recharge) {
       print('AlertProvider: loadAlerts skipped - no recharge needed');
@@ -88,8 +94,9 @@ class AlertProvider with ChangeNotifier {
     try {
       print('AlertProvider: loadAlerts called');
       print('AlertProvider: token = ${_authProvider!.token}');
+      print('AlertProvider: workspaceId = $_currentWorkspaceId');
       
-      final result = await _alertRepository.listAlerts(_authProvider!.token!);
+      final result = await _alertRepository.listAlerts(_authProvider!.token!, _currentWorkspaceId!);
       
       print('AlertProvider: loadAlerts result isSuccess=${result.isSuccess}');
       
