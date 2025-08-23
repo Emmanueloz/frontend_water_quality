@@ -60,7 +60,7 @@ class _FormMeterPageState extends State<FormMeterPage> {
 
       print(error);
 
-      if (error == null && context.mounted && widget.idMeter != null) {
+      if (error == null && context.mounted && widget.idMeter == null) {
         context.pop();
       }
     }

@@ -69,6 +69,16 @@ class _ListWorkspaceState extends State<ListWorkspace> {
     ]);
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final provider = Provider.of<WorkspaceProvider>(context);
+    if (provider.shouldReloadList) {
+      _loadWorkspaces();
+      provider.confirmListReloaded();
+    }
+  }
+
   Future<void> _fetchOwnWorkspaces() async {
     setState(() {
       isLoadingOwn = true;
@@ -78,11 +88,13 @@ class _ListWorkspaceState extends State<ListWorkspace> {
     final provider = Provider.of<WorkspaceProvider>(context, listen: false);
     final Result<List<Workspace>> result = await provider.getWorkspaces();
 
-    setState(() {
-      errorOwn = result.message;
-      ownWorkspaces = result.value ?? [];
-      isLoadingOwn = false;
-    });
+    if (mounted) {
+      setState(() {
+        errorOwn = result.message;
+        ownWorkspaces = result.value ?? [];
+        isLoadingOwn = false;
+      });
+    }
   }
 
   Future<void> _fetchSharedWorkspaces() async {
@@ -94,11 +106,13 @@ class _ListWorkspaceState extends State<ListWorkspace> {
     final provider = Provider.of<WorkspaceProvider>(context, listen: false);
     final Result<List<Workspace>> result = await provider.getSharedWorkspaces();
 
-    setState(() {
-      errorShared = result.message;
-      sharedWorkspaces = result.value ?? [];
-      isLoadingShared = false;
-    });
+    if (mounted) {
+      setState(() {
+        errorShared = result.message;
+        sharedWorkspaces = result.value ?? [];
+        isLoadingShared = false;
+      });
+    }
   }
 
   Future<void> _fetchAllWorkspaces() async {
@@ -110,11 +124,13 @@ class _ListWorkspaceState extends State<ListWorkspace> {
     final provider = Provider.of<WorkspaceProvider>(context, listen: false);
     final Result<List<Workspace>> result = await provider.getAllWorkspaces();
 
-    setState(() {
-      errorAll = result.message;
-      allWorkspaces = result.value ?? [];
-      isLoadingAll = false;
-    });
+    if (mounted) {
+      setState(() {
+        errorAll = result.message;
+        allWorkspaces = result.value ?? [];
+        isLoadingAll = false;
+      });
+    }
   }
 
   void _onDestinationSelected(int index) {

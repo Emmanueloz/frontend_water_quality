@@ -41,7 +41,20 @@ class _LayoutWorkspaceState extends State<LayoutWorkspace> {
 
   Future<Result<Workspace>> _fetchWorkspace() async {
     final provider = Provider.of<WorkspaceProvider>(context, listen: false);
-    return await provider.getWorkspaceById(widget.id);
+    final result = await provider.getWorkspaceById(widget.id);
+    provider.confirmWorkspaceReloaded(widget.id);
+    return result;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final provider = Provider.of<WorkspaceProvider>(context);
+    if (provider.shouldReloadWorkspace(widget.id)) {
+      setState(() {
+        _workspaceFuture = _fetchWorkspace();
+      });
+    }
   }
 
   List<NavigationItem> _getDestinationsByRole(WorkRole? role) {

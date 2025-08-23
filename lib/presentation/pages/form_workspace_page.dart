@@ -43,13 +43,10 @@ class _FormWorkspacePageState extends State<FormWorkspacePage> {
 
     final provider = context.read<WorkspaceProvider>();
     if (widget.idWorkspace != null) {
-      final (success, error) = await provider.updateWorkspace(workspace);
-      if (success && mounted) {
-        context.pop();
-      }
+      await provider.updateWorkspace(workspace);
     } else {
       final error = await provider.createWorkspace(workspace);
-      if (error == null && mounted) {
+      if (error == null && context.mounted && widget.idWorkspace == null) {
         context.pop();
       }
     }

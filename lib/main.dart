@@ -41,7 +41,7 @@ void main() async {
         ChangeNotifierProvider<AuthProvider>(
           create: (_) => authProvider,
         ),
-        ProxyProvider<AuthProvider, WorkspaceProvider>(
+        ChangeNotifierProxyProvider<AuthProvider, WorkspaceProvider>(
           create: (context) => WorkspaceProvider(
             workspaceRepo,
             context.read<AuthProvider>(),
