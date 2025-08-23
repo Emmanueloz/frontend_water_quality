@@ -8,41 +8,6 @@ class WorkspaceProvider {
   final WorkspaceRepo _workspaceRepo;
   WorkspaceProvider(this._workspaceRepo, this._authProvider);
 
-  List<Workspace> workspaces = [];
-  List<Workspace> workspacesShared = [];
-  List<Workspace> workspacesAll = [];
-  Workspace? currentWorkspace;
-  bool isLoading = false;
-  bool isLoadingShared = false;
-  bool isLoadingAll = false;
-  bool isLoadingForm = false;
-  bool recharge = true;
-  bool rechargeShare = true;
-  bool rechargeAll = true;
-  String? errorMessage;
-  String? errorMessageShared;
-  String? errorMessageAll;
-  String? errorMessageForm;
-
-  void clean() {
-    workspaces = [];
-    workspacesShared = [];
-    workspacesAll = [];
-    currentWorkspace = null;
-    isLoading = false;
-    isLoadingForm = false;
-    recharge = true;
-    errorMessage = null;
-    errorMessageShared = null;
-    errorMessageAll = null;
-    errorMessageForm = null;
-  }
-
-  void cleanForm() {
-    currentWorkspace = null;
-    errorMessageForm = null;
-  }
-
   void setAuthProvider(AuthProvider? provider) {
     _authProvider = provider;
   }

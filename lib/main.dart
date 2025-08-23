@@ -47,8 +47,7 @@ void main() async {
             context.read<AuthProvider>(),
           ),
           update: (context, authProvider, workspaceProvider) {
-            workspaceProvider!.clean();
-            return workspaceProvider..setAuthProvider(authProvider);
+            return workspaceProvider!..setAuthProvider(authProvider);
           },
         ),
         ChangeNotifierProvider(

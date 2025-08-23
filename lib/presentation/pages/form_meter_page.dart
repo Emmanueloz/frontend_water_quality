@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
+import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/domain/models/meter_model.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
@@ -24,27 +25,44 @@ class FormMeterPage extends StatefulWidget {
 }
 
 class _FormMeterPageState extends State<FormMeterPage> {
-  bool isLoading = false;
-  String? errorMessage;
+  late Future<Result<Meter>>? _meterFuture;
+  bool _isLoading = false;
 
-  Future<void> _handleSave(BuildContext context, Meter meter) async {
-    setState(() {
-      isLoading = true;
-      errorMessage = null;
-    });
+  @override
+  void initState() {
+    super.initState();
+    if (widget.idMeter != null) {
+      _meterFuture = _fetchMeter();
+    }
+  }
 
-    final provider = Provider.of<MeterProvider>(context, listen: false);
-    final errorMSG = widget.idMeter != null
-        ? await provider.updateMeter(widget.idWorkspace, meter)
-        : await provider.createMeter(widget.idWorkspace, meter);
+  Future<Result<Meter>> _fetchMeter() async {
+    final provider = context.read<MeterProvider>();
+    return await provider.getMeterById(widget.idWorkspace, widget.idMeter!);
+  }
 
-    setState(() {
-      isLoading = false;
-      errorMessage = errorMSG;
-    });
+  Future<void> _handleSubmit(BuildContext context, Meter meter) async {
+    setState(() => _isLoading = true);
 
-    if (errorMSG == null && context.mounted) {
-      context.pop();
+    final provider = context.read<MeterProvider>();
+    String? error;
+
+    if (widget.idMeter != null) {
+      error = await provider.updateMeter(widget.idWorkspace, meter);
+      print("Error updating meter: $error");
+    } else {
+      error = await provider.createMeter(widget.idWorkspace, meter);
+      print("Error creating meter: $error");
+    }
+
+    if (mounted) {
+      setState(() => _isLoading = false);
+
+      print(error);
+
+      if (error == null && context.mounted && widget.idMeter != null) {
+        context.pop();
+      }
     }
   }
 
@@ -69,7 +87,7 @@ class _FormMeterPageState extends State<FormMeterPage> {
       BuildContext context, ScreenSize screenSize, String title) {
     if (screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet) {
       return BaseContainer(
-        margin: EdgeInsets.all(10),
+        margin: const EdgeInsets.all(10),
         width: double.infinity,
         height: double.infinity,
         child: _buildForm(context, screenSize, title),
@@ -89,22 +107,48 @@ class _FormMeterPageState extends State<FormMeterPage> {
     return Container(
       width: screenSize == ScreenSize.mobile ? double.infinity : 600,
       height: screenSize == ScreenSize.mobile ? double.infinity : 600,
-      margin: EdgeInsets.all(10),
-      padding: EdgeInsets.all(10),
-      child: Consumer<MeterProvider>(
-        builder: (context, meterProvider, child) {
-          return FormMeters(
-            title: title,
-            idWorkspace: widget.idWorkspace,
-            idMeter: widget.idMeter,
-            errorMessage: errorMessage ?? "",
-            isLoading: isLoading,
-            onSave: (Meter meter) async {
-              await _handleSave(context, meter);
-            },
-          );
-        },
-      ),
+      margin: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
+      child: widget.idMeter != null
+          ? FutureBuilder<Result<Meter>>(
+              future: _meterFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError ||
+                    !snapshot.hasData ||
+                    !snapshot.data!.isSuccess) {
+                  return Center(
+                    child: Text(
+                      snapshot.data?.message ?? 'Error cargando medidor',
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+
+                final meter = snapshot.data!.value!;
+                return FormMeters(
+                  title: title,
+                  idWorkspace: widget.idWorkspace,
+                  idMeter: widget.idMeter,
+                  name: meter.name,
+                  lat: meter.location.lat,
+                  lng: meter.location.lon,
+                  isLoading: _isLoading,
+                  errorMessage: snapshot.data?.message ?? "",
+                  onSave: (meter) => _handleSubmit(context, meter),
+                );
+              },
+            )
+          : FormMeters(
+              title: title,
+              idWorkspace: widget.idWorkspace,
+              isLoading: _isLoading,
+              errorMessage: "",
+              onSave: (meter) => _handleSubmit(context, meter),
+            ),
     );
   }
 }
