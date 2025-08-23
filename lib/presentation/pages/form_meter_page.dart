@@ -53,16 +53,13 @@ class _FormMeterPageState extends State<FormMeterPage> {
     } else {
       error = await provider.createMeter(widget.idWorkspace, meter);
       print("Error creating meter: $error");
+      if (error == null && context.mounted && widget.idMeter == null) {
+        context.pop();
+      }
     }
 
     if (mounted) {
       setState(() => _isLoading = false);
-
-      print(error);
-
-      if (error == null && context.mounted && widget.idMeter == null) {
-        context.pop();
-      }
     }
   }
 
