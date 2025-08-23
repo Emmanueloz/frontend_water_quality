@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/roles.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
+import 'package:frontend_water_quality/core/interface/result.dart';
+import 'package:frontend_water_quality/domain/models/workspace.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/workspace_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
@@ -23,12 +25,29 @@ class _ListWorkspaceState extends State<ListWorkspace> {
   int currentIndex = 0;
   ListWorkspaces _type = ListWorkspaces.mine;
 
+  bool isLoadingOwn = false;
+  bool isLoadingShared = false;
+  bool isLoadingAll = false;
+
+  String? errorOwn;
+  String? errorShared;
+  String? errorAll;
+
+  List<Workspace> ownWorkspaces = [];
+  List<Workspace> sharedWorkspaces = [];
+  List<Workspace> allWorkspaces = [];
+
   @override
   void initState() {
     super.initState();
 
     _type = widget.type;
 
+    _setInitialIndex();
+    _loadWorkspaces();
+  }
+
+  void _setInitialIndex() {
     switch (widget.type) {
       case ListWorkspaces.mine:
         currentIndex = 0;
@@ -40,58 +59,125 @@ class _ListWorkspaceState extends State<ListWorkspace> {
         currentIndex = 2;
         break;
     }
+  }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<WorkspaceProvider>(context, listen: false)
-          .fetchWorkspacesUser();
+  Future<void> _loadWorkspaces() async {
+    await Future.wait([
+      _fetchOwnWorkspaces(),
+      _fetchSharedWorkspaces(),
+      _fetchAllWorkspaces(),
+    ]);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final provider = Provider.of<WorkspaceProvider>(context);
+    if (provider.shouldReloadList) {
+      _loadWorkspaces();
+      provider.confirmListReloaded();
+    }
+  }
+
+  Future<void> _fetchOwnWorkspaces() async {
+    setState(() {
+      isLoadingOwn = true;
+      errorOwn = null;
     });
+
+    final provider = Provider.of<WorkspaceProvider>(context, listen: false);
+    final Result<List<Workspace>> result = await provider.getWorkspaces();
+
+    if (mounted) {
+      setState(() {
+        errorOwn = result.message;
+        ownWorkspaces = result.value ?? [];
+        isLoadingOwn = false;
+      });
+    }
+  }
+
+  Future<void> _fetchSharedWorkspaces() async {
+    setState(() {
+      isLoadingShared = true;
+      errorShared = null;
+    });
+
+    final provider = Provider.of<WorkspaceProvider>(context, listen: false);
+    final Result<List<Workspace>> result = await provider.getSharedWorkspaces();
+
+    if (mounted) {
+      setState(() {
+        errorShared = result.message;
+        sharedWorkspaces = result.value ?? [];
+        isLoadingShared = false;
+      });
+    }
+  }
+
+  Future<void> _fetchAllWorkspaces() async {
+    setState(() {
+      isLoadingAll = true;
+      errorAll = null;
+    });
+
+    final provider = Provider.of<WorkspaceProvider>(context, listen: false);
+    final Result<List<Workspace>> result = await provider.getAllWorkspaces();
+
+    if (mounted) {
+      setState(() {
+        errorAll = result.message;
+        allWorkspaces = result.value ?? [];
+        isLoadingAll = false;
+      });
+    }
+  }
+
+  void _onDestinationSelected(int index) {
+    setState(() {
+      currentIndex = index;
+    });
+    if (index == 0) {
+      setState(() {
+        _type = ListWorkspaces.mine;
+      });
+      context.goNamed(
+        Routes.workspaces.name,
+        queryParameters: {
+          "type": ListWorkspaces.mine.name,
+        },
+      );
+    } else if (index == 1) {
+      setState(() {
+        _type = ListWorkspaces.shared;
+      });
+      context.goNamed(
+        Routes.workspaces.name,
+        queryParameters: {
+          "type": ListWorkspaces.shared.name,
+        },
+      );
+    } else if (index == 2) {
+      setState(() {
+        _type = ListWorkspaces.all;
+      });
+      context.goNamed(
+        Routes.workspaces.name,
+        queryParameters: {
+          "type": ListWorkspaces.all.name,
+        },
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    void onDestinationSelected(int index) {
-      setState(() {
-        currentIndex = index;
-      });
-      if (index == 0) {
-        setState(() {
-          _type = ListWorkspaces.mine;
-        });
-        context.goNamed(
-          Routes.workspaces.name,
-          queryParameters: {
-            "type": ListWorkspaces.mine.name,
-          },
-        );
-      } else if (index == 1) {
-        setState(() {
-          _type = ListWorkspaces.shared;
-        });
-        context.goNamed(
-          Routes.workspaces.name,
-          queryParameters: {
-            "type": ListWorkspaces.shared.name,
-          },
-        );
-      } else if (index == 2) {
-        setState(() {
-          _type = ListWorkspaces.all;
-        });
-        context.goNamed(
-          Routes.workspaces.name,
-          queryParameters: {
-            "type": ListWorkspaces.all.name,
-          },
-        );
-      }
-    }
-
     return Layout(
       title: "Espacios de trabajo",
       selectedIndex: currentIndex,
-      onDestinationSelected: onDestinationSelected,
+      onDestinationSelected: _onDestinationSelected,
       destinations: [
         NavigationItem(
           label: "Mis espacios",
@@ -111,88 +197,81 @@ class _ListWorkspaceState extends State<ListWorkspace> {
           ),
       ],
       builder: (context, screenSize) {
-        return Consumer<WorkspaceProvider>(
-          builder: (context, workspaceProvider, child) {
-            if (_type == ListWorkspaces.all) {
-              return MainGridWorkspaces(
-                type: _type,
-                screenSize: screenSize,
-                errorMessage: workspaceProvider.errorMessageAll,
-                isLoading: workspaceProvider.isLoadingAll,
-                itemCount: workspaceProvider.workspacesAll.length,
-                onRefresh: () =>
-                    workspaceProvider.fetchWorkspacesAll(isRecharge: true),
-                itemBuilder: (context, index) {
-                  final workspace = workspaceProvider.workspacesAll[index];
-                  return WorkspaceCard(
-                    id: workspace.id ?? '',
-                    title: workspace.name ?? "Sin nombre",
-                    owner: workspace.user?.username ?? "Sin propietario",
-                    type: workspace.type,
-                    onTap: () {
-                      context.goNamed(
-                        Routes.workspace.name,
-                        pathParameters: {
-                          'id': workspace.id ?? '',
-                        },
-                      );
+        if (_type == ListWorkspaces.all) {
+          return MainGridWorkspaces(
+            type: _type,
+            screenSize: screenSize,
+            isLoading: isLoadingAll,
+            errorMessage: errorAll,
+            itemCount: allWorkspaces.length,
+            onRefresh: _fetchAllWorkspaces,
+            itemBuilder: (context, index) {
+              final workspace = allWorkspaces[index];
+              return WorkspaceCard(
+                id: workspace.id ?? '',
+                title: workspace.name ?? "Sin nombre",
+                owner: workspace.user?.username ?? "Sin propietario",
+                type: workspace.type,
+                onTap: () {
+                  context.goNamed(
+                    Routes.workspace.name,
+                    pathParameters: {
+                      'id': workspace.id ?? '',
                     },
                   );
                 },
               );
-            }
+            },
+          );
+        }
 
-            if (_type == ListWorkspaces.shared) {
-              return MainGridWorkspaces(
-                type: _type,
-                screenSize: screenSize,
-                isLoading: workspaceProvider.isLoadingShared,
-                errorMessage: workspaceProvider.errorMessageShared,
-                itemCount: workspaceProvider.workspacesShared.length,
-                onRefresh: () =>
-                    workspaceProvider.fetchWorkspacesShare(isRecharge: true),
-                itemBuilder: (context, index) {
-                  final workspace = workspaceProvider.workspacesShared[index];
-                  return WorkspaceCard(
-                    id: workspace.id ?? '',
-                    title: workspace.name ?? "Sin nombre",
-                    owner: workspace.user?.username ?? "Sin propietario",
-                    type: workspace.type,
-                    onTap: () {
-                      context.goNamed(
-                        Routes.workspace.name,
-                        pathParameters: {
-                          'id': workspace.id ?? '',
-                        },
-                      );
+        if (_type == ListWorkspaces.shared) {
+          return MainGridWorkspaces(
+            type: _type,
+            screenSize: screenSize,
+            isLoading: isLoadingShared,
+            errorMessage: errorShared,
+            itemCount: sharedWorkspaces.length,
+            onRefresh: _fetchSharedWorkspaces,
+            itemBuilder: (context, index) {
+              final workspace = sharedWorkspaces[index];
+              return WorkspaceCard(
+                id: workspace.id ?? '',
+                title: workspace.name ?? "Sin nombre",
+                owner: workspace.user?.username ?? "Sin propietario",
+                type: workspace.type,
+                onTap: () {
+                  context.goNamed(
+                    Routes.workspace.name,
+                    pathParameters: {
+                      'id': workspace.id ?? '',
                     },
                   );
                 },
               );
-            }
+            },
+          );
+        }
 
-            return MainGridWorkspaces(
-              type: _type,
-              screenSize: screenSize,
-              isLoading: workspaceProvider.isLoading,
-              errorMessage: workspaceProvider.errorMessage,
-              itemCount: workspaceProvider.workspaces.length,
-              onRefresh: () =>
-                  workspaceProvider.fetchWorkspaces(isRecharge: true),
-              itemBuilder: (context, index) {
-                final workspace = workspaceProvider.workspaces[index];
-                return WorkspaceCard(
-                  id: workspace.id ?? '',
-                  title: workspace.name ?? "Sin nombre",
-                  owner: workspace.user?.username ?? "Sin propietario",
-                  type: workspace.type,
-                  onTap: () {
-                    context.goNamed(
-                      Routes.workspace.name,
-                      pathParameters: {
-                        'id': workspace.id ?? '',
-                      },
-                    );
+        return MainGridWorkspaces(
+          type: _type,
+          screenSize: screenSize,
+          isLoading: isLoadingOwn,
+          errorMessage: errorOwn,
+          itemCount: ownWorkspaces.length,
+          onRefresh: _fetchOwnWorkspaces,
+          itemBuilder: (context, index) {
+            final workspace = ownWorkspaces[index];
+            return WorkspaceCard(
+              id: workspace.id ?? '',
+              title: workspace.name ?? "Sin nombre",
+              owner: workspace.user?.username ?? "Sin propietario",
+              type: workspace.type,
+              onTap: () {
+                context.goNamed(
+                  Routes.workspace.name,
+                  pathParameters: {
+                    'id': workspace.id ?? '',
                   },
                 );
               },

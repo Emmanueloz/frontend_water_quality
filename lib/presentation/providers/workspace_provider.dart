@@ -1,5 +1,5 @@
-import 'package:flutter/widgets.dart';
-import 'package:frontend_water_quality/core/enums/roles.dart';
+import 'package:flutter/foundation.dart';
+import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/domain/models/workspace.dart';
 import 'package:frontend_water_quality/domain/repositories/workspace_repo.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
@@ -7,268 +7,122 @@ import 'package:frontend_water_quality/presentation/providers/auth_provider.dart
 class WorkspaceProvider with ChangeNotifier {
   AuthProvider? _authProvider;
   final WorkspaceRepo _workspaceRepo;
+
+  // Flags para control de recarga
+  bool _shouldReloadList = true;
+  final Map<String, bool> _shouldReloadWorkspace = {};
+
   WorkspaceProvider(this._workspaceRepo, this._authProvider);
 
-  List<Workspace> workspaces = [];
-  List<Workspace> workspacesShared = [];
-  List<Workspace> workspacesAll = [];
-  Workspace? currentWorkspace;
-  bool isLoading = false;
-  bool isLoadingShared = false;
-  bool isLoadingAll = false;
-  bool isLoadingForm = false;
-  bool recharge = true;
-  bool rechargeShare = true;
-  bool rechargeAll = true;
-  String? errorMessage;
-  String? errorMessageShared;
-  String? errorMessageAll;
-  String? errorMessageForm;
+  // Getters para los flags
+  bool get shouldReloadList => _shouldReloadList;
+  bool shouldReloadWorkspace(String id) => _shouldReloadWorkspace[id] ?? true;
 
-  void clean() {
-    workspaces = [];
-    workspacesShared = [];
-    workspacesAll = [];
-    currentWorkspace = null;
-    isLoading = false;
-    isLoadingForm = false;
-    recharge = true;
-    errorMessage = null;
-    errorMessageShared = null;
-    errorMessageAll = null;
-    errorMessageForm = null;
+  // Métodos para marcar recargas
+  void markListForReload() {
+    _shouldReloadList = true;
+    notifyListeners();
   }
 
-  void cleanForm() {
-    currentWorkspace = null;
-    errorMessageForm = null;
+  void markWorkspaceForReload(String id) {
+    _shouldReloadWorkspace[id] = true;
+    notifyListeners();
+  }
+
+  // Métodos para confirmar recargas completadas
+  void confirmListReloaded() {
+    _shouldReloadList = false;
+  }
+
+  void confirmWorkspaceReloaded(String id) {
+    _shouldReloadWorkspace.remove(id);
   }
 
   void setAuthProvider(AuthProvider? provider) {
     _authProvider = provider;
   }
 
-  Future<void> fetchWorkspace(String idWorkspace) async {
+  Future<Result<Workspace>> getWorkspaceById(String id) async {
     if (_authProvider == null || _authProvider!.token == null) {
-      errorMessage = "User not authenticated";
-      notifyListeners();
-      return;
+      return Result.failure("User not authenticated");
     }
 
-    isLoading = true;
-    currentWorkspace = null;
-    notifyListeners();
-
     try {
-      final result =
-          await _workspaceRepo.getById(_authProvider!.token!, idWorkspace);
-      if (!result.isSuccess) {
-        errorMessage = result.message;
-        return;
-      }
-
-      currentWorkspace = result.value;
-      errorMessage = null;
+      final result = await _workspaceRepo.getById(_authProvider!.token!, id);
+      return result;
     } catch (e) {
-      errorMessage = e.toString();
-    } finally {
-      isLoading = false;
-      notifyListeners();
+      return Result.failure(e.toString());
     }
   }
 
-  Future<void> fetchWorkspacesUser() async {
-    await fetchWorkspaces();
-    await fetchWorkspacesShare();
-    await fetchWorkspacesAll();
-  }
-
-  Future<void> fetchWorkspaces({bool isRecharge = false}) async {
+  Future<Result<List<Workspace>>> getWorkspaces() async {
     if (_authProvider == null || _authProvider!.token == null) {
-      errorMessage = "User not authenticated";
-      notifyListeners();
-      return;
+      return Result.failure("User not authenticated");
     }
-
-    if (isRecharge) {
-      recharge = true;
-      notifyListeners();
-    }
-
-    if (!recharge) return;
-
-    isLoading = true;
-    notifyListeners();
 
     try {
-      print("Fetching workspaces...");
       final result = await _workspaceRepo.getAll(_authProvider!.token!);
-      if (!result.isSuccess) {
-        errorMessage = result.message;
-        notifyListeners();
-        return;
-      }
-
-      workspaces = result.value ?? [];
-      errorMessage = null;
+      return result;
     } catch (e) {
-      errorMessage = e.toString();
-    } finally {
-      isLoading = false;
-      recharge = false;
-      notifyListeners();
+      return Result.failure(e.toString());
     }
   }
 
-  Future<void> fetchWorkspacesShare({bool isRecharge = false}) async {
+  Future<Result<List<Workspace>>> getSharedWorkspaces() async {
     if (_authProvider == null || _authProvider!.token == null) {
-      errorMessageShared = "User not authenticated";
-      notifyListeners();
-      return;
+      return Result.failure("User not authenticated");
     }
 
-    if (isRecharge) {
-      rechargeShare = true;
-      notifyListeners();
-    }
-
-    if (!rechargeShare) return;
-
-    isLoadingShared = true;
-    notifyListeners();
     try {
-      final sharedResult =
-          await _workspaceRepo.getShared(_authProvider!.token!);
-      if (!sharedResult.isSuccess) {
-        errorMessageShared = sharedResult.message;
-        notifyListeners();
-        return;
-      }
-
-      workspacesShared = sharedResult.value ?? [];
-      errorMessageShared = null;
+      final result = await _workspaceRepo.getShared(_authProvider!.token!);
+      return result;
     } catch (e) {
-      errorMessageShared = e.toString();
-    } finally {
-      isLoadingShared = false;
-      rechargeShare = false;
-      notifyListeners();
+      return Result.failure(e.toString());
     }
   }
 
-  Future<void> fetchWorkspacesAll({bool isRecharge = false}) async {
+  Future<Result<List<Workspace>>> getAllWorkspaces() async {
     if (_authProvider == null || _authProvider!.token == null) {
-      errorMessageAll = "User not authenticated";
-      notifyListeners();
-      return;
+      return Result.failure("User not authenticated");
     }
 
-    if (_authProvider?.user?.rol != AppRoles.admin) {
-      print("User is not admin");
-      workspacesAll = [];
-      errorMessageAll = null;
-      notifyListeners();
-      return;
-    }
-
-    if (isRecharge) {
-      rechargeAll = true;
-      notifyListeners();
-    }
-
-    if (!rechargeAll) return;
-
-    isLoadingAll = true;
-    notifyListeners();
     try {
-      final allResult = await _workspaceRepo.getFullAll(_authProvider!.token!);
-      print("Fetched all workspaces: ${allResult.isSuccess}");
-      if (!allResult.isSuccess) {
-        errorMessageAll = allResult.message;
-        return;
-      }
-
-      workspacesAll = allResult.value ?? [];
-      errorMessageAll = null;
+      final result = await _workspaceRepo.getFullAll(_authProvider!.token!);
+      return result;
     } catch (e) {
-      errorMessageAll = e.toString();
-    } finally {
-      isLoadingAll = false;
-      rechargeAll = false;
-      notifyListeners();
+      return Result.failure(e.toString());
     }
   }
 
-  Future<bool> createWorkspace(Workspace workspace) async {
-    if (_authProvider == null || _authProvider!.token == null) {
-      errorMessageForm = "User not authenticated";
-      notifyListeners();
-      return false;
-    }
-
-    isLoadingForm = true;
-    notifyListeners();
+  Future<String?> createWorkspace(Workspace workspace) async {
+    if (_authProvider?.token == null) return "User not authenticated";
 
     try {
-      print(workspace.toJson());
       final result =
           await _workspaceRepo.create(_authProvider!.token!, workspace);
-
-      print(result);
-      if (!result.isSuccess) {
-        errorMessageForm = result.message;
-        return false;
+      if (result.isSuccess) {
+        markListForReload(); // Marcar para recargar la lista después de crear
       }
-
-      recharge = true;
-      errorMessageForm = null;
-      isLoadingForm = false;
-      notifyListeners();
-      await fetchWorkspaces();
-      return result.isSuccess;
+      return result.message;
     } catch (e) {
-      errorMessageForm = e.toString();
-      isLoadingForm = false;
-      recharge = false;
-      notifyListeners();
-      return false;
+      return e.toString();
     }
   }
 
-  Future<bool> updateWorkspace(Workspace workspace) async {
-    if (_authProvider == null || _authProvider!.token == null) {
-      errorMessageForm = "User not authenticated";
-      notifyListeners();
-      return false;
-    }
-
-    isLoadingForm = true;
-    notifyListeners();
+  Future<(bool success, String? error)> updateWorkspace(
+      Workspace workspace) async {
+    if (_authProvider?.token == null) return (false, "User not authenticated");
 
     try {
       final result =
           await _workspaceRepo.update(_authProvider!.token!, workspace);
-
-      if (!result.isSuccess) {
-        errorMessageForm = result.message;
-        return false;
+      if (result.isSuccess) {
+        markWorkspaceForReload(workspace.id!); // Marcar workspace específico
+        markListForReload(); // Marcar lista para actualizar
       }
-
-      recharge = true;
-      errorMessageForm = null;
-      isLoadingForm = false;
-      notifyListeners();
-      await fetchWorkspaces();
-      if (currentWorkspace != null) {
-        currentWorkspace = workspace;
-      }
-      return result.isSuccess;
+      return (result.isSuccess, result.isSuccess ? null : result.message);
     } catch (e) {
-      errorMessageForm = e.toString();
-      isLoadingForm = false;
-      recharge = false;
-      notifyListeners();
-      return false;
+      return (false, e.toString());
     }
   }
 }

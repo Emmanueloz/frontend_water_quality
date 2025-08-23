@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/enums/work_roles.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
+import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/core/interface/route_properties.dart';
+import 'package:frontend_water_quality/domain/models/meter_model.dart';
+import 'package:frontend_water_quality/presentation/pages/error_page.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_skeleton.dart';
@@ -31,6 +34,31 @@ class LayoutMeters extends StatefulWidget {
 
 class _LayoutMetersState extends State<LayoutMeters> {
   int currentIndex = 0;
+  late Future<Result<Meter>> _meterFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _meterFuture = _fetchMeter();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final provider = Provider.of<MeterProvider>(context);
+    if (provider.shouldReloadMeter(widget.id, widget.idMeter)) {
+      setState(() {
+        _meterFuture = _fetchMeter();
+      });
+    }
+  }
+
+  Future<Result<Meter>> _fetchMeter() async {
+    final provider = Provider.of<MeterProvider>(context, listen: false);
+    final result = await provider.getMeterById(widget.id, widget.idMeter);
+    provider.confirmMeterReloaded(widget.id, widget.idMeter);
+    return result;
+  }
 
   final List<NavigationItem> _baseDestinations = [
     NavigationItem(
@@ -141,48 +169,30 @@ class _LayoutMetersState extends State<LayoutMeters> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _fetchMeter();
-  }
-
-  void _fetchMeter() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<MeterProvider>(context, listen: false)
-          .fetchMeter(widget.id, widget.idMeter);
-    });
-  }
-
-  void _handleMeterError(BuildContext context, MeterProvider provider) {
-    if (!provider.isLoading && provider.currentMeter == null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        GoRouter.of(context).go('/404');
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Consumer<MeterProvider>(
-      builder: (context, meterProvider, child) {
-        if (meterProvider.isLoading) {
+    return FutureBuilder<Result<Meter>>(
+      future: _meterFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return const LayoutSkeleton();
         }
 
-        _handleMeterError(context, meterProvider);
+        if (snapshot.hasError ||
+            !snapshot.hasData ||
+            snapshot.data?.message != null) {
+          return const ErrorPage();
+        }
 
-        final meter = meterProvider.currentMeter;
-        final role = meter?.role;
-        final destinations = _getDestinationsByRole(role);
+        final meter = snapshot.data!.value;
+        final destinations = _getDestinationsByRole(meter?.role);
 
         return Layout(
-          title: meterProvider.isLoading
-              ? "Cargando..."
-              : meter?.name ?? "Medidor no encontrado",
+          title: meter?.name ?? "Medidor no encontrado",
           selectedIndex: currentIndex,
-          onDestinationSelected: (index) => _onDestinationSelected(index, role),
+          onDestinationSelected: (index) =>
+              _onDestinationSelected(index, meter?.role),
           destinations: destinations,
-          builder: (context, screenSize) => widget.builder(context, screenSize),
+          builder: widget.builder,
         );
       },
     );
