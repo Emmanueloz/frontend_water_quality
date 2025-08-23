@@ -56,14 +56,13 @@ void main() async {
             BLEService(),
           ),
         ),
-        ChangeNotifierProxyProvider<AuthProvider, MeterProvider>(
+        ProxyProvider<AuthProvider, MeterProvider>(
           create: (context) => MeterProvider(
             meterRepo,
             context.read<AuthProvider>(),
           ),
           update: (context, authProvider, meterProvider) {
-            meterProvider!.clean();
-            return meterProvider..setAuthProvider(authProvider);
+            return meterProvider!..setAuthProvider(authProvider);
           },
         ),
         ChangeNotifierProxyProvider<AuthProvider, GuestProvider>(

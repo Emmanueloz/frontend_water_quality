@@ -81,16 +81,14 @@ class AlertGrid extends StatelessWidget {
               ),
             )
           else
-            Expanded(
-              child: GridItemBuilder(
-                itemCount: alerts.length,
-                itemBuilder: (context, index) => AlertCard(
-                  alert: alerts[index],
-                  workspaceId: workspaceId,
-                  workspaceTitle: title,
-                ),
-                screenSize: screenSize,
+            GridItemBuilder(
+              itemCount: alerts.length,
+              itemBuilder: (context, index) => AlertCard(
+                alert: alerts[index],
+                workspaceId: workspaceId,
+                workspaceTitle: title,
               ),
+              screenSize: screenSize,
             ),
         ],
       ),

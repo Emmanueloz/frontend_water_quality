@@ -63,10 +63,6 @@ class FormWorkspacePage extends StatelessWidget {
       padding: EdgeInsets.all(10),
       child: Consumer<WorkspaceProvider>(
         builder: (context, workspaceProvider, child) {
-          if (idWorkspace == null) {
-            workspaceProvider.cleanForm();
-          }
-
           return FormWorkspace(
             title: title,
             idWorkspace: idWorkspace,

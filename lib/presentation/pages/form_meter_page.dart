@@ -9,7 +9,7 @@ import 'package:frontend_water_quality/presentation/widgets/specific/form_meters
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-class FormMeterPage extends StatelessWidget {
+class FormMeterPage extends StatefulWidget {
   final String idWorkspace;
   final String? idMeter;
 
@@ -20,11 +20,40 @@ class FormMeterPage extends StatelessWidget {
   });
 
   @override
+  State<FormMeterPage> createState() => _FormMeterPageState();
+}
+
+class _FormMeterPageState extends State<FormMeterPage> {
+  bool isLoading = false;
+  String? errorMessage;
+
+  Future<void> _handleSave(BuildContext context, Meter meter) async {
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
+    final provider = Provider.of<MeterProvider>(context, listen: false);
+    final errorMSG = widget.idMeter != null
+        ? await provider.updateMeter(widget.idWorkspace, meter)
+        : await provider.createMeter(widget.idWorkspace, meter);
+
+    setState(() {
+      isLoading = false;
+      errorMessage = errorMSG;
+    });
+
+    if (errorMSG == null && context.mounted) {
+      context.pop();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    String title = idMeter != null ? "Editar medidor" : "Crear medidor";
+    String title = widget.idMeter != null ? "Editar medidor" : "Crear medidor";
     final screenSize = ResponsiveScreenSize.getScreenSize(context);
 
-    if (idMeter == null) {
+    if (widget.idMeter == null) {
       return Layout(
         title: title,
         builder: (context, screenSize) {
@@ -48,7 +77,7 @@ class FormMeterPage extends StatelessWidget {
     }
 
     return BaseContainer(
-      margin: EdgeInsets.all(idMeter != null ? 0 : 10),
+      margin: EdgeInsets.all(widget.idMeter != null ? 0 : 10),
       child: Align(
         alignment: Alignment.topCenter,
         child: _buildForm(context, screenSize, title),
@@ -64,31 +93,14 @@ class FormMeterPage extends StatelessWidget {
       padding: EdgeInsets.all(10),
       child: Consumer<MeterProvider>(
         builder: (context, meterProvider, child) {
-          if (idMeter == null) {
-            meterProvider.clearCurrentMeter();
-          }
           return FormMeters(
             title: title,
-            idWorkspace: idWorkspace,
-            idMeter: idMeter,
-            name: meterProvider.currentMeter?.name,
-            lat: meterProvider.currentMeter?.location.lat,
-            lng: meterProvider.currentMeter?.location.lon,
-            placeName: null, // El modelo Meter no tiene placeName
-            errorMessage: meterProvider.errorMessageForm ?? "",
-            isLoading: meterProvider.isLoadingForm,
+            idWorkspace: widget.idWorkspace,
+            idMeter: widget.idMeter,
+            errorMessage: errorMessage ?? "",
+            isLoading: isLoading,
             onSave: (Meter meter) async {
-              print(meter.toJson());
-
-              if (idMeter != null) {
-                print("Actualizando medidor");
-                await meterProvider.updateWorkspace(idWorkspace, meter);
-              } else {
-                if (await meterProvider.createMeter(idWorkspace, meter) &&
-                    context.mounted) {
-                  context.pop();
-                }
-              }
+              await _handleSave(context, meter);
             },
           );
         },
