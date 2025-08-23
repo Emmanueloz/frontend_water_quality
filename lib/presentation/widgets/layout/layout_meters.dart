@@ -42,9 +42,22 @@ class _LayoutMetersState extends State<LayoutMeters> {
     _meterFuture = _fetchMeter();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final provider = Provider.of<MeterProvider>(context);
+    if (provider.shouldReloadMeter(widget.id, widget.idMeter)) {
+      setState(() {
+        _meterFuture = _fetchMeter();
+      });
+    }
+  }
+
   Future<Result<Meter>> _fetchMeter() async {
     final provider = Provider.of<MeterProvider>(context, listen: false);
-    return await provider.getMeterById(widget.id, widget.idMeter);
+    final result = await provider.getMeterById(widget.id, widget.idMeter);
+    provider.confirmMeterReloaded(widget.id, widget.idMeter);
+    return result;
   }
 
   final List<NavigationItem> _baseDestinations = [

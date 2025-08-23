@@ -55,7 +55,7 @@ void main() async {
             BLEService(),
           ),
         ),
-        ProxyProvider<AuthProvider, MeterProvider>(
+        ChangeNotifierProxyProvider<AuthProvider, MeterProvider>(
           create: (context) => MeterProvider(
             meterRepo,
             context.read<AuthProvider>(),

@@ -27,9 +27,22 @@ class _ListMeterState extends State<ListMeter> {
     _metersFuture = _fetchMeters();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final provider = Provider.of<MeterProvider>(context);
+    if (provider.shouldReloadList(widget.idWorkspace)) {
+      setState(() {
+        _metersFuture = _fetchMeters();
+      });
+    }
+  }
+
   Future<Result<List<Meter>>> _fetchMeters() async {
     final provider = Provider.of<MeterProvider>(context, listen: false);
-    return await provider.getMeters(widget.idWorkspace);
+    final result = await provider.getMeters(widget.idWorkspace);
+    provider.confirmListReloaded(widget.idWorkspace);
+    return result;
   }
 
   @override
@@ -68,6 +81,8 @@ class _ListMeterState extends State<ListMeter> {
           isLoading: false,
           itemCount: meters.length,
           onRefresh: () {
+            final provider = context.read<MeterProvider>();
+            provider.markListForReload(widget.idWorkspace);
             setState(() {
               _metersFuture = _fetchMeters();
             });
