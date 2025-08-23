@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/work_roles.dart';
+import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/core/interface/route_properties.dart';
+import 'package:frontend_water_quality/domain/models/workspace.dart';
+import 'package:frontend_water_quality/presentation/pages/error_page.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_skeleton.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -28,18 +31,17 @@ class LayoutWorkspace extends StatefulWidget {
 
 class _LayoutWorkspaceState extends State<LayoutWorkspace> {
   int currentIndex = 0;
+  late Future<Result<Workspace>> _workspaceFuture;
 
   @override
   void initState() {
     super.initState();
-    _fetchWorkspace();
+    _workspaceFuture = _fetchWorkspace();
   }
 
-  void _fetchWorkspace() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<WorkspaceProvider>(context, listen: false)
-          .fetchWorkspace(widget.id);
-    });
+  Future<Result<Workspace>> _fetchWorkspace() async {
+    final provider = Provider.of<WorkspaceProvider>(context, listen: false);
+    return await provider.getWorkspaceById(widget.id);
   }
 
   List<NavigationItem> _getDestinationsByRole(WorkRole? role) {
@@ -121,37 +123,31 @@ class _LayoutWorkspaceState extends State<LayoutWorkspace> {
     }
   }
 
-  void _handleWorkspaceError(BuildContext context, WorkspaceProvider provider) {
-    if (!provider.isLoading && provider.currentWorkspace == null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        GoRouter.of(context).go('/404');
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Consumer<WorkspaceProvider>(
-      builder: (context, workspaceProvider, child) {
-        if (workspaceProvider.isLoading) {
+    return FutureBuilder<Result<Workspace>>(
+      future: _workspaceFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return const LayoutSkeleton();
         }
 
-        _handleWorkspaceError(context, workspaceProvider);
+        if (snapshot.hasError ||
+            !snapshot.hasData ||
+            !snapshot.data!.isSuccess) {
+          return const ErrorPage();
+        }
 
-        final workspace = workspaceProvider.currentWorkspace;
-        final workspaceName = workspace?.name ?? "Espacio no encontrado";
-        final role = workspace
-            ?.role; // Asumiendo que tienes una propiedad role en tu modelo
-
-        final destinations = _getDestinationsByRole(role);
+        final workspace = snapshot.data!.value;
+        final destinations = _getDestinationsByRole(workspace?.role);
 
         return Layout(
-          title: workspaceProvider.isLoading ? "Cargando..." : workspaceName,
+          title: workspace?.name ?? "Espacio no encontrado",
           selectedIndex: currentIndex,
-          onDestinationSelected: (index) => _onDestinationSelected(index, role),
+          onDestinationSelected: (index) =>
+              _onDestinationSelected(index, workspace?.role),
           destinations: destinations,
-          builder: (context, screenSize) => widget.builder(context, screenSize),
+          builder: widget.builder,
         );
       },
     );

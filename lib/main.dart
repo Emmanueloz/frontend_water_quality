@@ -41,7 +41,7 @@ void main() async {
         ChangeNotifierProvider<AuthProvider>(
           create: (_) => authProvider,
         ),
-        ChangeNotifierProxyProvider<AuthProvider, WorkspaceProvider>(
+        ProxyProvider<AuthProvider, WorkspaceProvider>(
           create: (context) => WorkspaceProvider(
             workspaceRepo,
             context.read<AuthProvider>(),
@@ -119,7 +119,8 @@ void main() async {
               previousAlertProvider.setAuthProvider(authProvider);
               previousAlertProvider.clean();
             }
-            return previousAlertProvider ?? AlertProvider(alertRepo, authProvider);
+            return previousAlertProvider ??
+                AlertProvider(alertRepo, authProvider);
           },
         ),
       ],
