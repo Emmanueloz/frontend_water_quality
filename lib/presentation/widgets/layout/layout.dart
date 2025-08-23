@@ -110,16 +110,23 @@ class Layout extends StatelessWidget {
   }
 
   /// Construye la barra de navegación inferior
-  Widget _buildBottomNavigationBar(
+  Widget? _buildBottomNavigationBar(
       BuildContext context, ScreenSize screenSize) {
     NavigationDestinationLabelBehavior labelBehavior =
         screenSize == ScreenSize.mobile
             ? NavigationDestinationLabelBehavior.onlyShowSelected
             : NavigationDestinationLabelBehavior.alwaysShow;
+
+    final destinations = _buildNavigationDestinations(context);
+
+    if (destinations.isEmpty || destinations.length <= 1) {
+      return null;
+    }
+
     return NavigationBar(
       selectedIndex: selectedIndex ?? 0,
       labelBehavior: labelBehavior,
-      destinations: _buildNavigationDestinations(context),
+      destinations: destinations,
       onDestinationSelected: onDestinationSelected,
     );
   }
