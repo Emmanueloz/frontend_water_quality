@@ -67,6 +67,11 @@ class _ListMeterState extends State<ListMeter> {
           screenSize: screenSize,
           isLoading: false,
           itemCount: meters.length,
+          onRefresh: () {
+            setState(() {
+              _metersFuture = _fetchMeters();
+            });
+          },
           itemBuilder: (context, index) {
             final meter = meters[index];
             return MeterCard(
