@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/type_workspace.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/molecules/base_card.dart';
 
 class WorkspaceCard extends StatelessWidget {
   final String id;
   final String title;
   final String owner;
-  final String type;
+  final TypeWorkspace? type;
   final void Function()? onTap;
 
   const WorkspaceCard({
@@ -19,14 +20,18 @@ class WorkspaceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget iconAvatar = Icon(Icons.lock_outlined);
+    Widget iconAvatar = Icon(
+      type == TypeWorkspace.private
+          ? Icons.lock_outline
+          : Icons.public_outlined,
+    );
 
     return BaseCard(
       title: title,
       subtitle: "Creador: $owner",
       chip: Chip(
         avatar: iconAvatar,
-        label: Text(type),
+        label: Text(type!.nameSpanish),
       ),
       onTap: onTap,
     );

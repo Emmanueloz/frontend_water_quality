@@ -1,16 +1,20 @@
 import 'dart:convert';
 
+import 'package:frontend_water_quality/core/enums/work_roles.dart';
+
 class Meter {
   final String? id;
   final String name;
   final Location location;
   final String? state;
+  final WorkRole? role;
 
   Meter({
     this.id,
     required this.name,
     required this.location,
     this.state,
+    this.role,
   });
 
   factory Meter.fromJson(Map<String, dynamic> json) {
@@ -19,6 +23,8 @@ class Meter {
       name: json['name'] as String,
       location: Location.fromJson(json['location']),
       state: json['state'] as String?,
+      role:
+          json["rol"] == null ? null : WorkRoleExtension.fromName(json["rol"]),
     );
   }
 

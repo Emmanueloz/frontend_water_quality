@@ -35,18 +35,20 @@ class GridItemBuilder extends StatelessWidget {
       gap = 16;
       childAspectRatio = 1 / 0.85;
     }
-    return SingleChildScrollView(
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: crossAxisCount,
-          childAspectRatio: childAspectRatio,
-          crossAxisSpacing: gap,
-          mainAxisSpacing: gap,
+    return Expanded(
+      child: SingleChildScrollView(
+        child: GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            childAspectRatio: childAspectRatio,
+            crossAxisSpacing: gap,
+            mainAxisSpacing: gap,
+          ),
+          itemCount: itemCount,
+          itemBuilder: itemBuilder,
         ),
-        itemCount: itemCount,
-        itemBuilder: itemBuilder,
       ),
     );
   }

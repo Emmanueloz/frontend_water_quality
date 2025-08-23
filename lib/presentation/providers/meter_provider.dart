@@ -53,7 +53,6 @@ class MeterProvider with ChangeNotifier {
         errorMessage = result.message;
         return;
       }
-      print("Fetched meter: $result");
 
       currentMeter = result.value;
       print("Current meter set: $currentMeter");
@@ -80,7 +79,8 @@ class MeterProvider with ChangeNotifier {
 
     try {
       print("Fetching meters...");
-      final result = await _meterRepo.getAll(_authProvider!.token!, idWorkspace);
+      final result =
+          await _meterRepo.getAll(_authProvider!.token!, idWorkspace);
       if (!result.isSuccess) {
         errorMessage = result.message;
         notifyListeners();
@@ -89,7 +89,6 @@ class MeterProvider with ChangeNotifier {
 
       meters = result.value ?? [];
       errorMessage = null;
-
 
       if (currentMeter != null) {
         currentMeter = meters.firstWhere(

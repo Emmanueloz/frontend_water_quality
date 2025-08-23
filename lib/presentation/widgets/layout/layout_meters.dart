@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
+import 'package:frontend_water_quality/core/enums/work_roles.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
+import 'package:frontend_water_quality/core/interface/route_properties.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_skeleton.dart';
@@ -30,7 +32,7 @@ class LayoutMeters extends StatefulWidget {
 class _LayoutMetersState extends State<LayoutMeters> {
   int currentIndex = 0;
 
-  List<NavigationItem> destinations = [
+  final List<NavigationItem> _baseDestinations = [
     NavigationItem(
       label: "Monitoreo",
       icon: Icons.speed_outlined,
@@ -58,106 +60,127 @@ class _LayoutMetersState extends State<LayoutMeters> {
     ),
   ];
 
+  final NavigationItem _connectionDestination = NavigationItem(
+    label: "Conexión",
+    icon: Icons.wifi_tethering_outlined,
+    selectedIcon: Icons.wifi_tethering,
+  );
+
+  List<NavigationItem> _getDestinationsByRole(WorkRole? role) {
+    print(role);
+    // Lista base para visitantes
+    if (role == WorkRole.visitor || role == null) {
+      return _baseDestinations.take(2).toList();
+    }
+
+    // Para roles con acceso completo
+    if (role == WorkRole.administrator ||
+        role == WorkRole.manager ||
+        role == WorkRole.owner) {
+      var destinations = List<NavigationItem>.from(_baseDestinations);
+
+      // Agregar conexión solo para admin y owner en Android
+      if ((role == WorkRole.administrator || role == WorkRole.owner) &&
+          defaultTargetPlatform == TargetPlatform.android &&
+          !kIsWeb) {
+        destinations.add(_connectionDestination);
+      }
+
+      return destinations;
+    }
+
+    // Por defecto, acceso básico
+    return _baseDestinations.take(2).toList();
+  }
+
+  List<RouteProperties> _getRoutesByRole(WorkRole? role) {
+    final baseRoutes = [
+      Routes.meter,
+      Routes.listRecords,
+      Routes.analysisRecords,
+      Routes.weather,
+      Routes.updateMeter,
+    ];
+
+    if (role == WorkRole.visitor || role == null) {
+      return baseRoutes.take(2).toList();
+    }
+
+    if (role == WorkRole.administrator ||
+        role == WorkRole.manager ||
+        role == WorkRole.owner) {
+      var routes = List<RouteProperties>.from(baseRoutes);
+
+      if ((role == WorkRole.administrator || role == WorkRole.owner) &&
+          defaultTargetPlatform == TargetPlatform.android &&
+          !kIsWeb) {
+        routes.add(Routes.connectionMeter);
+      }
+
+      return routes;
+    }
+
+    return baseRoutes.take(2).toList();
+  }
+
+  void _onDestinationSelected(int index, WorkRole? role) {
+    final routes = _getRoutesByRole(role);
+    if (index >= routes.length) return;
+
+    context.goNamed(
+      routes[index].name,
+      pathParameters: {
+        "id": widget.id,
+        "idMeter": widget.idMeter,
+      },
+    );
+
+    setState(() {
+      currentIndex = index;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    if (defaultTargetPlatform == TargetPlatform.android && !kIsWeb) {
-      destinations.add(
-        NavigationItem(
-          label: "Conección",
-          icon: Icons.wifi_tethering_outlined,
-          selectedIcon: Icons.wifi_tethering,
-        ),
-      );
-    }
+    _fetchMeter();
+  }
+
+  void _fetchMeter() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<MeterProvider>(context, listen: false)
           .fetchMeter(widget.id, widget.idMeter);
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    void onDestinationSelected(int index) {
-      if (index == 0) {
-        context.goNamed(
-          Routes.meter.name,
-          pathParameters: {
-            "id": widget.id,
-            "idMeter": widget.idMeter,
-          },
-        );
-      } else if (index == 1) {
-        context.goNamed(
-          Routes.listRecords.name,
-          pathParameters: {
-            "id": widget.id,
-            "idMeter": widget.idMeter,
-          },
-        );
-      } else if (index == 2) {
-        context.goNamed(
-          Routes.analysisRecords.name,
-          pathParameters: {
-            "id": widget.id,
-            "idMeter": widget.idMeter,
-          },
-        );
-      } else if (index == 3) {
-        context.goNamed(
-          Routes.weather.name,
-          pathParameters: {
-            "id": widget.id,
-            "idMeter": widget.idMeter,
-          },
-        );
-      } else if (index == 4) {
-        context.goNamed(
-          Routes.updateMeter.name,
-          pathParameters: {
-            "id": widget.id,
-            "idMeter": widget.idMeter,
-          },
-        );
-      } else if (index == 5) {
-        context.goNamed(
-          Routes.connectionMeter.name,
-          pathParameters: {
-            "id": widget.id,
-            "idMeter": widget.idMeter,
-          },
-        );
-      }
-
-      setState(() {
-        currentIndex = index;
+  void _handleMeterError(BuildContext context, MeterProvider provider) {
+    if (!provider.isLoading && provider.currentMeter == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        GoRouter.of(context).go('/404');
       });
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Consumer<MeterProvider>(
       builder: (context, meterProvider, child) {
         if (meterProvider.isLoading) {
           return const LayoutSkeleton();
         }
-        print("Current meter: ${meterProvider.currentMeter}");
 
-        if (!meterProvider.isLoading && meterProvider.currentMeter == null) {
-          // Esto dispara el error 404 automático de GoRouter
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (!meterProvider.isLoading) {
-              GoRouter.of(context).go('/404');
-            }
-          });
-          return const SizedBox.shrink();
-        }
+        _handleMeterError(context, meterProvider);
+
+        final meter = meterProvider.currentMeter;
+        final role = meter?.role;
+        final destinations = _getDestinationsByRole(role);
 
         return Layout(
           title: meterProvider.isLoading
               ? "Cargando..."
-              : meterProvider.currentMeter?.name ??
-                  "Medidor no encontrado",
+              : meter?.name ?? "Medidor no encontrado",
           selectedIndex: currentIndex,
-          onDestinationSelected: onDestinationSelected,
+          onDestinationSelected: (index) => _onDestinationSelected(index, role),
           destinations: destinations,
           builder: (context, screenSize) => widget.builder(context, screenSize),
         );
