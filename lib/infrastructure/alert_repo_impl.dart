@@ -8,6 +8,18 @@ class AlertRepositoryImpl implements AlertRepository {
 
   AlertRepositoryImpl(this._dio);
 
+  // Función auxiliar para convertir Map a List para Alert.fromJson
+  List<dynamic> _mapToAlertList(Map<String, dynamic> json) {
+    return [
+      json['id'] ?? '',
+      json['title'] ?? '',
+      json['type'] ?? '',
+      json['workspace_id'] ?? '',
+      json['meter_id'],
+      json['is_active'] ?? true,
+    ];
+  }
+
   String _handleDioError(DioException e) {
     if (e.response?.statusCode == 401) {
       return 'No autorizado. Por favor, inicie sesión nuevamente.';
@@ -43,7 +55,7 @@ class AlertRepositoryImpl implements AlertRepository {
       if (response.statusCode == 200) {
         final List<dynamic> alertsData = response.data['alerts'] ?? response.data;
         final alerts = alertsData
-            .map((json) => Alert.fromJson(json))
+            .map((json) => Alert.fromJson(_mapToAlertList(json)))
             .toList();
         
         print('Parsed ${alerts.length} alerts');
@@ -93,7 +105,7 @@ class AlertRepositoryImpl implements AlertRepository {
           return Result.failure('Formato de respuesta no válido');
         }
         
-        final alert = Alert.fromJson(alertData);
+        final alert = Alert.fromJson(_mapToAlertList(alertData));
         print('Parsed alert details: $alert');
         return Result.success(alert);
       }
@@ -143,7 +155,7 @@ class AlertRepositoryImpl implements AlertRepository {
           return Result.failure('Formato de respuesta no válido');
         }
         
-        final alert = Alert.fromJson(alertResponseData);
+        final alert = Alert.fromJson(_mapToAlertList(alertResponseData));
         print('Created alert: $alert');
         return Result.success(alert);
       }
@@ -193,7 +205,7 @@ class AlertRepositoryImpl implements AlertRepository {
           return Result.failure('Formato de respuesta no válido');
         }
         
-        final alert = Alert.fromJson(alertResponseData);
+        final alert = Alert.fromJson(_mapToAlertList(alertResponseData));
         print('Updated alert: $alert');
         return Result.success(alert);
       }

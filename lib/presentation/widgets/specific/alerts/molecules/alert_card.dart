@@ -49,7 +49,7 @@ class AlertCard extends StatelessWidget {
   }
 
   String _buildSubtitle() {
-    return _formatDate(alert.createdAt);
+    return '';
   }
 
   Chip _buildChip(BuildContext context) {
@@ -68,20 +68,5 @@ class AlertCard extends StatelessWidget {
       side: BorderSide.none,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     );
-  }
-
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final difference = now.difference(date);
-
-    if (difference.inDays > 0) {
-      return '${difference.inDays} día${difference.inDays > 1 ? 's' : ''} atrás';
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours} hora${difference.inHours > 1 ? 's' : ''} atrás';
-    } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes} minuto${difference.inMinutes > 1 ? 's' : ''} atrás';
-    } else {
-      return 'Ahora';
-    }
   }
 } 

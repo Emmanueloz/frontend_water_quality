@@ -5,7 +5,7 @@ class Alert {
   final String title;
   final AlertType type;
   final String workspaceId;
-  final DateTime createdAt;
+  final String? meterId;
   final bool isActive;
 
   Alert({
@@ -13,34 +13,34 @@ class Alert {
     required this.title,
     required this.type,
     required this.workspaceId,
-    required this.createdAt,
+    this.meterId,
     required this.isActive,
   });
 
-  factory Alert.fromJson(Map<String, dynamic> json) {
+  factory Alert.fromJson(List<dynamic> json) {
     return Alert(
-      id: json['id'] ?? '',
-      title: json['title'] ?? '',
-      type: json['type'] == null 
+      id: json[0] ?? '',
+      title: json[1] ?? '',
+      type: json[2] == null 
           ? AlertType.good 
-          : AlertTypeExtension.fromName(json['type']),
-      workspaceId: json['workspace_id'] ?? '',
-      createdAt: DateTime.parse(json['created_at'] ?? DateTime.now().toIso8601String()),
-      isActive: json['is_active'] ?? true,
+          : AlertTypeExtension.fromName(json[2]),
+      workspaceId: json[3] ?? '',
+      meterId: json[4],
+      isActive: json[5] ?? true,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    final json = {
-      'id': id,
-      'title': title,
-      'type': type.name,
-      'workspace_id': workspaceId,
-      'created_at': createdAt.toIso8601String(),
-      'is_active': isActive,
-    };
+  List<dynamic> toJson() {
+    final list = [
+      id,
+      title,
+      type.name,
+      workspaceId,
+      meterId,
+      isActive,
+    ];
 
-    return json;
+    return list;
   }
 
   Alert copyWith({
@@ -48,7 +48,7 @@ class Alert {
     String? title,
     AlertType? type,
     String? workspaceId,
-    DateTime? createdAt,
+    String? meterId,
     bool? isActive,
   }) {
     return Alert(
@@ -56,8 +56,13 @@ class Alert {
       title: title ?? this.title,
       type: type ?? this.type,
       workspaceId: workspaceId ?? this.workspaceId,
-      createdAt: createdAt ?? this.createdAt,
+      meterId: meterId ?? this.meterId,
       isActive: isActive ?? this.isActive,
     );
+  }
+
+  @override
+  String toString() {
+    return 'Alert(id: $id, title: $title, type: $type, workspaceId: $workspaceId, meterId: $meterId, isActive: $isActive)';
   }
 } 
