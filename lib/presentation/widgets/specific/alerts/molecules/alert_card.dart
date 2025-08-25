@@ -11,7 +11,7 @@ class AlertCard extends StatelessWidget {
   final String workspaceTitle;
 
   const AlertCard({
-    super.key, 
+    super.key,
     required this.alert,
     required this.workspaceId,
     required this.workspaceTitle,
@@ -29,7 +29,7 @@ class AlertCard extends StatelessWidget {
 
   void _showAlertDetails(BuildContext context) {
     // Validar que el alertId no esté vacío
-    if (alert.id.isEmpty) {
+    if (alert.id!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Error: ID de alerta no válido'),
@@ -42,19 +42,18 @@ class AlertCard extends StatelessWidget {
       Routes.updateAlerts.name,
       pathParameters: {
         'id': workspaceId,
-        'idAlert': alert.id,
+        'idAlert': alert.id!,
       },
       extra: alert,
     );
   }
 
   String _buildSubtitle() {
-    return _formatDate(alert.createdAt);
+    return '';
   }
 
   Chip _buildChip(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
 
     return Chip(
       label: Text(
@@ -64,24 +63,8 @@ class AlertCard extends StatelessWidget {
           fontWeight: FontWeight.w600,
         ),
       ),
-      backgroundColor: alert.isActive ? colorScheme.secondary : Colors.grey[600],
       side: BorderSide.none,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     );
   }
-
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final difference = now.difference(date);
-
-    if (difference.inDays > 0) {
-      return '${difference.inDays} día${difference.inDays > 1 ? 's' : ''} atrás';
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours} hora${difference.inHours > 1 ? 's' : ''} atrás';
-    } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes} minuto${difference.inMinutes > 1 ? 's' : ''} atrás';
-    } else {
-      return 'Ahora';
-    }
-  }
-} 
+}

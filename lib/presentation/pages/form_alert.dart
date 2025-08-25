@@ -44,6 +44,8 @@ class _FormAlertPageState extends State<FormAlertPage> {
     super.initState();
     _metersFuture = _fetchMeters();
 
+    _selectedMeterId = widget.alert?.meterId ?? '';
+
     if (_isEditMode) {
       _titleController.text = widget.alert!.title;
       _selectedType = widget.alert!.type;
@@ -70,12 +72,12 @@ class _FormAlertPageState extends State<FormAlertPage> {
 
     final alertProvider = context.read<AlertProvider>();
 
-    final alertData = {
-      'title': _titleController.text.trim(),
-      'type': _selectedType.name,
-      'workspace_id': widget.workspaceId,
-      'meter_id': _selectedMeterId,
-    };
+    final alertData = Alert(
+      title: _titleController.text.trim(),
+      type: _selectedType,
+      workspaceId: widget.workspaceId,
+      meterId: _selectedMeterId,
+    );
 
     if (_isEditMode) {
       final alertId = widget.alert!.id;
@@ -227,6 +229,7 @@ class _FormAlertPageState extends State<FormAlertPage> {
                     );
                   }).toList(),
                   onChanged: (value) {
+                    print(value);
                     if (value != null) {
                       setState(() {
                         _selectedMeterId = value;
