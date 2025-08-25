@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/roles.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
@@ -10,8 +12,7 @@ import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/organisms/main_grid_workspaces.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/workspace_card.dart';
 import 'package:frontend_water_quality/router/routes.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+import 'package:frontend_water_quality/infrastructure/notification_service.dart';
 
 class ListWorkspace extends StatefulWidget {
   final ListWorkspaces type;
@@ -21,8 +22,11 @@ class ListWorkspace extends StatefulWidget {
   State<ListWorkspace> createState() => _ListWorkspaceState();
 }
 
-class _ListWorkspaceState extends State<ListWorkspace> {
+class _ListWorkspaceState extends State<ListWorkspace>
+    with WidgetsBindingObserver {
   int currentIndex = 0;
+  final NotificationService _notificationService = NotificationService();
+  bool _isNotificationInitialized = false;
   ListWorkspaces _type = ListWorkspaces.mine;
 
   bool isLoadingOwn = false;
@@ -40,11 +44,13 @@ class _ListWorkspaceState extends State<ListWorkspace> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     _type = widget.type;
 
     _setInitialIndex();
     _loadWorkspaces();
+    _initNotificationService();
   }
 
   void _setInitialIndex() {
@@ -77,6 +83,41 @@ class _ListWorkspaceState extends State<ListWorkspace> {
       _loadWorkspaces();
       provider.confirmListReloaded();
     }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.resumed) {
+      await _initNotificationService();
+    } else if (state == AppLifecycleState.detached) {
+      if (_isNotificationInitialized) {
+        await _notificationService.dispose();
+        _isNotificationInitialized = false;
+      }
+    }
+  }
+
+  Future<void> _initNotificationService() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (!_isNotificationInitialized &&
+        authProvider.isAuthenticated &&
+        authProvider.user?.uid != null) {
+      try {
+        await _notificationService.init(authProvider.user!.uid);
+        _isNotificationInitialized = true;
+      } catch (e) {
+        debugPrint('Error initializing notification service: $e');
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    if (_isNotificationInitialized) {
+      _notificationService.dispose();
+    }
+    super.dispose();
   }
 
   Future<void> _fetchOwnWorkspaces() async {
