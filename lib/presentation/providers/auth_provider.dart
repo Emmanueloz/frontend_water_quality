@@ -50,8 +50,12 @@ class AuthProvider with ChangeNotifier {
       if (user != null) {
         await LocalStorageService.save(
           StorageKey.user,
-          User(email: user!.email, username: user!.username, rol: user!.rol)
-              .toJsonEncode(),
+          User(
+            email: user!.email,
+            username: user!.username,
+            rol: user!.rol,
+            uid: user!.uid,
+          ).toJsonEncode(),
         );
       }
 
