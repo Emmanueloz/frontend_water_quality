@@ -8,18 +8,6 @@ class AlertRepositoryImpl implements AlertRepository {
 
   AlertRepositoryImpl(this._dio);
 
-  // Función auxiliar para convertir Map a List para Alert.fromJson
-  List<dynamic> _mapToAlertList(Map<String, dynamic> json) {
-    return [
-      json['id'] ?? '',
-      json['title'] ?? '',
-      json['type'] ?? '',
-      json['workspace_id'] ?? '',
-      json['meter_id'],
-      json['is_active'] ?? true,
-    ];
-  }
-
   String _handleDioError(DioException e) {
     if (e.response?.statusCode == 401) {
       return 'No autorizado. Por favor, inicie sesión nuevamente.';
@@ -39,10 +27,11 @@ class AlertRepositoryImpl implements AlertRepository {
   }
 
   @override
-  Future<Result<List<Alert>>> listAlerts(String userToken, String workspaceId) async {
+  Future<Result<List<Alert>>> listAlerts(
+      String userToken, String workspaceId) async {
     try {
       print('Listing alerts for workspace: $workspaceId');
-      
+
       final response = await _dio.get(
         '/alerts/',
         queryParameters: {'workspace_id': workspaceId},
@@ -53,11 +42,10 @@ class AlertRepositoryImpl implements AlertRepository {
       print('List response data: ${response.data}');
 
       if (response.statusCode == 200) {
-        final List<dynamic> alertsData = response.data['alerts'] ?? response.data;
-        final alerts = alertsData
-            .map((json) => Alert.fromJson(_mapToAlertList(json)))
-            .toList();
-        
+        final List<dynamic> alertsData =
+            response.data['alerts'] ?? response.data;
+        final alerts = alertsData.map((json) => Alert.fromJson(json)).toList();
+
         print('Parsed ${alerts.length} alerts');
         return Result.success(alerts);
       }
@@ -75,10 +63,11 @@ class AlertRepositoryImpl implements AlertRepository {
   }
 
   @override
-  Future<Result<Alert>> getAlertDetails(String userToken, String alertId) async {
+  Future<Result<Alert>> getAlertDetails(
+      String userToken, String alertId) async {
     try {
       print('Getting alert details: alertId=$alertId');
-      
+
       final response = await _dio.get(
         '/alerts/$alertId/',
         options: Options(headers: {'Authorization': 'Bearer $userToken'}),
@@ -89,11 +78,12 @@ class AlertRepositoryImpl implements AlertRepository {
 
       if (response.statusCode == 200) {
         Map<String, dynamic> alertData;
-        
+
         if (response.data is Map<String, dynamic>) {
           final data = response.data as Map<String, dynamic>;
-          
-          if (data.containsKey('alert') && data['alert'] is Map<String, dynamic>) {
+
+          if (data.containsKey('alert') &&
+              data['alert'] is Map<String, dynamic>) {
             alertData = data['alert'] as Map<String, dynamic>;
             print('Found alert data in response.alert');
           } else {
@@ -104,8 +94,8 @@ class AlertRepositoryImpl implements AlertRepository {
           print('Unexpected response format: ${response.data.runtimeType}');
           return Result.failure('Formato de respuesta no válido');
         }
-        
-        final alert = Alert.fromJson(_mapToAlertList(alertData));
+
+        final alert = Alert.fromJson(alertData);
         print('Parsed alert details: $alert');
         return Result.success(alert);
       }
@@ -123,14 +113,11 @@ class AlertRepositoryImpl implements AlertRepository {
   }
 
   @override
-  Future<Result<Alert>> createAlert(String userToken, Map<String, dynamic> alertData) async {
+  Future<Result<Alert>> createAlert(String userToken, Alert alertData) async {
     try {
-      print('Creating alert: data=$alertData');
-      print('Creating alert: all fields: ${alertData.keys.toList()}');
-      
       final response = await _dio.post(
         '/alerts/',
-        data: alertData,
+        data: alertData.toJson(),
         options: Options(headers: {'Authorization': 'Bearer $userToken'}),
       );
 
@@ -139,11 +126,12 @@ class AlertRepositoryImpl implements AlertRepository {
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         Map<String, dynamic> alertResponseData;
-        
+
         if (response.data is Map<String, dynamic>) {
           final data = response.data as Map<String, dynamic>;
-          
-          if (data.containsKey('alert') && data['alert'] is Map<String, dynamic>) {
+
+          if (data.containsKey('alert') &&
+              data['alert'] is Map<String, dynamic>) {
             alertResponseData = data['alert'] as Map<String, dynamic>;
             print('Found alert data in response.alert');
           } else {
@@ -154,8 +142,8 @@ class AlertRepositoryImpl implements AlertRepository {
           print('Unexpected response format: ${response.data.runtimeType}');
           return Result.failure('Formato de respuesta no válido');
         }
-        
-        final alert = Alert.fromJson(_mapToAlertList(alertResponseData));
+
+        final alert = Alert.fromJson(alertResponseData);
         print('Created alert: $alert');
         return Result.success(alert);
       }
@@ -173,14 +161,12 @@ class AlertRepositoryImpl implements AlertRepository {
   }
 
   @override
-  Future<Result<Alert>> updateAlert(String userToken, String alertId, Map<String, dynamic> alertData) async {
+  Future<Result<Alert>> updateAlert(
+      String userToken, String alertId, Alert alertData) async {
     try {
-      print('Updating alert: alertId=$alertId, data=$alertData');
-      print('Updating alert: all fields: ${alertData.keys.toList()}');
-      
       final response = await _dio.put(
         '/alerts/$alertId/',
-        data: alertData,
+        data: alertData.toJson(),
         options: Options(headers: {'Authorization': 'Bearer $userToken'}),
       );
 
@@ -189,11 +175,12 @@ class AlertRepositoryImpl implements AlertRepository {
 
       if (response.statusCode == 200) {
         Map<String, dynamic> alertResponseData;
-        
+
         if (response.data is Map<String, dynamic>) {
           final data = response.data as Map<String, dynamic>;
-          
-          if (data.containsKey('alert') && data['alert'] is Map<String, dynamic>) {
+
+          if (data.containsKey('alert') &&
+              data['alert'] is Map<String, dynamic>) {
             alertResponseData = data['alert'] as Map<String, dynamic>;
             print('Found alert data in response.alert');
           } else {
@@ -204,8 +191,8 @@ class AlertRepositoryImpl implements AlertRepository {
           print('Unexpected response format: ${response.data.runtimeType}');
           return Result.failure('Formato de respuesta no válido');
         }
-        
-        final alert = Alert.fromJson(_mapToAlertList(alertResponseData));
+
+        final alert = Alert.fromJson(alertResponseData);
         print('Updated alert: $alert');
         return Result.success(alert);
       }
@@ -226,7 +213,7 @@ class AlertRepositoryImpl implements AlertRepository {
   Future<Result<bool>> deleteAlert(String userToken, String alertId) async {
     try {
       print('Deleting alert: alertId=$alertId');
-      
+
       final response = await _dio.delete(
         '/alerts/$alertId/',
         options: Options(headers: {'Authorization': 'Bearer $userToken'}),
@@ -254,26 +241,9 @@ class AlertRepositoryImpl implements AlertRepository {
 
   @override
   Future<Result<List<Alert>>> getAlertNotifications(String userToken) async {
+    // !TODO: Implementar la carga de notificaciones de alertas
     try {
       print('Getting alert notifications');
-      
-      final response = await _dio.get(
-        '/alerts/notifications/',
-        options: Options(headers: {'Authorization': 'Bearer $userToken'}),
-      );
-
-      print('Notifications response status: ${response.statusCode}');
-      print('Notifications response data: ${response.data}');
-
-      if (response.statusCode == 200) {
-        final List<dynamic> notificationsData = response.data['notifications'] ?? response.data;
-        final notifications = notificationsData
-            .map((json) => Alert.fromJson(json))
-            .toList();
-        
-        print('Parsed ${notifications.length} alert notifications');
-        return Result.success(notifications);
-      }
 
       return Result.failure('Error al cargar las notificaciones de alertas');
     } on DioException catch (e) {
@@ -288,10 +258,11 @@ class AlertRepositoryImpl implements AlertRepository {
   }
 
   @override
-  Future<Result<bool>> markNotificationAsRead(String userToken, String notificationId) async {
+  Future<Result<bool>> markNotificationAsRead(
+      String userToken, String notificationId) async {
     try {
       print('Marking notification as read: notificationId=$notificationId');
-      
+
       final response = await _dio.put(
         '/alerts/notifications/$notificationId/',
         options: Options(headers: {'Authorization': 'Bearer $userToken'}),
@@ -316,4 +287,4 @@ class AlertRepositoryImpl implements AlertRepository {
       return Result.failure('Error inesperado al marcar como leída: $e');
     }
   }
-} 
+}

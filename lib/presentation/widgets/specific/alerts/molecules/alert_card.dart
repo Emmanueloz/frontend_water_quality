@@ -11,7 +11,7 @@ class AlertCard extends StatelessWidget {
   final String workspaceTitle;
 
   const AlertCard({
-    super.key, 
+    super.key,
     required this.alert,
     required this.workspaceId,
     required this.workspaceTitle,
@@ -29,7 +29,7 @@ class AlertCard extends StatelessWidget {
 
   void _showAlertDetails(BuildContext context) {
     // Validar que el alertId no esté vacío
-    if (alert.id.isEmpty) {
+    if (alert.id!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Error: ID de alerta no válido'),
@@ -42,7 +42,7 @@ class AlertCard extends StatelessWidget {
       Routes.updateAlerts.name,
       pathParameters: {
         'id': workspaceId,
-        'idAlert': alert.id,
+        'idAlert': alert.id!,
       },
       extra: alert,
     );
@@ -54,7 +54,6 @@ class AlertCard extends StatelessWidget {
 
   Chip _buildChip(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
 
     return Chip(
       label: Text(
@@ -64,9 +63,8 @@ class AlertCard extends StatelessWidget {
           fontWeight: FontWeight.w600,
         ),
       ),
-      backgroundColor: alert.isActive ? colorScheme.secondary : Colors.grey[600],
       side: BorderSide.none,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     );
   }
-} 
+}
