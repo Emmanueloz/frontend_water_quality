@@ -1,4 +1,5 @@
 import 'package:frontend_water_quality/core/enums/type_workspace.dart';
+import 'package:frontend_water_quality/core/enums/work_roles.dart';
 import 'package:frontend_water_quality/domain/models/user.dart';
 
 class Workspace {
@@ -7,11 +8,13 @@ class Workspace {
   String? owner;
   TypeWorkspace? type;
   User? user;
+  WorkRole? role;
 
   Workspace({
     this.name,
     this.owner,
     this.type,
+    this.role,
     this.id,
     this.user,
   });
@@ -24,6 +27,9 @@ class Workspace {
             : TypeWorkspaceExtension.fromName(json["type"]),
         id: json["id"],
         user: json["user"] == null ? null : User.fromJson(json["user"]),
+        role: json["rol"] == null
+            ? null
+            : WorkRoleExtension.fromName(json["rol"]),
       );
 
   Map<String, dynamic> toJson() {

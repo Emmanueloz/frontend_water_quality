@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/work_roles.dart';
+import 'package:frontend_water_quality/core/interface/result.dart';
+import 'package:frontend_water_quality/core/interface/route_properties.dart';
+import 'package:frontend_water_quality/domain/models/workspace.dart';
+import 'package:frontend_water_quality/presentation/pages/error_page.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_skeleton.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -26,120 +31,136 @@ class LayoutWorkspace extends StatefulWidget {
 
 class _LayoutWorkspaceState extends State<LayoutWorkspace> {
   int currentIndex = 0;
+  late Future<Result<Workspace>> _workspaceFuture;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      print("Fetching workspace with id: ${widget.id}");
-      Provider.of<WorkspaceProvider>(context, listen: false)
-          .fetchWorkspace(widget.id);
-    });
+    _workspaceFuture = _fetchWorkspace();
+  }
+
+  Future<Result<Workspace>> _fetchWorkspace() async {
+    final provider = Provider.of<WorkspaceProvider>(context, listen: false);
+    final result = await provider.getWorkspaceById(widget.id);
+    provider.confirmWorkspaceReloaded(widget.id);
+    return result;
   }
 
   @override
-  Widget build(BuildContext context) {
-    void onDestinationSelected(int index) {
-      if (index == 0) {
-        // Navigate to meters
-        context.goNamed(
-          Routes.workspace.name,
-          pathParameters: {
-            "id": widget.id,
-          },
-        );
-      } else if (index == 1) {
-        // Navigate to alerts
-        context.goNamed(
-          Routes.alerts.name,
-          pathParameters: {
-            "id": widget.id,
-          },
-        );
-      } else if (index == 2) {
-        // Navigate to guests
-        context.goNamed(
-          Routes.guests.name,
-          pathParameters: {
-            "id": widget.id,
-          },
-        );
-      } else if (index == 3) {
-        // Navigate to location
-        context.goNamed(
-          Routes.locationMeters.name,
-          pathParameters: {
-            "id": widget.id,
-          },
-        );
-        print("Locations meters");
-      } else if (index == 4) {
-        // Navigate to settings
-        context.goNamed(
-          Routes.updateWorkspace.name,
-          pathParameters: {
-            'id': widget.id,
-          },
-        );
-      }
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final provider = Provider.of<WorkspaceProvider>(context);
+    if (provider.shouldReloadWorkspace(widget.id)) {
+      setState(() {
+        _workspaceFuture = _fetchWorkspace();
+      });
+    }
+  }
 
+  List<NavigationItem> _getDestinationsByRole(WorkRole? role) {
+    final allDestinations = [
+      NavigationItem(
+        label: "Medidores",
+        icon: Icons.analytics_outlined,
+        selectedIcon: Icons.analytics,
+      ),
+      NavigationItem(
+        label: "Alertas",
+        icon: Icons.alarm_outlined,
+        selectedIcon: Icons.alarm,
+      ),
+      NavigationItem(
+        label: "Invitados",
+        icon: Icons.people_outline,
+        selectedIcon: Icons.people,
+      ),
+      NavigationItem(
+        label: "Ubicaciones",
+        icon: Icons.location_on_outlined,
+        selectedIcon: Icons.location_on,
+      ),
+      NavigationItem(
+        label: "Editar",
+        icon: Icons.edit_outlined,
+        selectedIcon: Icons.edit,
+      ),
+    ];
+
+    // Si el rol es visitor o no existe, solo mostrar medidores
+    if (role == WorkRole.visitor || role == null) {
+      return [allDestinations.first];
+    }
+
+    // Si el rol es administrator u owner, mostrar todas las secciones
+    if (role == WorkRole.administrator || role == WorkRole.owner) {
+      return allDestinations;
+    }
+
+    // Por defecto, solo mostrar medidores
+    return [allDestinations.first];
+  }
+
+  List<RouteProperties> _getRoutesByRole(WorkRole? role) {
+    final allRoutes = [
+      Routes.workspace,
+      Routes.alerts,
+      Routes.guests,
+      Routes.locationMeters,
+      Routes.updateWorkspace,
+    ];
+
+    if (role == WorkRole.visitor || role == null) {
+      return [allRoutes.first];
+    }
+
+    if (role == WorkRole.administrator || role == WorkRole.owner) {
+      return allRoutes;
+    }
+
+    return [allRoutes.first];
+  }
+
+  void _onDestinationSelected(int index, WorkRole? role) {
+    final routes = _getRoutesByRole(role);
+    if (index >= routes.length) return;
+
+    context.goNamed(
+      routes[index].name,
+      pathParameters: {"id": widget.id},
+    );
+
+    if (currentIndex != index) {
       setState(() {
         currentIndex = index;
       });
     }
+  }
 
-    return Consumer<WorkspaceProvider>(
-      builder: (context, workspaceProvider, child) {
-        if (workspaceProvider.isLoading) {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Result<Workspace>>(
+      future: _workspaceFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return const LayoutSkeleton();
         }
 
-        if (!workspaceProvider.isLoading &&
-            workspaceProvider.currentWorkspace == null) {
-          // Esto dispara el error 404 automático de GoRouter
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (!workspaceProvider.isLoading) {
-              GoRouter.of(context).go('/404');
-            }
-          });
-          return const SizedBox.shrink();
+        if (snapshot.hasError ||
+            !snapshot.hasData ||
+            !snapshot.data!.isSuccess) {
+          return const ErrorPage();
         }
 
+        final workspace = snapshot.data!.value;
+        final destinations = _getDestinationsByRole(workspace?.role);
+
         return Layout(
-          title: workspaceProvider.isLoading
-              ? "Cargando..."
-              : workspaceProvider.currentWorkspace?.name ??
-                  "Espacio no encontrado",
+          title: workspace?.name ?? "Espacio no encontrado",
           selectedIndex: currentIndex,
-          onDestinationSelected: onDestinationSelected,
-          destinations: [
-            NavigationItem(
-              label: "Medidores",
-              icon: Icons.analytics_outlined,
-              selectedIcon: Icons.analytics,
-            ),
-            NavigationItem(
-              label: "Alertas",
-              icon: Icons.alarm_outlined,
-              selectedIcon: Icons.alarm,
-            ),
-            NavigationItem(
-              label: "Invitados",
-              icon: Icons.people_outline,
-              selectedIcon: Icons.people,
-            ),
-            NavigationItem(
-              label: "Ubicaciones",
-              icon: Icons.location_on_outlined,
-              selectedIcon: Icons.location_on,
-            ),
-            NavigationItem(
-              label: "Editar",
-              icon: Icons.edit_outlined,
-              selectedIcon: Icons.edit,
-            ),
-          ],
-          builder: (context, screenSize) => widget.builder(context, screenSize),
+          onDestinationSelected: (index) =>
+              _onDestinationSelected(index, workspace?.role),
+          destinations: destinations,
+          builder: widget.builder,
         );
       },
     );

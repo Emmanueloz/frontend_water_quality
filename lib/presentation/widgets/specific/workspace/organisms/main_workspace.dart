@@ -13,8 +13,9 @@ class MainWorkspace extends StatelessWidget {
   final bool isLoading;
   final String? errorMessage;
   final int itemCount;
-  final Widget Function(BuildContext, int) itemBuilder;
+  final void Function()? onRefresh;
 
+  final Widget Function(BuildContext, int) itemBuilder;
 
   const MainWorkspace({
     super.key,
@@ -24,6 +25,7 @@ class MainWorkspace extends StatelessWidget {
     this.errorMessage,
     this.itemCount = 0,
     required this.itemBuilder,
+    this.onRefresh,
   });
 
   @override
@@ -48,13 +50,17 @@ class MainWorkspace extends StatelessWidget {
         children: [
           ButtonActions(
             title: Text(
-              "Espacio de trabajo $id",
+              "Medidores",
               style: Theme.of(context)
                   .textTheme
                   .bodyLarge
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
             actions: [
+              IconButton(
+                onPressed: onRefresh,
+                icon: Icon(Icons.refresh),
+              ),
               ElevatedButton.icon(
                 onPressed: () {
                   context.goNamed(
@@ -68,7 +74,6 @@ class MainWorkspace extends StatelessWidget {
             ],
             screenSize: screenSize,
           ),
-
           if (isLoading)
             GridLoadingSkeleton(screenSize: screenSize)
           else if (errorMessage != null)

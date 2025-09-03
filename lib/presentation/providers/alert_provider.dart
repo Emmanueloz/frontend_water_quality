@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:frontend_water_quality/core/enums/alert_type.dart';
 import 'package:frontend_water_quality/domain/models/alert.dart';
 import 'package:frontend_water_quality/domain/repositories/alert_repo.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
@@ -75,6 +74,12 @@ class AlertProvider with ChangeNotifier {
       return;
     }
 
+    if (_currentWorkspaceId == null) {
+      _errorMessage = "Workspace ID no disponible";
+      notifyListeners();
+      return;
+    }
+
     // Solo cargar si es necesario recargar
     if (!_recharge) {
       print('AlertProvider: loadAlerts skipped - no recharge needed');
@@ -88,15 +93,18 @@ class AlertProvider with ChangeNotifier {
     try {
       print('AlertProvider: loadAlerts called');
       print('AlertProvider: token = ${_authProvider!.token}');
-      
-      final result = await _alertRepository.listAlerts(_authProvider!.token!);
-      
+      print('AlertProvider: workspaceId = $_currentWorkspaceId');
+
+      final result = await _alertRepository.listAlerts(
+          _authProvider!.token!, _currentWorkspaceId!);
+
       print('AlertProvider: loadAlerts result isSuccess=${result.isSuccess}');
-      
+
       if (result.isSuccess) {
         _alerts = result.value!;
         _recharge = false;
-        print('AlertProvider: loadAlerts success, loaded ${_alerts.length} alerts');
+        print(
+            'AlertProvider: loadAlerts success, loaded ${_alerts.length} alerts');
       } else {
         _errorMessage = result.message;
         print('AlertProvider: loadAlerts failed: ${result.message}');
@@ -123,11 +131,13 @@ class AlertProvider with ChangeNotifier {
 
     try {
       print('AlertProvider: getAlertDetails called for alertId=$alertId');
-      
-      final result = await _alertRepository.getAlertDetails(_authProvider!.token!, alertId);
-      
-      print('AlertProvider: getAlertDetails result isSuccess=${result.isSuccess}');
-      
+
+      final result = await _alertRepository.getAlertDetails(
+          _authProvider!.token!, alertId);
+
+      print(
+          'AlertProvider: getAlertDetails result isSuccess=${result.isSuccess}');
+
       if (result.isSuccess) {
         _selectedAlert = result.value!;
         print('AlertProvider: getAlertDetails success');
@@ -144,7 +154,7 @@ class AlertProvider with ChangeNotifier {
     }
   }
 
-  Future<void> createAlert(Map<String, dynamic> alertData) async {
+  Future<void> createAlert(Alert alertData) async {
     if (_authProvider == null || _authProvider!.token == null) {
       _errorMessage = "Usuario no autenticado";
       notifyListeners();
@@ -158,11 +168,12 @@ class AlertProvider with ChangeNotifier {
     try {
       print('AlertProvider: createAlert called');
       print('AlertProvider: alertData = $alertData');
-      
-      final result = await _alertRepository.createAlert(_authProvider!.token!, alertData);
-      
+
+      final result =
+          await _alertRepository.createAlert(_authProvider!.token!, alertData);
+
       print('AlertProvider: createAlert result isSuccess=${result.isSuccess}');
-      
+
       if (result.isSuccess) {
         _alerts.add(result.value!);
         _recharge = false;
@@ -180,7 +191,7 @@ class AlertProvider with ChangeNotifier {
     }
   }
 
-  Future<void> updateAlert(String alertId, Map<String, dynamic> alertData) async {
+  Future<void> updateAlert(String? alertId, Alert alertData) async {
     if (_authProvider == null || _authProvider!.token == null) {
       _errorMessage = "Usuario no autenticado";
       notifyListeners();
@@ -194,11 +205,19 @@ class AlertProvider with ChangeNotifier {
     try {
       print('AlertProvider: updateAlert called for alertId=$alertId');
       print('AlertProvider: alertData = $alertData');
-      
-      final result = await _alertRepository.updateAlert(_authProvider!.token!, alertId, alertData);
-      
+
+      if (alertId == null) {
+        _errorMessage = "Alert ID no proporcionado";
+        _isLoading = false;
+        notifyListeners();
+        return;
+      }
+
+      final result = await _alertRepository.updateAlert(
+          _authProvider!.token!, alertId, alertData);
+
       print('AlertProvider: updateAlert result isSuccess=${result.isSuccess}');
-      
+
       if (result.isSuccess) {
         final index = _alerts.indexWhere((a) => a.id == alertId);
         if (index != -1) {
@@ -231,19 +250,20 @@ class AlertProvider with ChangeNotifier {
 
     try {
       print('AlertProvider: deleteAlert called for alertId=$alertId');
-      
-      final result = await _alertRepository.deleteAlert(_authProvider!.token!, alertId);
-      
+
+      final result =
+          await _alertRepository.deleteAlert(_authProvider!.token!, alertId);
+
       print('AlertProvider: deleteAlert result isSuccess=${result.isSuccess}');
-      
+
       if (result.isSuccess) {
         _alerts.removeWhere((a) => a.id == alertId);
-        
+
         // Si es la alerta seleccionada, limpiarla
         if (_selectedAlert?.id == alertId) {
           _selectedAlert = null;
         }
-        
+
         print('AlertProvider: deleteAlert success');
       } else {
         _errorMessage = result.message;
@@ -271,17 +291,21 @@ class AlertProvider with ChangeNotifier {
 
     try {
       print('AlertProvider: loadAlertNotifications called');
-      
-      final result = await _alertRepository.getAlertNotifications(_authProvider!.token!);
-      
-      print('AlertProvider: loadAlertNotifications result isSuccess=${result.isSuccess}');
-      
+
+      final result =
+          await _alertRepository.getAlertNotifications(_authProvider!.token!);
+
+      print(
+          'AlertProvider: loadAlertNotifications result isSuccess=${result.isSuccess}');
+
       if (result.isSuccess) {
         // Aquí podrías manejar las notificaciones de alertas si las necesitas
-        print('AlertProvider: loadAlertNotifications success, loaded ${result.value!.length} notifications');
+        print(
+            'AlertProvider: loadAlertNotifications success, loaded ${result.value!.length} notifications');
       } else {
         _errorMessage = result.message;
-        print('AlertProvider: loadAlertNotifications failed: ${result.message}');
+        print(
+            'AlertProvider: loadAlertNotifications failed: ${result.message}');
       }
     } catch (e) {
       print('AlertProvider: loadAlertNotifications exception: $e');
@@ -304,17 +328,21 @@ class AlertProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      print('AlertProvider: markNotificationAsRead called for notificationId=$notificationId');
-      
-      final result = await _alertRepository.markNotificationAsRead(_authProvider!.token!, notificationId);
-      
-      print('AlertProvider: markNotificationAsRead result isSuccess=${result.isSuccess}');
-      
+      print(
+          'AlertProvider: markNotificationAsRead called for notificationId=$notificationId');
+
+      final result = await _alertRepository.markNotificationAsRead(
+          _authProvider!.token!, notificationId);
+
+      print(
+          'AlertProvider: markNotificationAsRead result isSuccess=${result.isSuccess}');
+
       if (result.isSuccess) {
         print('AlertProvider: markNotificationAsRead success');
       } else {
         _errorMessage = result.message;
-        print('AlertProvider: markNotificationAsRead failed: ${result.message}');
+        print(
+            'AlertProvider: markNotificationAsRead failed: ${result.message}');
       }
     } catch (e) {
       print('AlertProvider: markNotificationAsRead exception: $e');
@@ -324,18 +352,4 @@ class AlertProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-
-  // Getters útiles
-  List<Alert> get activeAlerts => _alerts.where((a) => a.isActive).toList();
-  List<Alert> get inactiveAlerts => _alerts.where((a) => !a.isActive).toList();
-  int get activeCount => activeAlerts.length;
-  int get totalCount => _alerts.length;
-  
-  // Métodos para filtrar por tipo
-  List<Alert> getAlertsByType(AlertType type) => _alerts.where((a) => a.type == type).toList();
-  List<Alert> getExcellentAlerts() => getAlertsByType(AlertType.excellent);
-  List<Alert> getGoodAlerts() => getAlertsByType(AlertType.good);
-  List<Alert> getModerateAlerts() => getAlertsByType(AlertType.moderate);
-  List<Alert> getPoorAlerts() => getAlertsByType(AlertType.poor);
-  List<Alert> getDangerousAlerts() => getAlertsByType(AlertType.dangerous);
-} 
+}

@@ -1,7 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
+import 'package:frontend_water_quality/core/enums/work_roles.dart';
 import 'package:frontend_water_quality/core/interface/navigation_item.dart';
+import 'package:frontend_water_quality/core/interface/result.dart';
+import 'package:frontend_water_quality/core/interface/route_properties.dart';
+import 'package:frontend_water_quality/domain/models/meter_model.dart';
+import 'package:frontend_water_quality/presentation/pages/error_page.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_skeleton.dart';
@@ -29,8 +34,33 @@ class LayoutMeters extends StatefulWidget {
 
 class _LayoutMetersState extends State<LayoutMeters> {
   int currentIndex = 0;
+  late Future<Result<Meter>> _meterFuture;
 
-  List<NavigationItem> destinations = [
+  @override
+  void initState() {
+    super.initState();
+    _meterFuture = _fetchMeter();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final provider = Provider.of<MeterProvider>(context);
+    if (provider.shouldReloadMeter(widget.id, widget.idMeter)) {
+      setState(() {
+        _meterFuture = _fetchMeter();
+      });
+    }
+  }
+
+  Future<Result<Meter>> _fetchMeter() async {
+    final provider = Provider.of<MeterProvider>(context, listen: false);
+    final result = await provider.getMeterById(widget.id, widget.idMeter);
+    provider.confirmMeterReloaded(widget.id, widget.idMeter);
+    return result;
+  }
+
+  final List<NavigationItem> _baseDestinations = [
     NavigationItem(
       label: "Monitoreo",
       icon: Icons.speed_outlined,
@@ -58,108 +88,111 @@ class _LayoutMetersState extends State<LayoutMeters> {
     ),
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    if (defaultTargetPlatform == TargetPlatform.android && !kIsWeb) {
-      destinations.add(
-        NavigationItem(
-          label: "Conección",
-          icon: Icons.wifi_tethering_outlined,
-          selectedIcon: Icons.wifi_tethering,
-        ),
-      );
+  final NavigationItem _connectionDestination = NavigationItem(
+    label: "Conexión",
+    icon: Icons.wifi_tethering_outlined,
+    selectedIcon: Icons.wifi_tethering,
+  );
+
+  List<NavigationItem> _getDestinationsByRole(WorkRole? role) {
+    print(role);
+    // Lista base para visitantes
+    if (role == WorkRole.visitor || role == null) {
+      return _baseDestinations.take(2).toList();
     }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<MeterProvider>(context, listen: false)
-          .fetchMeter(widget.id, widget.idMeter);
+
+    // Para roles con acceso completo
+    if (role == WorkRole.administrator ||
+        role == WorkRole.manager ||
+        role == WorkRole.owner) {
+      var destinations = List<NavigationItem>.from(_baseDestinations);
+
+      // Agregar conexión solo para admin y owner en Android
+      if ((role == WorkRole.administrator || role == WorkRole.owner) &&
+          defaultTargetPlatform == TargetPlatform.android &&
+          !kIsWeb) {
+        destinations.add(_connectionDestination);
+      }
+
+      return destinations;
+    }
+
+    // Por defecto, acceso básico
+    return _baseDestinations.take(2).toList();
+  }
+
+  List<RouteProperties> _getRoutesByRole(WorkRole? role) {
+    final baseRoutes = [
+      Routes.meter,
+      Routes.listRecords,
+      Routes.analysisRecords,
+      Routes.weather,
+      Routes.updateMeter,
+    ];
+
+    if (role == WorkRole.visitor || role == null) {
+      return baseRoutes.take(2).toList();
+    }
+
+    if (role == WorkRole.administrator ||
+        role == WorkRole.manager ||
+        role == WorkRole.owner) {
+      var routes = List<RouteProperties>.from(baseRoutes);
+
+      if ((role == WorkRole.administrator || role == WorkRole.owner) &&
+          defaultTargetPlatform == TargetPlatform.android &&
+          !kIsWeb) {
+        routes.add(Routes.connectionMeter);
+      }
+
+      return routes;
+    }
+
+    return baseRoutes.take(2).toList();
+  }
+
+  void _onDestinationSelected(int index, WorkRole? role) {
+    final routes = _getRoutesByRole(role);
+    if (index >= routes.length) return;
+
+    context.goNamed(
+      routes[index].name,
+      pathParameters: {
+        "id": widget.id,
+        "idMeter": widget.idMeter,
+      },
+    );
+
+    setState(() {
+      currentIndex = index;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    void onDestinationSelected(int index) {
-      if (index == 0) {
-        context.goNamed(
-          Routes.meter.name,
-          pathParameters: {
-            "id": widget.id,
-            "idMeter": widget.idMeter,
-          },
-        );
-      } else if (index == 1) {
-        context.goNamed(
-          Routes.listRecords.name,
-          pathParameters: {
-            "id": widget.id,
-            "idMeter": widget.idMeter,
-          },
-        );
-      } else if (index == 2) {
-        context.goNamed(
-          Routes.analysisRecords.name,
-          pathParameters: {
-            "id": widget.id,
-            "idMeter": widget.idMeter,
-          },
-        );
-      } else if (index == 3) {
-        context.goNamed(
-          Routes.weather.name,
-          pathParameters: {
-            "id": widget.id,
-            "idMeter": widget.idMeter,
-          },
-        );
-      } else if (index == 4) {
-        context.goNamed(
-          Routes.updateMeter.name,
-          pathParameters: {
-            "id": widget.id,
-            "idMeter": widget.idMeter,
-          },
-        );
-      } else if (index == 5) {
-        context.goNamed(
-          Routes.connectionMeter.name,
-          pathParameters: {
-            "id": widget.id,
-            "idMeter": widget.idMeter,
-          },
-        );
-      }
-
-      setState(() {
-        currentIndex = index;
-      });
-    }
-
-    return Consumer<MeterProvider>(
-      builder: (context, meterProvider, child) {
-        if (meterProvider.isLoading) {
+    return FutureBuilder<Result<Meter>>(
+      future: _meterFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return const LayoutSkeleton();
         }
-        print("Current meter: ${meterProvider.currentMeter}");
 
-        if (!meterProvider.isLoading && meterProvider.currentMeter == null) {
-          // Esto dispara el error 404 automático de GoRouter
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (!meterProvider.isLoading) {
-              GoRouter.of(context).go('/404');
-            }
-          });
-          return const SizedBox.shrink();
+        if (snapshot.hasError ||
+            !snapshot.hasData ||
+            snapshot.data?.message != null) {
+          return const ErrorPage();
         }
 
+        final meter = snapshot.data!.value;
+        final destinations = _getDestinationsByRole(meter?.role);
+
         return Layout(
-          title: meterProvider.isLoading
-              ? "Cargando..."
-              : meterProvider.currentMeter?.name ??
-                  "Medidor no encontrado",
+          title: meter?.name ?? "Medidor no encontrado",
           selectedIndex: currentIndex,
-          onDestinationSelected: onDestinationSelected,
+          onDestinationSelected: (index) =>
+              _onDestinationSelected(index, meter?.role),
           destinations: destinations,
-          builder: (context, screenSize) => widget.builder(context, screenSize),
+          builder: widget.builder,
         );
       },
     );

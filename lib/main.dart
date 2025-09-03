@@ -47,8 +47,7 @@ void main() async {
             context.read<AuthProvider>(),
           ),
           update: (context, authProvider, workspaceProvider) {
-            workspaceProvider!.clean();
-            return workspaceProvider..setAuthProvider(authProvider);
+            return workspaceProvider!..setAuthProvider(authProvider);
           },
         ),
         ChangeNotifierProvider(
@@ -62,8 +61,7 @@ void main() async {
             context.read<AuthProvider>(),
           ),
           update: (context, authProvider, meterProvider) {
-            meterProvider!.clean();
-            return meterProvider..setAuthProvider(authProvider);
+            return meterProvider!..setAuthProvider(authProvider);
           },
         ),
         ChangeNotifierProxyProvider<AuthProvider, GuestProvider>(
@@ -119,7 +117,8 @@ void main() async {
               previousAlertProvider.setAuthProvider(authProvider);
               previousAlertProvider.clean();
             }
-            return previousAlertProvider ?? AlertProvider(alertRepo, authProvider);
+            return previousAlertProvider ??
+                AlertProvider(alertRepo, authProvider);
           },
         ),
       ],

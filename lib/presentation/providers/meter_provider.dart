@@ -1,182 +1,106 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/foundation.dart';
+import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/domain/models/meter_model.dart';
 import 'package:frontend_water_quality/domain/repositories/meter_repo.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 
 class MeterProvider with ChangeNotifier {
-  AuthProvider? _authProvider;
   final MeterRepo _meterRepo;
+  AuthProvider? _authProvider;
+
+  // Flags para control de recarga
+  final Map<String, bool> _shouldReloadList = {};
+  final Map<String, bool> _shouldReloadMeter = {};
+
   MeterProvider(this._meterRepo, this._authProvider);
 
-  List<Meter> meters = [];
-  Meter? currentMeter;
-  bool isLoading = false;
-  bool isLoadingForm = false;
-  bool recharge = true;
-  String? errorMessage;
-  String? errorMessageForm;
+  // Getters para los flags
+  bool shouldReloadList(String workspaceId) =>
+      _shouldReloadList[workspaceId] ?? true;
+  bool shouldReloadMeter(String workspaceId, String meterId) =>
+      _shouldReloadMeter['$workspaceId-$meterId'] ?? true;
 
-  void clean() {
-    meters = [];
-    currentMeter = null;
-    isLoading = false;
-    isLoadingForm = false;
-    recharge = true;
-    errorMessage = null;
-    errorMessageForm = null;
+  // Métodos para marcar recargas
+  void markListForReload(String workspaceId) {
+    _shouldReloadList[workspaceId] = true;
+    notifyListeners();
   }
 
-  void clearCurrentMeter() {
-    currentMeter = null;
-    errorMessageForm = null;
+  void markMeterForReload(String workspaceId, String meterId) {
+    _shouldReloadMeter['$workspaceId-$meterId'] = true;
+    notifyListeners();
+  }
+
+  // Métodos para confirmar recargas completadas
+  void confirmListReloaded(String workspaceId) {
+    _shouldReloadList.remove(workspaceId);
+  }
+
+  void confirmMeterReloaded(String workspaceId, String meterId) {
+    _shouldReloadMeter.remove('$workspaceId-$meterId');
   }
 
   void setAuthProvider(AuthProvider? provider) {
     _authProvider = provider;
   }
 
-  Future<void> fetchMeter(String idWorkspace, String idMeter) async {
-    if (_authProvider == null || _authProvider!.token == null) {
-      errorMessage = "User not authenticated";
-      notifyListeners();
-      return;
+  Future<Result<Meter>> getMeterById(String idWorkspace, String idMeter) async {
+    if (_authProvider?.token == null) {
+      return Result.failure("User not authenticated");
     }
-
-    isLoading = true;
-    currentMeter = null;
-    notifyListeners();
 
     try {
       final result =
           await _meterRepo.getById(_authProvider!.token!, idWorkspace, idMeter);
-      if (!result.isSuccess) {
-        errorMessage = result.message;
-        return;
-      }
-      print("Fetched meter: $result");
-
-      currentMeter = result.value;
-      print("Current meter set: $currentMeter");
-      errorMessage = null;
+      return result;
     } catch (e) {
-      errorMessage = e.toString();
-    } finally {
-      isLoading = false;
-      notifyListeners();
+      return Result.failure(e.toString());
     }
   }
 
-  Future<void> fetchMeters(String idWorkspace) async {
-    if (_authProvider == null || _authProvider!.token == null) {
-      errorMessage = "User not authenticated";
-      notifyListeners();
-      return;
+  Future<Result<List<Meter>>> getMeters(String idWorkspace) async {
+    if (_authProvider?.token == null) {
+      return Result.failure("User not authenticated");
     }
 
-    if (!recharge) return;
-
-    isLoading = true;
-    notifyListeners();
-
     try {
-      print("Fetching meters...");
-      final result = await _meterRepo.getAll(_authProvider!.token!, idWorkspace);
-      if (!result.isSuccess) {
-        errorMessage = result.message;
-        notifyListeners();
-        return;
-      }
-
-      meters = result.value ?? [];
-      errorMessage = null;
-
-
-      if (currentMeter != null) {
-        currentMeter = meters.firstWhere(
-          (meter) => meter.id == currentMeter!.id,
-          orElse: () => currentMeter!,
-        );
-      }
+      final result =
+          await _meterRepo.getAll(_authProvider!.token!, idWorkspace);
+      return result;
     } catch (e) {
-      errorMessage = e.toString();
-      print("Error fetching workspaces: $e");
-    } finally {
-      isLoading = false;
-      recharge = false;
-      notifyListeners();
+      return Result.failure(e.toString());
     }
   }
 
-  Future<bool> createMeter(String idWorkspace, Meter meter) async {
-    if (_authProvider == null || _authProvider!.token == null) {
-      errorMessageForm = "User not authenticated";
-      notifyListeners();
-      return false;
-    }
-
-    isLoadingForm = true;
-    notifyListeners();
+  Future<String?> createMeter(String idWorkspace, Meter meter) async {
+    if (_authProvider?.token == null) return "User not authenticated";
 
     try {
-      print(meter.toJson());
       final result =
           await _meterRepo.create(_authProvider!.token!, idWorkspace, meter);
-
-      print(result);
-      if (!result.isSuccess) {
-        errorMessageForm = result.message;
-        return false;
+      if (result.isSuccess) {
+        markListForReload(
+            idWorkspace); // Marcar para recargar la lista después de crear
       }
-
-      recharge = true;
-      errorMessageForm = null;
-      isLoadingForm = false;
-      notifyListeners();
-      await fetchMeters(idWorkspace);
-      return result.isSuccess;
+      return result.message;
     } catch (e) {
-      errorMessageForm = e.toString();
-      isLoadingForm = false;
-      recharge = false;
-      notifyListeners();
-      return false;
+      return e.toString();
     }
   }
 
-  Future<bool> updateWorkspace(String idWorkspace, Meter meter) async {
-    if (_authProvider == null || _authProvider!.token == null) {
-      errorMessageForm = "User not authenticated";
-      notifyListeners();
-      return false;
-    }
-
-    isLoadingForm = true;
-    notifyListeners();
+  Future<String?> updateMeter(String idWorkspace, Meter meter) async {
+    if (_authProvider?.token == null) return "User not authenticated";
 
     try {
       final result =
           await _meterRepo.update(_authProvider!.token!, idWorkspace, meter);
-
-      if (!result.isSuccess) {
-        errorMessageForm = result.message;
-        return false;
+      if (result.isSuccess) {
+        markMeterForReload(idWorkspace, meter.id!); // Marcar medidor específico
+        markListForReload(idWorkspace); // Marcar lista para actualizar
       }
-
-      recharge = true;
-      errorMessageForm = null;
-      isLoadingForm = false;
-      notifyListeners();
-      await fetchMeters(idWorkspace);
-      if (currentMeter != null) {
-        currentMeter = meter;
-      }
-      return result.isSuccess;
+      return result.message;
     } catch (e) {
-      errorMessageForm = e.toString();
-      isLoadingForm = false;
-      recharge = false;
-      notifyListeners();
-      return false;
+      return e.toString();
     }
   }
 }
