@@ -5,11 +5,11 @@ import 'package:frontend_water_quality/presentation/widgets/layout/responsive_sc
 import 'package:latlong2/latlong.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/meter_ubications/search_map.dart';
 
-class UbicacionSeleccionada {
-  final LatLng coordenadas;
-  final String nombreLugar;
+class SelectedLocation {
+  final LatLng coordinates;
+  final String placeName;
 
-  UbicacionSeleccionada({required this.coordenadas, required this.nombreLugar});
+  SelectedLocation({required this.coordinates, required this.placeName});
 }
 
 class FormMeters extends StatefulWidget {
@@ -52,11 +52,11 @@ class _FormMetersState extends State<FormMeters> {
 
   LatLng? selectedLocation;
 
-  Future<void> _cargarNombreLugar(LatLng coords) async {
-    final nombre = await MapsRepoImpl.buscarNombreLugar(coords);
+  Future<void> _loadPlaceName(LatLng coords) async {
+    final name = await MapsRepoImpl.searchPlaceName(coords);
     if (mounted) {
       setState(() {
-        _placeNameController.text = nombre;
+        _placeNameController.text = name;
       });
     }
   }
@@ -69,18 +69,24 @@ class _FormMetersState extends State<FormMeters> {
     _lngController = TextEditingController();
     _placeNameController = TextEditingController();
 
-    // Rellenar solo si hay datos iniciales
-    if (widget.name != null) _nameController.text = widget.name!;
-    if (widget.lat != null)
+    // Fill only if initial data exists
+    if (widget.name != null) {
+      _nameController.text = widget.name!;
+    }
+    if (widget.lat != null) {
       _latController.text = widget.lat!.toStringAsFixed(6);
-    if (widget.lng != null)
+    }
+    if (widget.lng != null) {
       _lngController.text = widget.lng!.toStringAsFixed(6);
-    if (widget.placeName != null) _placeNameController.text = widget.placeName!;
+    }
+    if (widget.placeName != null) {
+      _placeNameController.text = widget.placeName!;
+    }
 
     if (widget.lat != null && widget.lng != null) {
       selectedLocation = LatLng(widget.lat!, widget.lng!);
       if (_placeNameController.text.isEmpty) {
-        _cargarNombreLugar(selectedLocation!);
+        _loadPlaceName(selectedLocation!);
       }
     }
   }
@@ -94,25 +100,27 @@ class _FormMetersState extends State<FormMeters> {
     super.dispose();
   }
 
-  bool validarCoordenadas(LatLng? location) {
-    if (location == null) return false;
+  bool validateCoordinates(LatLng? location) {
+    if (location == null) {
+      return false;
+    }
     return location.latitude >= -90 &&
         location.latitude <= 90 &&
         location.longitude >= -180 &&
         location.longitude <= 180;
   }
 
-  Future<UbicacionSeleccionada?> showMapSelectionScreen(
+  Future<SelectedLocation?> showMapSelectionScreen(
       BuildContext context, LatLng? initial) async {
-    return await showModalBottomSheet<UbicacionSeleccionada>(
+    return await showModalBottomSheet<SelectedLocation>(
       context: context,
-      isScrollControlled: true, // Permite que el modal ocupe toda la pantalla
+      isScrollControlled: true, // Allow modal to take full screen
       builder: (BuildContext context) {
         return SearchMap(
           screenSize: ResponsiveScreenSize.getScreenSize(context),
           initialLocation: initial,
-          onLocationSelected: (UbicacionSeleccionada ubicacion) {
-            Navigator.pop(context, ubicacion);
+          onLocationSelected: (SelectedLocation location) {
+            Navigator.pop(context, location);
           },
         );
       },
@@ -173,11 +181,11 @@ class _FormMetersState extends State<FormMeters> {
                 if (result != null) {
                   setState(() {
                     _latController.text =
-                        result.coordenadas.latitude.toStringAsFixed(6);
+                        result.coordinates.latitude.toStringAsFixed(6);
                     _lngController.text =
-                        result.coordenadas.longitude.toStringAsFixed(6);
-                    _placeNameController.text = result.nombreLugar;
-                    selectedLocation = result.coordenadas;
+                        result.coordinates.longitude.toStringAsFixed(6);
+                    _placeNameController.text = result.placeName;
+                    selectedLocation = result.coordinates;
                   });
                 }
               },
@@ -223,7 +231,6 @@ class _FormMetersState extends State<FormMeters> {
                                   lon: location.longitude,
                                 ),
                               );
-                              print(meter);
                               await widget.onSave!(meter);
                             }
                           }

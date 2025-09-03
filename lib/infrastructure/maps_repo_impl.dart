@@ -4,7 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:frontend_water_quality/core/utils/config_map.dart';
 
 class MapsRepoImpl {
-  static Future<String> buscarNombreLugar(LatLng coords) async {
+  static Future<String> searchPlaceName(LatLng coords) async {
     final url = Uri.parse(
       'https://nominatim.openstreetmap.org/reverse?lat=${coords.latitude}&lon=${coords.longitude}&format=json',
     );

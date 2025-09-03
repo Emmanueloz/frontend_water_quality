@@ -11,7 +11,7 @@ import 'package:latlong2/latlong.dart';
 class SearchMap extends StatefulWidget {
   final ScreenSize screenSize;
   final LatLng? initialLocation;
-  final void Function(UbicacionSeleccionada)? onLocationSelected;
+  final void Function(SelectedLocation)? onLocationSelected;
 
   const SearchMap({
     super.key,
@@ -51,7 +51,7 @@ class _SearchMapState extends State<SearchMap> {
   }
 
   Future<void> _buscarNombreLugar(LatLng coords) async {
-    final nombre = await MapsRepoImpl.buscarNombreLugar(coords);
+    final nombre = await MapsRepoImpl.searchPlaceName(coords);
     setState(() {
       _nombreDelLugar = nombre;
     });
@@ -155,9 +155,9 @@ class _SearchMapState extends State<SearchMap> {
               onPressed: () {
                 if (_selectedLocation != null && _nombreDelLugar != null) {
                   widget.onLocationSelected?.call(
-                    UbicacionSeleccionada(
-                      coordenadas: _selectedLocation!,
-                      nombreLugar: _nombreDelLugar!,
+                    SelectedLocation(
+                      coordinates: _selectedLocation!,
+                      placeName: _nombreDelLugar!,
                     ),
                   );
                 }
