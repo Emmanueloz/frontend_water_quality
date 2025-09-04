@@ -115,6 +115,8 @@ class _FormMetersState extends State<FormMeters> {
     return await showModalBottomSheet<SelectedLocation>(
       context: context,
       isScrollControlled: true, // Allow modal to take full screen
+      useSafeArea: true,
+      useRootNavigator: true,
       builder: (BuildContext context) {
         return SearchMap(
           screenSize: ResponsiveScreenSize.getScreenSize(context),
@@ -133,6 +135,7 @@ class _FormMetersState extends State<FormMeters> {
       child: Form(
         key: _formKey,
         child: Column(
+          spacing: 10,
           children: [
             Text(
               widget.title,
@@ -153,25 +156,21 @@ class _FormMetersState extends State<FormMeters> {
                 return null;
               },
             ),
-            const SizedBox(height: 10),
             TextFormField(
               controller: _placeNameController,
               decoration: const InputDecoration(labelText: 'Ubicación'),
               readOnly: true,
             ),
-            const SizedBox(height: 10),
             TextFormField(
               controller: _latController,
               decoration: const InputDecoration(labelText: 'Latitud'),
               readOnly: true,
             ),
-            const SizedBox(height: 10),
             TextFormField(
               controller: _lngController,
               decoration: const InputDecoration(labelText: 'Longitud'),
               readOnly: true,
             ),
-            const SizedBox(height: 10),
             ElevatedButton.icon(
               icon: const Icon(Icons.map),
               label: const Text("Seleccionar ubicación"),
@@ -190,7 +189,6 @@ class _FormMetersState extends State<FormMeters> {
                 }
               },
             ),
-            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

@@ -51,9 +51,9 @@ class _SearchMapState extends State<SearchMap> {
   }
 
   Future<void> _searchPlaceName(LatLng coords) async {
-    final nombre = await MapsRepoImpl.searchPlaceName(coords);
+    final name = await MapsRepoImpl.searchPlaceName(coords);
     setState(() {
-      _nameLocation = nombre;
+      _nameLocation = name;
     });
   }
 

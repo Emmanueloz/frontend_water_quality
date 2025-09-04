@@ -51,7 +51,7 @@ class MapsRepoImpl {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        if (data != null && data.isNotEmpty) {
+        if (data != null) {
           final lat = double.parse(data[0]['lat']);
           final lon = double.parse(data[0]['lon']);
           return LatLng(lat, lon);
