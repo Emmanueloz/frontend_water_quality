@@ -29,7 +29,7 @@ class _SearchMapState extends State<SearchMap> {
   late final LatLng _initialCenter;
   late final double _initialZoom;
   LatLng? _selectedLocation;
-  String? _nombreDelLugar;
+  String? _nameLocation;
 
   final TextEditingController _searchController = TextEditingController();
 
@@ -41,8 +41,8 @@ class _SearchMapState extends State<SearchMap> {
     _initialZoom = kIsWeb ? 8.0 : 6.0;
   }
 
-  Future<void> _buscarDireccion(String query) async {
-    final result = await MapsRepoImpl.buscarDireccion(query);
+  Future<void> _searchDirection(String query) async {
+    final result = await MapsRepoImpl.searchDirection(query);
     if (result != null) {
       _mapController.move(result, 10);
     } else {
@@ -50,10 +50,10 @@ class _SearchMapState extends State<SearchMap> {
     }
   }
 
-  Future<void> _buscarNombreLugar(LatLng coords) async {
+  Future<void> _searchPlaceName(LatLng coords) async {
     final nombre = await MapsRepoImpl.searchPlaceName(coords);
     setState(() {
-      _nombreDelLugar = nombre;
+      _nameLocation = nombre;
     });
   }
 
@@ -89,7 +89,7 @@ class _SearchMapState extends State<SearchMap> {
             markers: markers,
             onTap: (tapPosition, latLng) {
               setState(() => _selectedLocation = latLng);
-              _buscarNombreLugar(latLng);
+              _searchPlaceName(latLng);
             },
           ),
         ),
@@ -113,7 +113,7 @@ class _SearchMapState extends State<SearchMap> {
                 contentPadding: EdgeInsets.symmetric(horizontal: 16),
               ),
               onSubmitted: (value) {
-                if (value.isNotEmpty) _buscarDireccion(value);
+                if (value.isNotEmpty) _searchDirection(value);
               },
             ),
           ),
@@ -153,11 +153,11 @@ class _SearchMapState extends State<SearchMap> {
                 elevation: 2,
               ),
               onPressed: () {
-                if (_selectedLocation != null && _nombreDelLugar != null) {
+                if (_selectedLocation != null && _nameLocation != null) {
                   widget.onLocationSelected?.call(
                     SelectedLocation(
                       coordinates: _selectedLocation!,
-                      placeName: _nombreDelLugar!,
+                      placeName: _nameLocation!,
                     ),
                   );
                 }
