@@ -1,22 +1,33 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:frontend_water_quality/core/utils/config_map.dart';
+import 'package:dio/dio.dart';
 
 class MapsRepoImpl {
-  static Future<String> buscarNombreLugar(LatLng coords) async {
-    final url = Uri.parse(
-      'https://nominatim.openstreetmap.org/reverse?lat=${coords.latitude}&lon=${coords.longitude}&format=json',
-    );
+  // Instancia de Dio reutilizable
+  static final Dio dio = Dio(
+    BaseOptions(
+      baseUrl: 'https://nominatim.openstreetmap.org',
+      headers: {'User-Agent': ConfigMap.userAgent},
+      responseType: ResponseType.json,
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+    ),
+  );
 
+  /// Busca el nombre de un lugar dado sus coordenadas
+  static Future<String> searchPlaceName(LatLng coords) async {
     try {
-      final response = await http.get(
-        url,
-        headers: {'User-Agent': ConfigMap.userAgent},
+      final response = await dio.get(
+        '/reverse',
+        queryParameters: {
+          'lat': coords.latitude,
+          'lon': coords.longitude,
+          'format': 'json',
+        },
       );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = response.data;
         return data['display_name'] ?? 'Ubicación sin nombre';
       } else {
         return 'Ubicación sin nombre';
@@ -26,20 +37,21 @@ class MapsRepoImpl {
     }
   }
 
-  static Future<LatLng?> buscarDireccion(String query) async {
-    final url = Uri.parse(
-      'https://nominatim.openstreetmap.org/search?q=$query&format=json&limit=1',
-    );
-
+  /// Busca las coordenadas de una dirección escrita en texto
+  static Future<LatLng?> searchDirection(String query) async {
     try {
-      final response = await http.get(
-        url,
-        headers: {'User-Agent': ConfigMap.userAgent},
+      final response = await dio.get(
+        '/search',
+        queryParameters: {
+          'q': query,
+          'format': 'json',
+          'limit': 1,
+        },
       );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        if (data.isNotEmpty) {
+        final data = response.data;
+        if (data != null) {
           final lat = double.parse(data[0]['lat']);
           final lon = double.parse(data[0]['lon']);
           return LatLng(lat, lon);
