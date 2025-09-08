@@ -1,11 +1,11 @@
 {
-    "name": "frontend_water_quality",
-    "short_name": "frontend_water_quality",
+    "name": "Aqua Minds - Water Quality Monitor",
+    "short_name": "Aqua Minds",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#6b1878",
+    "theme_color": "#6b1878",
+    "description": "Plataforma para monitorizar y analizar la calidad del agua en tiempo real con sensores y tecnología IoT.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
