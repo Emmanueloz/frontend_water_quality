@@ -2,6 +2,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
+import 'package:frontend_water_quality/core/enums/storage_key.dart';
+import 'package:frontend_water_quality/infrastructure/local_storage_service.dart';
 import 'package:frontend_water_quality/presentation/pages/alerts.dart';
 import 'package:frontend_water_quality/presentation/pages/form_alert.dart';
 import 'package:frontend_water_quality/domain/models/alert.dart';
@@ -264,28 +266,29 @@ class AppRouter {
                         name: Routes.createAlerts.name,
                         parentNavigatorKey: rootNavigatorKey,
                         builder: (context, state) {
-                          final workspaceId = state.pathParameters['id'] ?? 'default';
+                          final workspaceId =
+                              state.pathParameters['id'] ?? 'default';
                           return FormAlertPage(
                             workspaceTitle: 'Alertas',
                             workspaceId: workspaceId,
                           );
                         },
                       ),
-                      
-                                             GoRoute(
-                         path: Routes.updateAlerts.path,
-                         name: Routes.updateAlerts.name,
-                         parentNavigatorKey: rootNavigatorKey,
-                         builder: (context, state) {
-                           final workspaceId = state.pathParameters['id'] ?? 'default';
-                           final alert = state.extra as Alert?;
-                           return FormAlertPage(
-                             alert: alert,
-                             workspaceTitle: 'Alertas',
-                             workspaceId: workspaceId,
-                           );
-                         },
-                       ),
+                      GoRoute(
+                        path: Routes.updateAlerts.path,
+                        name: Routes.updateAlerts.name,
+                        parentNavigatorKey: rootNavigatorKey,
+                        builder: (context, state) {
+                          final workspaceId =
+                              state.pathParameters['id'] ?? 'default';
+                          final alert = state.extra as Alert?;
+                          return FormAlertPage(
+                            alert: alert,
+                            workspaceTitle: 'Alertas',
+                            workspaceId: workspaceId,
+                          );
+                        },
+                      ),
                     ],
                   ),
                   GoRoute(
@@ -408,7 +411,8 @@ class AppRouter {
       )
     ],
     errorBuilder: (context, state) => ErrorPage(),
-    redirect: (context, state) {
+    redirect: (context, state) async {
+      print("redirect");
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final List<String> publicRoutes = [
         Routes.splash.path,
@@ -427,6 +431,21 @@ class AppRouter {
       }
 
       if (authProvider.isAuthenticated && isOnPublicRoute) {
+        String? workspaceId =
+            await LocalStorageService.get(StorageKey.workspaceId);
+        String? meterId = await LocalStorageService.get(StorageKey.meterId);
+
+        if (workspaceId != null &&
+            workspaceId.isNotEmpty &&
+            meterId != null &&
+            meterId.isNotEmpty) {
+          return '/workspaces/$workspaceId/meter/$meterId';
+        }
+
+        if (workspaceId != null && workspaceId.isNotEmpty) {
+          return '/workspaces/$workspaceId';
+        }
+
         return Routes.workspaces.path;
       }
 

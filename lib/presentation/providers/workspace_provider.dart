@@ -53,6 +53,7 @@ class WorkspaceProvider with ChangeNotifier {
       final result = await _workspaceRepo.getById(_authProvider!.token!, id);
       if (id != await LocalStorageService.get(StorageKey.workspaceId)) {
         LocalStorageService.save(StorageKey.workspaceId, id);
+        LocalStorageService.remove(StorageKey.meterId);
       }
 
       return result;
