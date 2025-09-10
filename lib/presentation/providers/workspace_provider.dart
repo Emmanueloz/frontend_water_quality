@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
+import 'package:frontend_water_quality/core/enums/storage_key.dart';
 import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/domain/models/workspace.dart';
 import 'package:frontend_water_quality/domain/repositories/workspace_repo.dart';
+import 'package:frontend_water_quality/infrastructure/local_storage_service.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 
 class WorkspaceProvider with ChangeNotifier {
@@ -49,6 +51,10 @@ class WorkspaceProvider with ChangeNotifier {
 
     try {
       final result = await _workspaceRepo.getById(_authProvider!.token!, id);
+      if (id != await LocalStorageService.get(StorageKey.workspaceId)) {
+        LocalStorageService.save(StorageKey.workspaceId, id);
+      }
+
       return result;
     } catch (e) {
       return Result.failure(e.toString());
