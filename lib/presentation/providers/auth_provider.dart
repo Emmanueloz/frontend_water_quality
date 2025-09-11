@@ -10,7 +10,9 @@ import 'package:frontend_water_quality/infrastructure/local_storage_service.dart
 class AuthProvider with ChangeNotifier {
   final AuthRepo _authRepo;
 
-  AuthProvider(this._authRepo);
+  AuthProvider(this._authRepo) {
+    loadSettings();
+  }
 
   bool isAuthenticated = false;
   bool isLoading = false;
