@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/storage_key.dart';
+import 'package:frontend_water_quality/infrastructure/connectivity_provider.dart';
 import 'package:frontend_water_quality/infrastructure/local_storage_service.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/organisms/resizable_container.dart';
 import 'package:frontend_water_quality/router/routes.dart';
@@ -44,6 +45,13 @@ class _MainMeterState extends State<MainMeter> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final isOffline =
+        Provider.of<ConnectivityProvider>(context, listen: false).isOffline;
+
+    if (isOffline) {
+      print("is offline");
+      return;
+    }
     _meterProvider = Provider.of<MeterRecordProvider>(context, listen: false);
     _meterProvider!.subscribeToMeter(
       baseUrl: baseUrl,
