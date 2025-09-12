@@ -92,7 +92,7 @@ class Information extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                            "Vision",
+                            "Visión",
                             style: Theme.of(context)
                                 .textTheme
                                 .headlineSmall
