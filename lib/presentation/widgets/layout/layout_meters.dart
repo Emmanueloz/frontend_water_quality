@@ -6,6 +6,7 @@ import 'package:frontend_water_quality/core/interface/navigation_item.dart';
 import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/core/interface/route_properties.dart';
 import 'package:frontend_water_quality/domain/models/meter_model.dart';
+import 'package:frontend_water_quality/infrastructure/connectivity_provider.dart';
 import 'package:frontend_water_quality/presentation/pages/error_page.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
@@ -180,6 +181,19 @@ class _LayoutMetersState extends State<LayoutMeters> {
         if (snapshot.hasError ||
             !snapshot.hasData ||
             snapshot.data?.message != null) {
+          final isOffline =
+              Provider.of<ConnectivityProvider>(context, listen: false)
+                  .isOffline;
+
+          if (isOffline) {
+            return Layout(
+              title: "Modo offline",
+              builder: (context, screenSize) => Padding(
+                padding: EdgeInsets.all(10),
+                child: widget.builder(context, screenSize),
+              ),
+            );
+          }
           return const ErrorPage();
         }
 

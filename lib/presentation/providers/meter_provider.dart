@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
+import 'package:frontend_water_quality/core/enums/storage_key.dart';
 import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/domain/models/meter_model.dart';
 import 'package:frontend_water_quality/domain/repositories/meter_repo.dart';
+import 'package:frontend_water_quality/infrastructure/local_storage_service.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 
 class MeterProvider with ChangeNotifier {
@@ -52,6 +54,16 @@ class MeterProvider with ChangeNotifier {
     try {
       final result =
           await _meterRepo.getById(_authProvider!.token!, idWorkspace, idMeter);
+
+      if (idWorkspace !=
+          await LocalStorageService.get(StorageKey.workspaceId)) {
+        LocalStorageService.save(StorageKey.workspaceId, idWorkspace);
+      }
+
+      if (idMeter != await LocalStorageService.get(StorageKey.meterId)) {
+        LocalStorageService.save(StorageKey.meterId, idMeter);
+      }
+
       return result;
     } catch (e) {
       return Result.failure(e.toString());
