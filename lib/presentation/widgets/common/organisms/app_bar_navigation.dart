@@ -20,10 +20,12 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
       builder: (context, connectivityProvider, authProvider, child) {
         List<Widget> actions = [];
 
-        if (!connectivityProvider.state.isOnline) {
+        final bool isOffline = connectivityProvider.isOffline;
+
+        if (isOffline) {
           actions = [
-            TextButton(
-              child: const Text("Desconectado"),
+            IconButton(
+              icon: Icon(Icons.wifi_off),
               onPressed: () {},
             ),
           ];
@@ -35,23 +37,36 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
             TextButton(
               child: const Text("Espacios de trabajo"),
               onPressed: () {
+                if (isOffline) {
+                  return;
+                }
                 context.goNamed(Routes.workspaces.name);
               },
             ),
             IconButton(
-                icon: const Icon(Icons.notifications),
-                onPressed: () {
-                  context.goNamed(Routes.listNotifications.name);
-                }),
+              icon: const Icon(Icons.notifications),
+              onPressed: () {
+                if (isOffline) {
+                  return;
+                }
+                context.goNamed(Routes.listNotifications.name);
+              },
+            ),
             ButtonProfile(
               username: authProvider.user?.username ?? "",
               email: authProvider.user?.email ?? "",
               onPressed: () {
+                if (isOffline) {
+                  return;
+                }
                 context.goNamed(Routes.profile.name);
               },
             ),
             IconButton(
               onPressed: () {
+                if (isOffline) {
+                  return;
+                }
                 authProvider.logout();
                 context.goNamed(Routes.login.name);
               },
