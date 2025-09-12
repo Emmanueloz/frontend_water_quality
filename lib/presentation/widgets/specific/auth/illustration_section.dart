@@ -17,7 +17,7 @@ class IllustrationSection extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset('../../../assets/images/agua.png',
+          Image.asset('assets/images/agua.png',
               width: 500, height: 500),
           SizedBox(height: 20),
         ],
