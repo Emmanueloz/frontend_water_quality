@@ -66,7 +66,7 @@ class AppRouter {
       GoRoute(
         path: Routes.splash.path,
         name: Routes.splash.name,
-        builder: (context, state) => const Information(),
+        builder: (context, state) => const Splash(),
       ),
       GoRoute(
         path: Routes.login.path,
@@ -270,28 +270,29 @@ class AppRouter {
                         name: Routes.createAlerts.name,
                         parentNavigatorKey: rootNavigatorKey,
                         builder: (context, state) {
-                          final workspaceId = state.pathParameters['id'] ?? 'default';
+                          final workspaceId =
+                              state.pathParameters['id'] ?? 'default';
                           return FormAlertPage(
                             workspaceTitle: 'Alertas',
                             workspaceId: workspaceId,
                           );
                         },
                       ),
-                      
-                                             GoRoute(
-                         path: Routes.updateAlerts.path,
-                         name: Routes.updateAlerts.name,
-                         parentNavigatorKey: rootNavigatorKey,
-                         builder: (context, state) {
-                           final workspaceId = state.pathParameters['id'] ?? 'default';
-                           final alert = state.extra as Alert?;
-                           return FormAlertPage(
-                             alert: alert,
-                             workspaceTitle: 'Alertas',
-                             workspaceId: workspaceId,
-                           );
-                         },
-                       ),
+                      GoRoute(
+                        path: Routes.updateAlerts.path,
+                        name: Routes.updateAlerts.name,
+                        parentNavigatorKey: rootNavigatorKey,
+                        builder: (context, state) {
+                          final workspaceId =
+                              state.pathParameters['id'] ?? 'default';
+                          final alert = state.extra as Alert?;
+                          return FormAlertPage(
+                            alert: alert,
+                            workspaceTitle: 'Alertas',
+                            workspaceId: workspaceId,
+                          );
+                        },
+                      ),
                     ],
                   ),
                   GoRoute(
@@ -403,7 +404,6 @@ class AppRouter {
       ),
       GoRoute(
         path: Routes.changePassword.path,
-        
         name: Routes.changePassword.name,
         builder: (context, state) {
           final token = state.uri.queryParameters['token'];

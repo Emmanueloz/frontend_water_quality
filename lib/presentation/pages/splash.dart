@@ -3,8 +3,8 @@ import 'package:frontend_water_quality/core/theme/theme.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
-class Information extends StatelessWidget {
-  const Information({super.key});
+class Splash extends StatelessWidget {
+  const Splash({super.key});
 
   @override
   Widget build(BuildContext context) {
