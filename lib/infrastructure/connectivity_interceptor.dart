@@ -17,6 +17,10 @@ class ConnectivityInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
+    print("on Error");
+    print(err.type);
+    print(err.requestOptions.path);
+    print(err.message);
     // Detectar errores de conexión
     if (_isConnectionError(err)) {
       connectivityProvider.setOfflineWithError(

@@ -1,4 +1,6 @@
 import 'package:frontend_water_quality/core/enums/storage_key.dart';
+import 'package:frontend_water_quality/domain/models/storage_model.dart';
+import 'package:frontend_water_quality/domain/models/user.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
@@ -33,6 +35,27 @@ class LocalStorageService {
     } catch (e) {
       print(e.toString());
       return null;
+    }
+  }
+
+  static Future<StorageModel> getAll() async {
+    try {
+      String? token = await get(StorageKey.token);
+      String? userString = await get(StorageKey.user);
+
+      User? user;
+      if (userString != null) {
+        user = User.fromString(userString);
+      }
+
+      return StorageModel(
+        token: token,
+        user: user,
+      );
+    } catch (e) {
+      print(e.toString());
+
+      return StorageModel();
     }
   }
 

@@ -3,6 +3,7 @@ import 'package:frontend_water_quality/core/enums/storage_key.dart';
 import 'package:frontend_water_quality/core/interface/response/base_response.dart';
 import 'package:frontend_water_quality/core/interface/response/login_response.dart';
 import 'package:frontend_water_quality/core/interface/result.dart';
+import 'package:frontend_water_quality/domain/models/storage_model.dart';
 import 'package:frontend_water_quality/domain/models/user.dart';
 import 'package:frontend_water_quality/domain/repositories/auth_repo.dart';
 import 'package:frontend_water_quality/infrastructure/local_storage_service.dart';
@@ -10,10 +11,7 @@ import 'package:frontend_water_quality/infrastructure/local_storage_service.dart
 class AuthProvider with ChangeNotifier {
   final AuthRepo _authRepo;
 
-  AuthProvider(this._authRepo) {
-    loadSettings();
-  }
-
+  AuthProvider(this._authRepo);
   bool isAuthenticated = false;
   bool isLoading = false;
   String? token;
@@ -22,13 +20,22 @@ class AuthProvider with ChangeNotifier {
 
   String? emailRecovery;
 
-  Future<void> loadSettings() async {
-    token = await LocalStorageService.get(StorageKey.token);
-    isAuthenticated = token != null && token!.isNotEmpty;
-    String? userString = await LocalStorageService.get(StorageKey.user);
-    if (userString != null) {
-      user = User.fromString(userString);
+  Future<void> loadSettings(StorageModel storageModel) async {
+    print("Load token ${storageModel.token}");
+
+    final Result isExpired =
+        await _authRepo.isTokenExpired(storageModel.token ?? "");
+    if (isExpired.value == true) {
+      _cleanAuth();
+      return;
     }
+    token = storageModel.token;
+    print(token);
+    isAuthenticated = token != null && token!.isNotEmpty;
+    print(isAuthenticated);
+
+    user = storageModel.user;
+    print(user);
 
     notifyListeners();
   }
@@ -153,11 +160,19 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  void logout() {
+  void _cleanAuth() {
     isAuthenticated = false;
     token = null;
     user = null;
     LocalStorageService.remove(StorageKey.token);
+    LocalStorageService.remove(StorageKey.user);
+    LocalStorageService.remove(StorageKey.token);
+    LocalStorageService.remove(StorageKey.workspaceId);
+    LocalStorageService.remove(StorageKey.meterId);
+  }
+
+  void logout() {
+    _cleanAuth();
     notifyListeners();
   }
 }

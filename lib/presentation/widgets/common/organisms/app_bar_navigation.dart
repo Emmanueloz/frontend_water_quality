@@ -16,10 +16,8 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-    return Consumer<ConnectivityProvider>(
-      builder: (context, connectivityProvider, child) {
+    return Consumer2<ConnectivityProvider, AuthProvider>(
+      builder: (context, connectivityProvider, authProvider, child) {
         List<Widget> actions = [];
 
         if (!connectivityProvider.state.isOnline) {

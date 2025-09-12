@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:frontend_water_quality/domain/models/connectivity_state_model.dart';
 import 'package:frontend_water_quality/infrastructure/connectivity_interceptor.dart';
-import 'package:frontend_water_quality/infrastructure/dio_helper.dart';
 
 class ConnectivityProvider with ChangeNotifier {
   ConnectivityState _state = ConnectivityState(
@@ -16,19 +15,19 @@ class ConnectivityProvider with ChangeNotifier {
   bool get isOnline => _state.isOnline;
   bool get isOffline => !_state.isOnline;
 
-  late Dio _dio;
+  final Dio _dio;
+
   Dio get dio => _dio;
 
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
 
-  ConnectivityProvider() {
+  ConnectivityProvider(this._dio) {
     _initDio();
     _initConnectivityListener();
     _checkInitialConnectivity();
   }
 
   void _initDio() {
-    _dio = DioHelper.createDio();
     _dio.interceptors.add(ConnectivityInterceptor(this));
   }
 
@@ -39,27 +38,27 @@ class ConnectivityProvider with ChangeNotifier {
     _connectivitySubscription =
         Connectivity().onConnectivityChanged.handleError((error) {
       print("Error manejado en stream: $error");
-      // NO hacer nada más, solo logear el error
-      // Esto evita que el stream se rompa en DevTools
-    }).listen((results) {
-      print("Cambio de conectividad: $results");
+    }).listen(
+      (results) {
+        print("Cambio de conectividad: $results");
 
-      // Tu lógica original
-      bool hasConnection = results
-          .where((result) => result != ConnectivityResult.none)
-          .toList()
-          .isNotEmpty;
+        // Tu lógica original
+        bool hasConnection = results
+            .where((result) => result != ConnectivityResult.none)
+            .toList()
+            .isNotEmpty;
 
-      print("¿Tiene conexión según connectivity_plus?: $hasConnection");
+        print("¿Tiene conexión según connectivity_plus?: $hasConnection");
 
-      if (hasConnection) {
-        // Solo hacer ping real si connectivity dice que hay conexión
-        _performRealConnectivityCheck();
-      } else {
-        // Si no hay conexión, actualizar inmediatamente
-        _updateConnectionState(false);
-      }
-    });
+        if (hasConnection) {
+          // Solo hacer ping real si connectivity dice que hay conexión
+          _performRealConnectivityCheck();
+        } else {
+          // Si no hay conexión, actualizar inmediatamente
+          _updateConnectionState(false);
+        }
+      },
+    );
   }
 
   Future<void> _checkInitialConnectivity() async {
@@ -91,7 +90,6 @@ class ConnectivityProvider with ChangeNotifier {
     print("Realizando ping real...");
 
     try {
-      // Tu código original pero con timeout más corto para evitar colgarse
       final result = await _dio.get(
         "/",
       );

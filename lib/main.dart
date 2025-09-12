@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/theme/theme.dart';
+import 'package:frontend_water_quality/domain/models/storage_model.dart';
 import 'package:frontend_water_quality/infrastructure/auth_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/ble_service.dart';
 import 'package:frontend_water_quality/infrastructure/connectivity_provider.dart';
+import 'package:frontend_water_quality/infrastructure/dio_helper.dart';
+import 'package:frontend_water_quality/infrastructure/local_storage_service.dart';
 import 'package:frontend_water_quality/infrastructure/meter_records_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/meter_socket_service.dart';
 import 'package:frontend_water_quality/infrastructure/weather_meter_repo_impl.dart';
@@ -23,7 +26,13 @@ import 'package:frontend_water_quality/presentation/providers/alert_provider.dar
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //var dio = DioHelper.createDio();
+  final dio = DioHelper.createDio();
+  final StorageModel storageModel = await LocalStorageService.getAll();
+  final AuthProvider authProvider = AuthProvider(
+    AuthRepoImpl(dio),
+  );
+
+  await authProvider.loadSettings(storageModel);
 
   final MeterSocketService meterSocketService = MeterSocketService();
 
@@ -31,16 +40,14 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider<ConnectivityProvider>(
-          create: (_) => ConnectivityProvider(),
+          create: (_) => ConnectivityProvider(dio),
         ),
         ChangeNotifierProvider<AuthProvider>(
-          create: (context) => AuthProvider(
-            AuthRepoImpl(context.read<ConnectivityProvider>().dio),
-          ),
+          create: (context) => authProvider,
         ),
         ChangeNotifierProxyProvider<AuthProvider, WorkspaceProvider>(
           create: (context) => WorkspaceProvider(
-            WorkspaceRepoImpl(context.read<ConnectivityProvider>().dio),
+            WorkspaceRepoImpl(dio),
             context.read<AuthProvider>(),
           ),
           update: (context, authProvider, workspaceProvider) {
@@ -54,7 +61,7 @@ void main() async {
         ),
         ChangeNotifierProxyProvider<AuthProvider, MeterProvider>(
           create: (context) => MeterProvider(
-            MeterRepoImpl(context.read<ConnectivityProvider>().dio),
+            MeterRepoImpl(dio),
             context.read<AuthProvider>(),
           ),
           update: (context, authProvider, meterProvider) {
@@ -65,7 +72,7 @@ void main() async {
           create: (context) {
             final authProvider = context.read<AuthProvider>();
             final guestProvider = GuestProvider(
-              GuestRepositoryImpl(context.read<ConnectivityProvider>().dio),
+              GuestRepositoryImpl(dio),
               authProvider,
             );
             return guestProvider;
@@ -78,7 +85,7 @@ void main() async {
         ChangeNotifierProxyProvider<AuthProvider, MeterRecordProvider>(
           create: (context) => MeterRecordProvider(
             meterSocketService,
-            MeterRecordsRepoImpl(context.read<ConnectivityProvider>().dio),
+            MeterRecordsRepoImpl(dio),
             context.read<AuthProvider>(),
           ),
           update: (context, authProvider, meterProvider) {
@@ -88,7 +95,7 @@ void main() async {
         ),
         ChangeNotifierProxyProvider<AuthProvider, WeatherMeterProvider>(
           create: (context) => WeatherMeterProvider(
-            WeatherMeterRepoImpl(context.read<ConnectivityProvider>().dio),
+            WeatherMeterRepoImpl(dio),
             context.read<AuthProvider>(),
           ),
           update: (context, authProvider, weatherMeterProvider) {
@@ -100,7 +107,7 @@ void main() async {
           create: (context) {
             final authProvider = context.read<AuthProvider>();
             final alertProvider = AlertProvider(
-              AlertRepositoryImpl(context.read<ConnectivityProvider>().dio),
+              AlertRepositoryImpl(dio),
               authProvider,
             );
             return alertProvider;

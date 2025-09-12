@@ -1,4 +1,6 @@
 // app_router.dart
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
@@ -59,9 +61,54 @@ class AppRouter {
     }
   }
 
+  static FutureOr<String?> _redirect(
+      BuildContext context, GoRouterState state) async {
+    print("redirect");
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final List<String> publicRoutes = [
+      Routes.splash.path,
+      Routes.login.path,
+      Routes.register.path,
+      Routes.recoveryPassword.path,
+      Routes.changePassword.path,
+    ];
+
+    print(state.uri.path);
+    print(authProvider.isAuthenticated);
+
+    final isOnPublicRoute = publicRoutes.contains(state.uri.path);
+    print(isOnPublicRoute);
+
+    authProvider.cleanError();
+
+    if (!authProvider.isAuthenticated && !isOnPublicRoute) {
+      return Routes.login.path;
+    }
+
+    if (authProvider.isAuthenticated && isOnPublicRoute) {
+      String? workspaceId =
+          await LocalStorageService.get(StorageKey.workspaceId);
+      String? meterId = await LocalStorageService.get(StorageKey.meterId);
+
+      if (workspaceId != null &&
+          workspaceId.isNotEmpty &&
+          meterId != null &&
+          meterId.isNotEmpty) {
+        return '/workspaces/$workspaceId/meter/$meterId';
+      }
+
+      if (workspaceId != null && workspaceId.isNotEmpty) {
+        return '/workspaces/$workspaceId';
+      }
+
+      return Routes.workspaces.path;
+    }
+
+    return null;
+  }
+
   static final GoRouter router = GoRouter(
     initialLocation: Routes.splash.path,
-    //debugLogDiagnostics: true, // Útil durante el desarrollo
     navigatorKey: rootNavigatorKey,
     routes: [
       GoRoute(
@@ -411,45 +458,6 @@ class AppRouter {
       )
     ],
     errorBuilder: (context, state) => ErrorPage(),
-    redirect: (context, state) async {
-      print("redirect");
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final List<String> publicRoutes = [
-        Routes.splash.path,
-        Routes.login.path,
-        Routes.register.path,
-        Routes.recoveryPassword.path,
-        Routes.changePassword.path,
-      ];
-
-      final isOnPublicRoute = publicRoutes.contains(state.uri.path);
-
-      authProvider.cleanError();
-
-      if (!authProvider.isAuthenticated && !isOnPublicRoute) {
-        return Routes.login.path;
-      }
-
-      if (authProvider.isAuthenticated && isOnPublicRoute) {
-        String? workspaceId =
-            await LocalStorageService.get(StorageKey.workspaceId);
-        String? meterId = await LocalStorageService.get(StorageKey.meterId);
-
-        if (workspaceId != null &&
-            workspaceId.isNotEmpty &&
-            meterId != null &&
-            meterId.isNotEmpty) {
-          return '/workspaces/$workspaceId/meter/$meterId';
-        }
-
-        if (workspaceId != null && workspaceId.isNotEmpty) {
-          return '/workspaces/$workspaceId';
-        }
-
-        return Routes.workspaces.path;
-      }
-
-      return null;
-    },
+    redirect: _redirect,
   );
 }
