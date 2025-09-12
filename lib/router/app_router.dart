@@ -62,11 +62,17 @@ class AppRouter {
   }
 
   static FutureOr<String?> _redirect(
-      BuildContext context, GoRouterState state) async {
+    BuildContext context,
+    GoRouterState state,
+  ) async {
     print("redirect");
+
+    if (state.uri.path == Routes.splash.path) {
+      return null;
+    }
+
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final List<String> publicRoutes = [
-      Routes.splash.path,
       Routes.login.path,
       Routes.register.path,
       Routes.recoveryPassword.path,
