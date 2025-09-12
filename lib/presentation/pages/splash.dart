@@ -288,120 +288,99 @@ class Information extends StatelessWidget {
                   ),
                 ),
 
-                // Products - Con imágenes
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Nuestros productos",
-                        style:
-                            Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: AppTheme.textColor,
-                                ),
+                Text(
+                  "Nuestros productos",
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.textColor,
                       ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Card(
-                              elevation: 4,
-                              color: AppTheme.colorScheme.surface,
-                              child: Padding(
-                                padding: const EdgeInsets.all(24.0),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      height: 200,
-                                      decoration: BoxDecoration(
-                                        
-                                        borderRadius: BorderRadius.circular(8),
-                                        image: const DecorationImage(
-                                          image: AssetImage(
-                                              'assets/images/agua.png'),
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      "Medidor de calidad de agua",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: AppTheme.textColor,
-                                          ),
-                                    ),
-                                    Text(
-                                      "Dispositivo  de medición en tiempo real",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(
-                                            color: AppTheme.textColor
-                                                .withValues(alpha: 0.7),
-                                          ),
-                                    ),
-                                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Card(
+                        elevation: 4,
+                        color: AppTheme.colorScheme.surface,
+                        child: Column(
+                          spacing: 10,
+                          children: [
+                            Container(
+                              height: 200,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                image: const DecorationImage(
+                                  image: AssetImage('assets/images/meter.png'),
+                                  fit: BoxFit.contain,
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 24),
-                          Expanded(
-                            child: Card(
-                              elevation: 4,
-                              color: AppTheme.colorScheme.surface,
-                              child: Padding(
-                                padding: const EdgeInsets.all(24.0),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      height: 200,
-                                      decoration: BoxDecoration(
-                                        
-                                        borderRadius: BorderRadius.circular(8),
-                                        image: const DecorationImage(
-                                          image: AssetImage(
-                                              'assets/images/meters.png'),
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      "Aplicaciones web",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: AppTheme.textColor,
-                                          ),
-                                    ),
-                                    Text(
-                                      "Plataforma de Dashboard y analysis",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(
-                                            color: AppTheme.textColor
-                                                .withValues(alpha: 0.7),
-                                          ),
-                                    ),
-                                  ],
+                            Text(
+                              "Medidor de calidad de agua",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppTheme.textColor,
+                                  ),
+                            ),
+                            Text(
+                              "Dispositivo  de medición en tiempo real",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: AppTheme.textColor
+                                        .withValues(alpha: 0.7),
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Card(
+                        elevation: 4,
+                        color: AppTheme.colorScheme.surface,
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 200,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                image: const DecorationImage(
+                                  image:
+                                      AssetImage('assets/images/web_app.png'),
+                                  fit: BoxFit.contain,
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 16),
+                            Text(
+                              "Aplicaciones web",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppTheme.textColor,
+                                  ),
+                            ),
+                            Text(
+                              "Plataforma de Dashboard y analysis",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: AppTheme.textColor
+                                        .withValues(alpha: 0.7),
+                                  ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
 
                 // Call to Action
@@ -409,27 +388,30 @@ class Information extends StatelessWidget {
                   height: 200,
                   margin: EdgeInsets.only(bottom: 10),
                   decoration: BoxDecoration(
-                    color: AppTheme.colorScheme.primary,
-                    borderRadius: BorderRadius.circular(10)
-                  ),
+                      color: AppTheme.colorScheme.primary,
+                      borderRadius: BorderRadius.circular(10)),
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           "¿Listo para comenzar?",
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium
+                              ?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 10),
                         Text(
                           "Únete a nosotros en la revolución del monitoreo de calidad del agua",
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Colors.white.withValues(alpha: 0.9),
-                          ),
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    color: Colors.white.withValues(alpha: 0.9),
+                                  ),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 20),
