@@ -143,4 +143,9 @@ class Routes {
     name: "listRecords",
     path: "meter/:idMeter/records",
   );
+
+  static RouteProperties aboutUs = RouteProperties(
+    name: "aboutUs",
+    path: "/about-us",
+  );
 }

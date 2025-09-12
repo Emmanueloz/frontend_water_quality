@@ -21,6 +21,7 @@ import 'package:frontend_water_quality/presentation/pages/recovery_password.dart
 import 'package:frontend_water_quality/presentation/pages/register.dart';
 import 'package:frontend_water_quality/presentation/pages/profile.dart';
 import 'package:frontend_water_quality/presentation/pages/form_meter_page.dart';
+import 'package:frontend_water_quality/presentation/pages/about_us.dart';
 import 'package:frontend_water_quality/presentation/pages/splash.dart';
 import 'package:frontend_water_quality/presentation/pages/view_list_records.dart';
 import 'package:frontend_water_quality/presentation/pages/view_meter.dart';
@@ -120,7 +121,7 @@ class AppRouter {
       GoRoute(
         path: Routes.splash.path,
         name: Routes.splash.name,
-        builder: (context, state) => Splash(),
+        builder: (context, state) => const Splash(),
       ),
       GoRoute(
         path: Routes.login.path,
@@ -131,6 +132,11 @@ class AppRouter {
         path: Routes.register.path,
         name: Routes.register.name,
         builder: (context, state) => const RegisterPage(title: 'Register'),
+      ),
+      GoRoute(
+        path: Routes.aboutUs.path,
+        name: Routes.aboutUs.name,
+        builder: (context, state) => const AboutUsPage(),
       ),
       GoRoute(
         path: Routes.workspaces.path,
