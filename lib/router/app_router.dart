@@ -1,7 +1,11 @@
 // app_router.dart
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
+import 'package:frontend_water_quality/core/enums/storage_key.dart';
+import 'package:frontend_water_quality/infrastructure/local_storage_service.dart';
 import 'package:frontend_water_quality/presentation/pages/alerts.dart';
 import 'package:frontend_water_quality/presentation/pages/form_alert.dart';
 import 'package:frontend_water_quality/domain/models/alert.dart';
@@ -17,6 +21,7 @@ import 'package:frontend_water_quality/presentation/pages/recovery_password.dart
 import 'package:frontend_water_quality/presentation/pages/register.dart';
 import 'package:frontend_water_quality/presentation/pages/profile.dart';
 import 'package:frontend_water_quality/presentation/pages/form_meter_page.dart';
+import 'package:frontend_water_quality/presentation/pages/about_us.dart';
 import 'package:frontend_water_quality/presentation/pages/splash.dart';
 import 'package:frontend_water_quality/presentation/pages/view_list_records.dart';
 import 'package:frontend_water_quality/presentation/pages/view_meter.dart';
@@ -57,15 +62,66 @@ class AppRouter {
     }
   }
 
+  static FutureOr<String?> _redirect(
+    BuildContext context,
+    GoRouterState state,
+  ) async {
+    print("redirect");
+
+    if (state.uri.path == Routes.splash.path) {
+      return null;
+    }
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final List<String> publicRoutes = [
+      Routes.login.path,
+      Routes.register.path,
+      Routes.recoveryPassword.path,
+      Routes.changePassword.path,
+    ];
+
+    print(state.uri.path);
+    print(authProvider.isAuthenticated);
+
+    final isOnPublicRoute = publicRoutes.contains(state.uri.path);
+    print(isOnPublicRoute);
+
+    authProvider.cleanError();
+
+    if (!authProvider.isAuthenticated && !isOnPublicRoute) {
+      return Routes.login.path;
+    }
+
+    if (authProvider.isAuthenticated && isOnPublicRoute) {
+      String? workspaceId =
+          await LocalStorageService.get(StorageKey.workspaceId);
+      String? meterId = await LocalStorageService.get(StorageKey.meterId);
+
+      if (workspaceId != null &&
+          workspaceId.isNotEmpty &&
+          meterId != null &&
+          meterId.isNotEmpty) {
+        return '/workspaces/$workspaceId/meter/$meterId';
+      }
+
+      if (workspaceId != null && workspaceId.isNotEmpty) {
+        return '/workspaces/$workspaceId';
+      }
+
+      return Routes.workspaces.path;
+    }
+
+    return null;
+  }
+
   static final GoRouter router = GoRouter(
     initialLocation: Routes.splash.path,
-    //debugLogDiagnostics: true, // Útil durante el desarrollo
     navigatorKey: rootNavigatorKey,
     routes: [
       GoRoute(
         path: Routes.splash.path,
         name: Routes.splash.name,
-        builder: (context, state) => Splash(),
+        builder: (context, state) => const Splash(),
       ),
       GoRoute(
         path: Routes.login.path,
@@ -76,6 +132,11 @@ class AppRouter {
         path: Routes.register.path,
         name: Routes.register.name,
         builder: (context, state) => const RegisterPage(title: 'Register'),
+      ),
+      GoRoute(
+        path: Routes.aboutUs.path,
+        name: Routes.aboutUs.name,
+        builder: (context, state) => const AboutUsPage(),
       ),
       GoRoute(
         path: Routes.workspaces.path,
@@ -264,28 +325,29 @@ class AppRouter {
                         name: Routes.createAlerts.name,
                         parentNavigatorKey: rootNavigatorKey,
                         builder: (context, state) {
-                          final workspaceId = state.pathParameters['id'] ?? 'default';
+                          final workspaceId =
+                              state.pathParameters['id'] ?? 'default';
                           return FormAlertPage(
                             workspaceTitle: 'Alertas',
                             workspaceId: workspaceId,
                           );
                         },
                       ),
-                      
-                                             GoRoute(
-                         path: Routes.updateAlerts.path,
-                         name: Routes.updateAlerts.name,
-                         parentNavigatorKey: rootNavigatorKey,
-                         builder: (context, state) {
-                           final workspaceId = state.pathParameters['id'] ?? 'default';
-                           final alert = state.extra as Alert?;
-                           return FormAlertPage(
-                             alert: alert,
-                             workspaceTitle: 'Alertas',
-                             workspaceId: workspaceId,
-                           );
-                         },
-                       ),
+                      GoRoute(
+                        path: Routes.updateAlerts.path,
+                        name: Routes.updateAlerts.name,
+                        parentNavigatorKey: rootNavigatorKey,
+                        builder: (context, state) {
+                          final workspaceId =
+                              state.pathParameters['id'] ?? 'default';
+                          final alert = state.extra as Alert?;
+                          return FormAlertPage(
+                            alert: alert,
+                            workspaceTitle: 'Alertas',
+                            workspaceId: workspaceId,
+                          );
+                        },
+                      ),
                     ],
                   ),
                   GoRoute(
@@ -408,29 +470,6 @@ class AppRouter {
       )
     ],
     errorBuilder: (context, state) => ErrorPage(),
-    redirect: (context, state) {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final List<String> publicRoutes = [
-        Routes.splash.path,
-        Routes.login.path,
-        Routes.register.path,
-        Routes.recoveryPassword.path,
-        Routes.changePassword.path,
-      ];
-
-      final isOnPublicRoute = publicRoutes.contains(state.uri.path);
-
-      authProvider.cleanError();
-
-      if (!authProvider.isAuthenticated && !isOnPublicRoute) {
-        return Routes.login.path;
-      }
-
-      if (authProvider.isAuthenticated && isOnPublicRoute) {
-        return Routes.workspaces.path;
-      }
-
-      return null;
-    },
+    redirect: _redirect,
   );
 }

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-class DioProvider {
+class DioHelper {
   static Dio createDio() {
     final dio = Dio(
       BaseOptions(

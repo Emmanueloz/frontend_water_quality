@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/storage_key.dart';
+import 'package:frontend_water_quality/infrastructure/connectivity_provider.dart';
+import 'package:frontend_water_quality/infrastructure/local_storage_service.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/organisms/resizable_container.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
@@ -33,29 +36,48 @@ class _MainMeterState extends State<MainMeter> {
   MeterRecordProvider? _meterProvider; // Referencia guardada del provider
   final String baseUrl = 'https://api.aqua-minds.org';
 
+  RecordResponse lastRecord = RecordResponse.empty;
+
+  int count = 0;
+
   bool _resizable = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final isOffline =
+        Provider.of<ConnectivityProvider>(context, listen: false).isOffline;
+
+    if (isOffline) {
+      print("is offline");
+      return;
+    }
     _meterProvider = Provider.of<MeterRecordProvider>(context, listen: false);
+    _meterProvider!.subscribeToMeter(
+      baseUrl: baseUrl,
+      idWorkspace: widget.id,
+      idMeter: widget.idMeter,
+    );
   }
 
   @override
   void initState() {
     super.initState();
-    // Nota: No podemos acceder al Provider aquí porque didChangeDependencies
-    // aún no se ha ejecutado. Movemos la suscripción a didChangeDependencies
-    // o usamos un WidgetsBinding.instance.addPostFrameCallback
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_meterProvider != null) {
-        _meterProvider!.subscribeToMeter(
-          baseUrl: baseUrl,
-          idWorkspace: widget.id,
-          idMeter: widget.idMeter,
-        );
-      }
-    });
+
+    _getLastRecord();
+  }
+
+  Future<void> _getLastRecord() async {
+    String? recordString =
+        await LocalStorageService.get(StorageKey.lastRecords);
+
+    print(recordString);
+
+    if (recordString != null) {
+      setState(() {
+        lastRecord = RecordResponse.fromString(recordString);
+      });
+    }
   }
 
   @override
@@ -93,13 +115,27 @@ class _MainMeterState extends State<MainMeter> {
           );
         }
 
-        return _buildMain(context, record);
+        return _buildMain(context, record ?? lastRecord);
       },
     );
   }
 
+  void _saveRecord(RecordResponse? record) {
+    if (count != 10) {
+      count++;
+      return;
+    }
+
+    String? recordString = record!.toJsonEncode();
+
+    LocalStorageService.save(StorageKey.lastRecords, recordString);
+    count = 0;
+  }
+
   Widget _buildMain(BuildContext context, RecordResponse? record) {
     final meterSize = _getMeterSize();
+
+    _saveRecord(record);
 
     // Aquí debes mapear los datos recibidos a los valores de los medidores
     // Ejemplo de cómo podrías hacerlo:
@@ -109,8 +145,8 @@ class _MainMeterState extends State<MainMeter> {
     final tds = record?.tds.value ?? 0;
     final conductivity = record?.conductivity.value ?? 0;
     final turbidity = record?.turbidity.value ?? 0;
-    final SRColorValue color = record?.color.value ??
-        SRColorValue(r: 111, g: 111, b: 111); // Color por defecto
+    final SRColorValue color =
+        record?.color.value ?? SRColorValue(r: 111, g: 111, b: 111);
 
     // Lista de medidores de ejemplo (puedes modificarla para pruebas)
     final List<Widget> meters = [

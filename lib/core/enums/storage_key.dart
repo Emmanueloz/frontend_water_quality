@@ -3,4 +3,5 @@ enum StorageKey {
   workspaceId,
   meterId,
   user,
+  lastRecords,
 }

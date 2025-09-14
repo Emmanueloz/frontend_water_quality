@@ -99,7 +99,6 @@ class MeterSocketService {
         return;
       }
 
-      print('📨 Mensaje recibido del servidor: $data');
       try {
         onData(data);
       } catch (e) {
