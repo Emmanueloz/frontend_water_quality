@@ -9,6 +9,8 @@ class LineGraph extends StatefulWidget {
   final double minY;
   final double maxY;
   final double intervalY;
+  final double? minThreshold;
+  final double? maxThreshold;
 
   const LineGraph({
     super.key,
@@ -19,6 +21,8 @@ class LineGraph extends StatefulWidget {
     required this.minY,
     required this.maxY,
     required this.intervalY,
+    this.minThreshold,
+    this.maxThreshold,
   });
 
   @override
@@ -42,7 +46,6 @@ class _LineGraphState extends State<LineGraph> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Texto con ajuste automático
             FittedBox(
               fit: BoxFit.scaleDown,
               alignment: Alignment.centerLeft,
@@ -55,7 +58,6 @@ class _LineGraphState extends State<LineGraph> {
               ),
             ),
             const SizedBox(height: 16),
-            // Gráfica expandida sin scroll
             Expanded(
               child: AspectRatio(
                 aspectRatio: 1.70,
@@ -69,6 +71,22 @@ class _LineGraphState extends State<LineGraph> {
   }
 
   LineChartData mainData() {
+    // ⚡ Ajuste dinámico de minY y maxY
+    double minY = widget.minY;
+    double maxY = widget.maxY;
+
+    if (widget.data.isNotEmpty) {
+      final dataMin = widget.data.reduce((a, b) => a < b ? a : b);
+      final dataMax = widget.data.reduce((a, b) => a > b ? a : b);
+
+      minY = dataMin < minY ? dataMin - (widget.intervalY / 2) : minY;
+      maxY = dataMax > maxY ? dataMax + (widget.intervalY / 2) : maxY;
+    }
+
+    if (widget.minThreshold != null && widget.minThreshold! < minY) minY = widget.minThreshold! - 1;
+    if (widget.maxThreshold != null && widget.maxThreshold! > maxY) maxY = widget.maxThreshold! + 1;
+
+    // Convertir datos a FlSpot
     List<FlSpot> spots = [];
     for (int i = 0; i < widget.data.length; i++) {
       spots.add(FlSpot(i.toDouble(), widget.data[i]));
@@ -84,11 +102,8 @@ class _LineGraphState extends State<LineGraph> {
             reservedSize: 30,
             getTitlesWidget: (value, meta) {
               int index = value.toInt();
-              if (index < 0 || index >= widget.dates.length) {
-                return const SizedBox.shrink();
-              }
-              return Text(widget.dates[index],
-                  style: const TextStyle(fontSize: 10));
+              if (index < 0 || index >= widget.dates.length) return const SizedBox.shrink();
+              return Text(widget.dates[index], style: const TextStyle(fontSize: 10));
             },
           ),
         ),
@@ -98,20 +113,18 @@ class _LineGraphState extends State<LineGraph> {
             interval: widget.intervalY,
             reservedSize: 35,
             getTitlesWidget: (value, meta) {
-              return Text(value.toStringAsFixed(1),
-                  style: const TextStyle(fontSize: 10));
+              return Text(value.toStringAsFixed(1), style: const TextStyle(fontSize: 10));
             },
           ),
         ),
         topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        rightTitles:
-            const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
       ),
       borderData: FlBorderData(show: true),
       minX: 0,
       maxX: (widget.data.length - 1).toDouble(),
-      minY: widget.minY,
-      maxY: widget.maxY,
+      minY: minY,
+      maxY: maxY,
       lineBarsData: [
         LineChartBarData(
           spots: spots,
@@ -122,12 +135,41 @@ class _LineGraphState extends State<LineGraph> {
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
-              colors:
-                  gradientColors.map((c) => c.withValues(alpha: 0.3)).toList(),
+              colors: gradientColors.map((c) => c.withOpacity(0.3)).toList(),
             ),
           ),
         ),
       ],
+      extraLinesData: ExtraLinesData(
+        horizontalLines: [
+          if (widget.minThreshold != null)
+            HorizontalLine(
+              y: widget.minThreshold!,
+              color: Colors.greenAccent,
+              strokeWidth: 2,
+              dashArray: [5, 5],
+              label: HorizontalLineLabel(
+                show: true,
+                alignment: Alignment.centerRight,
+                style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                labelResolver: (_) => 'Min',
+              ),
+            ),
+          if (widget.maxThreshold != null)
+            HorizontalLine(
+              y: widget.maxThreshold!,
+              color: Colors.redAccent,
+              strokeWidth: 2,
+              dashArray: [5, 5],
+              label: HorizontalLineLabel(
+                show: true,
+                alignment: Alignment.centerRight,
+                style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                labelResolver: (_) => 'Max',
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
