@@ -197,133 +197,133 @@ class _MainListrecordsState extends State<MainListrecords> {
     ];
   }
 
-  Widget _buildTemperatureGraph(records) {
-    final temperatureRecords = records.temperatureRecords;
-    if (temperatureRecords.isEmpty) {
-      return _buildEmptyGraph("Temperatura");
-    }
-
-    final dates = temperatureRecords
-        .map((r) => _formatDate(r.datetime))
-        .toList()
-        .cast<String>();
-    final data = temperatureRecords.map((r) => r.value).toList().cast<double>();
-    final currentValue = data.isNotEmpty ? data.last : 0.0;
-    final minY = 0.0;
-    final maxY = 60.0;
-
-    return LineGraph(
-      sensorType: "Temperatura",
-      value: currentValue,
-      dates: dates,
-      data: data,
-      minY: minY,
-      maxY: maxY,
-      intervalY: 5.0,
-    );
+Widget _buildTemperatureGraph(records) {
+  final temperatureRecords = records.temperatureRecords;
+  if (temperatureRecords.isEmpty) {
+    return _buildEmptyGraph("Temperatura");
   }
 
-  Widget _buildPhGraph(records) {
-    final phRecords = records.phRecords;
-    if (phRecords.isEmpty) {
-      return _buildEmptyGraph("PH");
-    }
+  final dates = temperatureRecords
+      .map((r) => _formatDate(r.datetime))
+      .toList()
+      .cast<String>();
+  final data = temperatureRecords.map((r) => r.value).toList().cast<double>();
+  final currentValue = data.isNotEmpty ? double.parse(data.last.toStringAsFixed(1)) : 0.0;
 
-    final dates =
-        phRecords.map((r) => _formatDate(r.datetime)).toList().cast<String>();
-    final data = phRecords.map((r) => r.value).toList().cast<double>();
-    final currentValue = data.isNotEmpty ? data.last : 0.0;
-    final minY = 0.0;
-    final maxY = 14.0;
+  final minThreshold = 10.0;
+  final maxThreshold = 35.0;
 
-    return LineGraph(
-      sensorType: "PH",
-      value: currentValue,
-      dates: dates,
-      data: data,
-      minY: minY,
-      maxY: maxY,
-      intervalY: 1.0,
-    );
-  }
+  final minY = 0.0;
+  final maxY = 60.0;
 
-  Widget _buildTdsGraph(records) {
-    final tdsRecords = records.tdsRecords;
-    if (tdsRecords.isEmpty) {
-      return _buildEmptyGraph("Total de sólidos disueltos");
-    }
+  return LineGraph(
+    sensorType: "Temperatura",
+    value: currentValue,
+    dates: dates,
+    data: data,
+    minY: minY,
+    maxY: maxY,
+    intervalY: 10.0,
+    minThreshold: minThreshold, 
+    maxThreshold: maxThreshold, 
+  );
+}
 
-    final dates =
-        tdsRecords.map((r) => _formatDate(r.datetime)).toList().cast<String>();
-    final data = tdsRecords.map((r) => r.value).toList().cast<double>();
-    final currentValue = data.isNotEmpty ? data.last : 0.0;
-    final minY = 0.0;
-    final maxY = 500.0;
 
-    return LineGraph(
-      sensorType: "Total de sólidos disueltos",
-      value: currentValue,
-      dates: dates,
-      data: data,
-      minY: minY,
-      maxY: maxY,
-      intervalY: 100.0,
-    );
-  }
+Widget _buildPhGraph(records) {
+  final phRecords = records.phRecords;
+  if (phRecords.isEmpty) return _buildEmptyGraph("PH");
 
-  Widget _buildConductivityGraph(records) {
-    final conductivityRecords = records.conductivityRecords;
-    if (conductivityRecords.isEmpty) {
-      return _buildEmptyGraph("Conductividad");
-    }
+  final dates = phRecords.map((r) => _formatDate(r.datetime)).toList().cast<String>();
+  final data = phRecords.map((r) => r.value).toList().cast<double>();
+  final currentValue = data.isNotEmpty ? double.parse(data.last.toStringAsFixed(1)) : 0.0;
 
-    final dates = conductivityRecords
-        .map((r) => _formatDate(r.datetime))
-        .toList()
-        .cast<String>();
-    final data =
-        conductivityRecords.map((r) => r.value).toList().cast<double>();
-    final currentValue = data.isNotEmpty ? data.last : 0.0;
-    final minY = 0.0;
-    final maxY = 3000.0;
+  final minThreshold = 6.5; 
+  final maxThreshold = 8.5;  
 
-    return LineGraph(
-      sensorType: "Conductividad",
-      value: currentValue,
-      dates: dates,
-      data: data,
-      minY: minY,
-      maxY: maxY,
-      intervalY: 250.0,
-    );
-  }
+  return LineGraph(
+    sensorType: "PH",
+    value: currentValue,
+    dates: dates,
+    data: data,
+    minY: 0.0,
+    maxY: 14.0,
+    intervalY: 2.0,
+    minThreshold: minThreshold,
+    maxThreshold: maxThreshold,
+  );
+}
+Widget _buildTdsGraph(records) {
+  final tdsRecords = records.tdsRecords;
+  if (tdsRecords.isEmpty) return _buildEmptyGraph("Total de sólidos disueltos");
 
-  Widget _buildTurbidityGraph(records) {
-    final turbidityRecords = records.turbidityRecords;
-    if (turbidityRecords.isEmpty) {
-      return _buildEmptyGraph("Turbidez");
-    }
+  final dates = tdsRecords.map((r) => _formatDate(r.datetime)).toList().cast<String>();
+  final data = tdsRecords.map((r) => r.value).toList().cast<double>();
+  final currentValue = data.isNotEmpty ? double.parse(data.last.toStringAsFixed(1)) : 0.0;
 
-    final dates = turbidityRecords
-        .map((r) => _formatDate(r.datetime))
-        .toList()
-        .cast<String>();
-    final data = turbidityRecords.map((r) => r.value).toList().cast<double>();
-    final currentValue = data.isNotEmpty ? data.last : 0.0;
-    final minY = 0.0;
-    final maxY = 50.0;
+  final minThreshold = 300.0;   
+  final maxThreshold = 1000.0;
 
-    return LineGraph(
-      sensorType: "Turbidez",
-      value: currentValue,
-      dates: dates,
-      data: data,
-      minY: minY,
-      maxY: maxY,
-      intervalY: 5.0,
-    );
-  }
+  return LineGraph(
+    sensorType: "Total de sólidos disueltos",
+    value: currentValue,
+    dates: dates,
+    data: data,
+    minY: 0,
+    maxY: 1400,
+    intervalY: 200,
+    minThreshold: minThreshold,
+    maxThreshold: maxThreshold,
+  );
+}
 
+Widget _buildConductivityGraph(records) {
+  final conductivityRecords = records.conductivityRecords;
+  if (conductivityRecords.isEmpty) return _buildEmptyGraph("Conductividad");
+
+  final dates = conductivityRecords.map((r) => _formatDate(r.datetime)).toList().cast<String>();
+  final data = conductivityRecords.map((r) => r.value).toList().cast<double>();
+  final currentValue = data.isNotEmpty ? double.parse(data.last.toStringAsFixed(1)) : 0.0;
+
+  final minThreshold = 0.0;  
+  final maxThreshold = 1000.0;   
+
+  return LineGraph(
+    sensorType: "Conductividad",
+    value: currentValue,
+    dates: dates,
+    data: data,
+    minY: 0.0,
+    maxY: 1600.0,
+    intervalY: 200.0,
+    minThreshold: minThreshold,
+    maxThreshold: maxThreshold,
+  );
+}
+
+Widget _buildTurbidityGraph(records) {
+  final turbidityRecords = records.turbidityRecords;
+  if (turbidityRecords.isEmpty) return _buildEmptyGraph("Turbidez");
+
+  final dates = turbidityRecords.map((r) => _formatDate(r.datetime)).toList().cast<String>();
+  final data = turbidityRecords.map((r) => r.value).toList().cast<double>();
+  final currentValue = data.isNotEmpty ? double.parse(data.last.toStringAsFixed(1)) : 0.0;
+
+  final minThreshold = 0.0;   
+  final maxThreshold = 5.0;   // Turbidez máxima (NTU)
+
+  return LineGraph(
+    sensorType: "Turbidez",
+    value: currentValue,
+    dates: dates,
+    data: data,
+    minY: 0.0,
+    maxY: 16.0,
+    intervalY: 2.0,
+    minThreshold: minThreshold,
+    maxThreshold: maxThreshold,
+  );
+}
   Widget _buildEmptyGraph(String sensorType) {
     return Card(
       child: Container(
