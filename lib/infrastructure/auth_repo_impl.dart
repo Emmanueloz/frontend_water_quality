@@ -124,4 +124,32 @@ class AuthRepoImpl implements AuthRepo {
       return Result.failure(e.toString());
     }
   }
+
+  @override
+  Future<Result<bool>> isTokenExpired(String token) async {
+    try {
+      print("hola");
+      print(_dio.options.baseUrl);
+      final response = await _dio.get(
+        "/users/me",
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+
+      print(token);
+      print(response.statusCode);
+
+      if (response.statusCode != 200) {
+        print("expiro");
+        return Result.success(true);
+      }
+      print("No expiro");
+
+      return Result.success(false);
+    } catch (e) {
+      print(e.toString());
+      return Result.failure(e.toString());
+    }
+  }
 }

@@ -131,7 +131,7 @@ class _FormMeterPageState extends State<FormMeterPage> {
                   idWorkspace: widget.idWorkspace,
                   idMeter: widget.idMeter,
                   name: meter.name,
-                  name_location: meter.location.name_location,
+                  nameLocation: meter.location.nameLocation,
                   lat: meter.location.lat,
                   lng: meter.location.lon,
                   isLoading: _isLoading,

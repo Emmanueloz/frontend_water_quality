@@ -53,14 +53,14 @@ class _ViewMeterUbicationsState extends State<ViewMeterUbications> {
         final meters = snapshot.data!.value ?? [];
 
         final ubications = meters.map((meter) {
-          final name_location = meter.location.name_location;
+          final nameLocation = meter.location.nameLocation;
           final lat = meter.location.lat;
           final lng = meter.location.lon;
           final state = meter.state;
            {
             return MeterUbication(
               name: meter.name,
-              name_location: name_location,
+              nameLocation: nameLocation,
               latitude: lat,
               longitude: lng,
               state: state,
