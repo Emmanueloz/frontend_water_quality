@@ -22,7 +22,7 @@ class AlertCard extends StatelessWidget {
     return BaseCard(
       title: alert.title,
       subtitle: _buildSubtitle(),
-      chip: _buildChip(context),
+      chip: Chip(label: Text(alert.type.nameSpanish.toUpperCase())),
       onTap: () => _showAlertDetails(context),
     );
   }
@@ -50,21 +50,5 @@ class AlertCard extends StatelessWidget {
 
   String _buildSubtitle() {
     return '';
-  }
-
-  Chip _buildChip(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Chip(
-      label: Text(
-        alert.type.nameSpanish.toUpperCase(),
-        style: theme.textTheme.bodySmall?.copyWith(
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      side: BorderSide.none,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-    );
   }
 }

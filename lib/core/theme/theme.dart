@@ -1,17 +1,43 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  static const Color textColor = Color(0xff004E49); //#424a4d
+  static const Color textColor = Color(0xff040c13); //#040c13
+
+  // Paleta base (CSS → Flutter)
+  static const Color robinEggBlue = Color(0xff5bcdc5); // #5bcdc5
+  static const Color robinEggBlue2 = Color(0xff53c6bd); // #53c6bd
+  static const Color verdigris = Color(0xff51c0b5); // #51c0b5
+  static const Color keppel = Color(0xff4fbaac); // #4fbaac
+
+  // MaterialColor para usar como primarySwatch
+  static const MaterialColor primarySwatch = MaterialColor(
+    0xff5bcdc5, // valor principal
+    <int, Color>{
+      50: Color(0xffe0f7f6),
+      100: Color(0xffb3e8e5),
+      200: Color(0xff80d9d3),
+      300: Color(0xff4dcac1),
+      400: Color(0xff26c0b6),
+      500: Color(0xff5bcdc5), // color base
+      600: Color(0xff53c6bd),
+      700: Color(0xff51c0b5),
+      800: Color(0xff4fbaac),
+      900: Color(0xff3da397),
+    },
+  );
 
   static ColorScheme get colorScheme => const ColorScheme.light(
-        primary: Color(0xff5accc4), //
-        secondary: Color(0xff145c57),
-        tertiary: Color(0xffbfe7e4),
-        surface: Color(0xfff7fafa),
-        primaryContainer: Color(0xff145c57),
-        secondaryContainer: Color(0xff5accc4),
-        tertiaryContainer: Color(0xffbfe7e4),
-        surfaceContainer: Color(0xfff7fafa),
+        primary: robinEggBlue,
+        secondary: robinEggBlue2,
+        tertiary: verdigris,
+        surface: Color(0xffefefef),
+        primaryContainer: Colors.white,
+        surfaceContainer: Color(0xfff6f9fb),
+        tertiaryContainer: keppel,
+        onPrimary: Colors.white,
+        onSecondary: textColor,
+        onTertiary: textColor,
+        onSurface: textColor,
       );
 
   static TextTheme get textTheme => const TextTheme(
@@ -64,27 +90,22 @@ class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
-      primarySwatch: Colors.cyan,
+      primarySwatch: primarySwatch, // ahora con tu paleta
       primaryColor: colorScheme.primary,
       colorScheme: colorScheme,
       appBarTheme: AppBarTheme(
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.surface,
+        actionsPadding: const EdgeInsets.all(4),
+        backgroundColor: colorScheme.primaryContainer,
         elevation: 0,
-        actionsIconTheme: IconThemeData(
-          color: colorScheme.secondary,
-        ),
-        iconTheme: IconThemeData(
-          color: colorScheme.secondary,
-        ),
+        actionsIconTheme: IconThemeData(color: colorScheme.primary),
+        iconTheme: IconThemeData(color: colorScheme.primary),
         titleTextStyle: textTheme.displaySmall,
       ),
-      scaffoldBackgroundColor: colorScheme.surface,
+      scaffoldBackgroundColor: colorScheme.secondary,
+      dividerTheme: DividerThemeData(color: colorScheme.primary),
       primaryTextTheme: textTheme,
       textTheme: textTheme,
-      iconTheme: IconThemeData(
-        color: colorScheme.secondary,
-      ),
+      iconTheme: IconThemeData(color: colorScheme.primary),
       listTileTheme: ListTileThemeData(
         textColor: textColor,
         iconColor: textColor,
@@ -94,58 +115,52 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         labelStyle: textTheme.bodyMedium,
-        iconColor: colorScheme.secondary,
+        iconColor: colorScheme.primary,
         prefixIconColor: colorScheme.secondary,
         suffixIconColor: colorScheme.secondary,
         floatingLabelBehavior: FloatingLabelBehavior.auto,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
           borderSide: BorderSide(color: colorScheme.primary, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
           borderSide: BorderSide(color: colorScheme.primary, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
           borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
       ),
-      cardColor: colorScheme.surface,
-      cardTheme: CardThemeData(
-        elevation: 2,
-        color: colorScheme.surface,
+      cardTheme: CardTheme(
+        elevation: 0,
+        color: colorScheme.primaryContainer,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: colorScheme.primary, width: 1),
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: colorScheme.surface,
-        indicatorColor: colorScheme.tertiary,
+        elevation: 0,
+        backgroundColor: colorScheme.secondary,
+        indicatorColor: colorScheme.surface,
       ),
       navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: colorScheme.surface,
-        selectedIconTheme: IconThemeData(
-          color: colorScheme.secondary,
-        ),
-        unselectedIconTheme: IconThemeData(
-          color: textColor,
-        ),
+        backgroundColor: colorScheme.primary,
+        selectedIconTheme: IconThemeData(color: colorScheme.surface),
+        unselectedIconTheme: const IconThemeData(color: textColor),
         indicatorColor: colorScheme.tertiary,
-        selectedLabelTextStyle: textTheme.titleMedium,
+        selectedLabelTextStyle:
+            textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         unselectedLabelTextStyle: textTheme.titleMedium,
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: colorScheme.secondary,
-        labelStyle: textTheme.bodySmall?.copyWith(
-          color: colorScheme.surface,
-        ),
-        iconTheme: IconThemeData(
-          color: colorScheme.surface,
-        ),
+        backgroundColor: colorScheme.primary,
+        labelStyle: textTheme.bodySmall,
+        iconTheme: IconThemeData(color: textColor),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
-          side: BorderSide(
-            color: colorScheme.secondary,
-            width: 0,
-          ),
+          side: BorderSide(color: colorScheme.secondary, width: 0),
         ),
       ),
       expansionTileTheme: ExpansionTileThemeData(
@@ -153,9 +168,7 @@ class AppTheme {
         collapsedTextColor: textColor,
         iconColor: colorScheme.secondary,
         collapsedIconColor: colorScheme.secondary,
-        shape: BeveledRectangleBorder(
-          side: BorderSide.none,
-        ),
+        shape: const BeveledRectangleBorder(side: BorderSide.none),
       ),
       dropdownMenuTheme: DropdownMenuThemeData(
         textStyle: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -163,10 +176,7 @@ class AppTheme {
           suffixIconColor: colorScheme.primary,
           enabledBorder: InputBorder.none,
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: colorScheme.primary,
-              width: 2,
-            ),
+            borderSide: BorderSide(color: colorScheme.primary, width: 2),
           ),
         ),
       ),
@@ -178,21 +188,22 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: colorScheme.secondary, //#5bcdc5
-          foregroundColor: colorScheme.surface,
+          backgroundColor: colorScheme.primary,
+          foregroundColor: textColor,
           textStyle: textTheme.bodyMedium,
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          side: BorderSide(color: colorScheme.secondary, width: 1),
+          side: BorderSide(color: colorScheme.primary, width: 1),
           foregroundColor: textColor,
           textStyle: textTheme.bodyMedium,
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: textColor, //#5bcdc5
+          iconColor: colorScheme.primary,
+          foregroundColor: textColor,
           textStyle: textTheme.bodyMedium,
         ),
       ),

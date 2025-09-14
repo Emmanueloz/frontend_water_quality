@@ -10,7 +10,7 @@ class GuestCard extends StatelessWidget {
   final String workspaceTitle;
 
   const GuestCard({
-    super.key, 
+    super.key,
     required this.guest,
     required this.workspaceId,
     required this.workspaceTitle,
@@ -21,24 +21,8 @@ class GuestCard extends StatelessWidget {
     return BaseCard(
       title: guest.name,
       subtitle: guest.email,
-      chip: _buildChip(context),
+      chip: Chip(label: Text(_translateRole(guest.role))),
       onTap: () => _showGuestDetails(context),
-    );
-  }
-
-  Chip _buildChip(BuildContext context) {
-    String roleText = _translateRole(guest.role);
-    
-    return Chip(
-      label: Text(
-        roleText,
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      backgroundColor: const Color(0xff145c57),
-      visualDensity: VisualDensity.compact,
     );
   }
 
@@ -66,7 +50,7 @@ class GuestCard extends StatelessWidget {
       );
       return;
     }
-    
+
     context.goNamed(
       Routes.editGuest.name,
       pathParameters: {

@@ -19,13 +19,16 @@ class ButtonProfile extends StatelessWidget {
         Icons.account_circle,
         size: 30,
       ),
-      label: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(username),
-          Text(email),
-        ],
+      label: Container(
+        padding: EdgeInsets.all(2),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(username),
+            Text(email),
+          ],
+        ),
       ),
       onPressed: onPressed,
     );

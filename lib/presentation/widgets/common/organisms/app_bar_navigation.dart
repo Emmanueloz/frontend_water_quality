@@ -44,7 +44,7 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
               },
             ),
             IconButton(
-              icon: const Icon(Icons.notifications),
+              icon: const Icon(Icons.notifications_outlined),
               onPressed: () {
                 if (isOffline) {
                   return;
@@ -97,10 +97,6 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
         }
 
         return AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.home),
-            onPressed: () => {context.goNamed(Routes.splash.name)},
-          ),
           title: Text(title),
           actions: actions,
         );
