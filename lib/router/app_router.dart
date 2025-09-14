@@ -413,7 +413,7 @@ class AppRouter {
                     name: Routes.locationMeters.name,
                     builder: (context, state) {
                       final id = state.pathParameters['id'] ?? 'default';
-                      return ViewMeterUbications(id: id);
+                      return ViewMeterUbications(idWorkspace: id);
                     },
                   ),
                   GoRoute(
