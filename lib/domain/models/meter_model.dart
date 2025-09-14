@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:frontend_water_quality/core/enums/work_roles.dart';
 
 class Meter {
@@ -48,13 +47,15 @@ class Meter {
 }
 
 class Location {
+  final String? nameLocation;
   final double lat;
   final double lon;
 
-  Location({required this.lat, required this.lon});
+  Location({required this.nameLocation, required this.lat, required this.lon});
 
   factory Location.fromJson(Map<String, dynamic> json) {
     return Location(
+      nameLocation: json['name_location'] as String?,
       lat: (json['lat'] as num).toDouble(),
       lon: (json['lon'] as num).toDouble(),
     );
@@ -62,6 +63,7 @@ class Location {
 
   Map<String, dynamic> toJson() {
     return {
+      'name_location': nameLocation,
       'lat': lat,
       'lon': lon,
     };
