@@ -97,10 +97,6 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
         }
 
         return AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.home),
-            onPressed: () => {context.goNamed(Routes.splash.name)},
-          ),
           title: Text(title),
           actions: actions,
         );
