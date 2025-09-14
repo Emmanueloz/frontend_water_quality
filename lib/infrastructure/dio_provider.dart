@@ -4,7 +4,7 @@ class DioProvider {
   static Dio createDio() {
     final dio = Dio(
       BaseOptions(
-        baseUrl: 'https://api.aqua-minds.org/',
+        baseUrl: 'http://127.0.0.1:8000',
         validateStatus: (status) {
           return true;
         },

@@ -21,6 +21,7 @@ class FormMeters extends StatefulWidget {
   final Future<void> Function(Meter meter)? onSave;
 
   final String? name;
+  final String? name_location;
   final double? lat;
   final double? lng;
   final String? placeName;
@@ -34,6 +35,7 @@ class FormMeters extends StatefulWidget {
     required this.errorMessage,
     this.onSave,
     this.name,
+    this.name_location,
     this.lat,
     this.lng,
     this.placeName,
@@ -227,6 +229,7 @@ class _FormMetersState extends State<FormMeters> {
                                 id: widget.idMeter,
                                 name: _nameController.text.trim(),
                                 location: Location(
+                                  name_location: _placeNameController.text.trim(),
                                   lat: location.latitude,
                                   lon: location.longitude,
                                 ),
