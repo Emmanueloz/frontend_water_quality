@@ -139,10 +139,13 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
                         ],
                       ),
                       const SizedBox(height: 4),
-                      Text("${_selectedUbication!.name_location}"),
+                      Text(_selectedUbication?.nameLocation ?? "Ubicación desconocida",
+                          style: const TextStyle(fontSize: 12)),
                       const SizedBox(height: 4),
                       Text(
-                          "Estado: ${_selectedUbication?.state}"),
+                          "Estado: ${_selectedUbication?.state ?? 'Desconocido'}",
+                          style: const TextStyle(fontSize: 12)),
+                          
                     ],
                   ),
                 ),
