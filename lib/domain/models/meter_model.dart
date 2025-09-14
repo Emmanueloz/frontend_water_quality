@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:frontend_water_quality/core/enums/work_roles.dart';
 
 class Meter {

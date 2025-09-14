@@ -5,5 +5,5 @@ class MeterUbication {
   final double longitude;
   final String? state;
 
-  MeterUbication({required this.name, required this.nameLocation,required this.latitude, required this.longitude, this.state});
+  MeterUbication({required this.name, this.nameLocation, required this.latitude, required this.longitude, this.state});
 }
