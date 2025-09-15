@@ -3,6 +3,7 @@ import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/domain/models/meter_records_response.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/line_graph.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/molecules/date_range_filter.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_record_provider.dart';
 
@@ -26,6 +27,9 @@ class MainListrecords extends StatefulWidget {
 
 class _MainListrecordsState extends State<MainListrecords> {
   MeterRecordProvider? _meterProvider;
+  DateTime? _startDate;
+  DateTime? _endDate;
+  bool _isFilterLoading = false;
 
   @override
   void didChangeDependencies() {
@@ -167,6 +171,38 @@ class _MainListrecordsState extends State<MainListrecords> {
             ],
           ),
           const SizedBox(height: 16),
+          
+          // Widget de filtro de fechas
+          DateRangeFilter(
+            startDate: _startDate,
+            endDate: _endDate,
+            isLoading: _isFilterLoading,
+            onApplyFilters: (startDate, endDate) {
+              setState(() {
+                _isFilterLoading = true;
+                _startDate = startDate;
+                _endDate = endDate;
+              });
+              
+              // Simular filtrado de datos
+              Future.delayed(const Duration(seconds: 1), () {
+                if (mounted) {
+                  setState(() {
+                    _isFilterLoading = false;
+                  });
+                }
+              });
+            },
+            onPreviousPeriod: () {
+              _navigatePeriod(-1);
+            },
+            onNextPeriod: () {
+              _navigatePeriod(1);
+            },
+          ),
+          
+          const SizedBox(height: 16),
+          
           // Contenedor con scroll para los gráficos
           Expanded(
             child: SingleChildScrollView(
@@ -185,6 +221,26 @@ class _MainListrecordsState extends State<MainListrecords> {
         ],
       ),
     );
+  }
+
+  void _navigatePeriod(int direction) {
+    if (_startDate != null && _endDate != null) {
+      final duration = _endDate!.difference(_startDate!);
+      setState(() {
+        _startDate = _startDate!.add(Duration(days: duration.inDays * direction));
+        _endDate = _endDate!.add(Duration(days: duration.inDays * direction));
+      });
+    } else {
+      // Si no hay fechas seleccionadas, usar el mes actual
+      final now = DateTime.now();
+      final startOfMonth = DateTime(now.year, now.month, 1);
+      final endOfMonth = DateTime(now.year, now.month + 1, 0);
+      
+      setState(() {
+        _startDate = startOfMonth.add(Duration(days: 30 * direction));
+        _endDate = endOfMonth.add(Duration(days: 30 * direction));
+      });
+    }
   }
 
   List<Widget> _buildLineGraphs(records) {
