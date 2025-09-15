@@ -21,12 +21,27 @@ class MeterRecordProvider with ChangeNotifier {
   String? _currentMeterId;
   bool _recordsLoaded = false;
 
+  // Variables de paginación
+  DateTime? _currentStartDate;
+  DateTime? _currentEndDate;
+  int _currentPage = 1;
+  final int _pageSize = 30; // 30 registros por página
+  bool _hasNextPage = false;
+  bool _hasPreviousPage = false;
+
   MeterRecordProvider(
       this._socketService, this._meterRecordsRepo, this._authProvider);
 
   void setAuthProvider(AuthProvider? provider) {
     _authProvider = provider;
   }
+
+  // Getters para paginación
+  DateTime? get currentStartDate => _currentStartDate;
+  DateTime? get currentEndDate => _currentEndDate;
+  int get currentPage => _currentPage;
+  bool get hasNextPage => _hasNextPage;
+  bool get hasPreviousPage => _hasPreviousPage;
 
   void clean() {
     recordResponse = null;
@@ -50,6 +65,15 @@ class MeterRecordProvider with ChangeNotifier {
     _recordsLoaded = false;
     errorMessageSocket = null;
     errorMessageRecords = null;
+    _resetPagination();
+  }
+
+  void _resetPagination() {
+    _currentStartDate = null;
+    _currentEndDate = null;
+    _currentPage = 1;
+    _hasNextPage = false;
+    _hasPreviousPage = false;
   }
 
   void subscribeToMeter({
@@ -83,11 +107,25 @@ class MeterRecordProvider with ChangeNotifier {
     }
   }
 
-  Future<void> fetchMeterRecords(String idWorkspace, String idMeter) async {
-    // Verificar si ya tenemos los datos para este medidor
+  Future<void> fetchMeterRecords(
+    String idWorkspace, 
+    String idMeter, {
+    DateTime? startDate,
+    DateTime? endDate,
+    int? page,
+  }) async {
+    // Si se proporcionan fechas o página, forzar recarga
+    if (startDate != null || endDate != null || page != null) {
+      _recordsLoaded = false;
+    }
+
+    // Verificar si ya tenemos los datos para este medidor (sin filtros)
     if (_recordsLoaded &&
         _currentWorkspaceId == idWorkspace &&
-        _currentMeterId == idMeter) {
+        _currentMeterId == idMeter &&
+        startDate == null &&
+        endDate == null &&
+        page == null) {
       return; // Ya tenemos los datos, no recargar
     }
 
@@ -110,7 +148,12 @@ class MeterRecordProvider with ChangeNotifier {
         _authProvider!.token!,
         idWorkspace,
         idMeter,
+        startDate: startDate,
+        endDate: endDate,
+        page: page ?? _currentPage,
+        limit: _pageSize,
       );
+      
       if (!result.isSuccess) {
         errorMessageRecords = result.message;
         return;
@@ -121,6 +164,18 @@ class MeterRecordProvider with ChangeNotifier {
       _currentMeterId = idMeter;
       _recordsLoaded = true;
       errorMessageRecords = null;
+
+      // Actualizar estado de paginación
+      _currentStartDate = startDate;
+      _currentEndDate = endDate;
+      if (page != null) {
+        _currentPage = page;
+      }
+
+      // Simular lógica de paginación (ajustar según la respuesta del servidor)
+      _hasNextPage = _currentPage < 10; // Asumir máximo 10 páginas
+      _hasPreviousPage = _currentPage > 1;
+
     } catch (e) {
       errorMessageRecords = e.toString();
     } finally {
@@ -129,11 +184,57 @@ class MeterRecordProvider with ChangeNotifier {
     }
   }
 
-  // Método para recarga manual
+  // Método para aplicar filtros de fecha
+  Future<void> applyDateFilters(DateTime? startDate, DateTime? endDate) async {
+    if (_currentWorkspaceId == null || _currentMeterId == null) return;
+    
+    _currentPage = 1; // Reset a la primera página
+    await fetchMeterRecords(
+      _currentWorkspaceId!,
+      _currentMeterId!,
+      startDate: startDate,
+      endDate: endDate,
+      page: 1,
+    );
+  }
+
+  // Método para navegar a la página anterior (solo actualiza la vista)
+  Future<void> goToPreviousPage() async {
+    if (!_hasPreviousPage || _currentWorkspaceId == null || _currentMeterId == null) return;
+    
+    // Solo actualizar la vista sin recargar datos
+    _currentPage--;
+    _updatePaginationState();
+    notifyListeners();
+  }
+
+  // Método para navegar a la página siguiente (solo actualiza la vista)
+  Future<void> goToNextPage() async {
+    if (!_hasNextPage || _currentWorkspaceId == null || _currentMeterId == null) return;
+    
+    // Solo actualizar la vista sin recargar datos
+    _currentPage++;
+    _updatePaginationState();
+    notifyListeners();
+  }
+
+  // Método para actualizar el estado de paginación
+  void _updatePaginationState() {
+    _hasNextPage = _currentPage < 10; // Asumir máximo 10 páginas
+    _hasPreviousPage = _currentPage > 1;
+  }
+
+  // Método para recarga manual (igual que antes)
   Future<void> refreshMeterRecords() async {
     if (_currentWorkspaceId != null && _currentMeterId != null) {
       _recordsLoaded = false; // Forzar recarga
-      await fetchMeterRecords(_currentWorkspaceId!, _currentMeterId!);
+      await fetchMeterRecords(
+        _currentWorkspaceId!,
+        _currentMeterId!,
+        startDate: _currentStartDate,
+        endDate: _currentEndDate,
+        page: _currentPage,
+      );
     }
   }
 

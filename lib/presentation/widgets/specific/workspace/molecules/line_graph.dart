@@ -98,12 +98,12 @@ class _LineGraphState extends State<LineGraph> {
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            interval: 1,
+            interval: 2,
             reservedSize: 30,
             getTitlesWidget: (value, meta) {
               int index = value.toInt();
               if (index < 0 || index >= widget.dates.length) return const SizedBox.shrink();
-              return Text(widget.dates[index], style: const TextStyle(fontSize: 10));
+              return Text(widget.dates[index], style: const TextStyle(fontSize: 12));
             },
           ),
         ),
@@ -113,7 +113,7 @@ class _LineGraphState extends State<LineGraph> {
             interval: widget.intervalY,
             reservedSize: 35,
             getTitlesWidget: (value, meta) {
-              return Text(value.toStringAsFixed(1), style: const TextStyle(fontSize: 10));
+              return Text(value.toStringAsFixed(1), style: const TextStyle(fontSize: 12));
             },
           ),
         ),

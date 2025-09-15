@@ -89,12 +89,12 @@ class _MainListrecordsState extends State<MainListrecords> {
           return const Center(child: Text('No hay registros disponibles'));
         }
 
-        return _buildMain(context, records);
+        return _buildMain(context, records, meterProvider);
       },
     );
   }
 
-  Widget _buildMain(BuildContext context, MeterRecordsResponse records) {
+  Widget _buildMain(BuildContext context, MeterRecordsResponse records, MeterRecordProvider meterProvider) {
     EdgeInsetsGeometry margin;
     EdgeInsetsGeometry padding;
     int crossAxisCount;
@@ -177,27 +177,32 @@ class _MainListrecordsState extends State<MainListrecords> {
             startDate: _startDate,
             endDate: _endDate,
             isLoading: _isFilterLoading,
-            onApplyFilters: (startDate, endDate) {
+            onApplyFilters: (startDate, endDate) async {
               setState(() {
                 _isFilterLoading = true;
                 _startDate = startDate;
                 _endDate = endDate;
               });
               
-              // Simular filtrado de datos
-              Future.delayed(const Duration(seconds: 1), () {
-                if (mounted) {
-                  setState(() {
-                    _isFilterLoading = false;
-                  });
-                }
-              });
+              if (_meterProvider != null) {
+                await _meterProvider!.applyDateFilters(startDate, endDate);
+              }
+              
+              if (mounted) {
+                setState(() {
+                  _isFilterLoading = false;
+                });
+              }
             },
-            onPreviousPeriod: () {
-              _navigatePeriod(-1);
+            onPreviousPeriod: () async {
+              if (_meterProvider != null) {
+                await _meterProvider!.goToPreviousPage();
+              }
             },
-            onNextPeriod: () {
-              _navigatePeriod(1);
+            onNextPeriod: () async {
+              if (_meterProvider != null) {
+                await _meterProvider!.goToNextPage();
+              }
             },
           ),
           
@@ -207,40 +212,39 @@ class _MainListrecordsState extends State<MainListrecords> {
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
-              child: GridView.count(
-                childAspectRatio: childAspectRatio,
-                crossAxisCount: crossAxisCount,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: linegraphs,
+              child: Column(
+                children: [
+                  GridView.count(
+                    childAspectRatio: childAspectRatio,
+                    crossAxisCount: crossAxisCount,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: linegraphs,
+                  ),
+                  
+                  // Número de página abajo
+                  if (meterProvider.currentPage > 1 || meterProvider.hasNextPage)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: Center(
+                        child: Text(
+                          '${meterProvider.currentPage}',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
           ),
         ],
       ),
     );
-  }
-
-  void _navigatePeriod(int direction) {
-    if (_startDate != null && _endDate != null) {
-      final duration = _endDate!.difference(_startDate!);
-      setState(() {
-        _startDate = _startDate!.add(Duration(days: duration.inDays * direction));
-        _endDate = _endDate!.add(Duration(days: duration.inDays * direction));
-      });
-    } else {
-      // Si no hay fechas seleccionadas, usar el mes actual
-      final now = DateTime.now();
-      final startOfMonth = DateTime(now.year, now.month, 1);
-      final endOfMonth = DateTime(now.year, now.month + 1, 0);
-      
-      setState(() {
-        _startDate = startOfMonth.add(Duration(days: 30 * direction));
-        _endDate = endOfMonth.add(Duration(days: 30 * direction));
-      });
-    }
   }
 
   List<Widget> _buildLineGraphs(records) {
