@@ -25,9 +25,10 @@ class MeterRecordProvider with ChangeNotifier {
   DateTime? _currentStartDate;
   DateTime? _currentEndDate;
   int _currentPage = 1;
-  final int _pageSize = 30; // 30 registros por página
+  final int _pageSize = 10; // 10 registros por página
   bool _hasNextPage = false;
   bool _hasPreviousPage = false;
+  int _totalPages = 1; // Total de páginas para el filtro actual
 
   MeterRecordProvider(
       this._socketService, this._meterRecordsRepo, this._authProvider);
@@ -40,6 +41,7 @@ class MeterRecordProvider with ChangeNotifier {
   DateTime? get currentStartDate => _currentStartDate;
   DateTime? get currentEndDate => _currentEndDate;
   int get currentPage => _currentPage;
+  int get totalPages => _totalPages;
   bool get hasNextPage => _hasNextPage;
   bool get hasPreviousPage => _hasPreviousPage;
 
@@ -74,6 +76,7 @@ class MeterRecordProvider with ChangeNotifier {
     _currentPage = 1;
     _hasNextPage = false;
     _hasPreviousPage = false;
+    _totalPages = 1;
   }
 
   void subscribeToMeter({
@@ -151,7 +154,7 @@ class MeterRecordProvider with ChangeNotifier {
         startDate: startDate,
         endDate: endDate,
         page: page ?? _currentPage,
-        limit: _pageSize,
+        limit: _pageSize, // 10 registros por página
       );
       
       if (!result.isSuccess) {
@@ -172,9 +175,8 @@ class MeterRecordProvider with ChangeNotifier {
         _currentPage = page;
       }
 
-      // Simular lógica de paginación (ajustar según la respuesta del servidor)
-      _hasNextPage = _currentPage < 10; // Asumir máximo 10 páginas
-      _hasPreviousPage = _currentPage > 1;
+      // Calcular total de páginas basado en los registros recibidos
+      _updatePaginationState();
 
     } catch (e) {
       errorMessageRecords = e.toString();
@@ -198,33 +200,76 @@ class MeterRecordProvider with ChangeNotifier {
     );
   }
 
-  // Método para navegar a la página anterior (solo actualiza la vista)
+  // Método para navegar a la página anterior (con datos reales)
   Future<void> goToPreviousPage() async {
     if (!_hasPreviousPage || _currentWorkspaceId == null || _currentMeterId == null) return;
     
-    // Solo actualizar la vista sin recargar datos
     _currentPage--;
-    _updatePaginationState();
-    notifyListeners();
+    await fetchMeterRecords(
+      _currentWorkspaceId!,
+      _currentMeterId!,
+      startDate: _currentStartDate,
+      endDate: _currentEndDate,
+      page: _currentPage,
+    );
   }
 
-  // Método para navegar a la página siguiente (solo actualiza la vista)
+  // Método para navegar a la página siguiente (con datos reales)
   Future<void> goToNextPage() async {
     if (!_hasNextPage || _currentWorkspaceId == null || _currentMeterId == null) return;
     
-    // Solo actualizar la vista sin recargar datos
     _currentPage++;
-    _updatePaginationState();
-    notifyListeners();
+    await fetchMeterRecords(
+      _currentWorkspaceId!,
+      _currentMeterId!,
+      startDate: _currentStartDate,
+      endDate: _currentEndDate,
+      page: _currentPage,
+    );
   }
 
   // Método para actualizar el estado de paginación
   void _updatePaginationState() {
-    _hasNextPage = _currentPage < 10; // Asumir máximo 10 páginas
+    if (meterRecordsResponse == null) {
+      _hasNextPage = false;
+      _hasPreviousPage = false;
+      _totalPages = 1;
+      return;
+    }
+
+    // Contar total de registros en la respuesta actual
+    int currentRecords = _countCurrentRecords();
+    
+    // Si recibimos menos de 10 registros, no hay página siguiente
+    _hasNextPage = currentRecords >= _pageSize;
+    
+    // Si estamos en la página 1, no hay página anterior
     _hasPreviousPage = _currentPage > 1;
+    
+    // Calcular total de páginas estimado
+    // Si hay página siguiente, estimamos que hay al menos _currentPage + 1 páginas
+    if (_hasNextPage) {
+      _totalPages = _currentPage + 1; // Mínimo estimado
+    } else {
+      _totalPages = _currentPage; // Solo las páginas que hemos visto
+    }
   }
 
-  // Método para recarga manual (igual que antes)
+  // Método para contar registros actuales
+  int _countCurrentRecords() {
+    if (meterRecordsResponse == null) return 0;
+    
+    int totalRecords = 0;
+    if (meterRecordsResponse!.temperatureRecords.isNotEmpty) totalRecords += meterRecordsResponse!.temperatureRecords.length;
+    if (meterRecordsResponse!.phRecords.isNotEmpty) totalRecords += meterRecordsResponse!.phRecords.length;
+    if (meterRecordsResponse!.tdsRecords.isNotEmpty) totalRecords += meterRecordsResponse!.tdsRecords.length;
+    if (meterRecordsResponse!.conductivityRecords.isNotEmpty) totalRecords += meterRecordsResponse!.conductivityRecords.length;
+    if (meterRecordsResponse!.turbidityRecords.isNotEmpty) totalRecords += meterRecordsResponse!.turbidityRecords.length;
+    
+    return totalRecords;
+  }
+
+  // Método para recarga manual
   Future<void> refreshMeterRecords() async {
     if (_currentWorkspaceId != null && _currentMeterId != null) {
       _recordsLoaded = false; // Forzar recarga

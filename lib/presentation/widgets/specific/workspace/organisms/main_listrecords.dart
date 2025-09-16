@@ -6,6 +6,7 @@ import 'package:frontend_water_quality/presentation/widgets/specific/workspace/m
 import 'package:frontend_water_quality/presentation/widgets/common/molecules/date_range_filter.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_record_provider.dart';
+import 'package:intl/intl.dart';
 
 /// Widget principal para listado de registros del medidor.
 /// Versión mejorada con funcionalidad completa.
@@ -30,6 +31,7 @@ class _MainListrecordsState extends State<MainListrecords> {
   DateTime? _startDate;
   DateTime? _endDate;
   bool _isFilterLoading = false;
+  final DateFormat _dateFormat = DateFormat('dd/MM/yyyy');
 
   @override
   void didChangeDependencies() {
@@ -132,6 +134,9 @@ class _MainListrecordsState extends State<MainListrecords> {
     // Mapear los datos de registros a los gráficos
     final List<Widget> linegraphs = _buildLineGraphs(records);
 
+    // Verificar si hay filtros activos
+    final bool hasActiveFilters = _startDate != null || _endDate != null;
+
     return BaseContainer(
       margin: margin,
       padding: padding,
@@ -194,19 +199,73 @@ class _MainListrecordsState extends State<MainListrecords> {
                 });
               }
             },
-            onPreviousPeriod: () async {
+            onPreviousPeriod: hasActiveFilters ? () async {
               if (_meterProvider != null) {
                 await _meterProvider!.goToPreviousPage();
               }
-            },
-            onNextPeriod: () async {
+            } : null,
+            onNextPeriod: hasActiveFilters ? () async {
               if (_meterProvider != null) {
                 await _meterProvider!.goToNextPage();
               }
-            },
+            } : null,
           ),
           
           const SizedBox(height: 16),
+          
+          // Información de filtros aplicados y paginación (solo si hay filtros activos)
+          if (hasActiveFilters && (meterProvider.currentPage > 1 || meterProvider.hasNextPage))
+            Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.tertiary,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                  width: 1,
+                ),
+              ),
+              child: Column(
+                children: [
+                  // Fechas filtradas
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.date_range,
+                        size: 16,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Filtro: ',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        '${_startDate != null ? _dateFormat.format(_startDate!) : 'Sin inicio'} - ${_endDate != null ? _dateFormat.format(_endDate!) : 'Sin fin'}',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ],
+                  ),
+                  
+                  // Paginación (solo si hay filtros activos)
+                  if (meterProvider.currentPage > 1 || meterProvider.hasNextPage) ...[
+                    const SizedBox(height: 8),
+                    Center(
+                      child: Text(
+                        'Página ${meterProvider.currentPage}/${meterProvider.totalPages}',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
           
           // Contenedor con scroll para los gráficos
           Expanded(
@@ -223,21 +282,6 @@ class _MainListrecordsState extends State<MainListrecords> {
                     physics: const NeverScrollableScrollPhysics(),
                     children: linegraphs,
                   ),
-                  
-                  // Número de página abajo
-                  if (meterProvider.currentPage > 1 || meterProvider.hasNextPage)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: Center(
-                        child: Text(
-                          '${meterProvider.currentPage}',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.secondary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
                 ],
               ),
             ),

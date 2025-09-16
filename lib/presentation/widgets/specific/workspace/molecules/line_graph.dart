@@ -98,7 +98,7 @@ class _LineGraphState extends State<LineGraph> {
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            interval: 2,
+            interval: 1,
             reservedSize: 30,
             getTitlesWidget: (value, meta) {
               int index = value.toInt();

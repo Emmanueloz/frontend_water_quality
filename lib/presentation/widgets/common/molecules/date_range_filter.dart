@@ -52,21 +52,11 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
       initialDate: _startDate ?? DateTime.now(),
       firstDate: DateTime(2020),
       lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: Theme.of(context).colorScheme.secondary,
-            ),
-          ),
-          child: child!,
-        );
-      },
+      locale: const Locale('es', 'ES'),
     );
     if (picked != null && picked != _startDate) {
       setState(() {
         _startDate = picked;
-        // Si la fecha de inicio es posterior a la fecha de fin, ajustar la fecha de fin
         if (_endDate != null && _startDate!.isAfter(_endDate!)) {
           _endDate = _startDate;
         }
@@ -80,16 +70,7 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
       initialDate: _endDate ?? DateTime.now(),
       firstDate: _startDate ?? DateTime(2020),
       lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: Theme.of(context).colorScheme.secondary,
-            ),
-          ),
-          child: child!,
-        );
-      },
+      locale: const Locale('es', 'ES'),
     );
     if (picked != null && picked != _endDate) {
       setState(() {

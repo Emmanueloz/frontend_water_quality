@@ -19,21 +19,22 @@ class MeterRecordsRepoImpl implements MeterRecordsRepo {
     int? limit,
   }) async {
     try {
-      // Construir query parameters
+      // Construir query parameters según la API
       final Map<String, dynamic> queryParams = {};
       
       if (startDate != null) {
-        queryParams['start_date'] = startDate.toIso8601String().split('T')[0];
+        // Formato: 2025-08-20 00:00:00
+        queryParams['start_date'] = '${startDate.toIso8601String().split('T')[0]} 00:00:00';
       }
       if (endDate != null) {
-        queryParams['end_date'] = endDate.toIso8601String().split('T')[0];
-      }
-      if (page != null) {
-        queryParams['page'] = page;
+        // Formato: 2025-08-24 21:53:00
+        queryParams['end_date'] = '${endDate.toIso8601String().split('T')[0]} 23:59:59';
       }
       if (limit != null) {
         queryParams['limit'] = limit;
       }
+      // Nota: La API no parece usar 'page' directamente, sino que usa 'index' para paginación
+      // Por ahora usamos limit para controlar la cantidad de registros
 
       final response = await _dio.get(
         '/meters/records/$workspaceId/$meterId/',
