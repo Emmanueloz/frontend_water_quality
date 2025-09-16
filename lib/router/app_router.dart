@@ -7,6 +7,7 @@ import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/storage_key.dart';
 import 'package:frontend_water_quality/infrastructure/local_storage_service.dart';
 import 'package:frontend_water_quality/presentation/pages/alerts.dart';
+import 'package:frontend_water_quality/presentation/pages/analysis.dart';
 import 'package:frontend_water_quality/presentation/pages/form_alert.dart';
 import 'package:frontend_water_quality/domain/models/alert.dart';
 import 'package:frontend_water_quality/presentation/pages/change_password.dart';
@@ -236,13 +237,47 @@ class AppRouter {
                         path: Routes.analysisRecords.path,
                         name: Routes.analysisRecords.name,
                         builder: (context, state) {
-                          final id = state.pathParameters['id'] ?? 'default';
-                          final idMeter =
-                              state.pathParameters['idMeter'] ?? 'default';
-                          return SizedBox(
-                            child: Text("Analisis $id $idMeter"),
+                          return AnalysisPage(
+                            idWorkspace:
+                                state.pathParameters['id'] ?? 'default',
+                            idMeter:
+                                state.pathParameters['idMeter'] ?? 'default',
                           );
                         },
+                        routes: [
+                          GoRoute(
+                            parentNavigatorKey: rootNavigatorKey,
+                            path: Routes.analysisAverage.path,
+                            name: Routes.analysisAverage.name,
+                            builder: (context, state) => SafeArea(
+                              child: Text("Promedio"),
+                            ),
+                          ),
+                          GoRoute(
+                            parentNavigatorKey: rootNavigatorKey,
+                            path: Routes.analysisAveragePeriod.path,
+                            name: Routes.analysisAveragePeriod.name,
+                            builder: (context, state) => SafeArea(
+                              child: Text("Promedio por periodo"),
+                            ),
+                          ),
+                          GoRoute(
+                            parentNavigatorKey: rootNavigatorKey,
+                            path: Routes.analysisPrediction.path,
+                            name: Routes.analysisPrediction.name,
+                            builder: (context, state) => SafeArea(
+                              child: Text("Predicción"),
+                            ),
+                          ),
+                          GoRoute(
+                            parentNavigatorKey: rootNavigatorKey,
+                            path: Routes.analysisCorrelation.path,
+                            name: Routes.analysisCorrelation.name,
+                            builder: (context, state) => SafeArea(
+                              child: Text("Correlación"),
+                            ),
+                          )
+                        ],
                       ),
                       GoRoute(
                           path: Routes.connectionMeter.path,

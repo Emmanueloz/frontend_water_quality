@@ -70,8 +70,6 @@ class Routes {
     pathRoot: "/alerts",
   );
 
-
-
   static RouteProperties guests = RouteProperties(
     name: "guests",
     path: "/guests",
@@ -112,6 +110,26 @@ class Routes {
   static RouteProperties analysisRecords = RouteProperties(
     name: "analysis",
     path: "meter/:idMeter/analysis",
+  );
+
+  static RouteProperties analysisAverage = RouteProperties(
+    name: "average",
+    path: "/average",
+  );
+
+  static RouteProperties analysisAveragePeriod = RouteProperties(
+    name: "averagePeriod",
+    path: "/average-period",
+  );
+
+  static RouteProperties analysisPrediction = RouteProperties(
+    name: "prediction",
+    path: "/prediction",
+  );
+
+  static RouteProperties analysisCorrelation = RouteProperties(
+    name: "correlation",
+    path: "/correlation",
   );
 
   static RouteProperties connectionMeter = RouteProperties(
