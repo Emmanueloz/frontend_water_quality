@@ -44,6 +44,7 @@ class MeterRecordProvider with ChangeNotifier {
   int get totalPages => _totalPages;
   bool get hasNextPage => _hasNextPage;
   bool get hasPreviousPage => _hasPreviousPage;
+  bool get hasActiveFilters => _currentStartDate != null || _currentEndDate != null;
 
   void clean() {
     recordResponse = null;

@@ -47,12 +47,9 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
   }
 
   Future<void> _selectStartDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _startDate ?? DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
-      locale: const Locale('es', 'ES'),
+    final DateTime? picked = await _showCustomDatePicker(
+      context,
+      _startDate ?? DateTime.now(),
     );
     if (picked != null && picked != _startDate) {
       setState(() {
@@ -65,18 +62,35 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
   }
 
   Future<void> _selectEndDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _endDate ?? DateTime.now(),
-      firstDate: _startDate ?? DateTime(2020),
-      lastDate: DateTime.now(),
-      locale: const Locale('es', 'ES'),
+    final DateTime? picked = await _showCustomDatePicker(
+      context,
+      _endDate ?? DateTime.now(),
     );
     if (picked != null && picked != _endDate) {
       setState(() {
         _endDate = picked;
       });
     }
+  }
+
+  Future<DateTime?> _showCustomDatePicker(BuildContext context, DateTime initialDate) async {
+    return await showDialog<DateTime>(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Container(
+            width: 300,
+            padding: const EdgeInsets.all(16),
+            child: _CustomDatePicker(
+              initialDate: initialDate,
+              onDateSelected: (date) {
+                Navigator.of(context).pop(date);
+              },
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void _applyFilters() {
@@ -307,6 +321,184 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
                 ),
               ),
       ),
+    );
+  }
+}
+
+class _CustomDatePicker extends StatefulWidget {
+  final DateTime initialDate;
+  final Function(DateTime) onDateSelected;
+
+  const _CustomDatePicker({
+    required this.initialDate,
+    required this.onDateSelected,
+  });
+
+  @override
+  State<_CustomDatePicker> createState() => _CustomDatePickerState();
+}
+
+class _CustomDatePickerState extends State<_CustomDatePicker> {
+  late DateTime _currentDate;
+  late DateTime _selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentDate = widget.initialDate;
+    _selectedDate = widget.initialDate;
+  }
+
+  void _previousMonth() {
+    setState(() {
+      _currentDate = DateTime(_currentDate.year, _currentDate.month - 1);
+    });
+  }
+
+  void _nextMonth() {
+    setState(() {
+      _currentDate = DateTime(_currentDate.year, _currentDate.month + 1);
+    });
+  }
+
+  void _selectDate(DateTime date) {
+    setState(() {
+      _selectedDate = date;
+    });
+    widget.onDateSelected(date);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final monthNames = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Header con mes y año
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              onPressed: _previousMonth,
+              icon: Icon(Icons.chevron_left, color: theme.colorScheme.secondary),
+            ),
+            Text(
+              '${monthNames[_currentDate.month - 1]} ${_currentDate.year}',
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: theme.colorScheme.secondary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            IconButton(
+              onPressed: _nextMonth,
+              icon: Icon(Icons.chevron_right, color: theme.colorScheme.secondary),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        // Días de la semana
+        Row(
+          children: ['L', 'M', 'X', 'J', 'V', 'S', 'D'].map((day) {
+            return Expanded(
+              child: Center(
+                child: Text(
+                  day,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.secondary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 8),
+        // Calendario
+        _buildCalendar(theme),
+        const SizedBox(height: 16),
+        // Botones
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancelar'),
+            ),
+            const SizedBox(width: 8),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(_selectedDate),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.secondary,
+                foregroundColor: theme.colorScheme.surface,
+              ),
+              child: Text('Seleccionar'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCalendar(ThemeData theme) {
+    final firstDayOfMonth = DateTime(_currentDate.year, _currentDate.month, 1);
+    final lastDayOfMonth = DateTime(_currentDate.year, _currentDate.month + 1, 0);
+    final firstWeekday = firstDayOfMonth.weekday;
+    final daysInMonth = lastDayOfMonth.day;
+
+    List<Widget> dayWidgets = [];
+
+    // Días del mes anterior
+    for (int i = 1; i < firstWeekday; i++) {
+      dayWidgets.add(Container());
+    }
+
+    // Días del mes actual
+    for (int day = 1; day <= daysInMonth; day++) {
+      final date = DateTime(_currentDate.year, _currentDate.month, day);
+      final isSelected = _selectedDate.year == date.year &&
+          _selectedDate.month == date.month &&
+          _selectedDate.day == date.day;
+      final isToday = date.year == DateTime.now().year &&
+          date.month == DateTime.now().month &&
+          date.day == DateTime.now().day;
+
+      dayWidgets.add(
+        GestureDetector(
+          onTap: () => _selectDate(date),
+          child: Container(
+            height: 32,
+            width: 32,
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? theme.colorScheme.secondary
+                  : isToday
+                      ? theme.colorScheme.primary.withValues(alpha: 0.3)
+                      : Colors.transparent,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Center(
+              child: Text(
+                day.toString(),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: isSelected
+                      ? theme.colorScheme.surface
+                      : theme.colorScheme.secondary,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Wrap(
+      children: dayWidgets,
     );
   }
 }
