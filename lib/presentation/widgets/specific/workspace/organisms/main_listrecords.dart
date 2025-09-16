@@ -7,8 +7,6 @@ import 'package:frontend_water_quality/presentation/widgets/common/molecules/dat
 import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_record_provider.dart';
 
-/// Widget principal para listado de registros del medidor.
-/// Versión mejorada con funcionalidad completa.
 class MainListrecords extends StatefulWidget {
   final String id;
   final String idMeter;
@@ -37,11 +35,8 @@ class _MainListrecordsState extends State<MainListrecords> {
   @override
   void initState() {
     super.initState();
-    // Cargar registros cuando se inicializa la página
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_meterProvider != null) {
-        _meterProvider!.fetchMeterRecords(widget.id, widget.idMeter);
-      }
+      _meterProvider?.fetchMeterRecords(widget.id, widget.idMeter);
     });
   }
 
@@ -49,31 +44,30 @@ class _MainListrecordsState extends State<MainListrecords> {
   Widget build(BuildContext context) {
     return Consumer<MeterRecordProvider>(
       builder: (context, meterProvider, _) {
-        // Mostrar loading inicial
-        if (meterProvider.isLoading && meterProvider.meterRecordsResponse == null) {
+        if (meterProvider.isLoading &&
+            meterProvider.meterRecordsResponse == null) {
           return BaseContainer(
             margin: _getMargin(),
             child: const Center(child: CircularProgressIndicator()),
           );
         }
 
-        // Mostrar error si no hay datos
-        if (meterProvider.errorMessageRecords != null && meterProvider.meterRecordsResponse == null) {
+        if (meterProvider.errorMessageRecords != null &&
+            meterProvider.meterRecordsResponse == null) {
           return BaseContainer(
             margin: _getMargin(),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Error al cargar los registros',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
+                  Text('Error al cargar los registros',
+                      style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 8),
                   Text(meterProvider.errorMessageRecords!),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => meterProvider.fetchMeterRecords(widget.id, widget.idMeter),
+                    onPressed: () => meterProvider.fetchMeterRecords(
+                        widget.id, widget.idMeter),
                     child: const Text('Reintentar'),
                   ),
                 ],
@@ -82,8 +76,9 @@ class _MainListrecordsState extends State<MainListrecords> {
           );
         }
 
-        final MeterRecordsResponse? records = meterProvider.meterRecordsResponse;
-        if (records == null || _countTotalRecords(records) == 0) {
+        final MeterRecordsResponse? records =
+            meterProvider.meterRecordsResponse;
+        if (records == null) {
           return _buildEmptyState(context, meterProvider);
         }
 
@@ -92,7 +87,8 @@ class _MainListrecordsState extends State<MainListrecords> {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, MeterRecordProvider meterProvider) {
+  Widget _buildEmptyState(
+      BuildContext context, MeterRecordProvider meterProvider) {
     return BaseContainer(
       margin: _getMargin(),
       padding: _getPadding(),
@@ -101,13 +97,29 @@ class _MainListrecordsState extends State<MainListrecords> {
         children: [
           _buildHeader(context, meterProvider),
           const SizedBox(height: 16),
-          DateRangeFilter(
-            startDate: meterProvider.currentStartDate,
-            endDate: meterProvider.currentEndDate,
-            isLoading: meterProvider.isLoading,
-            onApplyFilters: meterProvider.applyDateFilters,
-            onPreviousPeriod: meterProvider.hasActiveFilters ? meterProvider.goToPreviousPage : null,
-            onNextPeriod: meterProvider.hasActiveFilters ? meterProvider.goToNextPage : null,
+          Row(
+            children: [
+              Expanded(
+                child: DateRangeFilter(
+                  startDate: meterProvider.currentStartDate,
+                  endDate: meterProvider.currentEndDate,
+                  isLoading: meterProvider.isLoading,
+                  onApplyFilters: meterProvider.applyDateFilters,
+                  onPreviousPeriod: meterProvider.hasPreviousPage
+                      ? meterProvider.goToPreviousPage
+                      : null,
+                  onNextPeriod: meterProvider.hasNextPage
+                      ? meterProvider.goToNextPage
+                      : null,
+                ),
+              ),
+              if (meterProvider.hasActiveFilters)
+                IconButton(
+                  onPressed: meterProvider.clearFilters,
+                  icon: const Icon(Icons.clear),
+                  tooltip: 'Quitar filtros',
+                ),
+            ],
           ),
           const SizedBox(height: 16),
           Expanded(
@@ -117,297 +129,129 @@ class _MainListrecordsState extends State<MainListrecords> {
                 children: [
                   Icon(Icons.info_outline, size: 48, color: Colors.grey[400]),
                   const SizedBox(height: 8),
-                  Text(
-                    'No hay registros disponibles',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
+                  Text('No hay registros disponibles',
+                      style: Theme.of(context).textTheme.titleMedium),
                 ],
               ),
             ),
           ),
-          // Solo número de página en la parte inferior
-          if (meterProvider.hasActiveFilters) _buildPageNumber(context, meterProvider),
         ],
       ),
     );
   }
 
-  Widget _buildMain(BuildContext context, MeterRecordsResponse records, MeterRecordProvider meterProvider) {
-    EdgeInsetsGeometry margin = _getMargin();
-    EdgeInsetsGeometry padding = _getPadding();
-    int crossAxisCount;
-    double childAspectRatio;
+  Widget _buildMain(BuildContext context, MeterRecordsResponse records,
+      MeterRecordProvider meterProvider) {
+    int crossAxisCount = 1;
+    double childAspectRatio = 1 / 0.8;
 
-    if (widget.screenSize == ScreenSize.smallDesktop) {
+    if (widget.screenSize == ScreenSize.smallDesktop ||
+        widget.screenSize == ScreenSize.tablet) {
       crossAxisCount = 2;
-      childAspectRatio = 1 / 0.8;
     } else if (widget.screenSize == ScreenSize.largeDesktop) {
       crossAxisCount = 2;
       childAspectRatio = 1 / 0.6;
-    } else if (widget.screenSize == ScreenSize.tablet) {
-      crossAxisCount = 2;
-      childAspectRatio = 1 / 0.8;
-    } else {
-      // Mobile
-      crossAxisCount = 1;
-      childAspectRatio = 1 / 0.8;
     }
 
-    final List<Widget> linegraphs = _buildLineGraphs(records);
+    final List<Widget> linegraphs = [
+      _buildGraph(records.temperatureRecords, "Temperatura", 0, 60, 10, 10, 35),
+      _buildGraph(records.phRecords, "PH", 0, 14, 2, 6.5, 8.5),
+      _buildGraph(records.tdsRecords, "Total de sólidos disueltos", 0, 1400,
+          200, 300, 1000),
+      _buildGraph(
+          records.conductivityRecords, "Conductividad", 0, 1600, 200, 0, 1000),
+      _buildGraph(records.turbidityRecords, "Turbidez", 0, 16, 2, 0, 5),
+    ];
 
     return BaseContainer(
-      margin: margin,
-      padding: padding,
+      margin: _getMargin(),
+      padding: _getPadding(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(context, meterProvider),
           const SizedBox(height: 16),
-          DateRangeFilter(
-            startDate: meterProvider.currentStartDate,
-            endDate: meterProvider.currentEndDate,
-            isLoading: meterProvider.isLoading,
-            onApplyFilters: meterProvider.applyDateFilters,
-            onPreviousPeriod: meterProvider.hasActiveFilters ? meterProvider.goToPreviousPage : null,
-            onNextPeriod: meterProvider.hasActiveFilters ? meterProvider.goToNextPage : null,
+          Row(
+            children: [
+              Expanded(
+                child: DateRangeFilter(
+                  startDate: meterProvider.currentStartDate,
+                  endDate: meterProvider.currentEndDate,
+                  isLoading: meterProvider.isLoading,
+                  onApplyFilters: meterProvider.applyDateFilters,
+                  onPreviousPeriod: meterProvider.hasPreviousPage
+                      ? meterProvider.goToPreviousPage
+                      : null,
+                  onNextPeriod: meterProvider.hasNextPage
+                      ? meterProvider.goToNextPage
+                      : null,
+                ),
+              ),
+              if (meterProvider.hasActiveFilters)
+                IconButton(
+                  onPressed: meterProvider.clearFilters,
+                  icon: const Icon(Icons.clear),
+                  tooltip: 'Quitar filtros',
+                ),
+            ],
           ),
           const SizedBox(height: 16),
-          // Contenedor con scroll para los gráficos
           Expanded(
             child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                children: [
-                  GridView.count(
-                    childAspectRatio: childAspectRatio,
-                    crossAxisCount: crossAxisCount,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: linegraphs,
-                  ),
-                ],
+              child: GridView.count(
+                childAspectRatio: childAspectRatio,
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                children: linegraphs,
               ),
             ),
           ),
-          // Solo número de página en la parte inferior
-          if (meterProvider.hasActiveFilters) _buildPageNumber(context, meterProvider),
         ],
       ),
     );
   }
 
-  Widget _buildPageNumber(BuildContext context, MeterRecordProvider meterProvider) {
-    return Container(
-      margin: const EdgeInsets.only(top: 16),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.tertiary.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Theme.of(context).colorScheme.tertiary),
-      ),
-      child: Center(
-        child: Text(
-          '${meterProvider.currentPage}',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.secondary,
+  Widget _buildGraph(List<dynamic> records, String sensorType, double minY,
+      double maxY, double intervalY, double minThreshold, double maxThreshold) {
+    if (records.isEmpty) {
+      return Card(
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.show_chart, size: 48, color: Colors.grey[400]),
+              const SizedBox(height: 8),
+              Text(sensorType,
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              Text('Sin datos disponibles',
+                  style: TextStyle(color: Colors.grey[600])),
+            ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context, MeterRecordProvider meterProvider) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: Text(
-            "Historial del medidor ${widget.idMeter}",
-            style: Theme.of(context)
-                .textTheme
-                .bodyLarge
-                ?.copyWith(fontWeight: FontWeight.bold),
-          ),
-        ),
-        IconButton(
-          onPressed: meterProvider.isLoading
-              ? null
-              : () => meterProvider.refreshMeterRecords(),
-          icon: meterProvider.isLoading
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Icon(Icons.refresh),
-          tooltip: 'Recargar registros',
-        ),
-      ],
-    );
-  }
-
-  List<Widget> _buildLineGraphs(records) {
-    return [
-      _buildTemperatureGraph(records),
-      _buildPhGraph(records),
-      _buildTdsGraph(records),
-      _buildConductivityGraph(records),
-      _buildTurbidityGraph(records),
-    ];
-  }
-
-  Widget _buildTemperatureGraph(records) {
-    final temperatureRecords = records.temperatureRecords;
-    if (temperatureRecords.isEmpty) {
-      return _buildEmptyGraph("Temperatura");
+      );
     }
 
-    final dates = temperatureRecords
-        .map((r) => _formatDate(r.datetime))
-        .toList()
-        .cast<String>();
-    final data = temperatureRecords.map((r) => r.value).toList().cast<double>();
-    final currentValue = data.isNotEmpty ? double.parse(data.last.toStringAsFixed(1)) : 0.0;
-
-    final minThreshold = 10.0;
-    final maxThreshold = 35.0;
-
-    final minY = 0.0;
-    final maxY = 60.0;
+    final dates =
+        records.map((r) => _formatDate(r.datetime)).toList().cast<String>();
+    final data = records.map((r) => r.value).toList().cast<double>();
+    final currentValue =
+        data.isNotEmpty ? double.parse(data.last.toStringAsFixed(1)) : 0.0;
 
     return LineGraph(
-      sensorType: "Temperatura",
+      sensorType: sensorType,
       value: currentValue,
       dates: dates,
       data: data,
       minY: minY,
       maxY: maxY,
-      intervalY: 10.0,
+      intervalY: intervalY,
       minThreshold: minThreshold,
       maxThreshold: maxThreshold,
-    );
-  }
-
-  Widget _buildPhGraph(records) {
-    final phRecords = records.phRecords;
-    if (phRecords.isEmpty) return _buildEmptyGraph("PH");
-
-    final dates = phRecords.map((r) => _formatDate(r.datetime)).toList().cast<String>();
-    final data = phRecords.map((r) => r.value).toList().cast<double>();
-    final currentValue = data.isNotEmpty ? double.parse(data.last.toStringAsFixed(1)) : 0.0;
-
-    final minThreshold = 6.5;
-    final maxThreshold = 8.5;
-
-    return LineGraph(
-      sensorType: "PH",
-      value: currentValue,
-      dates: dates,
-      data: data,
-      minY: 0.0,
-      maxY: 14.0,
-      intervalY: 2.0,
-      minThreshold: minThreshold,
-      maxThreshold: maxThreshold,
-    );
-  }
-
-  Widget _buildTdsGraph(records) {
-    final tdsRecords = records.tdsRecords;
-    if (tdsRecords.isEmpty) return _buildEmptyGraph("Total de sólidos disueltos");
-
-    final dates = tdsRecords.map((r) => _formatDate(r.datetime)).toList().cast<String>();
-    final data = tdsRecords.map((r) => r.value).toList().cast<double>();
-    final currentValue = data.isNotEmpty ? double.parse(data.last.toStringAsFixed(1)) : 0.0;
-
-    final minThreshold = 300.0;
-    final maxThreshold = 1000.0;
-
-    return LineGraph(
-      sensorType: "Total de sólidos disueltos",
-      value: currentValue,
-      dates: dates,
-      data: data,
-      minY: 0,
-      maxY: 1400,
-      intervalY: 200,
-      minThreshold: minThreshold,
-      maxThreshold: maxThreshold,
-    );
-  }
-
-  Widget _buildConductivityGraph(records) {
-    final conductivityRecords = records.conductivityRecords;
-    if (conductivityRecords.isEmpty) return _buildEmptyGraph("Conductividad");
-
-    final dates = conductivityRecords.map((r) => _formatDate(r.datetime)).toList().cast<String>();
-    final data = conductivityRecords.map((r) => r.value).toList().cast<double>();
-    final currentValue = data.isNotEmpty ? double.parse(data.last.toStringAsFixed(1)) : 0.0;
-
-    final minThreshold = 0.0;
-    final maxThreshold = 1000.0;
-
-    return LineGraph(
-      sensorType: "Conductividad",
-      value: currentValue,
-      dates: dates,
-      data: data,
-      minY: 0.0,
-      maxY: 1600.0,
-      intervalY: 200.0,
-      minThreshold: minThreshold,
-      maxThreshold: maxThreshold,
-    );
-  }
-
-  Widget _buildTurbidityGraph(records) {
-    final turbidityRecords = records.turbidityRecords;
-    if (turbidityRecords.isEmpty) return _buildEmptyGraph("Turbidez");
-
-    final dates = turbidityRecords.map((r) => _formatDate(r.datetime)).toList().cast<String>();
-    final data = turbidityRecords.map((r) => r.value).toList().cast<double>();
-    final currentValue = data.isNotEmpty ? double.parse(data.last.toStringAsFixed(1)) : 0.0;
-
-    final minThreshold = 0.0;
-    final maxThreshold = 5.0; // Turbidez máxima (NTU)
-
-    return LineGraph(
-      sensorType: "Turbidez",
-      value: currentValue,
-      dates: dates,
-      data: data,
-      minY: 0.0,
-      maxY: 16.0,
-      intervalY: 2.0,
-      minThreshold: minThreshold,
-      maxThreshold: maxThreshold,
-    );
-  }
-
-  Widget _buildEmptyGraph(String sensorType) {
-    return Card(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.show_chart, size: 48, color: Colors.grey[400]),
-            const SizedBox(height: 8),
-            Text(
-              sensorType,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Sin datos disponibles',
-              style: TextStyle(color: Colors.grey[600]),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -418,14 +262,39 @@ class _MainListrecordsState extends State<MainListrecords> {
     return '$day/$month';
   }
 
+  Widget _buildHeader(BuildContext context, MeterRecordProvider meterProvider) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Text("Historial del medidor ${widget.idMeter}",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(fontWeight: FontWeight.bold)),
+        ),
+        IconButton(
+          onPressed: meterProvider.isLoading
+              ? null
+              : meterProvider.refreshMeterRecords,
+          icon: meterProvider.isLoading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2))
+              : const Icon(Icons.refresh),
+          tooltip: 'Recargar registros',
+        ),
+      ],
+    );
+  }
+
   EdgeInsets _getMargin() {
     switch (widget.screenSize) {
       case ScreenSize.mobile:
-        return const EdgeInsets.all(10);
       case ScreenSize.tablet:
         return const EdgeInsets.all(10);
       case ScreenSize.smallDesktop:
-        return const EdgeInsets.all(0);
       case ScreenSize.largeDesktop:
         return const EdgeInsets.all(0);
     }
@@ -438,19 +307,8 @@ class _MainListrecordsState extends State<MainListrecords> {
       case ScreenSize.tablet:
         return const EdgeInsets.all(12.0);
       case ScreenSize.smallDesktop:
-        return const EdgeInsets.symmetric(horizontal: 20, vertical: 9);
       case ScreenSize.largeDesktop:
         return const EdgeInsets.symmetric(horizontal: 20, vertical: 9);
     }
-  }
-
-  int _countTotalRecords(MeterRecordsResponse records) {
-    int total = 0;
-    total += records.temperatureRecords.length;
-    total += records.phRecords.length;
-    total += records.tdsRecords.length;
-    total += records.conductivityRecords.length;
-    total += records.turbidityRecords.length;
-    return total;
   }
 }
