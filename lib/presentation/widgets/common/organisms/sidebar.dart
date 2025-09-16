@@ -24,8 +24,26 @@ class Sidebar extends StatelessWidget {
       extended: isExtended,
       selectedIndex: selectedIndex,
       minExtendedWidth: 200,
+      leading: _heroWidget(context),
       destinations: destinations ?? [],
       onDestinationSelected: onDestinationSelected,
+    );
+  }
+
+  Widget _heroWidget(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      spacing: 10,
+      children: [
+        Image.asset(
+          "assets/images/icon.png",
+          width: 45,
+        ),
+        Text(
+          "Aqua Minds",
+          style: Theme.of(context).textTheme.displayMedium,
+        ),
+      ],
     );
   }
 }

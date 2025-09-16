@@ -27,7 +27,7 @@ class SensorColor extends StatelessWidget {
           ),
           Expanded(
             child: Container(
-              height: 200,
+              margin: EdgeInsets.all(10),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Color.fromRGBO(

@@ -15,6 +15,9 @@ class ButtonProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton.icon(
+      style: TextButton.styleFrom(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+      ),
       icon: const Icon(
         Icons.account_circle,
         size: 30,

@@ -20,7 +20,7 @@ class GridItemBuilder extends StatelessWidget {
 
     if (screenSize == ScreenSize.mobile) {
       crossAxisCount = 1;
-      childAspectRatio = 1 / 0.6;
+      childAspectRatio = 1 / 0.4;
       gap = 5;
     } else if (screenSize == ScreenSize.tablet) {
       crossAxisCount = 2;
@@ -29,11 +29,11 @@ class GridItemBuilder extends StatelessWidget {
     } else if (screenSize == ScreenSize.smallDesktop) {
       crossAxisCount = 3;
       gap = 10;
-      childAspectRatio = 1 / 0.85;
+      childAspectRatio = 1 / 0.4;
     } else {
       crossAxisCount = 4;
       gap = 16;
-      childAspectRatio = 1 / 0.85;
+      childAspectRatio = 1 / 0.4;
     }
     return Expanded(
       child: SingleChildScrollView(

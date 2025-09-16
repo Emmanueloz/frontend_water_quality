@@ -96,12 +96,12 @@ class AppTheme {
       appBarTheme: AppBarTheme(
         actionsPadding: const EdgeInsets.all(4),
         backgroundColor: colorScheme.primaryContainer,
-        elevation: 0,
+        elevation: 1,
         actionsIconTheme: IconThemeData(color: colorScheme.primary),
         iconTheme: IconThemeData(color: colorScheme.primary),
         titleTextStyle: textTheme.displaySmall,
       ),
-      scaffoldBackgroundColor: colorScheme.secondary,
+      scaffoldBackgroundColor: colorScheme.surface,
       dividerTheme: DividerThemeData(color: colorScheme.primary),
       primaryTextTheme: textTheme,
       textTheme: textTheme,
@@ -133,12 +133,8 @@ class AppTheme {
         ),
       ),
       cardTheme: CardTheme(
-        elevation: 0,
+        elevation: 1,
         color: colorScheme.primaryContainer,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(color: colorScheme.primary, width: 1),
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
       ),
       navigationBarTheme: NavigationBarThemeData(
         elevation: 0,
