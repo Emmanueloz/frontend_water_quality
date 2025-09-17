@@ -68,7 +68,8 @@ class AppRouter {
   ) async {
     print("redirect");
 
-    if (state.uri.path == Routes.splash.path) {
+    if (state.uri.path == Routes.splash.path ||
+        state.uri.path == Routes.aboutUs.path) {
       return null;
     }
 
