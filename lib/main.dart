@@ -13,6 +13,7 @@ import 'package:frontend_water_quality/infrastructure/guest_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/alert_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/workspace_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/meter_repo_impl.dart';
+import 'package:frontend_water_quality/presentation/providers/analysis_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/weather_meter_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/guest_provider.dart';
@@ -117,6 +118,9 @@ void main() async {
             return previousAlertProvider..setAuthProvider(authProvider);
           },
         ),
+        Provider(
+          create: (context) => AnalysisProvider(dio),
+        )
       ],
       child: const MyApp(),
     ),
