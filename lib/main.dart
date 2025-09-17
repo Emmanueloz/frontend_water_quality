@@ -83,21 +83,29 @@ void main() async {
           },
         ),
         ChangeNotifierProxyProvider<AuthProvider, MeterRecordProvider>(
-          create: (context) => MeterRecordProvider(
-            meterSocketService,
-            MeterRecordsRepoImpl(dio),
-            context.read<AuthProvider>(),
-          ),
-          update: (context, authProvider, meterProvider) {
-            meterProvider!.clean();
-            return meterProvider..setAuthProvider(authProvider);
+          create: (context) {
+            final authProvider = context.read<AuthProvider>();
+            final meterRecordProvider = MeterRecordProvider(
+              meterSocketService,
+              MeterRecordsRepoImpl(dio),
+              authProvider,
+            );
+            return meterRecordProvider;
+          },
+          update: (context, authProvider, previousMeterRecordProvider) {
+            previousMeterRecordProvider!.clean();
+            return previousMeterRecordProvider..setAuthProvider(authProvider);
           },
         ),
         ChangeNotifierProxyProvider<AuthProvider, WeatherMeterProvider>(
-          create: (context) => WeatherMeterProvider(
-            WeatherMeterRepoImpl(dio),
-            context.read<AuthProvider>(),
-          ),
+          create: (context) {
+            final authProvider = context.read<AuthProvider>();
+            final weatherMeterProvider = WeatherMeterProvider(
+              WeatherMeterRepoImpl(dio),
+              authProvider,
+            );
+            return weatherMeterProvider;
+          },
           update: (context, authProvider, weatherMeterProvider) {
             weatherMeterProvider!.clean();
             return weatherMeterProvider..setAuthProvider(authProvider);
@@ -131,7 +139,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'Aqua Minds',
       theme: AppTheme.lightTheme,
-      routerConfig: AppRouter.router, // Usa directamente la instancia router
+      routerConfig: AppRouter.router,
       debugShowCheckedModeBanner: false,
     );
   }

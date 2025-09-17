@@ -70,8 +70,6 @@ class Routes {
     pathRoot: "/alerts",
   );
 
-
-
   static RouteProperties guests = RouteProperties(
     name: "guests",
     path: "/guests",
