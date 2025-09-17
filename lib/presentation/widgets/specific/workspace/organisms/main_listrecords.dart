@@ -114,6 +114,7 @@ class _MainListrecordsState extends State<MainListrecords> {
                   onClear: meterProvider.hasActiveFilters
                       ? meterProvider.clearFilters
                       : null,
+                  isMobile: widget.screenSize == ScreenSize.mobile,
                 ),
               ),
             ],
@@ -185,6 +186,7 @@ class _MainListrecordsState extends State<MainListrecords> {
                   onClear: meterProvider.hasActiveFilters
                       ? meterProvider.clearFilters
                       : null,
+                  isMobile: widget.screenSize == ScreenSize.mobile,
                 ),
               ),
             ],

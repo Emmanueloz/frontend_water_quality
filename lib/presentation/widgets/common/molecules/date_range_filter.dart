@@ -8,6 +8,7 @@ class DateRangeFilter extends StatefulWidget {
   final VoidCallback? onPreviousPeriod;
   final VoidCallback? onNextPeriod;
   final void Function()? onClear;
+  final bool isMobile;
   final bool isLoading;
 
   const DateRangeFilter({
@@ -19,6 +20,7 @@ class DateRangeFilter extends StatefulWidget {
     this.onNextPeriod,
     this.isLoading = false,
     this.onClear,
+    required this.isMobile,
   });
 
   @override
@@ -105,8 +107,6 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 600;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -122,7 +122,7 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 10,
         children: [
-          if (isMobile) ...[
+          if (widget.isMobile) ...[
             // Layout móvil - vertical
             _buildDateField(
               context,
