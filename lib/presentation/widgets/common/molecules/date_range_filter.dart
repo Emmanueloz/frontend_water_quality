@@ -7,6 +7,7 @@ class DateRangeFilter extends StatefulWidget {
   final Function(DateTime? startDate, DateTime? endDate)? onApplyFilters;
   final VoidCallback? onPreviousPeriod;
   final VoidCallback? onNextPeriod;
+  final void Function()? onClear;
   final bool isLoading;
 
   const DateRangeFilter({
@@ -17,6 +18,7 @@ class DateRangeFilter extends StatefulWidget {
     this.onPreviousPeriod,
     this.onNextPeriod,
     this.isLoading = false,
+    this.onClear,
   });
 
   @override
@@ -73,7 +75,8 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
     }
   }
 
-  Future<DateTime?> _showCustomDatePicker(BuildContext context, DateTime initialDate) async {
+  Future<DateTime?> _showCustomDatePicker(
+      BuildContext context, DateTime initialDate) async {
     return await showDialog<DateTime>(
       context: context,
       builder: (context) {
@@ -117,6 +120,7 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 10,
         children: [
           if (isMobile) ...[
             // Layout móvil - vertical
@@ -127,7 +131,6 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
               () => _selectStartDate(context),
               isMobile: true,
             ),
-            const SizedBox(height: 16),
             _buildDateField(
               context,
               'Fecha de fin',
@@ -135,7 +138,12 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
               () => _selectEndDate(context),
               isMobile: true,
             ),
-            const SizedBox(height: 16),
+            if (widget.onClear != null)
+              IconButton(
+                onPressed: widget.onClear,
+                icon: const Icon(Icons.clear_all),
+                tooltip: 'Quitar filtros',
+              ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -175,6 +183,12 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
                 _buildNavigationButtons(context),
                 const SizedBox(width: 16),
                 _buildApplyButton(context, isMobile: false),
+                if (widget.onClear != null)
+                  IconButton(
+                    onPressed: widget.onClear,
+                    icon: const Icon(Icons.clear),
+                    tooltip: 'Quitar filtros',
+                  ),
               ],
             ),
           ],
@@ -191,7 +205,7 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
     required bool isMobile,
   }) {
     final theme = Theme.of(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -222,8 +236,8 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
                   child: Text(
                     date != null ? _dateFormat.format(date) : 'mm/dd/yyyy',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: date != null 
-                          ? theme.colorScheme.secondary 
+                      color: date != null
+                          ? theme.colorScheme.secondary
                           : theme.colorScheme.secondary.withValues(alpha: 0.6),
                     ),
                   ),
@@ -265,7 +279,7 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
     VoidCallback? onPressed,
   ) {
     final theme = Theme.of(context);
-    
+
     return Container(
       width: 36,
       height: 36,
@@ -286,7 +300,7 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
 
   Widget _buildApplyButton(BuildContext context, {required bool isMobile}) {
     final theme = Theme.of(context);
-    
+
     return SizedBox(
       height: 36,
       child: ElevatedButton(
@@ -372,8 +386,18 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final monthNames = [
-      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre'
     ];
 
     return Column(
@@ -385,7 +409,8 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
           children: [
             IconButton(
               onPressed: _previousMonth,
-              icon: Icon(Icons.chevron_left, color: theme.colorScheme.secondary),
+              icon:
+                  Icon(Icons.chevron_left, color: theme.colorScheme.secondary),
             ),
             Text(
               '${monthNames[_currentDate.month - 1]} ${_currentDate.year}',
@@ -396,7 +421,8 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
             ),
             IconButton(
               onPressed: _nextMonth,
-              icon: Icon(Icons.chevron_right, color: theme.colorScheme.secondary),
+              icon:
+                  Icon(Icons.chevron_right, color: theme.colorScheme.secondary),
             ),
           ],
         ),
@@ -446,7 +472,8 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
 
   Widget _buildCalendar(ThemeData theme) {
     final firstDayOfMonth = DateTime(_currentDate.year, _currentDate.month, 1);
-    final lastDayOfMonth = DateTime(_currentDate.year, _currentDate.month + 1, 0);
+    final lastDayOfMonth =
+        DateTime(_currentDate.year, _currentDate.month + 1, 0);
     final firstWeekday = firstDayOfMonth.weekday;
     final daysInMonth = lastDayOfMonth.day;
 

@@ -30,7 +30,7 @@ class MeterRecordsRepoImpl implements MeterRecordsRepo {
             '${endDate.toIso8601String().split('T')[0]} 23:59:59';
       }
       if (lastId != null) {
-        queryParams['last_id'] = lastId;
+        queryParams['index'] = lastId;
       }
 
       final response = await _dio.get(

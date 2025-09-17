@@ -111,14 +111,11 @@ class _MainListrecordsState extends State<MainListrecords> {
                   onNextPeriod: meterProvider.hasNextPage
                       ? meterProvider.goToNextPage
                       : null,
+                  onClear: meterProvider.hasActiveFilters
+                      ? meterProvider.clearFilters
+                      : null,
                 ),
               ),
-              if (meterProvider.hasActiveFilters)
-                IconButton(
-                  onPressed: meterProvider.clearFilters,
-                  icon: const Icon(Icons.clear),
-                  tooltip: 'Quitar filtros',
-                ),
             ],
           ),
           const SizedBox(height: 16),
@@ -185,14 +182,11 @@ class _MainListrecordsState extends State<MainListrecords> {
                   onNextPeriod: meterProvider.hasNextPage
                       ? meterProvider.goToNextPage
                       : null,
+                  onClear: meterProvider.hasActiveFilters
+                      ? meterProvider.clearFilters
+                      : null,
                 ),
               ),
-              if (meterProvider.hasActiveFilters)
-                IconButton(
-                  onPressed: meterProvider.clearFilters,
-                  icon: const Icon(Icons.clear),
-                  tooltip: 'Quitar filtros',
-                ),
             ],
           ),
           const SizedBox(height: 16),
@@ -267,7 +261,7 @@ class _MainListrecordsState extends State<MainListrecords> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
-          child: Text("Historial del medidor ${widget.idMeter}",
+          child: Text("Historial del medidor",
               style: Theme.of(context)
                   .textTheme
                   .bodyLarge
