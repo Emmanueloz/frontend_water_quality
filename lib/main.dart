@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:frontend_water_quality/core/theme/theme.dart';
 import 'package:frontend_water_quality/domain/models/storage_model.dart';
 import 'package:frontend_water_quality/infrastructure/auth_repo_impl.dart';
@@ -142,16 +141,6 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       routerConfig: AppRouter.router,
       debugShowCheckedModeBanner: false,
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('es', 'ES'), // Español
-        Locale('en', 'US'), // Inglés como fallback
-      ],
-      locale: const Locale('es', 'ES'), // Español por defecto
     );
   }
 }
