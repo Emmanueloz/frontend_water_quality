@@ -154,11 +154,11 @@ class _MainListrecordsState extends State<MainListrecords> {
     final List<Widget> linegraphs = [
       _buildGraph(records.temperatureRecords, "Temperatura", 0, 60, 10, 10, 35),
       _buildGraph(records.phRecords, "PH", 0, 14, 2, 6.5, 8.5),
-      _buildGraph(records.tdsRecords, "Total de sólidos disueltos", 0, 1400,
-          200, 300, 1000),
+      _buildGraph(records.tdsRecords, "Total de sólidos disueltos", 0, 500, 50,
+          300, 490),
       _buildGraph(
-          records.conductivityRecords, "Conductividad", 0, 1600, 200, 0, 1000),
-      _buildGraph(records.turbidityRecords, "Turbidez", 0, 16, 2, 0, 5),
+          records.conductivityRecords, "Conductividad", 0, 3200, 300, 0, 1000),
+      _buildGraph(records.turbidityRecords, "Turbidez", 0, 50, 5, 0, 5),
     ];
 
     return BaseContainer(
