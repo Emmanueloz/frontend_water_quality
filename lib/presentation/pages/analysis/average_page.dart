@@ -4,7 +4,7 @@ import 'package:frontend_water_quality/presentation/providers/analysis_provider.
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
-import 'package:intl/intl.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/average_detail.dart';
 import 'package:provider/provider.dart';
 
 class AveragePage extends StatefulWidget {
@@ -89,6 +89,9 @@ class _AveragePageState extends State<AveragePage> {
                 Expanded(
                   child: AverageDetail(
                     average: _current,
+                    child: Center(
+                      child: Text("Graficas"),
+                    ),
                   ),
                 ),
             ],
@@ -133,87 +136,6 @@ class _AveragePageState extends State<AveragePage> {
           }
         });
       },
-    );
-  }
-}
-
-class AverageDetail extends StatelessWidget {
-  const AverageDetail({
-    super.key,
-    required this.average,
-  });
-
-  final Average? average;
-
-  @override
-  Widget build(BuildContext context) {
-    String typeSensor = "5";
-    String? sensor = average!.parameters!.sensor;
-
-    String startDate = DateFormat('dd MMM yyy')
-        .format(average!.parameters!.startDate ?? DateTime.now());
-
-    String endDate = DateFormat('dd MMM yyy')
-        .format(average!.parameters!.endDate ?? DateTime.now());
-
-    if (sensor != null) {
-      typeSensor = "Sensor: ${sensor}";
-    }
-
-    return BaseContainer(
-      width: double.infinity,
-      height: double.infinity,
-      child: Wrap(
-        children: [
-          Card(
-            child: Padding(
-              padding: EdgeInsets.all(10),
-              child: Column(
-                children: [Text("Estado"), Text(average!.status ?? "")],
-              ),
-            ),
-          ),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 10,
-                children: [
-                  Text("Parametros"),
-                  Text("$startDate $endDate"),
-                ],
-              ),
-            ),
-          ),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 10,
-                children: [
-                  Text("Sensores"),
-                  Text(typeSensor),
-                ],
-              ),
-            ),
-          ),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 10,
-                children: [
-                  Text("Tipo"),
-                  Text(average!.type ?? ""),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

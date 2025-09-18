@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/organisms/grid_item_builder.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/analysis/analysis_card.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/molecules/analysis_card.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
