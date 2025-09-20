@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/domain/models/analysis/average.dart';
-import 'package:frontend_water_quality/domain/models/analysis/data_average_all.dart';
-import 'package:frontend_water_quality/domain/models/analysis/data_average_sensor.dart';
+import 'package:frontend_water_quality/domain/models/analysis/average/average.dart';
+import 'package:frontend_water_quality/domain/models/analysis/average/data_average_all.dart';
+import 'package:frontend_water_quality/domain/models/analysis/average/data_average_sensor.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/chat_ai_page.dart';
 import 'package:frontend_water_quality/presentation/providers/analysis_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
@@ -80,10 +80,6 @@ class _AveragePageState extends State<AveragePage> {
                                   DataColumn(label: Text("Actualizar en")),
                                   DataColumn(label: Text("Estatus")),
                                 ],
-                                headingTextStyle: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(fontWeight: FontWeight.bold),
                                 rows: snapshot.data!
                                     .map(
                                       (average) => _rowTable(average),
@@ -121,7 +117,7 @@ class _AveragePageState extends State<AveragePage> {
                 ),
               if (expandedDetailt && showChat)
                 Expanded(
-                  child: ChatAiPage(average: _current),
+                  child: ChatAiPage(averageId: _current!.id),
                 ),
             ],
           ),

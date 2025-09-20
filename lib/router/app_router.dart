@@ -9,6 +9,7 @@ import 'package:frontend_water_quality/infrastructure/local_storage_service.dart
 import 'package:frontend_water_quality/presentation/pages/alerts.dart';
 import 'package:frontend_water_quality/presentation/pages/analysis/analysis.dart';
 import 'package:frontend_water_quality/presentation/pages/analysis/average_page.dart';
+import 'package:frontend_water_quality/presentation/pages/analysis/average_period_page.dart';
 import 'package:frontend_water_quality/presentation/pages/form_alert.dart';
 import 'package:frontend_water_quality/domain/models/alert.dart';
 import 'package:frontend_water_quality/presentation/pages/change_password.dart';
@@ -261,8 +262,11 @@ class AppRouter {
                             parentNavigatorKey: rootNavigatorKey,
                             path: Routes.analysisAveragePeriod.path,
                             name: Routes.analysisAveragePeriod.name,
-                            builder: (context, state) => SafeArea(
-                              child: Text("Promedio por periodo"),
+                            builder: (context, state) => AveragePeriodPage(
+                              idWorkspace:
+                                  state.pathParameters['id'] ?? 'default',
+                              idMeter:
+                                  state.pathParameters['idMeter'] ?? 'default',
                             ),
                           ),
                           GoRoute(

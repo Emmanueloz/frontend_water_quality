@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/domain/models/analysis/average.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 
 class ChatAiPage extends StatefulWidget {
-  final Average? average;
-  const ChatAiPage({super.key, required this.average});
+  final String? averageId;
+  const ChatAiPage({super.key, required this.averageId});
 
   @override
   State<ChatAiPage> createState() => _ChatAiPageState();

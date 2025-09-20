@@ -92,6 +92,11 @@ class AppTheme {
         selectedTileColor: colorScheme.tertiary,
         titleTextStyle: textTheme.titleMedium,
       ),
+      dataTableTheme: DataTableThemeData(
+        headingTextStyle: textTheme.bodyMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+        ),
+      ),
       inputDecorationTheme: InputDecorationTheme(
         labelStyle: textTheme.bodyMedium,
         iconColor: colorScheme.secondary,
