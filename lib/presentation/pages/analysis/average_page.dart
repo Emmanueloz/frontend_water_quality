@@ -9,6 +9,7 @@ import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_co
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/average_chart.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/average_detail.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class AveragePage extends StatefulWidget {
@@ -59,8 +60,9 @@ class _AveragePageState extends State<AveragePage> {
                     height: double.infinity,
                     child: Align(
                       alignment: Alignment.topCenter,
-                      child: SizedBox(
+                      child: Container(
                         width: 1024,
+                        margin: EdgeInsets.all(10),
                         child: FutureBuilder(
                           future: _getAverage,
                           builder: (context, snapshot) {
@@ -70,14 +72,18 @@ class _AveragePageState extends State<AveragePage> {
                                 return Text("Ocurio un error");
                               }
                               return DataTable(
+                                showCheckboxColumn: false,
                                 columns: [
                                   DataColumn(label: Text("Fecha inicio")),
                                   DataColumn(label: Text("Fecha final")),
-                                  DataColumn(label: Text("Creado")),
-                                  DataColumn(
-                                      label: Text("Ultima actualizacion")),
-                                  DataColumn(label: Text("Estado")),
+                                  DataColumn(label: Text("Creado en")),
+                                  DataColumn(label: Text("Actualizar en")),
+                                  DataColumn(label: Text("Estatus")),
                                 ],
+                                headingTextStyle: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(fontWeight: FontWeight.bold),
                                 rows: snapshot.data!
                                     .map(
                                       (average) => _rowTable(average),
@@ -125,19 +131,28 @@ class _AveragePageState extends State<AveragePage> {
   }
 
   DataRow _rowTable(Average average) {
+    String startDate = DateFormat('dd MMM yyy')
+        .format(average.parameters!.startDate ?? DateTime.now());
+    String endDate = DateFormat('dd MMM yyy')
+        .format(average.parameters!.startDate ?? DateTime.now());
+    String createAt = DateFormat('dd MMM yyy HH:MM')
+        .format(average.createdAt ?? DateTime.now());
+    String updateAt = DateFormat('dd MMM yyy HH:MM')
+        .format(average.updatedAt ?? DateTime.now());
+
     return DataRow(
       cells: [
         DataCell(
-          Text(average.parameters!.startDate.toString()),
+          Text(startDate),
         ),
         DataCell(
-          Text(average.parameters!.endDate.toString()),
+          Text(endDate),
         ),
         DataCell(
-          Text(average.createdAt.toString()),
+          Text(createAt),
         ),
         DataCell(
-          Text(average.updatedAt.toString()),
+          Text(updateAt),
         ),
         DataCell(
           Text(
