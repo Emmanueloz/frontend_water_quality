@@ -4,7 +4,7 @@ import 'package:frontend_water_quality/domain/models/analysis/average_period/par
 import 'package:frontend_water_quality/domain/models/analysis/base_analysis.dart';
 import 'package:frontend_water_quality/domain/models/analysis/data.dart';
 
-class AveragePeriod extends BaseAverage<Data, ParamPeriod> {
+class AveragePeriod extends BaseAnalysis<Data, ParamPeriod> {
   AveragePeriod({
     super.id,
     super.createdAt,

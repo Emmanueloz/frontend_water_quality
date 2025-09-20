@@ -4,7 +4,7 @@ import 'package:frontend_water_quality/domain/models/analysis/average/data_avera
 import 'package:frontend_water_quality/domain/models/analysis/average/data_average_sensor.dart';
 import 'package:frontend_water_quality/domain/models/analysis/parameters.dart';
 
-class Average extends BaseAverage<Data, Parameters> {
+class Average extends BaseAnalysis<Data, Parameters> {
   Average({
     super.id,
     super.createdAt,

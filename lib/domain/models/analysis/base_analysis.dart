@@ -1,4 +1,4 @@
-class BaseAverage<TData, TParameters> {
+class BaseAnalysis<TData, TParameters> {
   String? id;
   DateTime? createdAt;
   TData? data;
@@ -10,7 +10,7 @@ class BaseAverage<TData, TParameters> {
   DateTime? updatedAt;
   String? workspaceId;
 
-  BaseAverage({
+  BaseAnalysis({
     this.id,
     this.createdAt,
     this.data,
@@ -23,13 +23,13 @@ class BaseAverage<TData, TParameters> {
     this.workspaceId,
   });
 
-  factory BaseAverage.fromJson(
+  factory BaseAnalysis.fromJson(
     Map<String, dynamic> json,
     String id,
     TData Function(Map<String, dynamic>) dataFromJson,
     TParameters Function(Map<String, dynamic>) parametersFromJson,
   ) {
-    return BaseAverage<TData, TParameters>(
+    return BaseAnalysis<TData, TParameters>(
       id: id,
       createdAt: json["created_at"] == null
           ? null

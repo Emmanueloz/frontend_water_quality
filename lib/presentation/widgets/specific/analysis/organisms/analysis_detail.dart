@@ -1,34 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/domain/models/analysis/average/average.dart';
+import 'package:frontend_water_quality/domain/models/analysis/base_analysis.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:intl/intl.dart';
 
-class AverageDetail extends StatelessWidget {
+class AnalysisDetail extends StatelessWidget {
   final bool isExpanded;
   final void Function() onExpanded;
   final void Function() onOpenChat;
   final Widget child;
-  const AverageDetail({
+  const AnalysisDetail({
     super.key,
-    required this.average,
+    required this.analysis,
     required this.child,
     required this.isExpanded,
     required this.onExpanded,
     required this.onOpenChat,
   });
 
-  final Average? average;
+  final BaseAnalysis? analysis;
 
   @override
   Widget build(BuildContext context) {
     String typeSensor = "5";
-    String? sensor = average!.parameters!.sensor;
+    String? sensor = analysis!.parameters!.sensor;
 
     String startDate = DateFormat('dd MMM yyy')
-        .format(average!.parameters!.startDate ?? DateTime.now());
+        .format(analysis!.parameters!.startDate ?? DateTime.now());
 
     String endDate = DateFormat('dd MMM yyy')
-        .format(average!.parameters!.endDate ?? DateTime.now());
+        .format(analysis!.parameters!.endDate ?? DateTime.now());
 
     if (sensor != null) {
       typeSensor = "Sensor: $sensor";
@@ -66,10 +66,10 @@ class AverageDetail extends StatelessWidget {
             children: [
               TableRow(
                 children: [
-                  _cardInfo(context, "Estado", average!.status ?? ""),
+                  _cardInfo(context, "Estado", analysis!.status ?? ""),
                   _cardInfo(context, "Parametros", "$startDate $endDate"),
                   _cardInfo(context, "Sensores", typeSensor),
-                  _cardInfo(context, "Tipo", average!.type ?? ""),
+                  _cardInfo(context, "Tipo", analysis!.type ?? ""),
                 ],
               )
             ],

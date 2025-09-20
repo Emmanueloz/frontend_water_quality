@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average/average.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average/data_average_all.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average/data_average_sensor.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_table.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/chat_ai_page.dart';
 import 'package:frontend_water_quality/presentation/providers/analysis_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/average_chart.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/average_detail.dart';
-import 'package:intl/intl.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_detail.dart';
 import 'package:provider/provider.dart';
 
 class AveragePage extends StatefulWidget {
@@ -71,20 +71,26 @@ class _AveragePageState extends State<AveragePage> {
                               if (snapshot.hasError) {
                                 return Text("Ocurio un error");
                               }
-                              return DataTable(
-                                showCheckboxColumn: false,
-                                columns: [
-                                  DataColumn(label: Text("Fecha inicio")),
-                                  DataColumn(label: Text("Fecha final")),
-                                  DataColumn(label: Text("Creado en")),
-                                  DataColumn(label: Text("Actualizar en")),
-                                  DataColumn(label: Text("Estatus")),
-                                ],
-                                rows: snapshot.data!
-                                    .map(
-                                      (average) => _rowTable(average),
-                                    )
-                                    .toList(),
+                              return AnalysisTable(
+                                averages: snapshot.data ?? [],
+                                idSelected: idAverage ?? "",
+                                onSelectChanged: (value, id) {
+                                  setState(
+                                    () {
+                                      if (idAverage != id || !showDetail) {
+                                        showDetail = true;
+                                        idAverage = id;
+                                        _current = snapshot.data?.firstWhere(
+                                          (element) => element.id == id,
+                                        );
+                                      } else {
+                                        showDetail = false;
+                                        idAverage = "";
+                                        _current = null;
+                                      }
+                                    },
+                                  );
+                                },
                               );
                             } else {
                               return CircularProgressIndicator();
@@ -97,7 +103,7 @@ class _AveragePageState extends State<AveragePage> {
                 ),
               if (showDetail)
                 Expanded(
-                  child: AverageDetail(
+                  child: AnalysisDetail(
                     isExpanded: expandedDetailt,
                     onExpanded: () => setState(() {
                       expandedDetailt = !expandedDetailt;
@@ -105,7 +111,7 @@ class _AveragePageState extends State<AveragePage> {
                     onOpenChat: () => setState(() {
                       showChat = !showChat;
                     }),
-                    average: _current,
+                    analysis: _current,
                     child: _current!.parameters!.sensor != null
                         ? _ChartSensor(
                             dataAverage: _current!.data as DataAverageSensor,
@@ -122,53 +128,6 @@ class _AveragePageState extends State<AveragePage> {
             ],
           ),
         );
-      },
-    );
-  }
-
-  DataRow _rowTable(Average average) {
-    String startDate = DateFormat('dd MMM yyy')
-        .format(average.parameters!.startDate ?? DateTime.now());
-    String endDate = DateFormat('dd MMM yyy')
-        .format(average.parameters!.startDate ?? DateTime.now());
-    String createAt = DateFormat('dd MMM yyy HH:MM')
-        .format(average.createdAt ?? DateTime.now());
-    String updateAt = DateFormat('dd MMM yyy HH:MM')
-        .format(average.updatedAt ?? DateTime.now());
-
-    return DataRow(
-      cells: [
-        DataCell(
-          Text(startDate),
-        ),
-        DataCell(
-          Text(endDate),
-        ),
-        DataCell(
-          Text(createAt),
-        ),
-        DataCell(
-          Text(updateAt),
-        ),
-        DataCell(
-          Text(
-            average.status ?? "",
-          ),
-        ),
-      ],
-      selected: idAverage == average.id,
-      onSelectChanged: (value) {
-        setState(() {
-          if (idAverage != average.id || !showDetail) {
-            showDetail = true;
-            idAverage = average.id;
-            _current = average;
-          } else {
-            showDetail = false;
-            idAverage = "";
-            _current = null;
-          }
-        });
       },
     );
   }
