@@ -24,7 +24,7 @@ class DataAverageAll extends Data {
 
 class ResultAverage {
   double? average;
-  int? max;
+  double? max;
   double? min;
   String? sensor;
 

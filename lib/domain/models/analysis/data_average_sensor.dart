@@ -24,7 +24,7 @@ class DataAverageSensor extends Data {
 
 class Stats {
   double? average;
-  int? max;
+  double? max;
   double? min;
 
   Stats({

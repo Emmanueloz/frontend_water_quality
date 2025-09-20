@@ -4,11 +4,17 @@ import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_co
 import 'package:intl/intl.dart';
 
 class AverageDetail extends StatelessWidget {
+  final bool isExpanded;
+  final void Function() onExpanded;
+  final void Function() onOpenChat;
   final Widget child;
   const AverageDetail({
     super.key,
     required this.average,
     required this.child,
+    required this.isExpanded,
+    required this.onExpanded,
+    required this.onOpenChat,
   });
 
   final Average? average;
@@ -34,13 +40,25 @@ class AverageDetail extends StatelessWidget {
       padding: EdgeInsets.all(10),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
-        spacing: 10,
+        spacing: 20,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Resultados"),
-              IconButton.filled(onPressed: () {}, icon: Icon(Icons.chat))
+              IconButton(
+                onPressed: onExpanded,
+                icon: Icon(isExpanded ? Icons.close : Icons.fullscreen),
+              ),
+              Text(
+                "Resultados",
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              Spacer(),
+              if (isExpanded)
+                IconButton.filled(onPressed: onOpenChat, icon: Icon(Icons.chat))
             ],
           ),
           Table(
