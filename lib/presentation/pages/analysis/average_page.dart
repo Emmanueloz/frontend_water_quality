@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average.dart';
 import 'package:frontend_water_quality/domain/models/analysis/data_average_all.dart';
 import 'package:frontend_water_quality/domain/models/analysis/data_average_sensor.dart';
-import 'package:frontend_water_quality/presentation/pages/analysis/chat_ai_page.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/chat_ai_page.dart';
 import 'package:frontend_water_quality/presentation/providers/analysis_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';

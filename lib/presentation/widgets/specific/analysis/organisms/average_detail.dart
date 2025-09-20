@@ -31,7 +31,7 @@ class AverageDetail extends StatelessWidget {
         .format(average!.parameters!.endDate ?? DateTime.now());
 
     if (sensor != null) {
-      typeSensor = "Sensor: ${sensor}";
+      typeSensor = "Sensor: $sensor";
     }
 
     return BaseContainer(
@@ -58,7 +58,8 @@ class AverageDetail extends StatelessWidget {
               ),
               Spacer(),
               if (isExpanded)
-                IconButton.filled(onPressed: onOpenChat, icon: Icon(Icons.chat))
+                IconButton(
+                    onPressed: onOpenChat, icon: Icon(Icons.auto_awesome))
             ],
           ),
           Table(
