@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/constants/limit_chart_sensor.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average/average.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average/data_average_all.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average/data_average_sensor.dart';
@@ -72,8 +73,9 @@ class _AveragePageState extends State<AveragePage> {
                                 return Text("Ocurio un error");
                               }
                               return AnalysisTable(
-                                averages: snapshot.data ?? [],
+                                analysis: snapshot.data ?? [],
                                 idSelected: idAverage ?? "",
+                                screenSize: screenSize,
                                 onSelectChanged: (value, id) {
                                   setState(
                                     () {
@@ -149,28 +151,11 @@ class _AllChartSensor extends StatelessWidget {
                 average: av.average ?? 0,
                 min: av.min ?? 0,
                 max: av.max ?? 0,
-                maxY: _getMaxY(av.sensor ?? ""),
+                maxY: LimitChartSensor.getMaxY(av.sensor ?? ""),
                 name: av.sensor ?? ""),
           )
           .toList(),
     );
-  }
-
-  double _getMaxY(String sensor) {
-    switch (sensor) {
-      case "temperature":
-        return 60;
-      case "ph":
-        return 14.0;
-      case "tds":
-        return 700.0;
-      case "conductivity":
-        return 3000.0;
-      case "turbidity":
-        return 50;
-      default:
-        return 0;
-    }
   }
 }
 
@@ -185,26 +170,9 @@ class _ChartSensor extends StatelessWidget {
       average: dataAverage.stats?.average ?? 0,
       min: dataAverage.stats?.min ?? 0,
       max: dataAverage.stats?.max ?? 0,
-      maxY: _getMaxY(sensor),
+      maxY: LimitChartSensor.getMaxY(sensor),
       name: sensor,
       width: 500,
     );
-  }
-
-  double _getMaxY(String sensor) {
-    switch (sensor) {
-      case "temperature":
-        return 60;
-      case "ph":
-        return 14.0;
-      case "tds":
-        return 700.0;
-      case "conductivity":
-        return 3000.0;
-      case "turbidity":
-        return 70;
-      default:
-        return 0;
-    }
   }
 }
