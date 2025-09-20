@@ -18,6 +18,25 @@ class User {
     this.rol,
   });
 
+  // copyWith para crear una copia modificando solo los campos deseados
+  User copyWith({
+    String? uid,
+    String? email,
+    String? username,
+    String? phone,
+    String? password,
+    AppRoles? rol,
+  }) {
+    return User(
+      uid: uid ?? this.uid,
+      email: email ?? this.email,
+      username: username ?? this.username,
+      phone: phone ?? this.phone,
+      password: password ?? this.password,
+      rol: rol ?? this.rol,
+    );
+  }
+
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       uid: json['uid'] as String?,

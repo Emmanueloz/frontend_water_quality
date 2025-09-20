@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/presentation/pages/profile.dart';
+import 'package:frontend_water_quality/domain/models/user.dart';
 
 class ProfileHeader extends StatelessWidget {
-  final UserProfile user;
+  final User user;
 
   const ProfileHeader({super.key, required this.user});
 
@@ -16,13 +16,13 @@ class ProfileHeader extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            user.name,
+            user.username ?? 'Usuario',
             style: theme.textTheme.displaySmall?.copyWith(
               color: theme.colorScheme.surface, // Texto blanco sobre fondo oscuro
             ),
           ),
           const SizedBox(height: 8),
-          Chip(label: Text(user.role, style: TextStyle(fontSize: 14),)),
+          Chip(label: Text( user.rol?.name ?? 'Sin rol', style: TextStyle(fontSize: 14),)),
         ],
       ),
     );
