@@ -9,6 +9,7 @@ class AveragePeriodChart extends StatelessWidget {
   final String periodType;
   final double? width;
   final double? maxY;
+
   const AveragePeriodChart({
     super.key,
     required this.name,
@@ -21,17 +22,17 @@ class AveragePeriodChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final List<DateTime> titles =[ ];
-    final List<FlSpot> values = [];
+    final List<DateTime> titles = [];
     final int length = data.averages!.length;
 
+    // Crear títulos para el eje X
     for (int i = 0; i < length; i++) {
       final avg = data.averages?[i];
       titles.add(avg!.date ?? DateTime.now());
-      values.add(
-        FlSpot(i.toDouble(), avg.value ?? 0),
-      );
     }
+
+    // Crear segmentos de líneas discontinuas
+    final List<LineChartBarData> lineSegments = _createSegmentedLines(theme);
 
     return SizedBox(
       width: width,
@@ -44,7 +45,7 @@ class AveragePeriodChart extends StatelessWidget {
               spacing: 20,
               children: [
                 Text(
-                  name.toUpperCase(),
+                  "${name.toUpperCase()} - Cantidad de valores $length",
                   style: theme.textTheme.bodyLarge
                       ?.copyWith(fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
@@ -53,13 +54,8 @@ class AveragePeriodChart extends StatelessWidget {
                   child: LineChart(
                     LineChartData(
                       maxY: maxY,
-                      lineBarsData: [
-                        LineChartBarData(
-                          color: theme.colorScheme.primary,
-                          spots: values,
-                        )
-                      ],
-                      gridData: FlGridData(drawVerticalLine: false),
+                      minY: 0,
+                      lineBarsData: lineSegments,
                       borderData: FlBorderData(show: false),
                       titlesData: FlTitlesData(
                         bottomTitles: AxisTitles(
@@ -82,6 +78,13 @@ class AveragePeriodChart extends StatelessWidget {
                             },
                           ),
                         ),
+                        leftTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 40,
+                            interval: maxY! / 10,
+                          ),
+                        ),
                         topTitles: AxisTitles(
                           sideTitles: SideTitles(showTitles: false),
                         ),
@@ -100,26 +103,49 @@ class AveragePeriodChart extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime datetime) {
-    String format = "dd/MM";
+  List<LineChartBarData> _createSegmentedLines(ThemeData theme) {
+    List<LineChartBarData> lines = [];
+    List<FlSpot> currentSegment = [];
 
+    for (int i = 0; i < data.averages!.length; i++) {
+      final avg = data.averages![i];
+
+      if (avg.value != null) {
+        currentSegment.add(FlSpot(i.toDouble(), avg.value!));
+      } else {
+        // Guardar segmento actual si tiene al menos un punto
+        if (currentSegment.isNotEmpty) {
+          lines.add(LineChartBarData(
+            spots: List.from(currentSegment),
+            color: theme.colorScheme.primary,
+          ));
+          currentSegment.clear();
+        }
+      }
+    }
+
+    // Agregar último segmento si existe
+    if (currentSegment.isNotEmpty) {
+      lines.add(LineChartBarData(
+        spots: List.from(currentSegment),
+        color: theme.colorScheme.primary,
+      ));
+    }
+
+    return lines;
+  }
+
+  String _formatDate(DateTime datetime) {
+    String format = "dd/MMM";
     if (periodType == "months") {
-      format = "MM";
+      format = "MMM";
     } else if (periodType == "years") {
       format = "yyyy";
     }
-
-    print(format);
-
-    return DateFormat(format).format(
-      datetime,
-    );
+    return DateFormat(format).format(datetime);
   }
 
   double _getInterval(int length) {
-    if (length > 15) {
-      return 2;
-    }
-    return 1;
+    return length / 10;
   }
 }

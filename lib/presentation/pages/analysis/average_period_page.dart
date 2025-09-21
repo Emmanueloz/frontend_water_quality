@@ -115,7 +115,7 @@ class _AveragePeriodPageState extends State<AveragePeriodPage> {
                     analysis: _current,
                     child: _current!.parameters!.sensor != null
                         ? AveragePeriodChart(
-                            width: 700,
+                            width: 750,
                             name: _current!.parameters?.sensor ?? "",
                             data: _current?.data as DataAvgSensor,
                             periodType:
