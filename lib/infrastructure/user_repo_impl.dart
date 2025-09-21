@@ -46,4 +46,25 @@ class UserRepoImpl implements UserRepo {
       return Result.failure(e.toString());
     }
   }
+
+  @override
+  Future<Result<BaseResponse>> updatePassword(String userToken, String newPassword) async {
+    try {
+      final response = await _dio.put(
+        '/users/me/password',
+        data: {
+          'password': newPassword,
+        },
+        options: Options(headers: {'Authorization': 'Bearer $userToken'}),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return Result.success(BaseResponse.fromJson(response.data));
+      }
+
+      return Result.failure('Error: codigo ${response.statusCode}');
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
+  }
 }

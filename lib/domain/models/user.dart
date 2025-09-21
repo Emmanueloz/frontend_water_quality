@@ -18,7 +18,6 @@ class User {
     this.rol,
   });
 
-  // copyWith para crear una copia modificando solo los campos deseados
   User copyWith({
     String? uid,
     String? email,
