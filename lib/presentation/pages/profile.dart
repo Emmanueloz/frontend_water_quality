@@ -8,75 +8,66 @@ import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/profile/profile_header.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/profile/user_info_card.dart';
 import 'package:provider/provider.dart';
+import 'package:frontend_water_quality/core/interface/result.dart';
 
-class Profile extends StatefulWidget {
+class Profile extends StatelessWidget {
   const Profile({Key? key}) : super(key: key);
-  @override
-  State<Profile> createState() => _ProfileState();
-}
 
-class _ProfileState extends State<Profile> {
-  bool _isLoading = false;
-  @override
-  void initState() {
-    super.initState();
-    _loadUser();
-  }
-
-  void _loadUser() async {
-    final provider = context.read<UserProvider>();
-    setState(() => _isLoading = true);
-    await provider.getUser();
-    if (mounted) setState(() => _isLoading = false);
-  }
-
-  Future<void> _handleSubmit(User updatedUser) async {
-    setState(() => _isLoading = true);
+  Future<void> _handleSubmit(BuildContext context, User updatedUser) async {
     final provider = context.read<UserProvider>();
     final resultMessage = await provider.updateUser(updatedUser);
     if (resultMessage != null && context.mounted) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(resultMessage)));
     }
-    if (mounted) setState(() => _isLoading = false);
   }
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = context.watch<UserProvider>();
-    final user = userProvider.user;
+    final userProvider = context.read<UserProvider>();
+
     return Layout(
       title: 'Perfil',
       builder: (context, screenSize) {
-        if (_isLoading || userProvider.isLoadingUser) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (userProvider.errorMessage != null) {
-          return Center(
-            child: Text(
-              userProvider.errorMessage!,
-              style: const TextStyle(color: Colors.red),
-            ),
-          );
-        }
-        if (user == null) {
-          return const Center(
-            child: Text(
-              'No se encontró información del usuario',
-              style: TextStyle(color: Colors.red),
-            ),
-          );
-        }
-        return _buildProfileContent(screenSize, user);
+        return FutureBuilder<Result<User>>(
+          future: userProvider.getUser(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  "Error: ${snapshot.error}",
+                  style: const TextStyle(color: Colors.red),
+                ),
+              );
+            }
+
+            if (!snapshot.hasData || !snapshot.data!.isSuccess) {
+              return const Center(
+                child: Text(
+                  'No se encontró información del usuario',
+                  style: TextStyle(color: Colors.red),
+                ),
+              );
+            }
+
+            final user = snapshot.data!.value!;
+            return _buildProfileContent(screenSize, user, context);
+          },
+        );
       },
     );
   }
 
-  Widget _buildProfileContent(ScreenSize screenSize, User user) {
+  Widget _buildProfileContent(
+      ScreenSize screenSize, User user, BuildContext context) {
     final content = _ProfileContent(
       screenSize: screenSize,
       user: user,
-      onSave: _handleSubmit,
+      onSave: (updatedUser) => _handleSubmit(context, updatedUser),
     );
     if (screenSize != ScreenSize.mobile && screenSize != ScreenSize.tablet) {
       return Align(alignment: Alignment.topCenter, child: content);
@@ -94,8 +85,10 @@ class _ProfileContent extends StatelessWidget {
     required this.user,
     required this.onSave,
   });
+
   bool get _isMobileOrTablet =>
       screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet;
+
   @override
   Widget build(BuildContext context) {
     return BaseContainer(
@@ -128,6 +121,7 @@ class _ProfileCard extends StatelessWidget {
   final User user;
   final double width;
   const _ProfileCard({required this.user, required this.width});
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;

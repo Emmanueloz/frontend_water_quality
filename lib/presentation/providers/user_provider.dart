@@ -9,14 +9,8 @@ class UserProvider with ChangeNotifier {
   AuthProvider? _authProvider;
 
   bool isAuthenticated = false;
-  bool _isLoadingUser = false;
-  bool _isLoadingPassword = false;
-  String? token;
   User? user;
   String? errorMessage;
-
-  bool get isLoadingUser => _isLoadingUser;
-  bool get isLoadingPassword => _isLoadingPassword;
 
   UserProvider(this._userRepo, [this._authProvider]);
 
@@ -25,8 +19,7 @@ class UserProvider with ChangeNotifier {
   }
 
   void clean() {
-    _isLoadingUser = false;
-    _isLoadingPassword = false;
+    isAuthenticated = false;
     errorMessage = null;
     user = null;
     notifyListeners();
@@ -38,24 +31,15 @@ class UserProvider with ChangeNotifier {
     }
 
     try {
-      _isLoadingUser = true;
-      notifyListeners();
-
       final result = await _userRepo.getUser(_authProvider!.token!);
 
       if (result.isSuccess) {
-        user = result.value;
-        isAuthenticated = true;
+        return Result.success(result.value!);
       } else {
-        errorMessage = result.message;
+        return Result.failure(result.message ?? "Unknown error");
       }
-
-      return result;
     } catch (e) {
       return Result.failure(e.toString());
-    } finally {
-      _isLoadingUser = false;
-      notifyListeners();
     }
   }
 
@@ -63,13 +47,11 @@ class UserProvider with ChangeNotifier {
     if (_authProvider?.token == null) return "User not authenticated";
 
     try {
-      _isLoadingUser = true;
-      notifyListeners();
-
       final result = await _userRepo.update(_authProvider!.token!, updatedUser);
 
       if (result.isSuccess) {
         user = updatedUser;
+        notifyListeners();
       } else {
         errorMessage = result.message;
       }
@@ -78,21 +60,17 @@ class UserProvider with ChangeNotifier {
     } catch (e) {
       errorMessage = e.toString();
       return e.toString();
-    } finally {
-      _isLoadingUser = false;
-      notifyListeners();
     }
   }
 
   Future<String?> updatePassword(String newPassword) async {
-    if (_authProvider?.token == null || user == null) {
+    if (_authProvider?.token == null) {
       return "User not authenticated";
     }
-    try {
-      _isLoadingPassword = true;
-      notifyListeners();
 
-      final result = await _userRepo.updatePassword(_authProvider!.token!, newPassword);
+    try {
+      final result =
+          await _userRepo.updatePassword(_authProvider!.token!, newPassword);
 
       if (!result.isSuccess) {
         errorMessage = result.message;
@@ -102,9 +80,6 @@ class UserProvider with ChangeNotifier {
     } catch (e) {
       errorMessage = e.toString();
       return e.toString();
-    } finally {
-      _isLoadingPassword = false;
-      notifyListeners();
-    } 
+    }
   }
 }

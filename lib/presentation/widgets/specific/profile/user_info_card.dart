@@ -34,7 +34,6 @@ class _UserInfoCardState extends State<UserInfoCard> {
 
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
-  
 
   @override
   void initState() {
@@ -44,7 +43,6 @@ class _UserInfoCardState extends State<UserInfoCard> {
     _passwordController = TextEditingController();
     _confirmPasswordController = TextEditingController();
     _phoneController = TextEditingController(text: widget.user.phone);
-
   }
 
   @override
@@ -57,7 +55,6 @@ class _UserInfoCardState extends State<UserInfoCard> {
     super.dispose();
   }
 
-  // --- Lógica de usuario ---
   void _handleResetUser() {
     _formKey.currentState?.reset();
     setState(() {
@@ -77,7 +74,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
       email: _emailController.text.trim(),
       phone: _phoneController.text.trim(),
     );
-    print(  updatedUser.toJson());
+    print(updatedUser.toJson());
 
     final provider = context.read<UserProvider>();
     final resultMessage = await provider.updateUser(updatedUser);
@@ -119,7 +116,6 @@ class _UserInfoCardState extends State<UserInfoCard> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // --- Formulario de usuario ---
         Form(
           key: _formKey,
           child: Container(
@@ -148,21 +144,21 @@ class _UserInfoCardState extends State<UserInfoCard> {
                 ),
                 const SizedBox(height: 20),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    ActionButton(
-                      onPressed: _handleResetUser,
-                      label: 'Resetear',
-                      style: ActionButtonStyle.outlined,
-                      width: widget.width == double.infinity ? 150 : 200,
+                    Expanded(
+                      child: ActionButton(
+                        onPressed: _handleResetUser,
+                        label: 'Resetear',
+                        style: ActionButtonStyle.outlined,
+                      ),
                     ),
-                    ActionButton(
-                      onPressed: () async {
-                        await _handleSaveUser();
-                      },
-                      label: _isLoadingUser ? 'Guardando...' : 'Guardar',
-                      style: ActionButtonStyle.filled,
-                      width: widget.width == double.infinity ? 150 : 200,
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: ActionButton(
+                        onPressed: () async => await _handleSaveUser(),
+                        label: _isLoadingUser ? 'Guardando...' : 'Guardar',
+                        style: ActionButtonStyle.filled,
+                      ),
                     ),
                   ],
                 ),
@@ -191,7 +187,6 @@ class _UserInfoCardState extends State<UserInfoCard> {
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    // Campos de contraseña en una columna
                     Expanded(
                       child: Column(
                         children: [
@@ -220,7 +215,8 @@ class _UserInfoCardState extends State<UserInfoCard> {
                             obscureText: _obscureConfirmPassword,
                             keyboardType: TextInputType.visiblePassword,
                             fieldType: FieldType.confirmPassword,
-                            passwordController: _passwordController, // Pasamos el controlador del campo de contraseña
+                            passwordController:
+                                _passwordController,
                             suffixIcon: IconButton(
                               icon: Icon(
                                 _obscureConfirmPassword
@@ -237,9 +233,8 @@ class _UserInfoCardState extends State<UserInfoCard> {
                       ),
                     ),
                     const SizedBox(width: 10),
-                    // Botón al lado derecho
                     SizedBox(
-                      height: 35, // Ajusta la altura si es necesario
+                      height: 35, 
                       child: ActionButton(
                         onPressed: () async {
                           await _handleUpdatePassword();
