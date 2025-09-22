@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/constants/limit_chart_sensor.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average_period/average_period.dart';
+import 'package:frontend_water_quality/domain/models/analysis/average_period/data_avg_all.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average_period/data_avg_sensor.dart';
 import 'package:frontend_water_quality/presentation/providers/analysis_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
@@ -8,6 +9,7 @@ import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_co
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_detail.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_table.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/average_all_period_chart.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/average_period_chart.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/chat_ai_page.dart';
 import 'package:provider/provider.dart';
@@ -124,8 +126,9 @@ class _AveragePeriodPageState extends State<AveragePeriodPage> {
                               _current!.parameters?.sensor ?? "",
                             ),
                           )
-                        : Center(
-                            child: Text("Todos los sensores"),
+                        : AverageAllPeriodChart(
+                            screenSize: screenSize,
+                            data: _current?.data as DataAvgAll,
                           ),
                   ),
                 ),
