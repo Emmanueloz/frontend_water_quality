@@ -129,6 +129,8 @@ class _AveragePeriodPageState extends State<AveragePeriodPage> {
                         : AverageAllPeriodChart(
                             screenSize: screenSize,
                             data: _current?.data as DataAvgAll,
+                            periodType:
+                                _current!.parameters?.periodType ?? "days",
                           ),
                   ),
                 ),

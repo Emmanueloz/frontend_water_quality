@@ -212,7 +212,58 @@ class AnalysisProvider {
       AveragePeriod(
         id: "5f39da46-01e3-327a-8f0d-8dbc7ba9f90e",
         createdAt: DateTime.tryParse("2025-09-20 01:55:13.680568"),
-        data: DataAvgAll(),
+        data: DataAvgAll(
+          conductivity: SensorSpots(
+            labels: [
+              DateTime.tryParse("2025-08-31T00:00:00"),
+              DateTime.tryParse("2025-09-30T00:00:00"),
+            ],
+            values: [
+              1357.8187320507552,
+              1485.800051170245,
+            ],
+          ),
+          ph: SensorSpots(
+            labels: [
+              DateTime.tryParse("2025-08-31T00:00:00"),
+              DateTime.tryParse("2025-09-30T00:00:00"),
+            ],
+            values: [
+              5.089485242838196,
+              5.038926807535724,
+            ],
+          ),
+          tds: SensorSpots(
+            labels: [
+              DateTime.tryParse("2025-08-31T00:00:00"),
+              DateTime.tryParse("2025-09-30T00:00:00"),
+            ],
+            values: [
+              231.29920410989263,
+              245.5463665926781,
+            ],
+          ),
+          temperature: SensorSpots(
+            labels: [
+              DateTime.tryParse("2025-08-31T00:00:00"),
+              DateTime.tryParse("2025-09-30T00:00:00"),
+            ],
+            values: [
+              17.471170807714017,
+              17.403541591870752,
+            ],
+          ),
+          turbidity: SensorSpots(
+            labels: [
+              DateTime.tryParse("2025-08-31T00:00:00"),
+              DateTime.tryParse("2025-09-30T00:00:00"),
+            ],
+            values: [
+              22.85534779101629,
+              24.742207417322415,
+            ],
+          ),
+        ),
         error: "",
         meterId: "-OVnW46EjvIYWdpO8zPz",
         parameters: ParamPeriod(

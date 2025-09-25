@@ -4,11 +4,11 @@ import 'package:intl/intl.dart';
 
 class LineChartAnalysis extends StatelessWidget {
   final String title;
-  final List<DateTime> titles;
+  final List<DateTime?> titles;
   final List<double?> values;
   final String periodType;
+  final double maxY;
   final double? width;
-  final double? maxY;
 
   const LineChartAnalysis({
     super.key,
@@ -16,8 +16,8 @@ class LineChartAnalysis extends StatelessWidget {
     required this.titles,
     required this.values,
     required this.periodType,
+    required this.maxY,
     this.width,
-    this.maxY,
   });
 
   @override
@@ -64,7 +64,7 @@ class LineChartAnalysis extends StatelessWidget {
                               return SideTitleWidget(
                                 meta: meta,
                                 child: Text(
-                                  _formatDate(titles[index]),
+                                  _formatDate(titles[index] ?? DateTime.now()),
                                   style: const TextStyle(fontSize: 10),
                                 ),
                               );
@@ -74,8 +74,8 @@ class LineChartAnalysis extends StatelessWidget {
                         leftTitles: AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: true,
-                            reservedSize: 40,
-                            interval: maxY! / 10,
+                            reservedSize: 60,
+                            interval: _getIntervalX(),
                           ),
                         ),
                         topTitles: AxisTitles(
@@ -138,7 +138,17 @@ class LineChartAnalysis extends StatelessWidget {
     return DateFormat(format).format(datetime);
   }
 
+  double _getIntervalX() {
+    if (maxY < 20) {
+      return 1;
+    }
+    return maxY / 10;
+  }
+
   double _getInterval(int length) {
+    if (length < 10) {
+      return 1;
+    }
     return length / 10;
   }
 }

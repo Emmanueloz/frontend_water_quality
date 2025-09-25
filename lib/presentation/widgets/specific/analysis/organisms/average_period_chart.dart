@@ -36,7 +36,7 @@ class AveragePeriodChart extends StatelessWidget {
       titles: titles,
       values: values,
       periodType: periodType,
-      maxY: maxY,
+      maxY: maxY ?? 0,
       width: width,
     );
   }
