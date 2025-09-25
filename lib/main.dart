@@ -8,12 +8,14 @@ import 'package:frontend_water_quality/infrastructure/dio_helper.dart';
 import 'package:frontend_water_quality/infrastructure/local_storage_service.dart';
 import 'package:frontend_water_quality/infrastructure/meter_records_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/meter_socket_service.dart';
+import 'package:frontend_water_quality/infrastructure/user_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/weather_meter_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/guest_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/alert_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/workspace_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/meter_repo_impl.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
+import 'package:frontend_water_quality/presentation/providers/user_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/weather_meter_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/guest_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/blue_provider.dart';
@@ -83,21 +85,29 @@ void main() async {
           },
         ),
         ChangeNotifierProxyProvider<AuthProvider, MeterRecordProvider>(
-          create: (context) => MeterRecordProvider(
-            meterSocketService,
-            MeterRecordsRepoImpl(dio),
-            context.read<AuthProvider>(),
-          ),
-          update: (context, authProvider, meterProvider) {
-            meterProvider!.clean();
-            return meterProvider..setAuthProvider(authProvider);
+          create: (context) {
+            final authProvider = context.read<AuthProvider>();
+            final meterRecordProvider = MeterRecordProvider(
+              meterSocketService,
+              MeterRecordsRepoImpl(dio),
+              authProvider,
+            );
+            return meterRecordProvider;
+          },
+          update: (context, authProvider, previousMeterRecordProvider) {
+            previousMeterRecordProvider!.clean();
+            return previousMeterRecordProvider..setAuthProvider(authProvider);
           },
         ),
         ChangeNotifierProxyProvider<AuthProvider, WeatherMeterProvider>(
-          create: (context) => WeatherMeterProvider(
-            WeatherMeterRepoImpl(dio),
-            context.read<AuthProvider>(),
-          ),
+          create: (context) {
+            final authProvider = context.read<AuthProvider>();
+            final weatherMeterProvider = WeatherMeterProvider(
+              WeatherMeterRepoImpl(dio),
+              authProvider,
+            );
+            return weatherMeterProvider;
+          },
           update: (context, authProvider, weatherMeterProvider) {
             weatherMeterProvider!.clean();
             return weatherMeterProvider..setAuthProvider(authProvider);
@@ -117,6 +127,20 @@ void main() async {
             return previousAlertProvider..setAuthProvider(authProvider);
           },
         ),
+        ChangeNotifierProxyProvider<AuthProvider, UserProvider>(
+          create: (context) {
+            final authProvider = context.read<AuthProvider>();
+            final userProvider = UserProvider(
+              UserRepoImpl(dio),
+              authProvider,
+            );
+            return userProvider;
+          },
+          update: (context, authProvider, previousUserProvider) {
+            previousUserProvider!.clean();
+            return previousUserProvider..setAuthProvider(authProvider);
+          },
+        ),
       ],
       child: const MyApp(),
     ),
@@ -131,7 +155,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'Aqua Minds',
       theme: AppTheme.lightTheme,
-      routerConfig: AppRouter.router, // Usa directamente la instancia router
+      routerConfig: AppRouter.router,
       debugShowCheckedModeBanner: false,
     );
   }

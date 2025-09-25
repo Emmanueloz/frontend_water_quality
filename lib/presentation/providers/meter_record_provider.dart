@@ -1,3 +1,4 @@
+// lib/presentation/providers/meter_record_provider.dart
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/domain/models/meter_records_response.dart';
 import 'package:frontend_water_quality/domain/repositories/meter_records_repo.dart';
@@ -7,49 +8,46 @@ import 'package:frontend_water_quality/domain/models/record_models.dart';
 
 class MeterRecordProvider with ChangeNotifier {
   AuthProvider? _authProvider;
-
   final MeterSocketService _socketService;
   final MeterRecordsRepo _meterRecordsRepo;
+
   RecordResponse? recordResponse;
   MeterRecordsResponse? meterRecordsResponse;
   bool isLoading = false;
-  bool? isSuccessSocketConnect;
   String? errorMessageSocket;
   String? errorMessageRecords;
 
   String? _currentWorkspaceId;
   String? _currentMeterId;
-  bool _recordsLoaded = false;
+  DateTime? _currentStartDate;
+  DateTime? _currentEndDate;
+
+  String? _currentLastId;
+  final List<String> _indexHistory = []; // Historial de IDs usados
 
   MeterRecordProvider(
       this._socketService, this._meterRecordsRepo, this._authProvider);
 
-  void setAuthProvider(AuthProvider? provider) {
-    _authProvider = provider;
-  }
+  void setAuthProvider(AuthProvider? provider) => _authProvider = provider;
+
+  bool get hasActiveFilters =>
+      _currentStartDate != null || _currentEndDate != null;
+  bool get hasNextPage => _currentLastId != null;
+  bool get hasPreviousPage => _indexHistory.isNotEmpty;
+  DateTime? get currentStartDate => _currentStartDate;
+  DateTime? get currentEndDate => _currentEndDate;
 
   void clean() {
     recordResponse = null;
-    isSuccessSocketConnect = null;
-    // Limpiar registros también cuando se hace clean general
-    cleanRecords();
-  }
-
-  // Método para limpiar solo datos en tiempo real (no registros)
-  void cleanRealtimeData() {
     errorMessageSocket = null;
     errorMessageRecords = null;
-    recordResponse = null;
-  }
-
-  // Método para limpiar registros cuando cambia el medidor o workspace
-  void cleanRecords() {
     meterRecordsResponse = null;
     _currentWorkspaceId = null;
     _currentMeterId = null;
-    _recordsLoaded = false;
-    errorMessageSocket = null;
-    errorMessageRecords = null;
+    _currentStartDate = null;
+    _currentEndDate = null;
+    _currentLastId = null;
+    _indexHistory.clear();
   }
 
   void subscribeToMeter({
@@ -57,7 +55,7 @@ class MeterRecordProvider with ChangeNotifier {
     required String idWorkspace,
     required String idMeter,
   }) async {
-    if (_authProvider == null || _authProvider!.token == null) {
+    if (_authProvider?.token == null) {
       errorMessageSocket = "User not authenticated";
       notifyListeners();
       return;
@@ -80,26 +78,24 @@ class MeterRecordProvider with ChangeNotifier {
       );
     } catch (e) {
       errorMessageSocket = "Error al conectar al servidor: ${e.toString()}";
+      notifyListeners();
     }
   }
 
-  Future<void> fetchMeterRecords(String idWorkspace, String idMeter) async {
-    // Verificar si ya tenemos los datos para este medidor
-    if (_recordsLoaded &&
-        _currentWorkspaceId == idWorkspace &&
-        _currentMeterId == idMeter) {
-      return; // Ya tenemos los datos, no recargar
-    }
+  Future<void> fetchMeterRecords(
+    String workspaceId,
+    String meterId, {
+    DateTime? startDate,
+    DateTime? endDate,
+    String? lastId,
+  }) async {
+    if (_authProvider?.token == null) return;
 
-    if (_authProvider == null || _authProvider!.token == null) {
-      errorMessageRecords = "User not authenticated";
-      notifyListeners();
-      return;
-    }
-
-    // Si cambió el medidor o workspace, limpiar datos anteriores
-    if (_currentWorkspaceId != idWorkspace || _currentMeterId != idMeter) {
-      cleanRecords();
+    // Limpiar si cambió medidor o workspace
+    if (_currentWorkspaceId != workspaceId || _currentMeterId != meterId) {
+      meterRecordsResponse = null;
+      _indexHistory.clear();
+      _currentLastId = null;
     }
 
     isLoading = true;
@@ -108,19 +104,30 @@ class MeterRecordProvider with ChangeNotifier {
     try {
       final result = await _meterRecordsRepo.fetchMeterRecords(
         _authProvider!.token!,
-        idWorkspace,
-        idMeter,
+        workspaceId,
+        meterId,
+        startDate: startDate,
+        endDate: endDate,
+        lastId: lastId,
       );
+
       if (!result.isSuccess) {
         errorMessageRecords = result.message;
-        return;
-      }
+        meterRecordsResponse = null;
+      } else {
+        final records = result.value!;
+        meterRecordsResponse = records;
+        errorMessageRecords = null;
 
-      meterRecordsResponse = result.value;
-      _currentWorkspaceId = idWorkspace;
-      _currentMeterId = idMeter;
-      _recordsLoaded = true;
-      errorMessageRecords = null;
+        // Actualizar índice para paginación
+        if (lastId != null) _indexHistory.add(lastId);
+        _currentLastId = _getLastId(records);
+
+        _currentWorkspaceId = workspaceId;
+        _currentMeterId = meterId;
+        _currentStartDate = startDate;
+        _currentEndDate = endDate;
+      }
     } catch (e) {
       errorMessageRecords = e.toString();
     } finally {
@@ -129,15 +136,63 @@ class MeterRecordProvider with ChangeNotifier {
     }
   }
 
-  // Método para recarga manual
+  String? _getLastId(MeterRecordsResponse records) {
+    final allRecords = [
+      ...records.temperatureRecords,
+      ...records.phRecords,
+      ...records.tdsRecords,
+      ...records.conductivityRecords,
+      ...records.turbidityRecords,
+    ];
+    if (allRecords.isEmpty) return null;
+    return allRecords.last.id; // Cada registro debe tener un campo 'id'
+  }
+
+  Future<void> goToNextPage() async {
+    if (_currentLastId == null) return;
+    await fetchMeterRecords(
+      _currentWorkspaceId!,
+      _currentMeterId!,
+      startDate: _currentStartDate,
+      endDate: _currentEndDate,
+      lastId: _currentLastId,
+    );
+  }
+
+  Future<void> goToPreviousPage() async {
+    if (_indexHistory.isEmpty) return;
+    final previousId = _indexHistory.removeLast();
+    await fetchMeterRecords(
+      _currentWorkspaceId!,
+      _currentMeterId!,
+      startDate: _currentStartDate,
+      endDate: _currentEndDate,
+      lastId: previousId,
+    );
+  }
+
+  Future<void> applyDateFilters(DateTime? startDate, DateTime? endDate) async {
+    if (_currentWorkspaceId == null || _currentMeterId == null) return;
+    _indexHistory.clear();
+    _currentLastId = null;
+    await fetchMeterRecords(_currentWorkspaceId!, _currentMeterId!,
+        startDate: startDate, endDate: endDate);
+  }
+
+  Future<void> clearFilters() async {
+    _currentStartDate = null;
+    _currentEndDate = null;
+    _indexHistory.clear();
+    _currentLastId = null;
+    await fetchMeterRecords(_currentWorkspaceId!, _currentMeterId!);
+  }
+
   Future<void> refreshMeterRecords() async {
     if (_currentWorkspaceId != null && _currentMeterId != null) {
-      _recordsLoaded = false; // Forzar recarga
-      await fetchMeterRecords(_currentWorkspaceId!, _currentMeterId!);
+      await fetchMeterRecords(_currentWorkspaceId!, _currentMeterId!,
+          startDate: _currentStartDate, endDate: _currentEndDate);
     }
   }
 
-  void unsubscribe() {
-    _socketService.disconnect();
-  }
+  void unsubscribe() => _socketService.disconnect();
 }
