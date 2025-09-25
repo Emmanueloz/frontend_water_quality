@@ -10,6 +10,7 @@ import 'package:frontend_water_quality/presentation/pages/alerts.dart';
 import 'package:frontend_water_quality/presentation/pages/analysis/analysis.dart';
 import 'package:frontend_water_quality/presentation/pages/analysis/average_page.dart';
 import 'package:frontend_water_quality/presentation/pages/analysis/average_period_page.dart';
+import 'package:frontend_water_quality/presentation/pages/analysis/prediction_page.dart';
 import 'package:frontend_water_quality/presentation/pages/form_alert.dart';
 import 'package:frontend_water_quality/domain/models/alert.dart';
 import 'package:frontend_water_quality/presentation/pages/change_password.dart';
@@ -273,8 +274,11 @@ class AppRouter {
                             parentNavigatorKey: rootNavigatorKey,
                             path: Routes.analysisPrediction.path,
                             name: Routes.analysisPrediction.name,
-                            builder: (context, state) => SafeArea(
-                              child: Text("Predicción"),
+                            builder: (context, state) => PredictionPage(
+                              idWorkspace:
+                                  state.pathParameters['id'] ?? 'default',
+                              idMeter:
+                                  state.pathParameters['idMeter'] ?? 'default',
                             ),
                           ),
                           GoRoute(
