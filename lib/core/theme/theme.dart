@@ -129,7 +129,7 @@ class AppTheme {
       ),
       navigationRailTheme: NavigationRailThemeData(
         backgroundColor: colorScheme.primary,
-        selectedIconTheme: IconThemeData(color: colorScheme.surface),
+        selectedIconTheme: IconThemeData(color: colorScheme.onPrimary),
         unselectedIconTheme: IconThemeData(color: colorScheme.surface),
         indicatorColor: colorScheme.tertiary,
         selectedLabelTextStyle: textTheme.titleMedium?.copyWith(
@@ -187,12 +187,12 @@ class AppTheme {
       ),
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
-          foregroundColor: colorScheme.tertiary,
+          backgroundColor: colorScheme.tertiary,
+          foregroundColor: colorScheme.onPrimary,
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          iconColor: colorScheme.primary,
           foregroundColor: textColor,
           textStyle: textTheme.bodyMedium,
         ),
