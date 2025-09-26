@@ -141,7 +141,10 @@ class AppTheme {
       ),
       chipTheme: ChipThemeData(
         backgroundColor: colorScheme.tertiary,
-        labelStyle: textTheme.bodySmall?.copyWith(color: colorScheme.primary),
+        labelStyle: textTheme.bodySmall?.copyWith(
+          color: colorScheme.onPrimary,
+          fontWeight: FontWeight.bold,
+        ),
         iconTheme: IconThemeData(color: colorScheme.primary),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
