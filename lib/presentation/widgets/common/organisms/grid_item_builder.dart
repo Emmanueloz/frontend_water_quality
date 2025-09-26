@@ -29,11 +29,11 @@ class GridItemBuilder extends StatelessWidget {
     } else if (screenSize == ScreenSize.smallDesktop) {
       crossAxisCount = 3;
       gap = 10;
-      childAspectRatio = 1 / 0.4;
+      childAspectRatio = 1 / 0.6;
     } else {
       crossAxisCount = 4;
       gap = 16;
-      childAspectRatio = 1 / 0.4;
+      childAspectRatio = 1 / 0.6;
     }
     return Expanded(
       child: SingleChildScrollView(

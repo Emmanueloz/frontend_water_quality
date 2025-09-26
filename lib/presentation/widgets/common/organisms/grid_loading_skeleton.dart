@@ -39,7 +39,7 @@ class _GridLoadingSkeletonState extends State<GridLoadingSkeleton>
 
     if (widget.screenSize == ScreenSize.mobile) {
       crossAxisCount = 1;
-      childAspectRatio = 1 / 0.6;
+      childAspectRatio = 1 / 0.4;
       gap = 5;
     } else if (widget.screenSize == ScreenSize.tablet) {
       crossAxisCount = 2;
@@ -48,11 +48,11 @@ class _GridLoadingSkeletonState extends State<GridLoadingSkeleton>
     } else if (widget.screenSize == ScreenSize.smallDesktop) {
       crossAxisCount = 3;
       gap = 10;
-      childAspectRatio = 1 / 0.85;
+      childAspectRatio = 1 / 0.6;
     } else {
       crossAxisCount = 4;
       gap = 16;
-      childAspectRatio = 1 / 0.85;
+      childAspectRatio = 1 / 0.6;
     }
 
     return Expanded(

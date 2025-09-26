@@ -24,13 +24,14 @@ class Sidebar extends StatelessWidget {
       extended: isExtended,
       selectedIndex: selectedIndex,
       minExtendedWidth: 200,
-      leading: _heroWidget(context),
+      leading: _heroWidget(context, isExtended),
       destinations: destinations ?? [],
       onDestinationSelected: onDestinationSelected,
     );
   }
 
-  Widget _heroWidget(BuildContext context) {
+  Widget _heroWidget(BuildContext context, bool isExtended) {
+    final theme = Theme.of(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       spacing: 10,
@@ -39,10 +40,13 @@ class Sidebar extends StatelessWidget {
           "assets/images/icon.png",
           width: 45,
         ),
-        Text(
-          "Aqua Minds",
-          style: Theme.of(context).textTheme.displayMedium,
-        ),
+        if (isExtended)
+          Text(
+            "Aqua Minds",
+            style: theme.textTheme.displayMedium?.copyWith(
+              color: theme.colorScheme.surface,
+            ),
+          ),
       ],
     );
   }
