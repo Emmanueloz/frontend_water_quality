@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 class AnalysisTable extends StatelessWidget {
   final String idSelected;
   final ScreenSize screenSize;
-  final void Function(bool, String?)? onSelectChanged;
+  final void Function(String?)? onSelectChanged;
   final List<BaseAnalysis> analysis;
 
   const AnalysisTable({
@@ -35,9 +35,6 @@ class AnalysisTable extends StatelessWidget {
       columns: [
         DataColumn(label: Text("Fecha inicio")),
         DataColumn(label: Text("Fecha final")),
-        DataColumn(label: Text("Creado en")),
-        DataColumn(label: Text("Actualizar en")),
-        DataColumn(label: Text("Estatus")),
       ],
       rows: analysis.map(
         (average) {
@@ -45,10 +42,6 @@ class AnalysisTable extends StatelessWidget {
               .format(average.parameters!.startDate ?? DateTime.now());
           String endDate = DateFormat('dd MMM yyy')
               .format(average.parameters!.endDate ?? DateTime.now());
-          String createAt = DateFormat('dd MMM yyy HH:MM')
-              .format(average.createdAt ?? DateTime.now());
-          String updateAt = DateFormat('dd MMM yyy HH:MM')
-              .format(average.updatedAt ?? DateTime.now());
 
           return DataRow(
             cells: [
@@ -58,20 +51,9 @@ class AnalysisTable extends StatelessWidget {
               DataCell(
                 Text(endDate),
               ),
-              DataCell(
-                Text(createAt),
-              ),
-              DataCell(
-                Text(updateAt),
-              ),
-              DataCell(
-                Text(
-                  average.status ?? "",
-                ),
-              ),
             ],
             selected: average.id == idSelected,
-            onSelectChanged: (value) => onSelectChanged!(value!, average.id),
+            onSelectChanged: (value) => onSelectChanged!(average.id),
           );
         },
       ).toList(),

@@ -38,51 +38,55 @@ class AnalysisDetail extends StatelessWidget {
       width: double.infinity,
       height: double.infinity,
       padding: EdgeInsets.all(10),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        spacing: 20,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                onPressed: onExpanded,
-                icon: Icon(isExpanded ? Icons.close : Icons.fullscreen),
-              ),
-              Text(
-                "Resultados",
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              Spacer(),
-              if (isExpanded)
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          spacing: 20,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  onPressed: onExpanded,
+                  icon: Icon(
+                    isExpanded ? Icons.arrow_right : Icons.arrow_left,
+                    size: 30,
+                  ),
+                ),
+                Text(
+                  "Resultados",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                Spacer(),
                 IconButton(
                     onPressed: onOpenChat, icon: Icon(Icons.auto_awesome))
-            ],
-          ),
-          Table(
-            children: [
-              TableRow(
-                children: [
-                  _cardInfo(context, "Estado", analysis!.status ?? ""),
-                  _cardInfo(context, "Parametros", "$startDate $endDate"),
-                  _cardInfo(context, "Sensores", typeSensor),
-                  _cardInfo(context, "Tipo", analysis!.type ?? ""),
-                ],
-              )
-            ],
-          ),
-          child,
-        ],
+              ],
+            ),
+            Table(
+              children: [
+                TableRow(
+                  children: [
+                    _cardInfo(context, "Estado", analysis!.status ?? ""),
+                    _cardInfo(context, "Parametros", "$startDate $endDate"),
+                    _cardInfo(context, "Sensores", typeSensor),
+                    _cardInfo(context, "Tipo", analysis!.type ?? ""),
+                  ],
+                )
+              ],
+            ),
+            child,
+          ],
+        ),
       ),
     );
   }
 
   SizedBox _cardInfo(BuildContext context, String label, String value) {
     return SizedBox(
-      height: 100,
+      height: 150,
       child: Card(
         child: Padding(
           padding: EdgeInsets.all(10),

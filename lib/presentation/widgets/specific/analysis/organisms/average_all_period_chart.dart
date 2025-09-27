@@ -17,48 +17,52 @@ class AverageAllPeriodChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        padding: EdgeInsets.all(20),
-        child: ListView(
-          children: [
-            LineChartAnalysis(
-              title: "CONDUCTIVIDAD",
-              titles: data.conductivity!.labels ?? [],
-              values: data.conductivity!.values ?? [],
-              periodType: periodType,
-              maxY: LimitChartSensor.getMaxY("conductivity"),
-            ),
-            LineChartAnalysis(
-              title: "PH",
-              titles: data.ph!.labels ?? [],
-              values: data.ph!.values ?? [],
-              periodType: periodType,
-              maxY: LimitChartSensor.getMaxY("ph"),
-            ),
-            LineChartAnalysis(
-              title: "TDS",
-              titles: data.tds!.labels ?? [],
-              values: data.tds!.values ?? [],
-              periodType: periodType,
-              maxY: LimitChartSensor.getMaxY("tds"),
-            ),
-            LineChartAnalysis(
-              title: "TEMPERATURA",
-              titles: data.temperature!.labels ?? [],
-              values: data.temperature!.values ?? [],
-              periodType: periodType,
-              maxY: LimitChartSensor.getMaxY("temperature"),
-            ),
-            LineChartAnalysis(
-              title: "TURBIDEZ",
-              titles: data.turbidity!.labels ?? [],
-              values: data.turbidity!.values ?? [],
-              periodType: periodType,
-              maxY: LimitChartSensor.getMaxY("turbidity"),
-            ),
-          ],
-        ),
+    final double width = 600;
+    return Container(
+      padding: EdgeInsets.all(20),
+      child: Wrap(
+        children: [
+          LineChartAnalysis(
+            title: "CONDUCTIVIDAD",
+            titles: data.conductivity!.labels ?? [],
+            values: data.conductivity!.values ?? [],
+            periodType: periodType,
+            maxY: LimitChartSensor.getMaxY("conductivity"),
+            width: width,
+          ),
+          LineChartAnalysis(
+            title: "PH",
+            titles: data.ph!.labels ?? [],
+            values: data.ph!.values ?? [],
+            periodType: periodType,
+            maxY: LimitChartSensor.getMaxY("ph"),
+            width: width,
+          ),
+          LineChartAnalysis(
+            title: "TDS",
+            titles: data.tds!.labels ?? [],
+            values: data.tds!.values ?? [],
+            periodType: periodType,
+            maxY: LimitChartSensor.getMaxY("tds"),
+            width: width,
+          ),
+          LineChartAnalysis(
+            title: "TEMPERATURA",
+            titles: data.temperature!.labels ?? [],
+            values: data.temperature!.values ?? [],
+            periodType: periodType,
+            maxY: LimitChartSensor.getMaxY("temperature"),
+            width: width,
+          ),
+          LineChartAnalysis(
+            title: "TURBIDEZ",
+            titles: data.turbidity!.labels ?? [],
+            values: data.turbidity!.values ?? [],
+            periodType: periodType,
+            maxY: LimitChartSensor.getMaxY("turbidity"),
+            width: width,
+          ),
+        ],
       ),
     );
   }
