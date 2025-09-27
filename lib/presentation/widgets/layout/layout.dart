@@ -84,19 +84,23 @@ class Layout extends StatelessWidget {
   Widget _buildDesktopWithNavigation(
       BuildContext context, ScreenSize screenSize) {
     return Scaffold(
-      appBar: AppBarNavigation(title: title),
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 10,
-          children: [
-            _buildSidebar(screenSize),
-            Expanded(
-              child: builder != null ? builder!(context, screenSize) : body!,
+      body: Row(
+        children: [
+          _buildSidebar(screenSize),
+          Expanded(
+            child: Column(
+              children: [
+                AppBarNavigation(
+                  title: title,
+                ),
+                Expanded(
+                    child: builder != null
+                        ? builder!(context, screenSize)
+                        : body!),
+              ],
             ),
-          ],
-        ),
+          )
+        ],
       ),
     );
   }
@@ -149,7 +153,6 @@ class Layout extends StatelessWidget {
         label: item.label,
         icon: Icon(
           item.icon,
-          color: Theme.of(context).colorScheme.secondary,
         ),
         selectedIcon: Icon(
           item.selectedIcon,

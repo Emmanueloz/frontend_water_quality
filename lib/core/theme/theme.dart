@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  static const Color textColor = Color(0xff004E49); //#424a4d
+  static const Color textColor = Color(0xff000000); // 0, 0, 0
 
-  static ColorScheme get colorScheme => const ColorScheme.light(
-        primary: Color(0xff5accc4), //
-        secondary: Color(0xff145c57),
-        tertiary: Color(0xffbfe7e4),
-        surface: Color(0xfff7fafa),
-        primaryContainer: Color(0xff145c57),
-        secondaryContainer: Color(0xff5accc4),
-        tertiaryContainer: Color(0xffbfe7e4),
-        surfaceContainer: Color(0xfff7fafa),
+  static ColorScheme get colorScheme => ColorScheme.light(
+        primary: const Color(0xFF2563ab),
+        onPrimary: textColor,
+        secondary: const Color(0xFF2563ab),
+        onSecondary: textColor,
+        tertiary: const Color(0xFF5bcdc5),
+        onTertiary: textColor,
+        surface: const Color.fromARGB(255, 228, 243, 241),
+        onSurface: textColor,
+        primaryContainer: const Color.fromARGB(255, 239, 247, 246),
+        surfaceContainer: const Color(0xFF49ace1),
       );
 
   static TextTheme get textTheme => const TextTheme(
@@ -64,27 +66,22 @@ class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
-      primarySwatch: Colors.cyan,
       primaryColor: colorScheme.primary,
       colorScheme: colorScheme,
       appBarTheme: AppBarTheme(
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.surface,
+        actionsPadding: const EdgeInsets.all(4),
+        color: colorScheme.surface,
         elevation: 0,
-        actionsIconTheme: IconThemeData(
-          color: colorScheme.secondary,
-        ),
-        iconTheme: IconThemeData(
-          color: colorScheme.secondary,
-        ),
-        titleTextStyle: textTheme.displaySmall,
+        actionsIconTheme: IconThemeData(color: colorScheme.onPrimary),
+        iconTheme: IconThemeData(color: colorScheme.onPrimary),
+        titleTextStyle:
+            textTheme.displaySmall?.copyWith(color: colorScheme.onPrimary),
       ),
       scaffoldBackgroundColor: colorScheme.surface,
+      dividerTheme: DividerThemeData(color: colorScheme.primary),
       primaryTextTheme: textTheme,
       textTheme: textTheme,
-      iconTheme: IconThemeData(
-        color: colorScheme.secondary,
-      ),
+      iconTheme: IconThemeData(color: colorScheme.surface),
       listTileTheme: ListTileThemeData(
         textColor: textColor,
         iconColor: textColor,
@@ -94,58 +91,64 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         labelStyle: textTheme.bodyMedium,
-        iconColor: colorScheme.secondary,
+        iconColor: colorScheme.primary,
         prefixIconColor: colorScheme.secondary,
         suffixIconColor: colorScheme.secondary,
         floatingLabelBehavior: FloatingLabelBehavior.auto,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
           borderSide: BorderSide(color: colorScheme.primary, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
           borderSide: BorderSide(color: colorScheme.primary, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
           borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
       ),
-      cardColor: colorScheme.surface,
-      cardTheme: CardThemeData(
-        elevation: 2,
-        color: colorScheme.surface,
+      cardTheme: CardTheme(
+        elevation: 1,
+        color: colorScheme.primaryContainer,
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: colorScheme.surface,
+        elevation: 0,
+        backgroundColor: colorScheme.secondary,
         indicatorColor: colorScheme.tertiary,
+        iconTheme: WidgetStatePropertyAll(
+          IconThemeData(
+            color: colorScheme.surface,
+          ),
+        ),
+        labelTextStyle: WidgetStatePropertyAll(
+          textTheme.bodySmall?.copyWith(
+            color: colorScheme.surface,
+          ),
+        ),
       ),
       navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: colorScheme.surface,
-        selectedIconTheme: IconThemeData(
-          color: colorScheme.secondary,
-        ),
-        unselectedIconTheme: IconThemeData(
-          color: textColor,
-        ),
+        backgroundColor: colorScheme.primary,
+        selectedIconTheme: IconThemeData(color: colorScheme.onPrimary),
+        unselectedIconTheme: IconThemeData(color: colorScheme.surface),
         indicatorColor: colorScheme.tertiary,
-        selectedLabelTextStyle: textTheme.titleMedium,
-        unselectedLabelTextStyle: textTheme.titleMedium,
+        selectedLabelTextStyle: textTheme.titleMedium?.copyWith(
+          color: colorScheme.surface,
+        ),
+        unselectedLabelTextStyle: textTheme.titleMedium?.copyWith(
+          color: colorScheme.surface,
+        ),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: colorScheme.secondary,
+        backgroundColor: colorScheme.tertiary,
         labelStyle: textTheme.bodySmall?.copyWith(
-          color: colorScheme.surface,
+          color: colorScheme.onPrimary,
+          fontWeight: FontWeight.bold,
         ),
-        iconTheme: IconThemeData(
-          color: colorScheme.surface,
-        ),
+        iconTheme: IconThemeData(color: colorScheme.primary),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
-          side: BorderSide(
-            color: colorScheme.secondary,
-            width: 0,
-          ),
+          side: BorderSide(color: colorScheme.tertiary, width: 0),
         ),
       ),
       expansionTileTheme: ExpansionTileThemeData(
@@ -153,9 +156,7 @@ class AppTheme {
         collapsedTextColor: textColor,
         iconColor: colorScheme.secondary,
         collapsedIconColor: colorScheme.secondary,
-        shape: BeveledRectangleBorder(
-          side: BorderSide.none,
-        ),
+        shape: const BeveledRectangleBorder(side: BorderSide.none),
       ),
       dropdownMenuTheme: DropdownMenuThemeData(
         textStyle: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -163,10 +164,7 @@ class AppTheme {
           suffixIconColor: colorScheme.primary,
           enabledBorder: InputBorder.none,
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: colorScheme.primary,
-              width: 2,
-            ),
+            borderSide: BorderSide(color: colorScheme.primary, width: 2),
           ),
         ),
       ),
@@ -178,21 +176,27 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: colorScheme.secondary, //#5bcdc5
-          foregroundColor: colorScheme.surface,
+          backgroundColor: colorScheme.tertiary,
+          foregroundColor: textColor,
           textStyle: textTheme.bodyMedium,
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          side: BorderSide(color: colorScheme.secondary, width: 1),
+          side: BorderSide(color: colorScheme.tertiary, width: 1),
           foregroundColor: textColor,
           textStyle: textTheme.bodyMedium,
         ),
       ),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          backgroundColor: colorScheme.tertiary,
+          foregroundColor: colorScheme.onPrimary,
+        ),
+      ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: textColor, //#5bcdc5
+          foregroundColor: textColor,
           textStyle: textTheme.bodyMedium,
         ),
       ),

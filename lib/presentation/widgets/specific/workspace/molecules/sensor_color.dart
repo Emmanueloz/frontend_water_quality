@@ -13,32 +13,34 @@ class SensorColor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      spacing: 5,
-      children: [
-        Text(
-          "Color del agua",
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-        Expanded(
-          child: Container(
-            height: 200,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Color.fromRGBO(
-                red,
-                green,
-                blue,
-                1,
-              ),
+    return Card(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        spacing: 5,
+        children: [
+          Text(
+            "Color del agua",
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
             ),
           ),
-        )
-      ],
+          Expanded(
+            child: Container(
+              margin: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color.fromRGBO(
+                  red,
+                  green,
+                  blue,
+                  1,
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 }

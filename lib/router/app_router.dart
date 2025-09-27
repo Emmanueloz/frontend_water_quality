@@ -31,6 +31,7 @@ import 'package:frontend_water_quality/presentation/pages/view_meter_ubications.
 import 'package:frontend_water_quality/presentation/pages/view_notification_details.dart';
 import 'package:frontend_water_quality/presentation/pages/list_meter.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_meters.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/weather_page.dart';
@@ -240,7 +241,7 @@ class AppRouter {
                           final id = state.pathParameters['id'] ?? 'default';
                           final idMeter =
                               state.pathParameters['idMeter'] ?? 'default';
-                          return SizedBox(
+                          return BaseContainer(
                             child: Text("Analisis $id $idMeter"),
                           );
                         },

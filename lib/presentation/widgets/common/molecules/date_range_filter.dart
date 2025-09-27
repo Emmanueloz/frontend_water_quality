@@ -278,22 +278,11 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
     IconData icon,
     VoidCallback? onPressed,
   ) {
-    final theme = Theme.of(context);
-
-    return Container(
-      width: 36,
-      height: 36,
-      decoration: BoxDecoration(
-        color: theme.colorScheme.secondary,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: IconButton(
-        onPressed: onPressed,
-        icon: Icon(
-          icon,
-          color: theme.colorScheme.surface,
-          size: 18,
-        ),
+    return IconButton(
+      onPressed: onPressed,
+      icon: Icon(
+        icon,
+        size: 30,
       ),
     );
   }
@@ -301,40 +290,34 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
   Widget _buildApplyButton(BuildContext context, {required bool isMobile}) {
     final theme = Theme.of(context);
 
-    return SizedBox(
-      height: 36,
-      child: ElevatedButton(
-        onPressed: widget.isLoading ? null : _applyFilters,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: theme.colorScheme.secondary,
-          foregroundColor: theme.colorScheme.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          padding: EdgeInsets.symmetric(
-            horizontal: isMobile ? 16 : 20,
-            vertical: 6,
-          ),
+    return ElevatedButton(
+      onPressed: widget.isLoading ? null : _applyFilters,
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
         ),
-        child: widget.isLoading
-            ? SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    theme.colorScheme.surface,
-                  ),
-                ),
-              )
-            : Text(
-                'Aplicar filtros',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.surface,
-                  fontWeight: FontWeight.w600,
+        padding: EdgeInsets.symmetric(
+          horizontal: isMobile ? 16 : 20,
+          vertical: 6,
+        ),
+      ),
+      child: widget.isLoading
+          ? SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  theme.colorScheme.surface,
                 ),
               ),
-      ),
+            )
+          : Text(
+              'Aplicar filtros',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
     );
   }
 }

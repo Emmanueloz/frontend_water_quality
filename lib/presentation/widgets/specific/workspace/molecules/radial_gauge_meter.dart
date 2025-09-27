@@ -45,9 +45,9 @@ class _RadialGaugeMeterState extends State<RadialGaugeMeter> {
       Theme.of(context).colorScheme.secondary,
     ];
 
-    return SizedBox(
-      width: widget.size.width,
-      height: widget.size.height,
+    return Card(
+      //width: widget.size.width,
+      //height: widget.size.height,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         spacing: 5,
