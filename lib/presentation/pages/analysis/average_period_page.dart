@@ -5,14 +5,11 @@ import 'package:frontend_water_quality/domain/models/analysis/average_period/dat
 import 'package:frontend_water_quality/domain/models/analysis/average_period/data_avg_sensor.dart';
 import 'package:frontend_water_quality/presentation/providers/analysis_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
-import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_detail.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_table.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/average_all_period_chart.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/average_period_chart.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/chat_ai_page.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/empty_analysis.dart';
 import 'package:provider/provider.dart';
 
 class AveragePeriodPage extends StatefulWidget {
@@ -29,7 +26,6 @@ class AveragePeriodPage extends StatefulWidget {
 }
 
 class _AveragePeriodPageState extends State<AveragePeriodPage> {
-  bool showDetail = false;
   bool expandedDetailt = false;
   bool showChat = false;
 
@@ -51,93 +47,62 @@ class _AveragePeriodPageState extends State<AveragePeriodPage> {
     return Layout(
       title: "Promedio por periodo",
       builder: (context, screenSize) {
-        return Padding(
-          padding: EdgeInsets.all(10),
-          child: Row(
-            spacing: 10,
-            children: [
-              if (!expandedDetailt)
-                BaseContainer(
-                  width: 400,
-                  height: double.infinity,
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: Container(
-                      width: 1024,
-                      margin: EdgeInsets.all(10),
-                      child: FutureBuilder(
-                        future: _getAveragePeriod,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.done) {
-                            if (snapshot.hasError) {
-                              return Text("Ocurio un error");
-                            }
-                            return AnalysisTable(
-                              analysis: snapshot.data ?? [],
-                              idSelected: idAverage ?? "",
-                              screenSize: screenSize,
-                              onSelectChanged: (id) {
-                                setState(
-                                  () {
-                                    if (idAverage != id || !showDetail) {
-                                      showDetail = true;
-                                      idAverage = id;
-                                      _current = snapshot.data?.firstWhere(
-                                        (element) => element.id == id,
-                                      );
-                                    }
-                                  },
-                                );
-                              },
-                            );
-                          } else {
-                            return CircularProgressIndicator();
-                          }
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              Expanded(
-                child: _current == null
-                    ? EmptyAnalysis()
-                    : AnalysisDetail(
-                        isExpanded: expandedDetailt,
-                        onExpanded: () => setState(() {
-                          expandedDetailt = !expandedDetailt;
-                        }),
-                        onOpenChat: () => setState(() {
-                          showChat = !showChat;
-                        }),
-                        analysis: _current,
-                        child: _current!.parameters!.sensor != null
-                            ? AveragePeriodChart(
-                                width: 750,
-                                name: _current!.parameters?.sensor ?? "",
-                                data: _current?.data as DataAvgSensor,
-                                periodType:
-                                    _current!.parameters?.periodType ?? "days",
-                                maxY: LimitChartSensor.getMaxY(
-                                  _current!.parameters?.sensor ?? "",
-                                ),
-                              )
-                            : AverageAllPeriodChart(
-                                screenSize: screenSize,
-                                data: _current?.data as DataAvgAll,
-                                periodType:
-                                    _current!.parameters?.periodType ?? "days",
-                              ),
-                      ),
-              ),
-              if (showChat)
-                Expanded(
-                  child: ChatAiPage(
-                    averageId: "",
-                  ),
-                ),
-            ],
+        return AnalysisLayout<AveragePeriod>(
+          screenSize: screenSize,
+          selectedItem: _current,
+          expandedDetail: expandedDetailt,
+          showChat: showChat,
+          chatAverageId: _current?.id,
+          onToggleExpand: () => setState(() {
+            expandedDetailt = !expandedDetailt;
+          }),
+          onToggleChat: () => setState(() {
+            showChat = !showChat;
+          }),
+          tableWidget: (screenSize) => FutureBuilder<List<AveragePeriod>>(
+            future: _getAveragePeriod,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasError) {
+                  return const Text("Ocurrió un error");
+                }
+                return AnalysisTable(
+                  analysis: snapshot.data ?? [],
+                  idSelected: idAverage ?? "",
+                  screenSize: screenSize,
+                  onSelectChanged: (id) {
+                    setState(() {
+                      if (idAverage != id) {
+                        idAverage = id;
+                        _current = snapshot.data?.firstWhere(
+                          (element) => element.id == id,
+                        );
+                      }
+                    });
+                  },
+                );
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            },
           ),
+          chartWidget: _current == null
+              ? null
+              : _current!.parameters!.sensor != null
+                  ? AveragePeriodChart(
+                      width: 650,
+                      name: _current!.parameters?.sensor ?? "",
+                      data: _current!.data as DataAvgSensor,
+                      periodType: _current!.parameters?.periodType ?? "days",
+                      maxY: LimitChartSensor.getMaxY(
+                        _current!.parameters?.sensor ?? "",
+                      ),
+                    )
+                  : AverageAllPeriodChart(
+                      screenSize: screenSize,
+                      data: _current!.data as DataAvgAll,
+                      periodType: _current!.parameters?.periodType ?? "days",
+                    ),
         );
       },
     );

@@ -74,7 +74,7 @@ class LineChartAnalysis extends StatelessWidget {
                         leftTitles: AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: true,
-                            reservedSize: 60,
+                            reservedSize: 45,
                             interval: _getIntervalX(),
                           ),
                         ),

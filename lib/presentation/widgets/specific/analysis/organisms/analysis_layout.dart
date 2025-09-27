@@ -1,0 +1,72 @@
+import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/screen_size.dart';
+import 'package:frontend_water_quality/domain/models/analysis/base_analysis.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_detail.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/chat_ai_page.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/empty_analysis.dart';
+
+class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
+  final T? selectedItem;
+  final bool expandedDetail;
+  final bool showChat;
+  final Widget? chartWidget;
+  final Widget Function(ScreenSize screenSize) tableWidget;
+  final void Function() onToggleExpand;
+  final void Function() onToggleChat;
+  final String? chatAverageId;
+  final ScreenSize screenSize;
+
+  const AnalysisLayout({
+    super.key,
+    required this.selectedItem,
+    this.expandedDetail = false,
+    this.showChat = false,
+    required this.chartWidget,
+    required this.tableWidget,
+    required this.onToggleExpand,
+    required this.onToggleChat,
+    this.chatAverageId,
+    required this.screenSize,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Row(
+        spacing: 10,
+        children: [
+          if (!expandedDetail)
+            BaseContainer(
+              width: 400,
+              height: double.infinity,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  width: 1024,
+                  margin: const EdgeInsets.all(10),
+                  child: tableWidget(screenSize),
+                ),
+              ),
+            ),
+          Expanded(
+            child: selectedItem == null || chartWidget == null
+                ? const EmptyAnalysis()
+                : AnalysisDetail(
+                    isExpanded: expandedDetail,
+                    onExpanded: onToggleExpand,
+                    onOpenChat: onToggleChat,
+                    analysis: selectedItem,
+                    child: chartWidget!,
+                  ),
+          ),
+          if (showChat && chatAverageId != null)
+            Expanded(
+              child: ChatAiPage(averageId: chatAverageId ?? ""),
+            ),
+        ],
+      ),
+    );
+  }
+}

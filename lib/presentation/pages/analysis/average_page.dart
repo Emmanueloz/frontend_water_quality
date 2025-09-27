@@ -3,15 +3,12 @@ import 'package:frontend_water_quality/core/constants/limit_chart_sensor.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average/average.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average/data_average_all.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average/data_average_sensor.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_table.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/chat_ai_page.dart';
 import 'package:frontend_water_quality/presentation/providers/analysis_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
-import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_layout.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_table.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/average_chart.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_detail.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/empty_analysis.dart';
 import 'package:provider/provider.dart';
 
 class AveragePage extends StatefulWidget {
@@ -29,7 +26,6 @@ class AveragePage extends StatefulWidget {
 }
 
 class _AveragePageState extends State<AveragePage> {
-  bool showDetail = false;
   bool expandedDetailt = false;
   bool showChat = false;
   String? idAverage;
@@ -50,82 +46,55 @@ class _AveragePageState extends State<AveragePage> {
     return Layout(
       title: "Promedios",
       builder: (context, screenSize) {
-        return Padding(
-          padding: const EdgeInsets.all(10),
-          child: Row(
-            spacing: 10,
-            children: [
-              if (!expandedDetailt)
-                BaseContainer(
-                  width: 400,
-                  height: double.infinity,
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: Container(
-                      width: 1024,
-                      margin: EdgeInsets.all(10),
-                      child: FutureBuilder(
-                        future: _getAverage,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.done) {
-                            if (snapshot.hasError) {
-                              return Text("Ocurio un error");
-                            }
-                            return AnalysisTable(
-                              analysis: snapshot.data ?? [],
-                              idSelected: idAverage ?? "",
-                              screenSize: screenSize,
-                              onSelectChanged: (id) {
-                                setState(
-                                  () {
-                                    if (idAverage != id || !showDetail) {
-                                      showDetail = true;
-                                      idAverage = id;
-                                      _current = snapshot.data?.firstWhere(
-                                        (element) => element.id == id,
-                                      );
-                                    }
-                                  },
-                                );
-                              },
-                            );
-                          } else {
-                            return CircularProgressIndicator();
-                          }
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              Expanded(
-                child: _current == null
-                    ? EmptyAnalysis()
-                    : AnalysisDetail(
-                        isExpanded: expandedDetailt,
-                        onExpanded: () => setState(() {
-                          expandedDetailt = !expandedDetailt;
-                        }),
-                        onOpenChat: () => setState(() {
-                          showChat = !showChat;
-                        }),
-                        analysis: _current,
-                        child: _current!.parameters!.sensor != null
-                            ? _ChartSensor(
-                                dataAverage:
-                                    _current!.data as DataAverageSensor,
-                                sensor: _current!.parameters?.sensor ?? "",
-                              )
-                            : _AllChartSensor(
-                                dataAverage: _current!.data as DataAverageAll),
-                      ),
-              ),
-              if (showChat)
-                Expanded(
-                  child: ChatAiPage(averageId: _current!.id),
-                ),
-            ],
+        return AnalysisLayout<Average>(
+          screenSize: screenSize,
+          selectedItem: _current,
+          expandedDetail: expandedDetailt,
+          showChat: showChat,
+          chatAverageId: _current?.id,
+          onToggleExpand: () => setState(() {
+            expandedDetailt = !expandedDetailt;
+          }),
+          onToggleChat: () => setState(() {
+            showChat = !showChat;
+          }),
+          tableWidget: (screenSize) => FutureBuilder<List<Average>>(
+            future: _getAverage,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasError) {
+                  return const Text("Ocurrió un error");
+                }
+                return AnalysisTable(
+                  analysis: snapshot.data ?? [],
+                  idSelected: idAverage ?? "",
+                  screenSize: screenSize,
+                  onSelectChanged: (id) {
+                    setState(() {
+                      if (idAverage != id) {
+                        idAverage = id;
+                        _current = snapshot.data?.firstWhere(
+                          (element) => element.id == id,
+                        );
+                      }
+                    });
+                  },
+                );
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            },
           ),
+          chartWidget: _current == null
+              ? null
+              : _current!.parameters!.sensor != null
+                  ? _ChartSensor(
+                      dataAverage: _current!.data as DataAverageSensor,
+                      sensor: _current!.parameters?.sensor ?? "",
+                    )
+                  : _AllChartSensor(
+                      dataAverage: _current!.data as DataAverageAll,
+                    ),
         );
       },
     );
