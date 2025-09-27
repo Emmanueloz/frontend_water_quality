@@ -1,4 +1,6 @@
-class DataPredSensor {
+import 'package:frontend_water_quality/domain/models/analysis/data.dart';
+
+class DataPredSensor extends Data {
   TimeSeriesData? data;
   TimeSeriesData? pred;
   String? sensor;
@@ -16,16 +18,10 @@ class DataPredSensor {
             json["pred"] == null ? null : TimeSeriesData.fromJson(json["pred"]),
         sensor: json["sensor"],
       );
-
-  Map<String, dynamic> toJson() => {
-        "data": data?.toJson(),
-        "pred": pred?.toJson(),
-        "sensor": sensor,
-      };
 }
 
 class TimeSeriesData {
-  List<DateTime>? labels;
+  List<DateTime?>? labels;
   List<double>? values;
 
   TimeSeriesData({
@@ -42,13 +38,4 @@ class TimeSeriesData {
             ? []
             : List<double>.from(json["values"]!.map((x) => x?.toDouble())),
       );
-
-  Map<String, dynamic> toJson() => {
-        "labels": labels == null
-            ? []
-            : List<dynamic>.from(labels!.map((x) =>
-                "${x.year.toString().padLeft(4, '0')}-${x.month.toString().padLeft(2, '0')}-${x.day.toString().padLeft(2, '0')}")),
-        "values":
-            values == null ? [] : List<dynamic>.from(values!.map((x) => x)),
-      };
 }

@@ -22,30 +22,4 @@ class BaseAnalysis<TData, TParameters> {
     this.updatedAt,
     this.workspaceId,
   });
-
-  factory BaseAnalysis.fromJson(
-    Map<String, dynamic> json,
-    String id,
-    TData Function(Map<String, dynamic>) dataFromJson,
-    TParameters Function(Map<String, dynamic>) parametersFromJson,
-  ) {
-    return BaseAnalysis<TData, TParameters>(
-      id: id,
-      createdAt: json["created_at"] == null
-          ? null
-          : DateTime.parse(json["created_at"]),
-      data: json["data"] == null ? null : dataFromJson(json["data"]),
-      error: json["error"],
-      meterId: json["meter_id"],
-      parameters: json["parameters"] == null
-          ? null
-          : parametersFromJson(json["parameters"]),
-      status: json["status"],
-      type: json["type"],
-      updatedAt: json["updated_at"] == null
-          ? null
-          : DateTime.parse(json["updated_at"]),
-      workspaceId: json["workspace_id"],
-    );
-  }
 }
