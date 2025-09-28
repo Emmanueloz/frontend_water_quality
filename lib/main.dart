@@ -130,7 +130,7 @@ void main() async {
         ),
         Provider(
           create: (context) => AnalysisProvider(dio),
-        )
+        ),
         ChangeNotifierProxyProvider<AuthProvider, UserProvider>(
           create: (context) {
             final authProvider = context.read<AuthProvider>();
