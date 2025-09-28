@@ -108,7 +108,7 @@ class AppTheme {
           borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 1,
         color: colorScheme.primaryContainer,
       ),
