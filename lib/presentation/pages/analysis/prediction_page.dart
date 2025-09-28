@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/domain/models/analysis/period/data_pred_all.dart';
+import 'package:frontend_water_quality/domain/models/analysis/period/data_pred_sensor.dart';
 import 'package:frontend_water_quality/domain/models/analysis/period/prediction.dart';
 import 'package:frontend_water_quality/presentation/providers/analysis_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_table.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/line_chart_prediction.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/prediction_all_chart.dart';
 import 'package:provider/provider.dart';
 
 class PredictionPage extends StatefulWidget {
@@ -59,7 +63,6 @@ class _PredictionPageState extends State<PredictionPage> {
               if (snapshot.hasError) {
                 return const Text("Ocurrió un error");
               }
-              print(snapshot.data);
               return AnalysisTable(
                 analysis: snapshot.data ?? [],
                 idSelected: idAverage ?? "",
@@ -80,8 +83,33 @@ class _PredictionPageState extends State<PredictionPage> {
             }
           },
         ),
-        chartWidget: Container(),
+        chartWidget: _buildChartWidget(),
       ),
+    );
+  }
+
+  Widget? _buildChartWidget() {
+    if (_current == null) {
+      return null;
+    }
+
+    if (_current?.parameters?.sensor != null) {
+      final DataPredSensor data = _current?.data as DataPredSensor;
+      return LineChartPrediction(
+        width: 650,
+        sensor: _current?.parameters?.sensor ?? "",
+        periodType: _current?.parameters?.periodType ?? "",
+        titles: [...?data.data!.labels, ...?data.pred!.labels],
+        dataValues: data.data!.values ?? [],
+        predValues: data.pred!.values ?? [],
+      );
+    }
+
+    final DataPredAll data = _current?.data as DataPredAll;
+
+    return PredictionAllChart(
+      data: data,
+      periodType: _current?.parameters?.periodType ?? "",
     );
   }
 }

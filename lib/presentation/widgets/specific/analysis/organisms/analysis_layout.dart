@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/domain/models/analysis/base_analysis.dart';
-import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_detail.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/chat_ai_page.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/empty_analysis.dart';
@@ -37,8 +36,8 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
       child: Row(
         spacing: 10,
         children: [
-          if (!expandedDetail)
-            BaseContainer(
+          if (!expandedDetail) ...[
+            SizedBox(
               width: 400,
               height: double.infinity,
               child: Align(
@@ -50,6 +49,8 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
                 ),
               ),
             ),
+            VerticalDivider(),
+          ],
           Expanded(
             child: selectedItem == null || chartWidget == null
                 ? const EmptyAnalysis()
@@ -61,10 +62,12 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
                     child: chartWidget!,
                   ),
           ),
-          if (showChat && chatAverageId != null)
+          if (showChat && chatAverageId != null) ...[
+            VerticalDivider(),
             Expanded(
               child: ChatAiPage(averageId: chatAverageId ?? ""),
             ),
+          ]
         ],
       ),
     );

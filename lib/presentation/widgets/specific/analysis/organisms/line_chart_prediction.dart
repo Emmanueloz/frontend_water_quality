@@ -1,31 +1,30 @@
-import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/constants/limit_chart_sensor.dart';
 import 'package:intl/intl.dart';
 
-class LineChartAnalysis extends StatelessWidget {
-  final String title;
+class LineChartPrediction extends StatelessWidget {
+  final String sensor;
   final List<DateTime?> titles;
-  final List<double?> values;
+  final List<double?> dataValues;
+  final List<double?> predValues;
   final String periodType;
-  final double maxY;
   final double? width;
-
-  const LineChartAnalysis({
+  const LineChartPrediction({
     super.key,
-    required this.title,
+    required this.sensor,
     required this.titles,
-    required this.values,
     required this.periodType,
-    required this.maxY,
+    required this.dataValues,
+    required this.predValues,
     this.width,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final length = values.length;
-
-    final List<LineChartBarData> lineSegments = _createSegmentedLines(theme);
+    final length = dataValues.length + predValues.length;
+    final maxY = LimitChartSensor.getMaxY(sensor);
 
     return SizedBox(
       width: width,
@@ -38,7 +37,7 @@ class LineChartAnalysis extends StatelessWidget {
               spacing: 20,
               children: [
                 Text(
-                  "${title.toUpperCase()} - Cantidad de valores $length",
+                  "${sensor.toUpperCase()} - Cantidad de valores $length",
                   style: theme.textTheme.bodyLarge
                       ?.copyWith(fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
@@ -48,7 +47,7 @@ class LineChartAnalysis extends StatelessWidget {
                     LineChartData(
                       maxY: maxY,
                       minY: 0,
-                      // Configuración de touch/tooltip
+                      maxX: length.toDouble(),
                       lineTouchData: LineTouchData(
                         enabled: true,
                         touchTooltipData: LineTouchTooltipData(
@@ -66,9 +65,13 @@ class LineChartAnalysis extends StatelessWidget {
                                 fontSize: 12,
                               );
 
-                              // Para este chart solo mostramos el valor
+                              // Determinar si es dato real o predicción
+                              String label = flSpot.x < dataValues.length
+                                  ? 'Real'
+                                  : 'Predicción';
+
                               return LineTooltipItem(
-                                flSpot.y.toStringAsFixed(2),
+                                '$label\n${flSpot.y.toStringAsFixed(2)}',
                                 textStyle,
                               );
                             }).toList();
@@ -88,15 +91,25 @@ class LineChartAnalysis extends StatelessWidget {
                           ),
                         ),
                       ),
-                      lineBarsData: lineSegments,
+                      lineBarsData: [
+                        _createLineChart(
+                          dataValues,
+                          theme.colorScheme.tertiary,
+                        ),
+                        _createLineChart(
+                          predValues,
+                          theme.colorScheme.primary,
+                          index: dataValues.length,
+                        )
+                      ],
+                      showingTooltipIndicators: [],
                       borderData: FlBorderData(show: false),
-                      // Grid personalizado
                       gridData: FlGridData(
                         show: true,
                         drawVerticalLine: true,
                         drawHorizontalLine: true,
                         verticalInterval: _getInterval(length),
-                        horizontalInterval: _getIntervalY(),
+                        horizontalInterval: _getIntervalY(maxY),
                         getDrawingVerticalLine: (value) {
                           return FlLine(
                             color: theme.colorScheme.outline.withAlpha(20),
@@ -134,14 +147,13 @@ class LineChartAnalysis extends StatelessWidget {
                         leftTitles: AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: true,
-                            reservedSize: 55, // Aumentado para dar más espacio
-                            interval: _getIntervalY(),
+                            reservedSize: 55,
+                            interval: _getIntervalY(maxY),
                             getTitlesWidget: (value, meta) {
                               return SideTitleWidget(
                                 meta: meta,
                                 child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      right: 8), // Separación del grid
+                                  padding: const EdgeInsets.only(right: 8),
                                   child: Text(
                                     value.toStringAsFixed(1),
                                     style: TextStyle(
@@ -172,48 +184,28 @@ class LineChartAnalysis extends StatelessWidget {
     );
   }
 
-  List<LineChartBarData> _createSegmentedLines(ThemeData theme) {
-    List<LineChartBarData> lines = [];
-    List<FlSpot> currentSegment = [];
+  LineChartBarData _createLineChart(List<double?> values, Color color,
+      {int index = 0}) {
+    List<FlSpot> segment = [];
 
     for (int i = 0; i < values.length; i++) {
       final value = values[i];
 
       if (value != null) {
-        currentSegment.add(FlSpot(i.toDouble(), value));
-      } else {
-        // Guardar segmento actual si tiene al menos un punto
-        if (currentSegment.isNotEmpty) {
-          lines.add(LineChartBarData(
-            spots: List.from(currentSegment),
-            color: theme.colorScheme.primary,
-            barWidth: 2,
-            isStrokeCapRound: true,
-            dotData: FlDotData(
-              show: false, // Ocultar puntos por defecto
-            ),
-            belowBarData: BarAreaData(show: false),
-          ));
-          currentSegment.clear();
-        }
+        segment.add(FlSpot((i + index).toDouble(), value));
       }
     }
 
-    // Agregar último segmento si existe
-    if (currentSegment.isNotEmpty) {
-      lines.add(LineChartBarData(
-        spots: List.from(currentSegment),
-        color: theme.colorScheme.primary,
-        barWidth: 2,
-        isStrokeCapRound: true,
-        dotData: FlDotData(
-          show: false, // Ocultar puntos por defecto
-        ),
-        belowBarData: BarAreaData(show: false),
-      ));
-    }
-
-    return lines;
+    return LineChartBarData(
+      spots: segment,
+      color: color,
+      barWidth: 2,
+      isStrokeCapRound: true,
+      dotData: FlDotData(
+        show: false, // Ocultar puntos por defecto
+      ),
+      belowBarData: BarAreaData(show: false),
+    );
   }
 
   String _formatDate(DateTime datetime) {
@@ -226,18 +218,17 @@ class LineChartAnalysis extends StatelessWidget {
     return DateFormat(format).format(datetime);
   }
 
-  double _getIntervalY() {
+  double _getIntervalY(double maxY) {
     if (maxY < 20) {
       return 2; // Aumentado para más separación
     }
-
-    return maxY / 8; // Reducido de 10 a 8 para menos líneas
+    return maxY / 10; // Reducido de 10 a 8 para menos líneas
   }
 
   double _getInterval(int length) {
     if (length < 10) {
       return 1;
     }
-    return length / 8; // Reducido para menos líneas verticales
+    return length / 10; // Reducido para menos líneas verticales
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 
 class ChatAiPage extends StatefulWidget {
   final String? averageId;
@@ -65,7 +64,7 @@ class _ChatAiPageState extends State<ChatAiPage> {
     final theme = Theme.of(context);
     final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
 
-    return BaseContainer(
+    return Container(
       width: double.infinity,
       height: double.infinity,
       padding: const EdgeInsets.all(12),

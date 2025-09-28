@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/domain/models/analysis/base_analysis.dart';
-import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/molecules/base_card.dart';
 import 'package:intl/intl.dart';
 
 class AnalysisDetail extends StatelessWidget {
@@ -34,7 +34,7 @@ class AnalysisDetail extends StatelessWidget {
       typeSensor = "Sensor: $sensor";
     }
 
-    return BaseContainer(
+    return Container(
       width: double.infinity,
       height: double.infinity,
       padding: EdgeInsets.all(10),
@@ -87,23 +87,9 @@ class AnalysisDetail extends StatelessWidget {
   SizedBox _cardInfo(BuildContext context, String label, String value) {
     return SizedBox(
       height: 150,
-      child: Card(
-        child: Padding(
-          padding: EdgeInsets.all(10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              Text(value),
-            ],
-          ),
-        ),
+      child: BaseCard(
+        title: label,
+        subtitle: value,
       ),
     );
   }

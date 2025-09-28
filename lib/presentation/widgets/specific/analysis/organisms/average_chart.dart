@@ -44,6 +44,49 @@ class AverageChart extends StatelessWidget {
                   child: BarChart(
                     BarChartData(
                       maxY: maxY,
+                      // Configuración de touch/tooltip
+                      barTouchData: BarTouchData(
+                        enabled: true,
+                        touchTooltipData: BarTouchTooltipData(
+                          // Fondo del tooltip personalizado
+                          getTooltipColor: (group) {
+                            return theme.colorScheme.surface.withAlpha(90);
+                          },
+                          // Elementos del tooltip personalizados
+                          getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                            final textStyle = TextStyle(
+                              color: theme.colorScheme.onSurface,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                            );
+
+                            final labels = ["Mínimo", "Promedio", "Máximo"];
+                            final values = [
+                              min,
+                              average,
+                              max > maxY ? maxY : max
+                            ];
+
+                            return BarTooltipItem(
+                              '${labels[groupIndex]}\n${values[groupIndex].toStringAsFixed(2)}',
+                              textStyle,
+                            );
+                          },
+                          // Configuración del tooltip
+                          tooltipBorderRadius: BorderRadius.circular(8),
+                          tooltipPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          tooltipMargin: 8,
+                          fitInsideHorizontally: true,
+                          fitInsideVertically: true,
+                          tooltipBorder: BorderSide(
+                            color: theme.colorScheme.outline.withAlpha(30),
+                            width: 1,
+                          ),
+                        ),
+                      ),
                       barGroups: [
                         BarChartGroupData(
                           x: 0,
