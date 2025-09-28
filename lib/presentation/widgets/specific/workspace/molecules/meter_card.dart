@@ -6,7 +6,7 @@ class MeterCard extends StatelessWidget {
   final String id;
   final String name;
   final String state;
-  final Location location; 
+  final Location location;
   final void Function()? onTap;
 
   const MeterCard({
@@ -14,18 +14,15 @@ class MeterCard extends StatelessWidget {
     required this.id,
     required this.name,
     required this.state,
-    required this.location, 
+    required this.location,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    Widget iconAvatar = Icon(Icons.lock_outlined);
-  
     return BaseCard(
       title: name,
       chip: Chip(
-        avatar: iconAvatar,
         label: Text(state),
       ),
       onTap: onTap,

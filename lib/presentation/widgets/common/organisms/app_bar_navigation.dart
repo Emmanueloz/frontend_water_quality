@@ -16,6 +16,11 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final styleButton = IconButton.styleFrom(
+      backgroundColor: theme.colorScheme.surface,
+    );
+
     return Consumer2<ConnectivityProvider, AuthProvider>(
       builder: (context, connectivityProvider, authProvider, child) {
         List<Widget> actions = [];
@@ -44,7 +49,8 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
               },
             ),
             IconButton(
-              icon: const Icon(Icons.notifications),
+              icon: const Icon(Icons.notifications_outlined),
+              style: styleButton,
               onPressed: () {
                 if (isOffline) {
                   return;
@@ -70,6 +76,7 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
                 authProvider.logout();
                 context.goNamed(Routes.login.name);
               },
+              style: styleButton,
               icon: Icon(
                 Icons.logout,
               ),

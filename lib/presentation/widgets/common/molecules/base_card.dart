@@ -16,24 +16,34 @@ class BaseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12), // esquinas redondeadas
+      ),
+      clipBehavior: Clip.antiAlias, // para que el borde se recorte bien
       child: InkWell(
         onTap: onTap,
-        child: Padding(
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border(
+              left: BorderSide(
+                color: theme.colorScheme.tertiary,
+                width: 10,
+              ),
+            ),
+          ),
           padding: const EdgeInsets.all(8),
           child: Column(
-            spacing: 4,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 title,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
+                style: theme.textTheme.bodyLarge
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
-              Text(subtitle ?? ''),
-              Spacer(),
+              if (subtitle != null) Text(subtitle!),
+              const Spacer(),
               if (chip != null)
                 Align(
                   alignment: Alignment.bottomRight,

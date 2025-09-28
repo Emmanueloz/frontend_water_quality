@@ -3,11 +3,10 @@ import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/domain/models/meter_records_response.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/line_graph.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/molecules/date_range_filter.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_record_provider.dart';
 
-/// Widget principal para listado de registros del medidor.
-/// Versión mejorada con funcionalidad completa.
 class MainListrecords extends StatefulWidget {
   final String id;
   final String idMeter;
@@ -36,11 +35,8 @@ class _MainListrecordsState extends State<MainListrecords> {
   @override
   void initState() {
     super.initState();
-    // Cargar registros cuando se inicializa la página
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_meterProvider != null) {
-        _meterProvider!.fetchMeterRecords(widget.id, widget.idMeter);
-      }
+      _meterProvider?.fetchMeterRecords(widget.id, widget.idMeter);
     });
   }
 
@@ -48,23 +44,24 @@ class _MainListrecordsState extends State<MainListrecords> {
   Widget build(BuildContext context) {
     return Consumer<MeterRecordProvider>(
       builder: (context, meterProvider, _) {
-        if (meterProvider.isLoading) {
+        if (meterProvider.isLoading &&
+            meterProvider.meterRecordsResponse == null) {
           return BaseContainer(
-              margin: _getMargin(),
-              child: const Center(child: CircularProgressIndicator()));
+            margin: _getMargin(),
+            child: const Center(child: CircularProgressIndicator()),
+          );
         }
 
-        if (meterProvider.errorMessageRecords != null) {
+        if (meterProvider.errorMessageRecords != null &&
+            meterProvider.meterRecordsResponse == null) {
           return BaseContainer(
             margin: _getMargin(),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Error al cargar los registros',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
+                  Text('Error al cargar los registros',
+                      style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 8),
                   Text(meterProvider.errorMessageRecords!),
                   const SizedBox(height: 16),
@@ -82,95 +79,121 @@ class _MainListrecordsState extends State<MainListrecords> {
         final MeterRecordsResponse? records =
             meterProvider.meterRecordsResponse;
         if (records == null) {
-          return const Center(child: Text('No hay registros disponibles'));
+          return _buildEmptyState(context, meterProvider);
         }
 
-        return _buildMain(context, records);
+        return _buildMain(context, records, meterProvider);
       },
     );
   }
 
-  Widget _buildMain(BuildContext context, MeterRecordsResponse records) {
-    EdgeInsetsGeometry margin;
-    EdgeInsetsGeometry padding;
-    int crossAxisCount;
-    double childAspectRatio;
-
-    if (widget.screenSize == ScreenSize.smallDesktop) {
-      margin = const EdgeInsets.all(0);
-      padding = const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 9,
-      );
-      crossAxisCount = 2;
-      childAspectRatio = 1 / 0.8;
-    } else if (widget.screenSize == ScreenSize.largeDesktop) {
-      margin = const EdgeInsets.all(0);
-      padding = const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 9,
-      );
-      crossAxisCount = 2;
-      childAspectRatio = 1 / 0.6;
-    } else if (widget.screenSize == ScreenSize.tablet) {
-      margin = const EdgeInsets.all(10);
-      padding = const EdgeInsets.all(12.0);
-      crossAxisCount = 2;
-      childAspectRatio = 1 / 0.8;
-    } else {
-      // Mobile
-      margin = const EdgeInsets.all(10);
-      padding = const EdgeInsets.all(10.0);
-      crossAxisCount = 1;
-      childAspectRatio = 1 / 0.8;
-    }
-
-    // Mapear los datos de registros a los gráficos
-    final List<Widget> linegraphs = _buildLineGraphs(records);
-
+  Widget _buildEmptyState(
+      BuildContext context, MeterRecordProvider meterProvider) {
     return BaseContainer(
-      margin: margin,
-      padding: padding,
+      margin: _getMargin(),
+      padding: _getPadding(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header con título y botón de recarga
+          _buildHeader(context, meterProvider),
+          const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Text(
-                  "Historial del medidor ${widget.idMeter}",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                child: DateRangeFilter(
+                  startDate: meterProvider.currentStartDate,
+                  endDate: meterProvider.currentEndDate,
+                  isLoading: meterProvider.isLoading,
+                  onApplyFilters: meterProvider.applyDateFilters,
+                  onPreviousPeriod: meterProvider.hasPreviousPage
+                      ? meterProvider.goToPreviousPage
+                      : null,
+                  onNextPeriod: meterProvider.hasNextPage
+                      ? meterProvider.goToNextPage
+                      : null,
+                  onClear: meterProvider.hasActiveFilters
+                      ? meterProvider.clearFilters
+                      : null,
+                  isMobile: widget.screenSize == ScreenSize.mobile,
                 ),
-              ),
-              Consumer<MeterRecordProvider>(
-                builder: (context, meterProvider, _) {
-                  return IconButton(
-                    onPressed: meterProvider.isLoading
-                        ? null
-                        : () => meterProvider.refreshMeterRecords(),
-                    icon: meterProvider.isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Icon(Icons.refresh),
-                    tooltip: 'Recargar registros',
-                  );
-                },
               ),
             ],
           ),
           const SizedBox(height: 16),
-          // Contenedor con scroll para los gráficos
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.info_outline, size: 48, color: Colors.grey[400]),
+                  const SizedBox(height: 8),
+                  Text('No hay registros disponibles',
+                      style: Theme.of(context).textTheme.titleMedium),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMain(BuildContext context, MeterRecordsResponse records,
+      MeterRecordProvider meterProvider) {
+    int crossAxisCount = 1;
+    double childAspectRatio = 1 / 0.8;
+
+    if (widget.screenSize == ScreenSize.smallDesktop ||
+        widget.screenSize == ScreenSize.tablet) {
+      crossAxisCount = 2;
+    } else if (widget.screenSize == ScreenSize.largeDesktop) {
+      crossAxisCount = 2;
+      childAspectRatio = 1 / 0.6;
+    }
+
+    final List<Widget> linegraphs = [
+      _buildGraph(records.temperatureRecords, "Temperatura", 0, 60, 10, 10, 35),
+      _buildGraph(records.phRecords, "PH", 0, 14, 2, 6.5, 8.5),
+      _buildGraph(records.tdsRecords, "Total de sólidos disueltos", 0, 500, 50,
+          300, 490),
+      _buildGraph(
+          records.conductivityRecords, "Conductividad", 0, 3200, 300, 0, 1000),
+      _buildGraph(records.turbidityRecords, "Turbidez", 0, 50, 5, 0, 5),
+    ];
+
+    return BaseContainer(
+      margin: _getMargin(),
+      padding: _getPadding(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(context, meterProvider),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: DateRangeFilter(
+                  startDate: meterProvider.currentStartDate,
+                  endDate: meterProvider.currentEndDate,
+                  isLoading: meterProvider.isLoading,
+                  onApplyFilters: meterProvider.applyDateFilters,
+                  onPreviousPeriod: meterProvider.hasPreviousPage
+                      ? meterProvider.goToPreviousPage
+                      : null,
+                  onNextPeriod: meterProvider.hasNextPage
+                      ? meterProvider.goToNextPage
+                      : null,
+                  onClear: meterProvider.hasActiveFilters
+                      ? meterProvider.clearFilters
+                      : null,
+                  isMobile: widget.screenSize == ScreenSize.mobile,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
           Expanded(
             child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
               child: GridView.count(
                 childAspectRatio: childAspectRatio,
                 crossAxisCount: crossAxisCount,
@@ -187,186 +210,101 @@ class _MainListrecordsState extends State<MainListrecords> {
     );
   }
 
-  List<Widget> _buildLineGraphs(records) {
-    return [
-      _buildTemperatureGraph(records),
-      _buildPhGraph(records),
-      _buildTdsGraph(records),
-      _buildConductivityGraph(records),
-      _buildTurbidityGraph(records),
-    ];
-  }
-
-Widget _buildTemperatureGraph(records) {
-  final temperatureRecords = records.temperatureRecords;
-  if (temperatureRecords.isEmpty) {
-    return _buildEmptyGraph("Temperatura");
-  }
-
-  final dates = temperatureRecords
-      .map((r) => _formatDate(r.datetime))
-      .toList()
-      .cast<String>();
-  final data = temperatureRecords.map((r) => r.value).toList().cast<double>();
-  final currentValue = data.isNotEmpty ? double.parse(data.last.toStringAsFixed(1)) : 0.0;
-
-  final minThreshold = 10.0;
-  final maxThreshold = 35.0;
-
-  final minY = 0.0;
-  final maxY = 60.0;
-
-  return LineGraph(
-    sensorType: "Temperatura",
-    value: currentValue,
-    dates: dates,
-    data: data,
-    minY: minY,
-    maxY: maxY,
-    intervalY: 10.0,
-    minThreshold: minThreshold, 
-    maxThreshold: maxThreshold, 
-  );
-}
-
-
-Widget _buildPhGraph(records) {
-  final phRecords = records.phRecords;
-  if (phRecords.isEmpty) return _buildEmptyGraph("PH");
-
-  final dates = phRecords.map((r) => _formatDate(r.datetime)).toList().cast<String>();
-  final data = phRecords.map((r) => r.value).toList().cast<double>();
-  final currentValue = data.isNotEmpty ? double.parse(data.last.toStringAsFixed(1)) : 0.0;
-
-  final minThreshold = 6.5; 
-  final maxThreshold = 8.5;  
-
-  return LineGraph(
-    sensorType: "PH",
-    value: currentValue,
-    dates: dates,
-    data: data,
-    minY: 0.0,
-    maxY: 14.0,
-    intervalY: 2.0,
-    minThreshold: minThreshold,
-    maxThreshold: maxThreshold,
-  );
-}
-Widget _buildTdsGraph(records) {
-  final tdsRecords = records.tdsRecords;
-  if (tdsRecords.isEmpty) return _buildEmptyGraph("Total de sólidos disueltos");
-
-  final dates = tdsRecords.map((r) => _formatDate(r.datetime)).toList().cast<String>();
-  final data = tdsRecords.map((r) => r.value).toList().cast<double>();
-  final currentValue = data.isNotEmpty ? double.parse(data.last.toStringAsFixed(1)) : 0.0;
-
-  final minThreshold = 300.0;   
-  final maxThreshold = 1000.0;
-
-  return LineGraph(
-    sensorType: "Total de sólidos disueltos",
-    value: currentValue,
-    dates: dates,
-    data: data,
-    minY: 0,
-    maxY: 1400,
-    intervalY: 200,
-    minThreshold: minThreshold,
-    maxThreshold: maxThreshold,
-  );
-}
-
-Widget _buildConductivityGraph(records) {
-  final conductivityRecords = records.conductivityRecords;
-  if (conductivityRecords.isEmpty) return _buildEmptyGraph("Conductividad");
-
-  final dates = conductivityRecords.map((r) => _formatDate(r.datetime)).toList().cast<String>();
-  final data = conductivityRecords.map((r) => r.value).toList().cast<double>();
-  final currentValue = data.isNotEmpty ? double.parse(data.last.toStringAsFixed(1)) : 0.0;
-
-  final minThreshold = 0.0;  
-  final maxThreshold = 1000.0;   
-
-  return LineGraph(
-    sensorType: "Conductividad",
-    value: currentValue,
-    dates: dates,
-    data: data,
-    minY: 0.0,
-    maxY: 1600.0,
-    intervalY: 200.0,
-    minThreshold: minThreshold,
-    maxThreshold: maxThreshold,
-  );
-}
-
-Widget _buildTurbidityGraph(records) {
-  final turbidityRecords = records.turbidityRecords;
-  if (turbidityRecords.isEmpty) return _buildEmptyGraph("Turbidez");
-
-  final dates = turbidityRecords.map((r) => _formatDate(r.datetime)).toList().cast<String>();
-  final data = turbidityRecords.map((r) => r.value).toList().cast<double>();
-  final currentValue = data.isNotEmpty ? double.parse(data.last.toStringAsFixed(1)) : 0.0;
-
-  final minThreshold = 0.0;   
-  final maxThreshold = 5.0;   // Turbidez máxima (NTU)
-
-  return LineGraph(
-    sensorType: "Turbidez",
-    value: currentValue,
-    dates: dates,
-    data: data,
-    minY: 0.0,
-    maxY: 16.0,
-    intervalY: 2.0,
-    minThreshold: minThreshold,
-    maxThreshold: maxThreshold,
-  );
-}
-  Widget _buildEmptyGraph(String sensorType) {
-    return Card(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.show_chart, size: 48, color: Colors.grey[400]),
-            const SizedBox(height: 8),
-            Text(
-              sensorType,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Sin datos disponibles',
-              style: TextStyle(color: Colors.grey[600]),
-            ),
-          ],
+  Widget _buildGraph(List<dynamic> records, String sensorType, double minY,
+      double maxY, double intervalY, double minThreshold, double maxThreshold) {
+    if (records.isEmpty) {
+      return Card(
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.show_chart, size: 48, color: Colors.grey[400]),
+              const SizedBox(height: 8),
+              Text(sensorType,
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              Text('Sin datos disponibles',
+                  style: TextStyle(color: Colors.grey[600])),
+            ],
+          ),
         ),
-      ),
+      );
+    }
+
+    final dates =
+        records.map((r) => _formatDate(r.datetime)).toList().cast<String>();
+    final data = records.map((r) => r.value).toList().cast<double>();
+    final currentValue =
+        data.isNotEmpty ? double.parse(data.last.toStringAsFixed(1)) : 0.0;
+
+    return LineGraph(
+      sensorType: sensorType,
+      value: currentValue,
+      dates: dates,
+      data: data,
+      minY: minY,
+      maxY: maxY,
+      intervalY: intervalY,
+      minThreshold: minThreshold,
+      maxThreshold: maxThreshold,
     );
   }
 
   String _formatDate(String date) {
     final dateTime = DateTime.parse(date);
-    // Formatear la fecha al formato dd/mm
     final day = dateTime.day.toString().padLeft(2, '0');
     final month = dateTime.month.toString().padLeft(2, '0');
-
     return '$day/$month';
+  }
+
+  Widget _buildHeader(BuildContext context, MeterRecordProvider meterProvider) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Text("Historial del medidor",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(fontWeight: FontWeight.bold)),
+        ),
+        IconButton(
+          onPressed: meterProvider.isLoading
+              ? null
+              : meterProvider.refreshMeterRecords,
+          icon: meterProvider.isLoading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2))
+              : const Icon(Icons.refresh),
+          tooltip: 'Recargar registros',
+        ),
+      ],
+    );
   }
 
   EdgeInsets _getMargin() {
     switch (widget.screenSize) {
       case ScreenSize.mobile:
-        return const EdgeInsets.all(10);
       case ScreenSize.tablet:
         return const EdgeInsets.all(10);
       case ScreenSize.smallDesktop:
-        return const EdgeInsets.all(0);
       case ScreenSize.largeDesktop:
         return const EdgeInsets.all(0);
+    }
+  }
+
+  EdgeInsets _getPadding() {
+    switch (widget.screenSize) {
+      case ScreenSize.mobile:
+        return const EdgeInsets.all(10.0);
+      case ScreenSize.tablet:
+        return const EdgeInsets.all(12.0);
+      case ScreenSize.smallDesktop:
+      case ScreenSize.largeDesktop:
+        return const EdgeInsets.symmetric(horizontal: 20, vertical: 9);
     }
   }
 }
