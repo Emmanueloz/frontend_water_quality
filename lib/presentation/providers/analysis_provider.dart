@@ -6,6 +6,9 @@ import 'package:frontend_water_quality/domain/models/analysis/average_period/ave
 import 'package:frontend_water_quality/domain/models/analysis/average_period/data_avg_all.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average_period/data_avg_sensor.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average_period/param_period.dart';
+import 'package:frontend_water_quality/domain/models/analysis/correlation/correlation.dart';
+import 'package:frontend_water_quality/domain/models/analysis/correlation/data_correlation_matrix.dart';
+import 'package:frontend_water_quality/domain/models/analysis/correlation/param_correlation.dart';
 import 'package:frontend_water_quality/domain/models/analysis/parameters.dart';
 import 'package:frontend_water_quality/domain/models/analysis/period/data_pred_all.dart';
 import 'package:frontend_water_quality/domain/models/analysis/period/data_pred_sensor.dart';
@@ -723,6 +726,70 @@ class AnalysisProvider {
         updatedAt: DateTime.tryParse("2025-09-09 22:08:43.172239"),
         workspaceId: "-OV6KJon4LkGwCw8pNvh",
       )
+    ];
+  }
+
+  Future<List<Correlation>> getCorrelations(
+    String workspaceId,
+    String meterId,
+    String token,
+  ) async {
+    // Lista de ejemplos de correlación
+    return [
+      // Ejemplo 1: Correlación de TDS, pH y Conductividad
+      Correlation(
+        id: "491733b4-9505-9103-7bce-3f41c24428ac",
+        createdAt: DateTime.tryParse("2025-09-09 22:09:04.682305"),
+        data: DataCorrelationMatrix(
+          matrix: [
+            [1, 0.35028823994785213, 0.9730369856825265],
+            [0.35028823994785213, 1, 0.24129311139024442],
+            [0.9730369856825265, 0.24129311139024442, 1],
+          ],
+          method: "pearson",
+          sensors: ["tds", "ph", "conductivity"],
+        ),
+        error: "",
+        meterId: "-OVnW46EjvIYWdpO8zPz",
+        parameters: ParamCorrelation(
+          endDate: DateTime.tryParse("2025-09-06 23:59:59"),
+          startDate: DateTime.tryParse("2025-04-01 00:00:00"),
+          periodType: "days",
+          method: "pearson",
+          sensors: ["tds", "ph", "conductivity"],
+        ),
+        status: "saved",
+        type: "correlation",
+        updatedAt: DateTime.tryParse("2025-09-09 22:09:46.782241"),
+        workspaceId: "-OV6KJon4LkGwCw8pNvh",
+      ),
+
+      // Ejemplo 2: Correlación de pH y Temperatura
+      Correlation(
+        id: "9e0fddc1-c16b-b41c-c4a4-22b25d1e6a45",
+        createdAt: DateTime.tryParse("2025-09-29 22:47:47.429188"),
+        data: DataCorrelationMatrix(
+          matrix: [
+            [1, -0.3115168260680026],
+            [-0.3115168260680026, 1],
+          ],
+          method: "pearson",
+          sensors: ["ph", "temperature"],
+        ),
+        error: "",
+        meterId: "-OVnW46EjvIYWdpO8zPz",
+        parameters: ParamCorrelation(
+          endDate: DateTime.tryParse("2025-09-26 23:59:59"),
+          startDate: DateTime.tryParse("2025-04-01 00:00:00"),
+          periodType: "days",
+          method: "pearson",
+          sensors: ["ph", "temperature"],
+        ),
+        status: "saved",
+        type: "correlation",
+        updatedAt: DateTime.tryParse("2025-09-29 22:47:51.331493"),
+        workspaceId: "-OV6KJon4LkGwCw8pNvh",
+      ),
     ];
   }
 }

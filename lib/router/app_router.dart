@@ -10,6 +10,7 @@ import 'package:frontend_water_quality/presentation/pages/alerts.dart';
 import 'package:frontend_water_quality/presentation/pages/analysis/analysis.dart';
 import 'package:frontend_water_quality/presentation/pages/analysis/average_page.dart';
 import 'package:frontend_water_quality/presentation/pages/analysis/average_period_page.dart';
+import 'package:frontend_water_quality/presentation/pages/analysis/correlation_page.dart';
 import 'package:frontend_water_quality/presentation/pages/analysis/prediction_page.dart';
 import 'package:frontend_water_quality/presentation/pages/form_alert.dart';
 import 'package:frontend_water_quality/domain/models/alert.dart';
@@ -286,8 +287,11 @@ class AppRouter {
                             parentNavigatorKey: rootNavigatorKey,
                             path: Routes.analysisCorrelation.path,
                             name: Routes.analysisCorrelation.name,
-                            builder: (context, state) => SafeArea(
-                              child: Text("Correlación"),
+                            builder: (context, state) => CorrelationPage(
+                              idWorkspace:
+                                  state.pathParameters['id'] ?? 'default',
+                              idMeter:
+                                  state.pathParameters['idMeter'] ?? 'default',
                             ),
                           )
                         ],
