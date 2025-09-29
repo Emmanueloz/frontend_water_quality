@@ -3,6 +3,7 @@ import 'package:frontend_water_quality/domain/models/analysis/correlation/correl
 import 'package:frontend_water_quality/presentation/providers/analysis_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/molecules/correlation_heatmap.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_table.dart';
 import 'package:provider/provider.dart';
@@ -35,6 +36,7 @@ class _CorrelationPageState extends State<CorrelationPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Layout(
       title: "Correlación",
       builder: (context, screenSize) => AnalysisLayout<Correlation>(
@@ -76,7 +78,14 @@ class _CorrelationPageState extends State<CorrelationPage> {
             }
           },
         ),
-        chartWidget: Container(),
+        chartWidget: CorrelationHeatmap(
+          labels: _current?.data?.sensors ?? [],
+          matrix: _current?.data?.matrix ?? [],
+          textColor: theme.colorScheme.onPrimary,
+          gridColor: theme.colorScheme.tertiary,
+          primaryColor: theme.colorScheme.tertiary,
+          size: 400,
+        ),
       ),
     );
   }

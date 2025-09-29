@@ -49,7 +49,7 @@ class CorrelationHeatmap extends StatelessWidget {
 
     //final dimension = matrix.length;
 
-    return Container(
+    return SizedBox(
       width: size,
       height: size,
       child: CustomPaint(
@@ -104,15 +104,14 @@ class HeatmapPainter extends CustomPainter {
         final y = labelSize + (i * cellSize);
 
         // Usar el valor absoluto para la opacidad (normalizado entre 0 y 1)
-        final opacity = value.abs().clamp(0.0, 1.0);
+        final opacity = value * 255;
 
-        // Determinar el color basado en el signo del valor
         Color cellColor;
+        // Determinar el color basado en el signo del valor
         if (value >= 0) {
-          cellColor = primaryColor.withOpacity(opacity);
+          cellColor = primaryColor.withAlpha(opacity.toInt());
         } else {
-          // Para valores negativos, usar un color complementario (rojo)
-          cellColor = Colors.red.withOpacity(opacity);
+          cellColor = primaryColor.withAlpha(10);
         }
 
         final rect = Rect.fromLTWH(x, y, cellSize, cellSize);
@@ -124,7 +123,7 @@ class HeatmapPainter extends CustomPainter {
 
         // Dibujar borde de celda
         final borderPaint = Paint()
-          ..color = gridColor.withOpacity(0.3)
+          ..color = gridColor.withAlpha(30)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 0.5;
         canvas.drawRect(rect, borderPaint);
