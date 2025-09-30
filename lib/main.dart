@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/theme/theme.dart';
 import 'package:frontend_water_quality/domain/models/storage_model.dart';
+import 'package:frontend_water_quality/infrastructure/analysis_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/auth_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/ble_service.dart';
 import 'package:frontend_water_quality/infrastructure/connectivity_provider.dart';
@@ -128,8 +129,14 @@ void main() async {
             return previousAlertProvider..setAuthProvider(authProvider);
           },
         ),
-        Provider(
-          create: (context) => AnalysisProvider(dio),
+        ProxyProvider<AuthProvider, AnalysisProvider>(
+          create: (context) {
+            final authProvider = context.read<AuthProvider>();
+            return AnalysisProvider(AnalysisRepoImpl(dio), authProvider);
+          },
+          update: (context, authProvider, previousAnalysisProvider) {
+            return previousAnalysisProvider!..setAuthProvider(authProvider);
+          },
         ),
         ChangeNotifierProxyProvider<AuthProvider, UserProvider>(
           create: (context) {

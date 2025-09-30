@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/constants/limit_chart_sensor.dart';
+import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average/average.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average/data_average_all.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average/data_average_sensor.dart';
@@ -29,7 +30,7 @@ class _AveragePageState extends State<AveragePage> {
   bool expandedDetailt = false;
   bool showChat = false;
   String? idAverage;
-  Future<List<Average>>? _getAverage;
+  Future<Result<List<Average>>>? _getAverage;
   Average? _current;
 
   @override
@@ -58,7 +59,7 @@ class _AveragePageState extends State<AveragePage> {
           onToggleChat: () => setState(() {
             showChat = !showChat;
           }),
-          tableWidget: (screenSize) => FutureBuilder<List<Average>>(
+          tableWidget: (screenSize) => FutureBuilder(
             future: _getAverage,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
@@ -66,14 +67,14 @@ class _AveragePageState extends State<AveragePage> {
                   return const Text("Ocurrió un error");
                 }
                 return AnalysisTable(
-                  analysis: snapshot.data ?? [],
+                  analysis: snapshot.data?.value ?? [],
                   idSelected: idAverage ?? "",
                   screenSize: screenSize,
                   onSelectChanged: (id) {
                     setState(() {
                       if (idAverage != id) {
                         idAverage = id;
-                        _current = snapshot.data?.firstWhere(
+                        _current = snapshot.data?.value?.firstWhere(
                           (element) => element.id == id,
                         );
                       }
