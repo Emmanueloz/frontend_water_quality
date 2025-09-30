@@ -40,11 +40,8 @@ class _LoginFormState extends State<LoginForm> {
           crossAxisAlignment: CrossAxisAlignment.center,
           spacing: 20,
           children: [
-            Icon(Icons.image, size: 50),
-            Text(
-              'Logo y nombre',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
+            Image.asset('assets/images/logotipo_aquaminds.png',
+                height: 150),
             Text(
               'Bienvenido',
               style: Theme.of(context).textTheme.displayLarge,
