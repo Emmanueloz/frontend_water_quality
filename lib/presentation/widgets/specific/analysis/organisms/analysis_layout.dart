@@ -30,10 +30,11 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
   });
 
   void _showDetailBottomSheet(BuildContext context) {
-    showModalBottomSheet<void>(
+    final PageController pageController = PageController();
+
+    showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      useSafeArea: true,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
@@ -54,18 +55,49 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
+              // Indicador de página
+              if (chatAverageId != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Desliza para ver el chat →',
+                          style: TextStyle(color: Colors.grey)),
+                    ],
+                  ),
+                ),
               // Content
               Expanded(
-                child: selectedItem == null || chartWidget == null
-                    ? const EmptyAnalysis()
-                    : AnalysisDetail(
-                        screenSize: screenSize,
-                        isExpanded: false,
-                        onExpanded: onToggleExpand,
-                        onOpenChat: onToggleChat,
-                        analysis: selectedItem,
-                        child: chartWidget!,
+                child: PageView(
+                  controller: pageController,
+                  children: [
+                    selectedItem == null || chartWidget == null
+                        ? const EmptyAnalysis()
+                        : AnalysisDetail(
+                            isExpanded: false,
+                            onExpanded: onToggleExpand,
+                            screenSize: screenSize,
+                            onOpenChat: () {
+                              if (pageController.page == 0) {
+                                pageController.animateToPage(
+                                  1,
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+                              }
+                            },
+                            analysis: selectedItem,
+                            child: chartWidget!,
+                          ),
+                    // Página del chat
+                    if (chatAverageId != null)
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: ChatAiPage(averageId: chatAverageId ?? ""),
                       ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -74,7 +106,7 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
     );
   }
 
-  Widget _buildDesktopLayout() {
+  Widget buildDesktopLayout() {
     return Row(
       children: [
         if (!expandedDetail) ...[
@@ -114,7 +146,7 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
     );
   }
 
-  Widget _buildMobileLayout(BuildContext context) {
+  Widget buildMobileLayout(BuildContext context) {
     return Column(
       children: [
         SizedBox(
@@ -138,8 +170,8 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet
-          ? _buildMobileLayout(context)
-          : _buildDesktopLayout(),
+          ? buildMobileLayout(context)
+          : buildDesktopLayout(),
     );
   }
 }

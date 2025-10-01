@@ -46,11 +46,11 @@ class AnalysisDetail extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           spacing: 20,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                if (screenSize == ScreenSize.smallDesktop ||
-                    screenSize == ScreenSize.largeDesktop)
+            if (screenSize == ScreenSize.smallDesktop ||
+                screenSize == ScreenSize.largeDesktop)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
                   IconButton(
                     onPressed: onExpanded,
                     icon: Icon(
@@ -58,18 +58,18 @@ class AnalysisDetail extends StatelessWidget {
                       size: 30,
                     ),
                   ),
-                Text(
-                  "Resultados",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge
-                      ?.copyWith(fontWeight: FontWeight.bold),
-                ),
-                Spacer(),
-                IconButton(
-                    onPressed: onOpenChat, icon: Icon(Icons.auto_awesome))
-              ],
-            ),
+                  Text(
+                    "Resultados",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  Spacer(),
+                  IconButton(
+                      onPressed: onOpenChat, icon: Icon(Icons.auto_awesome))
+                ],
+              ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
