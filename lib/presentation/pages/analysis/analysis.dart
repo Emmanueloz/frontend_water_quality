@@ -20,6 +20,7 @@ class AnalysisPage extends StatelessWidget {
       AnalysisCard(
         title: "Promedios",
         icon: Icons.analytics,
+        screenSize: screenSize,
         onTab: () => context.goNamed(
           Routes.analysisAverage.name,
           pathParameters: {
@@ -31,6 +32,7 @@ class AnalysisPage extends StatelessWidget {
       AnalysisCard(
         title: "Promedios por periodo",
         icon: Icons.bar_chart,
+        screenSize: screenSize,
         onTab: () => context.goNamed(
           Routes.analysisAveragePeriod.name,
           pathParameters: {
@@ -42,6 +44,7 @@ class AnalysisPage extends StatelessWidget {
       AnalysisCard(
         title: "Predicción",
         icon: Icons.line_axis,
+        screenSize: screenSize,
         onTab: () => context.goNamed(
           Routes.analysisPrediction.name,
           pathParameters: {
@@ -53,6 +56,7 @@ class AnalysisPage extends StatelessWidget {
       AnalysisCard(
         title: "Correlación",
         icon: Icons.bubble_chart,
+        screenSize: screenSize,
         onTab: () => context.goNamed(
           Routes.analysisCorrelation.name,
           pathParameters: {

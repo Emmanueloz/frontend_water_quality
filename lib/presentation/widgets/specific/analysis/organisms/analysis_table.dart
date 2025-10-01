@@ -19,12 +19,6 @@ class AnalysisTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet) {
-      return SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: _buildTable(),
-      );
-    }
     return _buildTable();
   }
 

@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/screen_size.dart';
 
 class AnalysisCard extends StatelessWidget {
   final String title;
   final IconData? icon;
   final void Function()? onTab;
-  const AnalysisCard({super.key, required this.title, this.icon, this.onTab});
+  final ScreenSize screenSize;
+
+  const AnalysisCard({
+    super.key,
+    required this.title,
+    this.icon,
+    this.onTab,
+    required this.screenSize,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -14,10 +23,12 @@ class AnalysisCard extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.all(10),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 icon,
-                size: 100,
+                size: _getIconSize(),
               ),
               Text(
                 title,
@@ -31,5 +42,18 @@ class AnalysisCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  double _getIconSize() {
+    switch (screenSize) {
+      case ScreenSize.mobile:
+        return 40;
+      case ScreenSize.tablet:
+        return 60;
+      case ScreenSize.smallDesktop:
+        return 80;
+      case ScreenSize.largeDesktop:
+        return 100;
+    }
   }
 }

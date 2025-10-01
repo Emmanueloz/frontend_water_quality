@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/domain/models/analysis/base_analysis.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/molecules/base_card.dart';
 import 'package:intl/intl.dart';
 
 class AnalysisDetail extends StatelessWidget {
   final bool isExpanded;
+  final ScreenSize screenSize;
   final void Function() onExpanded;
   final void Function() onOpenChat;
   final Widget child;
@@ -15,6 +17,7 @@ class AnalysisDetail extends StatelessWidget {
     required this.isExpanded,
     required this.onExpanded,
     required this.onOpenChat,
+    required this.screenSize,
   });
 
   final BaseAnalysis? analysis;
@@ -46,13 +49,15 @@ class AnalysisDetail extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                IconButton(
-                  onPressed: onExpanded,
-                  icon: Icon(
-                    isExpanded ? Icons.arrow_right : Icons.arrow_left,
-                    size: 30,
+                if (screenSize == ScreenSize.smallDesktop ||
+                    screenSize == ScreenSize.largeDesktop)
+                  IconButton(
+                    onPressed: onExpanded,
+                    icon: Icon(
+                      isExpanded ? Icons.arrow_right : Icons.arrow_left,
+                      size: 30,
+                    ),
                   ),
-                ),
                 Text(
                   "Resultados",
                   style: Theme.of(context)
@@ -65,17 +70,16 @@ class AnalysisDetail extends StatelessWidget {
                     onPressed: onOpenChat, icon: Icon(Icons.auto_awesome))
               ],
             ),
-            Table(
-              children: [
-                TableRow(
-                  children: [
-                    _cardInfo(context, "Estado", analysis!.status ?? ""),
-                    _cardInfo(context, "Parametros", "$startDate $endDate"),
-                    _cardInfo(context, "Sensores", typeSensor),
-                    _cardInfo(context, "Tipo", analysis!.type ?? ""),
-                  ],
-                )
-              ],
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _cardInfo(context, "Estado", analysis!.status ?? ""),
+                  _cardInfo(context, "Parametros", "$startDate $endDate"),
+                  _cardInfo(context, "Sensores", typeSensor),
+                  _cardInfo(context, "Tipo", analysis!.type ?? ""),
+                ],
+              ),
             ),
             child,
           ],
@@ -86,6 +90,7 @@ class AnalysisDetail extends StatelessWidget {
 
   SizedBox _cardInfo(BuildContext context, String label, String value) {
     return SizedBox(
+      width: 200,
       height: 150,
       child: BaseCard(
         title: label,
