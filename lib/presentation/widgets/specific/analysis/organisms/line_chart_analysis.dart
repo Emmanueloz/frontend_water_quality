@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:intl/intl.dart';
 
 class LineChartAnalysis extends StatelessWidget {
@@ -9,6 +10,7 @@ class LineChartAnalysis extends StatelessWidget {
   final String periodType;
   final double maxY;
   final double? width;
+  final ScreenSize screenSize;
 
   const LineChartAnalysis({
     super.key,
@@ -18,6 +20,7 @@ class LineChartAnalysis extends StatelessWidget {
     required this.periodType,
     required this.maxY,
     this.width,
+    required this.screenSize,
   });
 
   @override
@@ -30,7 +33,7 @@ class LineChartAnalysis extends StatelessWidget {
     return SizedBox(
       width: width,
       child: AspectRatio(
-        aspectRatio: 16 / 9,
+        aspectRatio: _getAspectRatio(),
         child: Stack(
           children: [
             Column(
@@ -170,6 +173,19 @@ class LineChartAnalysis extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  double _getAspectRatio() {
+    switch (screenSize) {
+      case ScreenSize.mobile:
+        return 1 / 1; // Cuadrado para móviles
+      case ScreenSize.tablet:
+        return 4 / 3; // Más ancho para tablets
+      case ScreenSize.smallDesktop:
+        return 16 / 9;
+      case ScreenSize.largeDesktop:
+        return 16 / 9;
+    }
   }
 
   List<LineChartBarData> _createSegmentedLines(ThemeData theme) {

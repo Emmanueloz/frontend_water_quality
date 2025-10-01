@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/constants/limit_chart_sensor.dart';
+import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:intl/intl.dart';
 
 class LineChartPrediction extends StatelessWidget {
@@ -10,6 +11,7 @@ class LineChartPrediction extends StatelessWidget {
   final List<double?> predValues;
   final String periodType;
   final double? width;
+  final ScreenSize screenSize;
   const LineChartPrediction({
     super.key,
     required this.sensor,
@@ -18,6 +20,7 @@ class LineChartPrediction extends StatelessWidget {
     required this.dataValues,
     required this.predValues,
     this.width,
+    required this.screenSize,
   });
 
   @override
@@ -29,7 +32,7 @@ class LineChartPrediction extends StatelessWidget {
     return SizedBox(
       width: width,
       child: AspectRatio(
-        aspectRatio: 16 / 9,
+        aspectRatio: _getAspectRatio(),
         child: Stack(
           children: [
             Column(
@@ -182,6 +185,19 @@ class LineChartPrediction extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  double _getAspectRatio() {
+    switch (screenSize) {
+      case ScreenSize.mobile:
+        return 1 / 1; // Cuadrado para móviles
+      case ScreenSize.tablet:
+        return 4 / 3; // Más ancho para tablets
+      case ScreenSize.smallDesktop:
+        return 16 / 9;
+      case ScreenSize.largeDesktop:
+        return 16 / 9;
+    }
   }
 
   LineChartBarData _createLineChart(List<double?> values, Color color,

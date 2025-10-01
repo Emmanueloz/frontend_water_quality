@@ -18,11 +18,12 @@ class AverageAllPeriodChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double width = 600;
-    print(data.toJson());
 
     return Container(
       padding: EdgeInsets.all(20),
       child: Wrap(
+        spacing: 20,
+        runSpacing: 20,
         children: [
           LineChartAnalysis(
             title: "CONDUCTIVIDAD",
@@ -31,6 +32,7 @@ class AverageAllPeriodChart extends StatelessWidget {
             periodType: periodType,
             maxY: LimitChartSensor.getMaxY("conductivity"),
             width: width,
+            screenSize: screenSize,
           ),
           LineChartAnalysis(
             title: "PH",
@@ -39,6 +41,7 @@ class AverageAllPeriodChart extends StatelessWidget {
             periodType: periodType,
             maxY: LimitChartSensor.getMaxY("ph"),
             width: width,
+            screenSize: screenSize,
           ),
           LineChartAnalysis(
             title: "TDS",
@@ -47,6 +50,7 @@ class AverageAllPeriodChart extends StatelessWidget {
             periodType: periodType,
             maxY: LimitChartSensor.getMaxY("tds"),
             width: width,
+            screenSize: screenSize,
           ),
           LineChartAnalysis(
             title: "TEMPERATURA",
@@ -55,6 +59,7 @@ class AverageAllPeriodChart extends StatelessWidget {
             periodType: periodType,
             maxY: LimitChartSensor.getMaxY("temperature"),
             width: width,
+            screenSize: screenSize,
           ),
           LineChartAnalysis(
             title: "TURBIDEZ",
@@ -63,6 +68,7 @@ class AverageAllPeriodChart extends StatelessWidget {
             periodType: periodType,
             maxY: LimitChartSensor.getMaxY("turbidity"),
             width: width,
+            screenSize: screenSize,
           ),
         ],
       ),

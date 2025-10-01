@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average_period/data_avg_sensor.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/line_chart_analysis.dart';
 
@@ -8,6 +9,7 @@ class AveragePeriodChart extends StatelessWidget {
   final String periodType;
   final double? width;
   final double? maxY;
+  final ScreenSize screenSize;
 
   const AveragePeriodChart({
     super.key,
@@ -16,6 +18,7 @@ class AveragePeriodChart extends StatelessWidget {
     required this.periodType,
     this.width,
     this.maxY,
+    required this.screenSize,
   });
 
   @override
@@ -38,6 +41,7 @@ class AveragePeriodChart extends StatelessWidget {
       periodType: periodType,
       maxY: maxY ?? 0,
       width: width,
+      screenSize: screenSize,
     );
   }
 }

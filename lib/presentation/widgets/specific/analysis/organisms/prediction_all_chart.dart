@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/domain/models/analysis/period/data_pred_all.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/line_chart_prediction.dart';
 
 class PredictionAllChart extends StatelessWidget {
   final DataPredAll data;
   final String periodType;
+  final ScreenSize screenSize;
   const PredictionAllChart({
     super.key,
     required this.data,
     required this.periodType,
+    required this.screenSize,
   });
 
   @override
@@ -28,6 +31,7 @@ class PredictionAllChart extends StatelessWidget {
             periodType: periodType,
             dataValues: data.data?.conductivity ?? [],
             predValues: data.pred?.conductivity ?? [],
+            screenSize: screenSize,
           ),
           LineChartPrediction(
             width: width,
@@ -36,6 +40,7 @@ class PredictionAllChart extends StatelessWidget {
             periodType: periodType,
             dataValues: data.data?.ph ?? [],
             predValues: data.pred?.ph ?? [],
+            screenSize: screenSize,
           ),
           LineChartPrediction(
             width: width,
@@ -44,6 +49,7 @@ class PredictionAllChart extends StatelessWidget {
             periodType: periodType,
             dataValues: data.data?.tds ?? [],
             predValues: data.pred?.tds ?? [],
+            screenSize: screenSize,
           ),
           LineChartPrediction(
             width: width,
@@ -52,6 +58,7 @@ class PredictionAllChart extends StatelessWidget {
             periodType: periodType,
             dataValues: data.data?.temperature ?? [],
             predValues: data.pred?.temperature ?? [],
+            screenSize: screenSize,
           ),
           LineChartPrediction(
             width: width,
@@ -60,6 +67,7 @@ class PredictionAllChart extends StatelessWidget {
             periodType: periodType,
             dataValues: data.data?.turbidity ?? [],
             predValues: data.pred?.turbidity ?? [],
+            screenSize: screenSize,
           ),
         ],
       ),

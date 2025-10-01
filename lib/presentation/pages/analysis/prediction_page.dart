@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/domain/models/analysis/period/data_pred_all.dart';
 import 'package:frontend_water_quality/domain/models/analysis/period/data_pred_sensor.dart';
@@ -86,12 +87,12 @@ class _PredictionPageState extends State<PredictionPage> {
             }
           },
         ),
-        chartWidget: _buildChartWidget(),
+        chartWidget: _buildChartWidget(screenSize),
       ),
     );
   }
 
-  Widget? _buildChartWidget() {
+  Widget? _buildChartWidget(ScreenSize screenSize) {
     if (_current == null) {
       return null;
     }
@@ -105,6 +106,7 @@ class _PredictionPageState extends State<PredictionPage> {
         titles: [...?data.data!.labels, ...?data.pred!.labels],
         dataValues: data.data!.values ?? [],
         predValues: data.pred!.values ?? [],
+        screenSize: screenSize,
       );
     }
 
@@ -113,6 +115,7 @@ class _PredictionPageState extends State<PredictionPage> {
     return PredictionAllChart(
       data: data,
       periodType: _current?.parameters?.periodType ?? "",
+      screenSize: screenSize,
     );
   }
 }
