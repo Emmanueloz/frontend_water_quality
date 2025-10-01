@@ -18,6 +18,8 @@ class AverageAllPeriodChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double width = 600;
+    print(data.toJson());
+
     return Container(
       padding: EdgeInsets.all(20),
       child: Wrap(

@@ -55,7 +55,7 @@ class SensorSpots {
                 json["labels"]!.map((x) => DateTime.parse(x))),
         values: json["values"] == null
             ? []
-            : List<double>.from(json["values"]!.map((x) => x?.toDouble())),
+            : List<double?>.from(json["values"]!.map((x) => x)),
       );
 
   Map<String, dynamic> toJson() => {

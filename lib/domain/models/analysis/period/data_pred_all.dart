@@ -1,4 +1,5 @@
 import 'package:frontend_water_quality/domain/models/analysis/data.dart';
+import 'package:frontend_water_quality/domain/models/analysis/period/date_parser_mixin.dart';
 
 class DataPredAll extends Data {
   WaterQualityData? data;
@@ -19,13 +20,13 @@ class DataPredAll extends Data {
       );
 }
 
-class WaterQualityData {
-  List<double>? conductivity;
+class WaterQualityData with DateParserMixin {
+  List<double?>? conductivity;
   List<DateTime?>? labels;
-  List<double>? ph;
-  List<double>? tds;
-  List<double>? temperature;
-  List<double>? turbidity;
+  List<double?>? ph;
+  List<double?>? tds;
+  List<double?>? temperature;
+  List<double?>? turbidity;
 
   WaterQualityData({
     this.conductivity,
@@ -40,23 +41,24 @@ class WaterQualityData {
       WaterQualityData(
         conductivity: json["conductivity"] == null
             ? []
-            : List<double>.from(
+            : List<double?>.from(
                 json["conductivity"]!.map((x) => x?.toDouble())),
         labels: json["labels"] == null
             ? []
-            : List<DateTime>.from(
-                json["labels"]!.map((x) => DateTime.parse(x))),
+            : List<DateTime>.from(json["labels"]!
+                .map((x) => WaterQualityData().parseFlexibleDate(x))),
         ph: json["ph"] == null
             ? []
-            : List<double>.from(json["ph"]!.map((x) => x?.toDouble())),
+            : List<double?>.from(json["ph"]!.map((x) => x?.toDouble())),
         tds: json["tds"] == null
             ? []
-            : List<double>.from(json["tds"]!.map((x) => x?.toDouble())),
+            : List<double?>.from(json["tds"]!.map((x) => x?.toDouble())),
         temperature: json["temperature"] == null
             ? []
-            : List<double>.from(json["temperature"]!.map((x) => x?.toDouble())),
+            : List<double?>.from(
+                json["temperature"]!.map((x) => x?.toDouble())),
         turbidity: json["turbidity"] == null
             ? []
-            : List<double>.from(json["turbidity"]!.map((x) => x?.toDouble())),
+            : List<double?>.from(json["turbidity"]!.map((x) => x?.toDouble())),
       );
 }

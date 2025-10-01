@@ -5,7 +5,6 @@ import 'package:frontend_water_quality/domain/models/analysis/average/average.da
 import 'package:frontend_water_quality/domain/models/analysis/average/data_average_all.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average/data_average_sensor.dart';
 import 'package:frontend_water_quality/presentation/providers/analysis_provider.dart';
-import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_table.dart';
@@ -36,10 +35,9 @@ class _AveragePageState extends State<AveragePage> {
   @override
   void initState() {
     super.initState();
-    String token =
-        Provider.of<AuthProvider>(context, listen: false).token ?? "";
+
     _getAverage = Provider.of<AnalysisProvider>(context, listen: false)
-        .getAverage(widget.idWorkspace, widget.idMeter, token);
+        .getAverage(widget.idWorkspace, widget.idMeter);
   }
 
   @override
@@ -66,6 +64,11 @@ class _AveragePageState extends State<AveragePage> {
                 if (snapshot.hasError) {
                   return const Text("Ocurrió un error");
                 }
+                if (!snapshot.data!.isSuccess) {
+                  final message = snapshot.data?.message;
+                  return Text("Error $message");
+                }
+
                 return AnalysisTable(
                   analysis: snapshot.data?.value ?? [],
                   idSelected: idAverage ?? "",

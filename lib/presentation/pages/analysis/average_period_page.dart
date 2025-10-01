@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/constants/limit_chart_sensor.dart';
+import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average_period/average_period.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average_period/data_avg_all.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average_period/data_avg_sensor.dart';
 import 'package:frontend_water_quality/presentation/providers/analysis_provider.dart';
-import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_table.dart';
@@ -30,16 +30,15 @@ class _AveragePeriodPageState extends State<AveragePeriodPage> {
   bool showChat = false;
 
   String? idAverage;
-  Future<List<AveragePeriod>>? _getAveragePeriod;
+  Future<Result<List<AveragePeriod>>>? _getAveragePeriod;
   AveragePeriod? _current;
 
   @override
   void initState() {
     super.initState();
-    String token =
-        Provider.of<AuthProvider>(context, listen: false).token ?? "";
+
     _getAveragePeriod = Provider.of<AnalysisProvider>(context, listen: false)
-        .getAveragePeriod(widget.idWorkspace, widget.idMeter, token);
+        .getAveragePeriod(widget.idWorkspace, widget.idMeter);
   }
 
   @override
@@ -59,22 +58,27 @@ class _AveragePeriodPageState extends State<AveragePeriodPage> {
           onToggleChat: () => setState(() {
             showChat = !showChat;
           }),
-          tableWidget: (screenSize) => FutureBuilder<List<AveragePeriod>>(
+          tableWidget: (screenSize) => FutureBuilder(
             future: _getAveragePeriod,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.hasError) {
                   return const Text("Ocurrió un error");
                 }
+                if (!snapshot.data!.isSuccess) {
+                  final message = snapshot.data?.message;
+                  return Text("Error $message");
+                }
+
                 return AnalysisTable(
-                  analysis: snapshot.data ?? [],
+                  analysis: snapshot.data?.value ?? [],
                   idSelected: idAverage ?? "",
                   screenSize: screenSize,
                   onSelectChanged: (id) {
                     setState(() {
                       if (idAverage != id) {
                         idAverage = id;
-                        _current = snapshot.data?.firstWhere(
+                        _current = snapshot.data?.value?.firstWhere(
                           (element) => element.id == id,
                         );
                       }

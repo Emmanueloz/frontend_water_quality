@@ -65,11 +65,14 @@ class AnalysisRepoImpl extends AnalysisRepo {
       }
       final Map<String, dynamic> data =
           response.data['result'] as Map<String, dynamic>;
-      final List<Average> averages = [];
+
+      final List<Average> analysis = [];
+
       data.forEach(
-        (key, value) => averages.add(Average.fromJson(value, key)),
+        (key, value) => analysis.add(Average.fromJson(value, key)),
       );
-      return Result.success(averages);
+
+      return Result.success(analysis);
     } catch (e) {
       return Result.failure(e.toString());
     }
@@ -78,21 +81,81 @@ class AnalysisRepoImpl extends AnalysisRepo {
   @override
   Future<Result<List<AveragePeriod>>> getAveragesPeriod(
       String workspaceId, String meterId, String token) async {
-    // TODO: implement getAveragesPeriod
-    throw UnimplementedError();
+    try {
+      final response = await _dio.get(
+        '$path/average/period/$workspaceId/$meterId/',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      if (response.statusCode != 200) {
+        return Result.failure('Error: codigo ${response.statusCode}');
+      }
+      final Map<String, dynamic> data =
+          response.data['result'] as Map<String, dynamic>;
+
+      final List<AveragePeriod> analysis = [];
+
+      data.forEach(
+        (key, value) => analysis.add(AveragePeriod.fromJson(value, key)),
+      );
+
+      return Result.success(analysis);
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
   }
 
   @override
   Future<Result<List<Correlation>>> getCorrelations(
       String workspaceId, String meterId, String token) async {
-    // TODO: implement getCorrelations
-    throw UnimplementedError();
+    try {
+      final response = await _dio.get(
+        '$path/correlation/$workspaceId/$meterId/',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      if (response.statusCode != 200) {
+        return Result.failure('Error: codigo ${response.statusCode}');
+      }
+      final Map<String, dynamic> data =
+          response.data['result'] as Map<String, dynamic>;
+
+      final List<Correlation> analysis = [];
+
+      data.forEach(
+        (key, value) => analysis.add(Correlation.fromJson(value, key)),
+      );
+
+      return Result.success(analysis);
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
   }
 
   @override
   Future<Result<List<PredictionSensor>>> getPredictions(
       String workspaceId, String meterId, String token) async {
-    // TODO: implement getPredictions
-    throw UnimplementedError();
+    try {
+      final response = await _dio.get(
+        '$path/prediction/$workspaceId/$meterId/',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      if (response.statusCode != 200) {
+        return Result.failure('Error: codigo ${response.statusCode}');
+      }
+      final Map<String, dynamic> data =
+          response.data['result'] as Map<String, dynamic>;
+
+      final List<PredictionSensor> analysis = [];
+
+      data.forEach(
+        (key, value) => analysis.add(PredictionSensor.fromJson(value, key)),
+      );
+
+      return Result.success(analysis);
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
   }
 }

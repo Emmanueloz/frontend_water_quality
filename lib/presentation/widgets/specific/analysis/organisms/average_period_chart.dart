@@ -28,7 +28,7 @@ class AveragePeriodChart extends StatelessWidget {
     for (int i = 0; i < length; i++) {
       final avg = data.averages?[i];
       titles.add(avg!.date ?? DateTime.now());
-      values.add(avg.value);
+      values.add(avg.value ?? 0);
     }
 
     return LineChartAnalysis(
