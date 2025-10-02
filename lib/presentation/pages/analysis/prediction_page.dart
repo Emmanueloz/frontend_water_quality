@@ -37,6 +37,10 @@ class _PredictionPageState extends State<PredictionPage> {
   void initState() {
     super.initState();
 
+    _handlerGetPrediction();
+  }
+
+  void _handlerGetPrediction() {
     _getPrediction = Provider.of<AnalysisProvider>(context, listen: false)
         .getPredictions(widget.idWorkspace, widget.idMeter);
   }
@@ -62,6 +66,13 @@ class _PredictionPageState extends State<PredictionPage> {
         onToggleChat: () => setState(() {
           showChat = !showChat;
         }),
+        onRefresh: () {
+          setState(() {
+            _handlerGetPrediction();
+            idAverage = null;
+            _current = null;
+          });
+        },
         tableWidget: (screenSize) => FutureBuilder(
           future: _getPrediction,
           builder: (context, snapshot) {

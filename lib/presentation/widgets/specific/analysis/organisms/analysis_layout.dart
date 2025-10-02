@@ -14,6 +14,7 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
   final Widget Function(ScreenSize screenSize) tableWidget;
   final void Function() onToggleExpand;
   final void Function() onToggleChat;
+  final void Function() onRefresh;
   final String? chatAverageId;
   final ScreenSize screenSize;
 
@@ -29,6 +30,7 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
     this.chatAverageId,
     required this.screenSize,
     this.formWidget,
+    required this.onRefresh,
   });
 
   void _showDetailBottomSheet(BuildContext context) {
@@ -131,9 +133,18 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
                   spacing: 10,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    ElevatedButton(
-                      onPressed: () => _showCreateDialog(context),
-                      child: const Text('Crear análisis'),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () => _showCreateDialog(context),
+                          child: const Text('Crear análisis'),
+                        ),
+                        IconButton(
+                          onPressed: onRefresh,
+                          icon: const Icon(Icons.refresh),
+                        )
+                      ],
                     ),
                     tableWidget(screenSize),
                   ],
@@ -169,9 +180,18 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
     return Column(
       spacing: 10,
       children: [
-        ElevatedButton(
-          onPressed: () => _showCreateDialog(context),
-          child: const Text('Crear análisis'),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ElevatedButton(
+              onPressed: () => _showCreateDialog(context),
+              child: const Text('Crear análisis'),
+            ),
+            IconButton(
+              onPressed: onRefresh,
+              icon: const Icon(Icons.refresh),
+            )
+          ],
         ),
         SizedBox(
           width: double.infinity,

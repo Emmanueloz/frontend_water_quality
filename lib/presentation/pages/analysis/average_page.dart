@@ -37,6 +37,10 @@ class _AveragePageState extends State<AveragePage> {
   void initState() {
     super.initState();
 
+    _handlerGetAverage();
+  }
+
+  void _handlerGetAverage() {
     _getAverage = Provider.of<AnalysisProvider>(context, listen: false)
         .getAverage(widget.idWorkspace, widget.idMeter);
   }
@@ -63,6 +67,13 @@ class _AveragePageState extends State<AveragePage> {
           onToggleChat: () => setState(() {
             showChat = !showChat;
           }),
+          onRefresh: () {
+            setState(() {
+              _handlerGetAverage();
+              idAverage = null;
+              _current = null;
+            });
+          },
           tableWidget: (screenSize) => FutureBuilder(
             future: _getAverage,
             builder: (context, snapshot) {

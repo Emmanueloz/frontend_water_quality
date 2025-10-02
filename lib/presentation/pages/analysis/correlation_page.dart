@@ -30,6 +30,10 @@ class _CorrelationPageState extends State<CorrelationPage> {
   void initState() {
     super.initState();
 
+    _handlerGetCorrelations();
+  }
+
+  void _handlerGetCorrelations() {
     _getCorrelations = Provider.of<AnalysisProvider>(context, listen: false)
         .getCorrelations(widget.idWorkspace, widget.idMeter);
   }
@@ -56,6 +60,13 @@ class _CorrelationPageState extends State<CorrelationPage> {
         onToggleChat: () => setState(() {
           showChat = !showChat;
         }),
+        onRefresh: () {
+          setState(() {
+            _handlerGetCorrelations();
+            idAverage = null;
+            _current = null;
+          });
+        },
         tableWidget: (screenSize) => FutureBuilder(
           future: _getCorrelations,
           builder: (context, snapshot) {
