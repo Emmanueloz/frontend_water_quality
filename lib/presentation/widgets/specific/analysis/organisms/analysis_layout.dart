@@ -3,13 +3,14 @@ import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/domain/models/analysis/base_analysis.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_detail.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/chat_ai_page.dart';
-import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/empty_analysis.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/molecules/empty_analysis.dart';
 
 class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
   final T? selectedItem;
   final bool expandedDetail;
   final bool showChat;
   final Widget? chartWidget;
+  final Widget? formWidget;
   final Widget Function(ScreenSize screenSize) tableWidget;
   final void Function() onToggleExpand;
   final void Function() onToggleChat;
@@ -27,6 +28,7 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
     required this.onToggleChat,
     this.chatAverageId,
     required this.screenSize,
+    this.formWidget,
   });
 
   void _showDetailBottomSheet(BuildContext context) {
@@ -106,7 +108,14 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
     );
   }
 
-  Widget buildDesktopLayout() {
+  void _showCreateDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => formWidget ?? Container(),
+    );
+  }
+
+  Widget buildDesktopLayout(BuildContext context) {
     return Row(
       children: [
         if (!expandedDetail) ...[
@@ -118,7 +127,17 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
               child: Container(
                 width: 1024,
                 margin: const EdgeInsets.all(10),
-                child: tableWidget(screenSize),
+                child: Column(
+                  spacing: 10,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => _showCreateDialog(context),
+                      child: const Text('Crear análisis'),
+                    ),
+                    tableWidget(screenSize),
+                  ],
+                ),
               ),
             ),
           ),
@@ -148,18 +167,20 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
 
   Widget buildMobileLayout(BuildContext context) {
     return Column(
+      spacing: 10,
       children: [
+        ElevatedButton(
+          onPressed: () => _showCreateDialog(context),
+          child: const Text('Crear análisis'),
+        ),
         SizedBox(
           width: double.infinity,
           child: tableWidget(screenSize),
         ),
         if (selectedItem != null)
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: () => _showDetailBottomSheet(context),
-              child: const Text('Ver detalles'),
-            ),
+          ElevatedButton(
+            onPressed: () => _showDetailBottomSheet(context),
+            child: const Text('Ver detalles'),
           ),
       ],
     );
@@ -171,7 +192,7 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       child: screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet
           ? buildMobileLayout(context)
-          : buildDesktopLayout(),
+          : buildDesktopLayout(context),
     );
   }
 }

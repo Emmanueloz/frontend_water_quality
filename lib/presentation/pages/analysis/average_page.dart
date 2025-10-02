@@ -9,6 +9,7 @@ import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_table.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/average_chart.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/form_average_dialog.dart';
 import 'package:provider/provider.dart';
 
 class AveragePage extends StatefulWidget {
@@ -51,6 +52,11 @@ class _AveragePageState extends State<AveragePage> {
           expandedDetail: expandedDetailt,
           showChat: showChat,
           chatAverageId: _current?.id,
+          formWidget: FormAverageDialog(
+            onSubmit: (parameters) {
+              print(parameters.toJson());
+            },
+          ),
           onToggleExpand: () => setState(() {
             expandedDetailt = !expandedDetailt;
           }),

@@ -8,6 +8,7 @@ import 'package:frontend_water_quality/presentation/providers/analysis_provider.
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_table.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/form_prediction_dialog.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/line_chart_prediction.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/prediction_all_chart.dart';
 import 'package:provider/provider.dart';
@@ -50,6 +51,11 @@ class _PredictionPageState extends State<PredictionPage> {
         expandedDetail: expandedDetailt,
         showChat: showChat,
         chatAverageId: _current?.id,
+        formWidget: FormPredictionDialog(
+          onSubmit: (parameters) {
+            print(parameters.toJson());
+          },
+        ),
         onToggleExpand: () => setState(() {
           expandedDetailt = !expandedDetailt;
         }),

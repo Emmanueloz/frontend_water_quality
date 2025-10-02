@@ -6,6 +6,7 @@ import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/molecules/correlation_heatmap.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_table.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/form_correlation_dialog.dart';
 import 'package:provider/provider.dart';
 
 class CorrelationPage extends StatefulWidget {
@@ -44,6 +45,11 @@ class _CorrelationPageState extends State<CorrelationPage> {
         expandedDetail: expandedDetailt,
         showChat: showChat,
         chatAverageId: _current?.id,
+        formWidget: FormCorrelationDialog(
+          onSubmit: (parameters) {
+            print(parameters.toJson());
+          },
+        ),
         onToggleExpand: () => setState(() {
           expandedDetailt = !expandedDetailt;
         }),

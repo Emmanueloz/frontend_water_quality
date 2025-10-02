@@ -29,4 +29,18 @@ class ParamCorrelation extends Parameters {
                 json["sensors"]!.map((x) => x),
               ),
       );
+
+  @override
+  Map<String, dynamic> toJson() => {
+        "end_date": endDate?.toIso8601String(),
+        "start_date": startDate?.toIso8601String(),
+        "sensor_type": sensor,
+        "period_type": periodType,
+        "method": method,
+        "sensors": sensors == null
+            ? []
+            : List<dynamic>.from(
+                sensors!.map((x) => x),
+              ),
+      };
 }
