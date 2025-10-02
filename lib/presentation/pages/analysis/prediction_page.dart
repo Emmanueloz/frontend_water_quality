@@ -32,17 +32,18 @@ class _PredictionPageState extends State<PredictionPage> {
   String? idAverage;
   Future<Result<List<PredictionSensor>>>? _getPrediction;
   PredictionSensor? _current;
+  late final AnalysisProvider _analysisProvider;
 
   @override
   void initState() {
     super.initState();
-
+    _analysisProvider = Provider.of<AnalysisProvider>(context, listen: false);
     _handlerGetPrediction();
   }
 
   void _handlerGetPrediction() {
-    _getPrediction = Provider.of<AnalysisProvider>(context, listen: false)
-        .getPredictions(widget.idWorkspace, widget.idMeter);
+    _getPrediction =
+        _analysisProvider.getPredictions(widget.idWorkspace, widget.idMeter);
   }
 
   @override
@@ -56,8 +57,32 @@ class _PredictionPageState extends State<PredictionPage> {
         showChat: showChat,
         chatAverageId: _current?.id,
         formWidget: FormPredictionDialog(
-          onSubmit: (parameters) {
-            print(parameters.toJson());
+          onSubmit: (parameters) async {
+            final result = await _analysisProvider.createPrediction(
+                widget.idWorkspace, widget.idMeter, parameters);
+
+            if (!context.mounted) {
+              return;
+            }
+
+            if (result.isSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Análisis creado con éxito'),
+                ),
+              );
+              setState(() {
+                _handlerGetPrediction();
+                idAverage = null;
+                _current = null;
+              });
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Error: ${result.message}'),
+                ),
+              );
+            }
           },
         ),
         onToggleExpand: () => setState(() {
@@ -112,6 +137,12 @@ class _PredictionPageState extends State<PredictionPage> {
   Widget? _buildChartWidget(ScreenSize screenSize) {
     if (_current == null) {
       return null;
+    }
+
+    if (_current?.data == null) {
+      return const Center(
+        child: Text("No hay datos para mostrar, recarga el análisis"),
+      );
     }
 
     if (_current?.parameters?.sensor != null) {

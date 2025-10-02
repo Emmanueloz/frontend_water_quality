@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/constants/limit_chart_sensor.dart';
+import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average_period/average_period.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average_period/data_avg_all.dart';
@@ -33,17 +34,19 @@ class _AveragePeriodPageState extends State<AveragePeriodPage> {
   String? idAverage;
   Future<Result<List<AveragePeriod>>>? _getAveragePeriod;
   AveragePeriod? _current;
+  late final AnalysisProvider _analysisProvider;
 
   @override
   void initState() {
     super.initState();
+    _analysisProvider = Provider.of<AnalysisProvider>(context, listen: false);
 
     _handlerGetAveragePeriod();
   }
 
   void _handlerGetAveragePeriod() {
-    _getAveragePeriod = Provider.of<AnalysisProvider>(context, listen: false)
-        .getAveragePeriod(widget.idWorkspace, widget.idMeter);
+    _getAveragePeriod =
+        _analysisProvider.getAveragePeriod(widget.idWorkspace, widget.idMeter);
   }
 
   @override
@@ -58,8 +61,32 @@ class _AveragePeriodPageState extends State<AveragePeriodPage> {
           showChat: showChat,
           chatAverageId: _current?.id,
           formWidget: FormPeriodDialog(
-            onSubmit: (parameters) {
-              print(parameters.toJson());
+            onSubmit: (parameters) async {
+              final result = await _analysisProvider.createAveragesPeriod(
+                  widget.idWorkspace, widget.idMeter, parameters);
+
+              if (!context.mounted) {
+                return;
+              }
+
+              if (result.isSuccess) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Análisis creado con éxito'),
+                  ),
+                );
+                setState(() {
+                  _handlerGetAveragePeriod();
+                  idAverage = null;
+                  _current = null;
+                });
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error: ${result.message}'),
+                  ),
+                );
+              }
             },
           ),
           onToggleExpand: () => setState(() {
@@ -107,26 +134,42 @@ class _AveragePeriodPageState extends State<AveragePeriodPage> {
               }
             },
           ),
-          chartWidget: _current == null
-              ? null
-              : _current!.parameters!.sensor != null
-                  ? AveragePeriodChart(
-                      width: 650,
-                      screenSize: screenSize,
-                      name: _current!.parameters?.sensor ?? "",
-                      data: _current!.data as DataAvgSensor,
-                      periodType: _current!.parameters?.periodType ?? "days",
-                      maxY: LimitChartSensor.getMaxY(
-                        _current!.parameters?.sensor ?? "",
-                      ),
-                    )
-                  : AverageAllPeriodChart(
-                      screenSize: screenSize,
-                      data: _current!.data as DataAvgAll,
-                      periodType: _current!.parameters?.periodType ?? "days",
-                    ),
+          chartWidget: _buildChart(screenSize),
         );
       },
     );
+  }
+
+  Widget _buildChart(ScreenSize screenSize) {
+    if (_current == null) {
+      return const Center(
+        child: Text("No hay datos para mostrar, recarga el análisis"),
+      );
+    }
+
+    if (_current!.data == null) {
+      return const Center(
+        child: Text("No hay datos para mostrar"),
+      );
+    }
+
+    if (_current!.parameters!.sensor != null) {
+      return AveragePeriodChart(
+        width: 650,
+        screenSize: screenSize,
+        name: _current!.parameters?.sensor ?? "",
+        data: _current!.data as DataAvgSensor,
+        periodType: _current!.parameters?.periodType ?? "days",
+        maxY: LimitChartSensor.getMaxY(
+          _current!.parameters?.sensor ?? "",
+        ),
+      );
+    } else {
+      return AverageAllPeriodChart(
+        screenSize: screenSize,
+        data: _current!.data as DataAvgAll,
+        periodType: _current!.parameters?.periodType ?? "days",
+      );
+    }
   }
 }

@@ -24,7 +24,7 @@ class ParamPeriod extends Parameters {
   Map<String, dynamic> toJson() => {
         "end_date": endDate?.toIso8601String(),
         "period_type": periodType,
-        "sensor_type": sensor,
+        if (sensor != null) "sensor_type": sensor,
         "start_date": startDate?.toIso8601String(),
       };
 }

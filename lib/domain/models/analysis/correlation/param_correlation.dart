@@ -34,7 +34,7 @@ class ParamCorrelation extends Parameters {
   Map<String, dynamic> toJson() => {
         "end_date": endDate?.toIso8601String(),
         "start_date": startDate?.toIso8601String(),
-        "sensor_type": sensor,
+        if (sensor != null) "sensor_type": sensor,
         "period_type": periodType,
         "method": method,
         "sensors": sensors == null

@@ -21,18 +21,14 @@ class AveragePeriod extends BaseAnalysis<Data, ParamPeriod> {
   factory AveragePeriod.fromJson(Map<String, dynamic> json, String id) {
     final param = ParamPeriod.fromJson(json["parameters"]);
 
-    print(json["data"]["results"]);
+    final data = AveragePeriod._getData(json["data"] ?? {}, param);
 
     return AveragePeriod(
       id: id,
       createdAt: json["created_at"] == null
           ? null
           : DateTime.parse(json["created_at"]),
-      data: json["data"] == null
-          ? null
-          : param.sensor != null
-              ? DataAvgSensor.fromJson(json["data"])
-              : DataAvgAll.fromJson(json["data"]["results"]),
+      data: data,
       error: json["error"],
       meterId: json["meter_id"],
       parameters: json["parameters"] == null ? null : param,
@@ -43,5 +39,14 @@ class AveragePeriod extends BaseAnalysis<Data, ParamPeriod> {
           : DateTime.parse(json["updated_at"]),
       workspaceId: json["workspace_id"],
     );
+  }
+
+  static Data? _getData(Map<String, dynamic> json, ParamPeriod? parameters) {
+    if (parameters != null && parameters.sensor != null) {
+      return DataAvgSensor.fromJson(json);
+    } else if (json["results"] != null && json["results"] is List) {
+      return DataAvgAll.fromJson(json["results"]);
+    }
+    return null;
   }
 }

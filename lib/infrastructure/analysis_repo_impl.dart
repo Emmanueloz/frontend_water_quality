@@ -20,29 +20,105 @@ class AnalysisRepoImpl extends AnalysisRepo {
   @override
   Future<Result<String>> createAverages(String workspaceId, String meterId,
       String token, Parameters param) async {
-    // TODO: implement createAverages
-    throw UnimplementedError();
+    try {
+      final response = await _dio.post(
+        '$path/average/',
+        data: {
+          "identifier": {
+            "workspace_id": workspaceId,
+            "meter_id": meterId,
+          },
+          "range": param.toJson(),
+        },
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      if (response.statusCode != 201 && response.statusCode != 200) {
+        return Result.failure('Error: codigo ${response.statusCode}');
+      }
+
+      return Result.success("Averages created successfully");
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
   }
 
   @override
   Future<Result<String>> createAveragesPeriod(String workspaceId,
       String meterId, String token, ParamPeriod param) async {
-    // TODO: implement createAveragesPeriod
-    throw UnimplementedError();
+    try {
+      final response = await _dio.post(
+        '$path/average/period/',
+        data: {
+          "identifier": {
+            "workspace_id": workspaceId,
+            "meter_id": meterId,
+          },
+          "period": param.toJson(),
+        },
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      if (response.statusCode != 201 && response.statusCode != 200) {
+        return Result.failure('Error: codigo ${response.statusCode}');
+      }
+
+      return Result.success("Averages created successfully");
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
   }
 
   @override
   Future<Result<String>> createCorrelation(String workspaceId, String meterId,
       String token, ParamCorrelation param) async {
-    // TODO: implement createCorrelation
-    throw UnimplementedError();
+    try {
+      final response = await _dio.post(
+        '$path/correlation/',
+        data: {
+          "identifier": {
+            "workspace_id": workspaceId,
+            "meter_id": meterId,
+          },
+          "correlation_params": param.toJson(),
+        },
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      if (response.statusCode != 201 && response.statusCode != 200) {
+        return Result.failure('Error: codigo ${response.statusCode}');
+      }
+
+      return Result.success("Averages created successfully");
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
   }
 
   @override
   Future<Result<String>> createPrediction(String workspaceId, String meterId,
       String token, ParamPrediction param) async {
-    // TODO: implement createPrediction
-    throw UnimplementedError();
+    try {
+      final response = await _dio.post(
+        '$path/prediction/',
+        data: {
+          "identifier": {
+            "workspace_id": workspaceId,
+            "meter_id": meterId,
+          },
+          "prediction_param": param.toJson(),
+        },
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      if (response.statusCode != 201 && response.statusCode != 200) {
+        return Result.failure('Error: codigo ${response.statusCode}');
+      }
+
+      return Result.success("Averages created successfully");
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
   }
 
   @override

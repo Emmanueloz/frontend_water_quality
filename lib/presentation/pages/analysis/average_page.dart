@@ -32,17 +32,18 @@ class _AveragePageState extends State<AveragePage> {
   String? idAverage;
   Future<Result<List<Average>>>? _getAverage;
   Average? _current;
+  late final AnalysisProvider _analysisProvider;
 
   @override
   void initState() {
     super.initState();
-
+    _analysisProvider = Provider.of<AnalysisProvider>(context, listen: false);
     _handlerGetAverage();
   }
 
   void _handlerGetAverage() {
-    _getAverage = Provider.of<AnalysisProvider>(context, listen: false)
-        .getAverage(widget.idWorkspace, widget.idMeter);
+    _getAverage =
+        _analysisProvider.getAverage(widget.idWorkspace, widget.idMeter);
   }
 
   @override
@@ -57,8 +58,32 @@ class _AveragePageState extends State<AveragePage> {
           showChat: showChat,
           chatAverageId: _current?.id,
           formWidget: FormAverageDialog(
-            onSubmit: (parameters) {
-              print(parameters.toJson());
+            onSubmit: (parameters) async {
+              final result = await _analysisProvider.createAverages(
+                  widget.idWorkspace, widget.idMeter, parameters);
+
+              if (!context.mounted) {
+                return;
+              }
+
+              if (result.isSuccess) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Análisis creado con éxito'),
+                  ),
+                );
+                setState(() {
+                  _handlerGetAverage();
+                  idAverage = null;
+                  _current = null;
+                });
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error: ${result.message}'),
+                  ),
+                );
+              }
             },
           ),
           onToggleExpand: () => setState(() {
@@ -106,19 +131,35 @@ class _AveragePageState extends State<AveragePage> {
               }
             },
           ),
-          chartWidget: _current == null
-              ? null
-              : _current!.parameters!.sensor != null
-                  ? _ChartSensor(
-                      dataAverage: _current!.data as DataAverageSensor,
-                      sensor: _current!.parameters?.sensor ?? "",
-                    )
-                  : _AllChartSensor(
-                      dataAverage: _current!.data as DataAverageAll,
-                    ),
+          chartWidget: _buildChart(),
         );
       },
     );
+  }
+
+  Widget _buildChart() {
+    if (_current == null) {
+      return const Center(
+        child: Text("Selecciona un análisis para ver el gráfico"),
+      );
+    }
+
+    if (_current!.data == null) {
+      return const Center(
+        child: Text("No hay datos para mostrar, recarga el análisis"),
+      );
+    }
+
+    if (_current!.parameters!.sensor != null) {
+      return _ChartSensor(
+        dataAverage: _current!.data as DataAverageSensor,
+        sensor: _current!.parameters?.sensor ?? "",
+      );
+    } else {
+      return _AllChartSensor(
+        dataAverage: _current!.data as DataAverageAll,
+      );
+    }
   }
 }
 

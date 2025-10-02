@@ -25,17 +25,18 @@ class _CorrelationPageState extends State<CorrelationPage> {
   String? idAverage;
   Future<Result<List<Correlation>>>? _getCorrelations;
   Correlation? _current;
+  late final AnalysisProvider _analysisProvider;
 
   @override
   void initState() {
     super.initState();
-
+    _analysisProvider = Provider.of<AnalysisProvider>(context, listen: false);
     _handlerGetCorrelations();
   }
 
   void _handlerGetCorrelations() {
-    _getCorrelations = Provider.of<AnalysisProvider>(context, listen: false)
-        .getCorrelations(widget.idWorkspace, widget.idMeter);
+    _getCorrelations =
+        _analysisProvider.getCorrelations(widget.idWorkspace, widget.idMeter);
   }
 
   @override
@@ -50,8 +51,32 @@ class _CorrelationPageState extends State<CorrelationPage> {
         showChat: showChat,
         chatAverageId: _current?.id,
         formWidget: FormCorrelationDialog(
-          onSubmit: (parameters) {
-            print(parameters.toJson());
+          onSubmit: (parameters) async {
+            final result = await _analysisProvider.createCorrelation(
+                widget.idWorkspace, widget.idMeter, parameters);
+
+            if (!context.mounted) {
+              return;
+            }
+
+            if (result.isSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Análisis creado con éxito'),
+                ),
+              );
+              setState(() {
+                _handlerGetCorrelations();
+                idAverage = null;
+                _current = null;
+              });
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Error: ${result.message}'),
+                ),
+              );
+            }
           },
         ),
         onToggleExpand: () => setState(() {
@@ -98,15 +123,31 @@ class _CorrelationPageState extends State<CorrelationPage> {
             }
           },
         ),
-        chartWidget: CorrelationHeatmap(
-          labels: _current?.data?.sensors ?? [],
-          matrix: _current?.data?.matrix ?? [],
-          textColor: theme.colorScheme.onPrimary,
-          gridColor: theme.colorScheme.tertiary,
-          primaryColor: theme.colorScheme.tertiary,
-          size: 400,
-        ),
+        chartWidget: _buildChart(theme),
       ),
+    );
+  }
+
+  Widget _buildChart(ThemeData theme) {
+    if (_current == null) {
+      return const Center(
+        child: Text("Selecciona un análisis para ver el gráfico"),
+      );
+    }
+
+    if (_current?.data == null) {
+      return const Center(
+        child: Text("No hay datos para mostrar, recarga el análisis"),
+      );
+    }
+
+    return CorrelationHeatmap(
+      labels: _current?.data?.sensors ?? [],
+      matrix: _current?.data?.matrix ?? [],
+      textColor: theme.colorScheme.onPrimary,
+      gridColor: theme.colorScheme.tertiary,
+      primaryColor: theme.colorScheme.tertiary,
+      size: 400,
     );
   }
 }
