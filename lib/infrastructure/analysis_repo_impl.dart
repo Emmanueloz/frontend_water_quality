@@ -123,8 +123,20 @@ class AnalysisRepoImpl extends AnalysisRepo {
 
   @override
   Future<Result<String>> delete(String id, String token) async {
-    // TODO: implement delete
-    throw UnimplementedError();
+    try {
+      final response = await _dio.delete(
+        '$path/$id/',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      if (response.statusCode != 200) {
+        return Result.failure('Error: codigo ${response.statusCode}');
+      }
+
+      return Result.success("Analysis deleted successfully");
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
   }
 
   @override

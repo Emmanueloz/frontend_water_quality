@@ -9,6 +9,7 @@ class AnalysisDetail extends StatelessWidget {
   final ScreenSize screenSize;
   final void Function() onExpanded;
   final void Function() onOpenChat;
+  final void Function() onDelete;
   final Widget child;
   const AnalysisDetail({
     super.key,
@@ -18,6 +19,7 @@ class AnalysisDetail extends StatelessWidget {
     required this.onExpanded,
     required this.onOpenChat,
     required this.screenSize,
+    required this.onDelete,
   });
 
   final BaseAnalysis? analysis;
@@ -26,6 +28,8 @@ class AnalysisDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     String typeSensor = "5";
     String? sensor = analysis!.parameters!.sensor;
+
+    final theme = Theme.of(context);
 
     String startDate = DateFormat('dd MMM yyy')
         .format(analysis!.parameters!.startDate ?? DateTime.now());
@@ -60,14 +64,30 @@ class AnalysisDetail extends StatelessWidget {
                   ),
                   Text(
                     "Resultados",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge
+                    style: theme.textTheme.bodyLarge
                         ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   Spacer(),
-                  IconButton(
-                      onPressed: onOpenChat, icon: Icon(Icons.auto_awesome))
+                  Row(
+                    spacing: 10,
+                    children: [
+                      IconButton.outlined(
+                        onPressed: onDelete,
+                        style: IconButton.styleFrom(
+                          backgroundColor: theme.colorScheme.surface,
+                          foregroundColor: theme.colorScheme.error,
+                          side: BorderSide(color: theme.colorScheme.error),
+                        ),
+                        icon: Icon(Icons.delete),
+                      ),
+                      IconButton(
+                        onPressed: onOpenChat,
+                        icon: Icon(
+                          Icons.auto_awesome,
+                        ),
+                      ),
+                    ],
+                  )
                 ],
               ),
             SingleChildScrollView(

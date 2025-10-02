@@ -15,6 +15,7 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
   final void Function() onToggleExpand;
   final void Function() onToggleChat;
   final void Function() onRefresh;
+  final void Function() onDelete;
   final String? chatAverageId;
   final ScreenSize screenSize;
 
@@ -31,6 +32,7 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
     required this.screenSize,
     this.formWidget,
     required this.onRefresh,
+    required this.onDelete,
   });
 
   void _showDetailBottomSheet(BuildContext context) {
@@ -82,6 +84,7 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
                             isExpanded: false,
                             onExpanded: onToggleExpand,
                             screenSize: screenSize,
+                            onDelete: onDelete,
                             onOpenChat: () {
                               if (pageController.page == 0) {
                                 pageController.animateToPage(
@@ -162,6 +165,7 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
                   isExpanded: expandedDetail,
                   onExpanded: onToggleExpand,
                   onOpenChat: onToggleChat,
+                  onDelete: onDelete,
                   analysis: selectedItem,
                   child: chartWidget!,
                 ),

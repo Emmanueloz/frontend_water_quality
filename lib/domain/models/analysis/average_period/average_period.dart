@@ -44,7 +44,7 @@ class AveragePeriod extends BaseAnalysis<Data, ParamPeriod> {
   static Data? _getData(Map<String, dynamic> json, ParamPeriod? parameters) {
     if (parameters != null && parameters.sensor != null) {
       return DataAvgSensor.fromJson(json);
-    } else if (json["results"] != null && json["results"] is List) {
+    } else if (json["results"] != null) {
       return DataAvgAll.fromJson(json["results"]);
     }
     return null;

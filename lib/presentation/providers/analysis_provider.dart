@@ -95,6 +95,19 @@ class AnalysisProvider {
     }
   }
 
+  Future<Result<String>> delete(String id) async {
+    if (_authProvider == null || _authProvider!.token == null) {
+      return Result.failure("User not authenticated");
+    }
+    try {
+      final result = await _analysisRepo.delete(id, _authProvider!.token!);
+
+      return result;
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
+  }
+
   Future<Result<List<AveragePeriod>>> getAveragePeriod(
     String workspaceId,
     String meterId,

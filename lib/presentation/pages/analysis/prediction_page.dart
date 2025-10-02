@@ -6,6 +6,7 @@ import 'package:frontend_water_quality/domain/models/analysis/period/data_pred_s
 import 'package:frontend_water_quality/domain/models/analysis/period/prediction.dart';
 import 'package:frontend_water_quality/presentation/providers/analysis_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/molecules/analysis_modal_delete.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_table.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/form_prediction_dialog.dart';
@@ -56,6 +57,40 @@ class _PredictionPageState extends State<PredictionPage> {
         expandedDetail: expandedDetailt,
         showChat: showChat,
         chatAverageId: _current?.id,
+        onDelete: () {
+          if (_current == null || _current!.id == null) {
+            return;
+          }
+
+          AnalysisModalDelete.show(
+            context,
+            onDelete: () async {
+              final result = await _analysisProvider.delete(_current!.id!);
+              if (!context.mounted) {
+                return;
+              }
+
+              if (result.isSuccess) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Análisis eliminado con éxito'),
+                  ),
+                );
+                setState(() {
+                  _handlerGetPrediction();
+                  idAverage = null;
+                  _current = null;
+                });
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error: ${result.message}'),
+                  ),
+                );
+              }
+            },
+          );
+        },
         formWidget: FormPredictionDialog(
           onSubmit: (parameters) async {
             final result = await _analysisProvider.createPrediction(

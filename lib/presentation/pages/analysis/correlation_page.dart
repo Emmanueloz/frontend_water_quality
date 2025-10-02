@@ -3,6 +3,7 @@ import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/domain/models/analysis/correlation/correlation.dart';
 import 'package:frontend_water_quality/presentation/providers/analysis_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/molecules/analysis_modal_delete.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/molecules/correlation_heatmap.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_table.dart';
@@ -50,6 +51,40 @@ class _CorrelationPageState extends State<CorrelationPage> {
         expandedDetail: expandedDetailt,
         showChat: showChat,
         chatAverageId: _current?.id,
+        onDelete: () {
+          if (_current == null || _current!.id == null) {
+            return;
+          }
+
+          AnalysisModalDelete.show(
+            context,
+            onDelete: () async {
+              final result = await _analysisProvider.delete(_current!.id!);
+              if (!context.mounted) {
+                return;
+              }
+
+              if (result.isSuccess) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Análisis eliminado con éxito'),
+                  ),
+                );
+                setState(() {
+                  _handlerGetCorrelations();
+                  idAverage = null;
+                  _current = null;
+                });
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error: ${result.message}'),
+                  ),
+                );
+              }
+            },
+          );
+        },
         formWidget: FormCorrelationDialog(
           onSubmit: (parameters) async {
             final result = await _analysisProvider.createCorrelation(
