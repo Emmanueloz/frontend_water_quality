@@ -71,15 +71,7 @@ class AnalysisDetail extends StatelessWidget {
                   Row(
                     spacing: 10,
                     children: [
-                      IconButton.outlined(
-                        onPressed: onDelete,
-                        style: IconButton.styleFrom(
-                          backgroundColor: theme.colorScheme.surface,
-                          foregroundColor: theme.colorScheme.error,
-                          side: BorderSide(color: theme.colorScheme.error),
-                        ),
-                        icon: Icon(Icons.delete),
-                      ),
+                      _deleteButton(theme),
                       IconButton(
                         onPressed: onOpenChat,
                         icon: Icon(
@@ -101,10 +93,29 @@ class AnalysisDetail extends StatelessWidget {
                 ],
               ),
             ),
+            if (screenSize == ScreenSize.mobile ||
+                screenSize == ScreenSize.tablet) ...[
+              Align(
+                alignment: Alignment.topRight,
+                child: _deleteButton(theme),
+              )
+            ],
             child,
           ],
         ),
       ),
+    );
+  }
+
+  Widget _deleteButton(ThemeData theme) {
+    return IconButton.outlined(
+      onPressed: onDelete,
+      style: IconButton.styleFrom(
+        backgroundColor: theme.colorScheme.surface,
+        foregroundColor: theme.colorScheme.error,
+        side: BorderSide(color: theme.colorScheme.error),
+      ),
+      icon: Icon(Icons.delete),
     );
   }
 
