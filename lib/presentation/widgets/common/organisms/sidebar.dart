@@ -37,8 +37,8 @@ class Sidebar extends StatelessWidget {
       spacing: 10,
       children: [
         Image.asset(
-          "assets/images/icon.png",
-          width: 45,
+          "assets/images/logo_aquaminds.png",
+          width: 100,
         ),
         if (isExtended)
           Text(
