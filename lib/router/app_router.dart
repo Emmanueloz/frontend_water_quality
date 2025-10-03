@@ -7,6 +7,11 @@ import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/storage_key.dart';
 import 'package:frontend_water_quality/infrastructure/local_storage_service.dart';
 import 'package:frontend_water_quality/presentation/pages/alerts.dart';
+import 'package:frontend_water_quality/presentation/pages/analysis/analysis.dart';
+import 'package:frontend_water_quality/presentation/pages/analysis/average_page.dart';
+import 'package:frontend_water_quality/presentation/pages/analysis/average_period_page.dart';
+import 'package:frontend_water_quality/presentation/pages/analysis/correlation_page.dart';
+import 'package:frontend_water_quality/presentation/pages/analysis/prediction_page.dart';
 import 'package:frontend_water_quality/presentation/pages/form_alert.dart';
 import 'package:frontend_water_quality/domain/models/alert.dart';
 import 'package:frontend_water_quality/presentation/pages/change_password.dart';
@@ -31,7 +36,6 @@ import 'package:frontend_water_quality/presentation/pages/view_meter_ubications.
 import 'package:frontend_water_quality/presentation/pages/view_notification_details.dart';
 import 'package:frontend_water_quality/presentation/pages/list_meter.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
-import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_meters.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_workspace.dart';
 import 'package:frontend_water_quality/presentation/pages/weather_page.dart';
@@ -238,13 +242,59 @@ class AppRouter {
                         path: Routes.analysisRecords.path,
                         name: Routes.analysisRecords.name,
                         builder: (context, state) {
-                          final id = state.pathParameters['id'] ?? 'default';
-                          final idMeter =
-                              state.pathParameters['idMeter'] ?? 'default';
-                          return BaseContainer(
-                            child: Text("Analisis $id $idMeter"),
+                          return AnalysisPage(
+                            idWorkspace:
+                                state.pathParameters['id'] ?? 'default',
+                            idMeter:
+                                state.pathParameters['idMeter'] ?? 'default',
                           );
                         },
+                        routes: [
+                          GoRoute(
+                            parentNavigatorKey: rootNavigatorKey,
+                            path: Routes.analysisAverage.path,
+                            name: Routes.analysisAverage.name,
+                            builder: (context, state) => AveragePage(
+                              idWorkspace:
+                                  state.pathParameters['id'] ?? 'default',
+                              idMeter:
+                                  state.pathParameters['idMeter'] ?? 'default',
+                            ),
+                          ),
+                          GoRoute(
+                            parentNavigatorKey: rootNavigatorKey,
+                            path: Routes.analysisAveragePeriod.path,
+                            name: Routes.analysisAveragePeriod.name,
+                            builder: (context, state) => AveragePeriodPage(
+                              idWorkspace:
+                                  state.pathParameters['id'] ?? 'default',
+                              idMeter:
+                                  state.pathParameters['idMeter'] ?? 'default',
+                            ),
+                          ),
+                          GoRoute(
+                            parentNavigatorKey: rootNavigatorKey,
+                            path: Routes.analysisPrediction.path,
+                            name: Routes.analysisPrediction.name,
+                            builder: (context, state) => PredictionPage(
+                              idWorkspace:
+                                  state.pathParameters['id'] ?? 'default',
+                              idMeter:
+                                  state.pathParameters['idMeter'] ?? 'default',
+                            ),
+                          ),
+                          GoRoute(
+                            parentNavigatorKey: rootNavigatorKey,
+                            path: Routes.analysisCorrelation.path,
+                            name: Routes.analysisCorrelation.name,
+                            builder: (context, state) => CorrelationPage(
+                              idWorkspace:
+                                  state.pathParameters['id'] ?? 'default',
+                              idMeter:
+                                  state.pathParameters['idMeter'] ?? 'default',
+                            ),
+                          )
+                        ],
                       ),
                       GoRoute(
                           path: Routes.connectionMeter.path,

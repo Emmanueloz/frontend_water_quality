@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/theme/theme.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:frontend_water_quality/domain/models/storage_model.dart';
+import 'package:frontend_water_quality/infrastructure/analysis_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/auth_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/ble_service.dart';
 import 'package:frontend_water_quality/infrastructure/connectivity_provider.dart';
@@ -14,6 +16,7 @@ import 'package:frontend_water_quality/infrastructure/guest_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/alert_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/workspace_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/meter_repo_impl.dart';
+import 'package:frontend_water_quality/presentation/providers/analysis_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/user_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/weather_meter_provider.dart';
@@ -127,6 +130,15 @@ void main() async {
             return previousAlertProvider..setAuthProvider(authProvider);
           },
         ),
+        ProxyProvider<AuthProvider, AnalysisProvider>(
+          create: (context) {
+            final authProvider = context.read<AuthProvider>();
+            return AnalysisProvider(AnalysisRepoImpl(dio), authProvider);
+          },
+          update: (context, authProvider, previousAnalysisProvider) {
+            return previousAnalysisProvider!..setAuthProvider(authProvider);
+          },
+        ),
         ChangeNotifierProxyProvider<AuthProvider, UserProvider>(
           create: (context) {
             final authProvider = context.read<AuthProvider>();
@@ -155,6 +167,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'Aqua Minds',
       theme: AppTheme.lightTheme,
+      // Add localization delegates and supported locales so widgets like
+      // DatePicker can show Spanish translations.
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('es', 'ES'), Locale('en', 'US')],
       routerConfig: AppRouter.router,
       debugShowCheckedModeBanner: false,
     );
