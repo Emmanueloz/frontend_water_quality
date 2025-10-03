@@ -17,9 +17,9 @@ class AnalysisCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTab,
-      child: Card(
+    return Card(
+      child: InkWell(
+        onTap: onTab,
         child: Padding(
           padding: EdgeInsets.all(10),
           child: Column(
