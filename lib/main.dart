@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/theme/theme.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:frontend_water_quality/domain/models/storage_model.dart';
 import 'package:frontend_water_quality/infrastructure/analysis_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/auth_repo_impl.dart';
@@ -166,6 +167,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'Aqua Minds',
       theme: AppTheme.lightTheme,
+      // Add localization delegates and supported locales so widgets like
+      // DatePicker can show Spanish translations.
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('es', 'ES'), Locale('en', 'US')],
       routerConfig: AppRouter.router,
       debugShowCheckedModeBanner: false,
     );

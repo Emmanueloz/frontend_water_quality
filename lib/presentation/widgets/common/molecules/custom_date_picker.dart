@@ -9,6 +9,8 @@ class CustomDatePicker {
   }) async {
     return showDatePicker(
       context: context,
+      // Force Spanish locale for the date picker dialog
+      locale: const Locale('es', 'ES'),
       initialDate: initialDate,
       firstDate: firstDate,
       lastDate: lastDate,
