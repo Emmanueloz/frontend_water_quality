@@ -47,7 +47,7 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
       ),
       builder: (context) {
         return SizedBox(
-          height: double.infinity,
+          height: MediaQuery.of(context).size.height * 0.8,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -101,7 +101,11 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
                     if (chatAverageId != null)
                       Padding(
                         padding: const EdgeInsets.all(16.0),
-                        child: ChatAiPage(averageId: chatAverageId ?? ""),
+                        child: ChatAiPage(
+                          averageId: chatAverageId ?? "",
+                          screenSize: screenSize,
+                          isInBottomSheet: true,
+                        ),
                       ),
                   ],
                 ),
@@ -173,7 +177,11 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
         if (showChat && chatAverageId != null) ...[
           const VerticalDivider(),
           Expanded(
-            child: ChatAiPage(averageId: chatAverageId ?? ""),
+            child: ChatAiPage(
+              averageId: chatAverageId ?? "",
+              screenSize: screenSize,
+              isInBottomSheet: false,
+            ),
           ),
         ]
       ],

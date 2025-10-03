@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/screen_size.dart';
 
 class ChatAiPage extends StatefulWidget {
   final String? averageId;
-  const ChatAiPage({super.key, required this.averageId});
+  final ScreenSize screenSize;
+  final bool isInBottomSheet;
+
+  const ChatAiPage({
+    super.key,
+    required this.averageId,
+    this.screenSize = ScreenSize.largeDesktop,
+    this.isInBottomSheet = false,
+  });
 
   @override
   State<ChatAiPage> createState() => _ChatAiPageState();
@@ -59,140 +68,136 @@ class _ChatAiPageState extends State<ChatAiPage> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+  Widget _buildHeader(ThemeData theme) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Text(
+        'Asistente de Análisis',
+        style: theme.textTheme.titleLarge?.copyWith(
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
 
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      padding: const EdgeInsets.all(12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+  Widget _buildEmptyMessages(ThemeData theme) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.psychology_outlined,
+              size: 64,
+              color: theme.hintColor.withValues(alpha: 127.5),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Pregunta sobre los datos de calidad de agua',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: theme.hintColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMessagesList(ThemeData theme) {
+    return _messages.isEmpty
+        ? _buildEmptyMessages(theme)
+        : ListView.builder(
+            controller: _scrollController,
+            padding: const EdgeInsets.only(bottom: 12),
+            itemCount: _messages.length + (_isLoading ? 1 : 0),
+            itemBuilder: (context, index) {
+              if (index < _messages.length) {
+                final message = _messages[index];
+                return _buildMessageBubble(
+                  context,
+                  message['text'],
+                  isUser: message['isUser'],
+                  theme: theme,
+                );
+              } else {
+                return _buildTypingIndicator(theme);
+              }
+            },
+          );
+  }
+
+  Widget _buildInputArea(BuildContext context, ThemeData theme) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        spacing: 10,
         children: [
-          // Header
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
-            child: Text(
-              'Asistente de Análisis',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+          Expanded(
+            child: TextField(
+              controller: _messageController,
+              maxLines: null,
+              minLines: 1,
+              textInputAction: TextInputAction.send,
+              onSubmitted: (_) => _sendMessage(),
+              decoration: InputDecoration(
+                hintText: 'Escribe tu pregunta...',
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
               ),
             ),
           ),
-
-          // Messages List
-          Expanded(
-            child: _messages.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      spacing: 16,
-                      children: [
-                        Icon(
-                          Icons.psychology_outlined,
-                          size: 64,
-                          color: theme.hintColor.withValues(alpha: 0.5),
-                        ),
-                        Text(
-                          'Pregunta sobre los datos de calidad de agua',
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            color: theme.hintColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.only(bottom: 12),
-                    itemCount: _messages.length + (_isLoading ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index < _messages.length) {
-                        final message = _messages[index];
-                        return _buildMessageBubble(
-                          message['text'],
-                          isUser: message['isUser'],
-                          theme: theme,
-                        );
-                      } else {
-                        return _buildTypingIndicator(theme);
-                      }
-                    },
-                  ),
-          ),
-
-          // Input Area
-          Container(
-            decoration: BoxDecoration(
-              color: theme.cardColor,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 8,
-                  offset: const Offset(0, -2),
-                ),
-              ],
-            ),
-            margin: EdgeInsets.only(
-              bottom: isKeyboardVisible ? 8.0 : 16.0,
-              top: 8.0,
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Row(
-              spacing: 10,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Text Input
-                Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    maxLines: null,
-                    minLines: 1,
-                    textInputAction: TextInputAction.send,
-                    onSubmitted: (_) => _sendMessage(),
-                    decoration: InputDecoration(
-                      hintText: 'Escribe tu pregunta...',
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                  ),
-                ),
-
-                // Send Button
-                IconButton(
-                  onPressed: _sendMessage,
-                  icon: const Icon(
-                    Icons.send,
-                  ),
-                  padding: const EdgeInsets.all(8),
-                  constraints: const BoxConstraints(),
-                ),
-              ],
-            ),
+          IconButton(
+            onPressed: _sendMessage,
+            icon: const Icon(Icons.send),
+            padding: const EdgeInsets.all(8),
+            constraints: const BoxConstraints(),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildMessageBubble(String text,
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final content = Column(
+      children: [
+        _buildHeader(theme),
+        Expanded(
+          child: _buildMessagesList(theme),
+        ),
+        _buildInputArea(context, theme),
+      ],
+    );
+
+    if (!widget.isInBottomSheet) {
+      return content;
+    }
+
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: SafeArea(child: content),
+    );
+  }
+
+  Widget _buildMessageBubble(BuildContext context, String text,
       {required bool isUser, required ThemeData theme}) {
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.8,
-        ),
         child: Card(
           elevation: 0,
-          color: isUser ? theme.primaryColor.withOpacity(0.1) : theme.cardColor,
+          color: isUser
+              ? theme.primaryColor.withValues(alpha: 25)
+              : theme.cardColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -202,7 +207,7 @@ class _ChatAiPageState extends State<ChatAiPage> {
               text,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: isUser
-                    ? theme.primaryColor
+                    ? theme.colorScheme.surface
                     : theme.textTheme.bodyLarge?.color,
               ),
             ),
