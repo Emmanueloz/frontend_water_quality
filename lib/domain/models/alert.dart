@@ -6,6 +6,7 @@ class Alert {
   final AlertType type;
   final String workspaceId;
   final String? meterId;
+  final Parameter ? parameter;
 
   Alert({
     this.id,
@@ -13,6 +14,7 @@ class Alert {
     required this.type,
     required this.workspaceId,
     this.meterId,
+    this.parameter,
   });
 
   factory Alert.fromJson(Map<String, dynamic> json) {
@@ -24,6 +26,9 @@ class Alert {
           : AlertTypeExtension.fromName(json['type']),
       workspaceId: json['workspace_id'] ?? '',
       meterId: json['meter_id'],
+      parameter: json['parameter'] != null
+          ? Parameter.fromJson(json['parameter'])
+          : null,
     );
   }
 
@@ -34,6 +39,68 @@ class Alert {
     data['title'] = title;
     data['type'] = type.name;
     data['workspace_id'] = workspaceId;
+    if (parameter != null) data['parameter'] = parameter!.toJson();
+    return data;
+  }
+}
+
+class Parameter {
+  final RangeValue ph;
+  final RangeValue temperature;
+  final RangeValue tds;
+  final RangeValue conductivity;
+  final RangeValue turbidity;
+  
+
+  Parameter({
+    required this.ph,
+    required this.temperature,
+    required this.tds,
+    required this.conductivity,
+    required this.turbidity,
+  });
+
+  factory Parameter.fromJson(Map<String, dynamic> json) {
+    return Parameter(
+      ph: RangeValue.fromJson(json['ph'] ?? {}),
+      temperature: RangeValue.fromJson(json['temperature'] ?? {}),
+      tds: RangeValue.fromJson(json['tds'] ?? {}),
+      conductivity: RangeValue.fromJson(json['conductivity'] ?? {}),
+      turbidity: RangeValue.fromJson(json['turbidity'] ?? {}),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['ph'] = ph.toJson();
+    data['temperature'] = temperature.toJson();
+    data['tds'] = tds.toJson();
+    data['conductivity'] = conductivity.toJson();
+    data['turbidity'] = turbidity.toJson();
+    return data;
+  }
+}
+
+class RangeValue {
+  final double min;
+  final double max;
+
+  RangeValue({
+    required this.min,
+    required this.max,
+  });
+
+  factory RangeValue.fromJson(Map<String, dynamic> json) {
+    return RangeValue(
+      min: json['min'] ?? 0.0,
+      max: json['max'] ?? 0.0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['min'] = min;
+    data['max'] = max;
     return data;
   }
 }
