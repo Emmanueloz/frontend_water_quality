@@ -6,8 +6,8 @@ class Alert {
   final AlertType type;
   final String workspaceId;
   final String? meterId;
-  final Parameter ? parameter;
-  final List<String>? readByUsers;
+  final Parameter ? parameters;
+  final List<String>? sendToUsers;
 
   Alert({
     this.id,
@@ -15,8 +15,8 @@ class Alert {
     required this.type,
     required this.workspaceId,
     this.meterId,
-    this.parameter,
-    this.readByUsers,
+    this.parameters,
+    this.sendToUsers,
   });
 
   factory Alert.fromJson(Map<String, dynamic> json) {
@@ -28,10 +28,10 @@ class Alert {
           : AlertTypeExtension.fromName(json['type']),
       workspaceId: json['workspace_id'] ?? '',
       meterId: json['meter_id'],
-      parameter: json['parameter'] != null
-          ? Parameter.fromJson(json['parameter'])
+      parameters: json['parameters'] != null
+          ? Parameter.fromJson(json['parameters'])
           : null,
-      readByUsers: json['read_by_users'] != null
+      sendToUsers: json['guests'] != null
           ? List<String>.from(json['guests'])
           : null,
     );
@@ -44,8 +44,8 @@ class Alert {
     data['title'] = title;
     data['type'] = type.name;
     data['workspace_id'] = workspaceId;
-    if (parameter != null) data['parameter'] = parameter!.toJson();
-    if (readByUsers != null) data['guests'] = readByUsers;
+    if (parameters != null) data['parameters'] = parameters!.toJson();
+    if (sendToUsers != null) data['guests'] = sendToUsers;
     return data;
   }
 }
