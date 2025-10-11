@@ -7,6 +7,7 @@ class Alert {
   final String workspaceId;
   final String? meterId;
   final Parameter ? parameter;
+  final List<String>? readByUsers;
 
   Alert({
     this.id,
@@ -15,6 +16,7 @@ class Alert {
     required this.workspaceId,
     this.meterId,
     this.parameter,
+    this.readByUsers,
   });
 
   factory Alert.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,9 @@ class Alert {
       parameter: json['parameter'] != null
           ? Parameter.fromJson(json['parameter'])
           : null,
+      readByUsers: json['read_by_users'] != null
+          ? List<String>.from(json['guests'])
+          : null,
     );
   }
 
@@ -40,6 +45,7 @@ class Alert {
     data['type'] = type.name;
     data['workspace_id'] = workspaceId;
     if (parameter != null) data['parameter'] = parameter!.toJson();
+    if (readByUsers != null) data['guests'] = readByUsers;
     return data;
   }
 }
