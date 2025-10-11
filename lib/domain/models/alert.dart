@@ -45,7 +45,7 @@ class Alert {
     data['type'] = type.name;
     data['workspace_id'] = workspaceId;
     if (parameters != null) data['parameters'] = parameters!.toJson();
-    if (sendToUsers != null) data['guests'] = sendToUsers;
+    data['guests'] = sendToUsers ?? [];
     return data;
   }
 }
