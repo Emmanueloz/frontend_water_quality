@@ -44,13 +44,21 @@ class _FormAlertPageState extends State<FormAlertPage> {
   List<String> _selectedUserIds = [];
 
   late Future<Result<List<Meter>>> _metersFuture;
-  late Future<List<Guest>> _guestsFuture;
+  Future<List<Guest>>? _guestsFuture; // CAMBIO: Hacerlo nullable
 
   @override
   void initState() {
     super.initState();
     _metersFuture = _fetchMeters();
-    _guestsFuture = _fetchGuestsDirectly();
+    
+    // CAMBIO 1: Cargar guests después del primer frame para evitar el error
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          _guestsFuture = _fetchGuestsDirectly();
+        });
+      }
+    });
 
     _selectedMeterId = widget.alert?.meterId ?? '';
 
@@ -306,7 +314,7 @@ class _FormAlertPageState extends State<FormAlertPage> {
                   FutureBuilder<List<Guest>>(
                     future: _guestsFuture,
                     builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
+                      if (_guestsFuture == null || snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
                           child: Padding(
                             padding: EdgeInsets.all(16.0),
@@ -331,7 +339,6 @@ class _FormAlertPageState extends State<FormAlertPage> {
                         final role = guest.role.toLowerCase();
                         return role == 'manager' || role == 'administrator';
                       }).toList();
-
 
                       return MultiUserSelector(
                         availableUsers: filteredGuests,
