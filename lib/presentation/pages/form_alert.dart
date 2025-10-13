@@ -7,6 +7,7 @@ import 'package:frontend_water_quality/domain/models/guests.dart';
 import 'package:frontend_water_quality/domain/models/meter_model.dart';
 import 'package:frontend_water_quality/presentation/providers/alert_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_provider.dart';
+import 'package:frontend_water_quality/presentation/providers/guest_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/alerts/molecules/multi_user_selector.dart';
@@ -17,8 +18,7 @@ import 'package:go_router/go_router.dart';
 class FormAlertPage extends StatefulWidget {
   final String workspaceTitle;
   final String workspaceId;
-  final Alert?
-      alert; // Si es null, es modo crear; si tiene valor, es modo editar
+  final Alert? alert;
 
   const FormAlertPage({
     super.key,
@@ -40,38 +40,17 @@ class _FormAlertPageState extends State<FormAlertPage> {
   bool get _isEditMode => widget.alert != null;
   final List<AlertType> _alertTypes = AlertType.values;
   
-  // Nuevas propiedades para parámetros y usuarios
   Parameter? _parameters;
   List<String> _selectedUserIds = [];
-  
-  // Datos hardcodeados de usuarios (temporal)
-  final List<Guest> _mockGuests = [
-    Guest(
-      id: 'user1',
-      name: 'Juan Pérez',
-      email: 'juan.perez@example.com',
-      role: 'admin',
-    ),
-    Guest(
-      id: 'user2',
-      name: 'María García',
-      email: 'maria.garcia@example.com',
-      role: 'viewer',
-    ),
-    Guest(
-      id: 'user3',
-      name: 'Carlos López',
-      email: 'carlos.lopez@example.com',
-      role: 'editor',
-    ),
-  ];
 
   late Future<Result<List<Meter>>> _metersFuture;
+  late Future<List<Guest>> _guestsFuture;
 
   @override
   void initState() {
     super.initState();
     _metersFuture = _fetchMeters();
+    _guestsFuture = _fetchGuestsDirectly();
 
     _selectedMeterId = widget.alert?.meterId ?? '';
 
@@ -86,6 +65,15 @@ class _FormAlertPageState extends State<FormAlertPage> {
   Future<Result<List<Meter>>> _fetchMeters() async {
     final meterProvider = context.read<MeterProvider>();
     return await meterProvider.getMeters(widget.workspaceId);
+  }
+
+  Future<List<Guest>> _fetchGuestsDirectly() async {
+    final guestProvider = context.read<GuestProvider>();
+    if (guestProvider.guests.isNotEmpty) {
+      return guestProvider.guests;
+    }
+    await guestProvider.loadGuests(widget.workspaceId);
+    return guestProvider.guests;
   }
 
   @override
@@ -125,8 +113,7 @@ class _FormAlertPageState extends State<FormAlertPage> {
       });
 
       if (alertProvider.errorMessage == null) {
-        print(
-            'FormAlertPage: ${_isEditMode ? 'update' : 'create'} successful, closing page');
+        print('FormAlertPage: ${_isEditMode ? 'update' : 'create'} successful, closing page');
         context.pop();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -138,8 +125,7 @@ class _FormAlertPageState extends State<FormAlertPage> {
           ),
         );
       } else {
-        print(
-            'FormAlertPage: ${_isEditMode ? 'update' : 'create'} failed, showing error');
+        print('FormAlertPage: ${_isEditMode ? 'update' : 'create'} failed, showing error');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(alertProvider.errorMessage ??
@@ -214,7 +200,6 @@ class _FormAlertPageState extends State<FormAlertPage> {
             );
           }
 
-          // Establecer el medidor seleccionado por defecto si no hay uno
           if (_selectedMeterId.isEmpty && meters.isNotEmpty) {
             _selectedMeterId = meters.first.id ?? '';
           }
@@ -233,7 +218,6 @@ class _FormAlertPageState extends State<FormAlertPage> {
                   ),
                   const SizedBox(height: 16),
                   
-                  // Información básica
                   TextFormField(
                     controller: _titleController,
                     decoration: const InputDecoration(
@@ -254,7 +238,7 @@ class _FormAlertPageState extends State<FormAlertPage> {
                   const SizedBox(height: 16),
                   
                   DropdownButtonFormField<String>(
-                    initialValue: _selectedMeterId,
+                    initialValue: _selectedMeterId.isEmpty ? null : _selectedMeterId,
                     decoration: const InputDecoration(
                       labelText: 'Medidor',
                       border: OutlineInputBorder(),
@@ -266,7 +250,6 @@ class _FormAlertPageState extends State<FormAlertPage> {
                       );
                     }).toList(),
                     onChanged: (value) {
-                      print(value);
                       if (value != null) {
                         setState(() {
                           _selectedMeterId = value;
@@ -310,7 +293,6 @@ class _FormAlertPageState extends State<FormAlertPage> {
                   ),
                   const SizedBox(height: 24),
                   
-                  // Widget de parámetros
                   ParameterRangeInput(
                     initialParameter: _parameters,
                     onParameterChanged: (parameter) {
@@ -321,19 +303,49 @@ class _FormAlertPageState extends State<FormAlertPage> {
                   ),
                   const SizedBox(height: 16),
                   
-                  // Widget de selección de usuarios (datos hardcodeados)
-                  MultiUserSelector(
-                    availableUsers: _mockGuests,
-                    selectedUserIds: _selectedUserIds,
-                    onSelectionChanged: (selectedIds) {
-                      setState(() {
-                        _selectedUserIds = selectedIds;
-                      });
+                  FutureBuilder<List<Guest>>(
+                    future: _guestsFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+
+                      if (snapshot.hasError) {
+                        return Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            'Error al cargar usuarios: ${snapshot.error}',
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        );
+                      }
+
+                      final allGuests = snapshot.data ?? [];
+                      
+                      final filteredGuests = allGuests.where((guest) {
+                        final role = guest.role.toLowerCase();
+                        return role == 'manager' || role == 'administrator';
+                      }).toList();
+
+
+                      return MultiUserSelector(
+                        availableUsers: filteredGuests,
+                        selectedUserIds: _selectedUserIds,
+                        onSelectionChanged: (selectedIds) {
+                          setState(() {
+                            _selectedUserIds = selectedIds;
+                          });
+                        },
+                      );
                     },
                   ),
                   const SizedBox(height: 16),
                   
-                  // Botones de acción
                   ElevatedButton(
                     onPressed: _isLoading ? null : _createAlert,
                     style: ElevatedButton.styleFrom(
