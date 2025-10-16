@@ -180,8 +180,8 @@ class _FormAlertPageState extends State<FormAlertPage> {
   Widget _buildForm(BuildContext context, ScreenSize screenSize) {
     return Container(
       width: screenSize == ScreenSize.mobile ? double.infinity : 600,
-      margin: const EdgeInsets.all(10),
-      padding: const EdgeInsets.all(10),
+      margin: const EdgeInsets.all(5),
+      padding: const EdgeInsets.all(5),
       child: FutureBuilder<Result<List<Meter>>>(
         future: _metersFuture,
         builder: (context, snapshot) {
