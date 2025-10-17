@@ -153,6 +153,34 @@ class AuthProvider with ChangeNotifier {
     return result.isSuccess;
   }
 
+  Future<bool> loginWithToken(String token) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      final Result<bool> isExpired = await _authRepo.isTokenExpired(token);
+
+      if (isExpired.isSuccess && isExpired.value == false) {
+        this.token = token;
+        isAuthenticated = true;
+
+        await LocalStorageService.save(StorageKey.token, token);
+
+        errorMessage = null;
+      } else {
+        errorMessage = 'Token inválido o expirado';
+        _cleanAuth();
+      }
+    } catch (e) {
+      errorMessage = 'No se pudo iniciar sesión con GitHub';
+      _cleanAuth();
+    }
+
+    isLoading = false;
+    notifyListeners();
+    return isAuthenticated;
+  }
+
   void cleanError() {
     if (errorMessage != null) {
       errorMessage = null;

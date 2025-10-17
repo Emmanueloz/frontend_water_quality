@@ -80,6 +80,7 @@ class AppRouter {
       Routes.register.path,
       Routes.recoveryPassword.path,
       Routes.changePassword.path,
+      Routes.authCallback.path,
     ];
 
     print(state.uri.path);
@@ -467,6 +468,32 @@ class AppRouter {
 
           return ChangePasswordPage(
             token: token,
+          );
+        },
+      ),
+      GoRoute(
+        path: Routes.authCallback.path,
+        name: Routes.authCallback.name,
+        builder: (context, state) {
+          final token = state.uri.queryParameters['token'];
+
+          // Ejecutar login con token y redirigir
+          Future.microtask(() async {
+            if (token != null && token.isNotEmpty) {
+              final auth = Provider.of<AuthProvider>(context, listen: false);
+              final ok = await auth.loginWithToken(token);
+              if (ok && context.mounted) {
+                context.goNamed(Routes.workspaces.name);
+              } else if (context.mounted) {
+                context.goNamed(Routes.login.name);
+              }
+            } else if (context.mounted) {
+              context.goNamed(Routes.login.name);
+            }
+          });
+
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
           );
         },
       )

@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:frontend_water_quality/router/routes.dart';
 
 class LoginForm extends StatefulWidget {
   final bool isLoading;
@@ -23,11 +26,37 @@ class _LoginFormState extends State<LoginForm> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
+  final String backendBaseUrl = "http://127.0.0.1:8000";
+
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  /// 🔹 Inicia sesión con GitHub usando el navegador del sistema
+  Future<void> _loginWithGitHub() async {
+    final Uri githubLoginUrl = Uri.parse("$backendBaseUrl/auth/github/login");
+
+    if (!await canLaunchUrl(githubLoginUrl)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("No se pudo abrir el navegador.")),
+      );
+      return;
+    }
+
+    // Abre el navegador
+    await launchUrl(
+      githubLoginUrl,
+      mode: LaunchMode.externalApplication,
+    );
+
+    // 🚨 IMPORTANTE:
+    // Tu backend debería redirigir al usuario a una página de éxito que indique
+    // que ya puede volver a la app.
+    // Si quieres manejar el token en Flutter, puedes hacerlo usando un endpoint
+    // de confirmación, o detectando la sesión en tu backend.
   }
 
   @override
@@ -40,17 +69,15 @@ class _LoginFormState extends State<LoginForm> {
           crossAxisAlignment: CrossAxisAlignment.center,
           spacing: 20,
           children: [
-            Image.asset('assets/images/logotipo_aquaminds.png',
-                height: 150),
-            Text(
-              'Bienvenido',
-              style: Theme.of(context).textTheme.displayLarge,
-            ),
+            Image.asset('assets/images/logotipo_aquaminds.png', height: 150),
+            Text('Bienvenido', style: Theme.of(context).textTheme.displayLarge),
+
+            // --- Campo email ---
             TextFormField(
               controller: emailController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Correo electrónico',
-                suffixIcon: const Icon(Icons.email_outlined),
+                suffixIcon: Icon(Icons.email_outlined),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -58,17 +85,18 @@ class _LoginFormState extends State<LoginForm> {
                 } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
                   return 'Por favor, ingresa un correo electrónico válido';
                 }
-
                 return null;
               },
               keyboardType: TextInputType.emailAddress,
             ),
+
+            // --- Campo contraseña ---
             TextFormField(
               controller: passwordController,
               obscureText: true,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Contraseña',
-                suffixIcon: const Icon(Icons.visibility_outlined),
+                suffixIcon: Icon(Icons.visibility_outlined),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -79,9 +107,11 @@ class _LoginFormState extends State<LoginForm> {
                 return null;
               },
             ),
+
+            // --- Botón normal de inicio de sesión ---
             Center(
               child: ElevatedButton(
-                onPressed: widget.isLoading == true
+                onPressed: widget.isLoading
                     ? null
                     : () async {
                         if (formKey.currentState!.validate()) {
@@ -94,12 +124,22 @@ class _LoginFormState extends State<LoginForm> {
                         }
                       },
                 child: widget.isLoading
-                    ? const CircularProgressIndicator(
-                        color: Colors.white,
-                      )
+                    ? const CircularProgressIndicator(color: Colors.white)
                     : const Text('Iniciar sesión'),
               ),
             ),
+
+            // --- Botón de GitHub ---
+            OutlinedButton.icon(
+              icon: const Icon(Icons.code),
+              label: const Text('Iniciar sesión con GitHub'),
+              onPressed: widget.isLoading ? null : _loginWithGitHub,
+              style: OutlinedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+              ),
+            ),
+
             if (widget.errorMessage.isNotEmpty)
               Center(
                 child: Text(
@@ -107,18 +147,15 @@ class _LoginFormState extends State<LoginForm> {
                   style: const TextStyle(color: Colors.red),
                 ),
               ),
+
             TextButton(
               onPressed: () => context.goNamed(Routes.register.name),
-              child: const Text(
-                '¿No tienes una cuenta? Regístrate',
-              ),
+              child: const Text('¿No tienes una cuenta? Regístrate'),
             ),
             TextButton(
               onPressed: () => context.goNamed(Routes.recoveryPassword.name),
-              child: const Text(
-                '¿Olvidaste tu contraseña? Recuperarla',
-              ),
-            )
+              child: const Text('¿Olvidaste tu contraseña? Recuperarla'),
+            ),
           ],
         ),
       ),
