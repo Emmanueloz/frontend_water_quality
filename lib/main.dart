@@ -32,6 +32,7 @@ void main() async {
   final StorageModel storageModel = await LocalStorageService.getAll();
   final AuthProvider authProvider = AuthProvider(
     AuthRepoImpl(dio),
+    UserRepoImpl(dio),
   );
 
   await authProvider.loadSettings(storageModel);

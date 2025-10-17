@@ -7,11 +7,13 @@ import 'package:frontend_water_quality/domain/models/storage_model.dart';
 import 'package:frontend_water_quality/domain/models/user.dart';
 import 'package:frontend_water_quality/domain/repositories/auth_repo.dart';
 import 'package:frontend_water_quality/infrastructure/local_storage_service.dart';
+import 'package:frontend_water_quality/domain/repositories/user_repo.dart';
 
 class AuthProvider with ChangeNotifier {
   final AuthRepo _authRepo;
+  final UserRepo _userRepo;
 
-  AuthProvider(this._authRepo);
+  AuthProvider(this._authRepo, this._userRepo);
   bool isAuthenticated = false;
   bool isLoading = false;
   String? token;
@@ -165,6 +167,20 @@ class AuthProvider with ChangeNotifier {
         isAuthenticated = true;
 
         await LocalStorageService.save(StorageKey.token, token);
+        // Obtener y persistir el usuario para que la sesión quede igual que email/contraseña
+        final userRes = await _userRepo.getUser(token);
+        if (userRes.isSuccess && userRes.value != null) {
+          user = userRes.value;
+          await LocalStorageService.save(
+            StorageKey.user,
+            User(
+              email: user!.email,
+              username: user!.username,
+              rol: user!.rol,
+              uid: user!.uid,
+            ).toJsonEncode(),
+          );
+        }
 
         errorMessage = null;
       } else {
