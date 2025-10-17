@@ -28,11 +28,13 @@ import 'package:frontend_water_quality/router/app_router.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_record_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/alert_provider.dart';
+import 'package:frontend_water_quality/presentation/providers/theme_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final dio = DioHelper.createDio();
   final StorageModel storageModel = await LocalStorageService.getAll();
+  final ThemeProvider themeProvider = await ThemeProvider.initialize();
   final AuthProvider authProvider = AuthProvider(
     AuthRepoImpl(dio),
   );
@@ -44,6 +46,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider<ThemeProvider>.value(value: themeProvider),
         ChangeNotifierProvider<ConnectivityProvider>(
           create: (_) => ConnectivityProvider(dio),
         ),
@@ -164,12 +167,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = context.watch<ThemeProvider>();
     return MaterialApp.router(
       title: 'Aqua Minds',
       theme: AppTheme.lightTheme,
-      // Add localization delegates and supported locales so widgets like
-      // DatePicker can show Spanish translations.
-      localizationsDelegates: [
+      darkTheme: AppTheme.darkTheme,
+      themeMode: themeProvider.themeMode,
+      localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
