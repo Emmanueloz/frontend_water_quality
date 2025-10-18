@@ -18,14 +18,16 @@ class AppTheme {
       );
 
   static ColorScheme get darkColorScheme => ColorScheme.dark(
-        primary: const Color(0xFF0F2A2D), // header teal oscuro
+        primary: const Color(0xFF386b70), // header teal oscuro
         onPrimary: _darkTextColor,
-        secondary: const Color(0xFF0F2A2D),
+        secondary: const Color(0xFF001b26),
         onSecondary: _darkTextColor,
         tertiary: const Color(0xFF2BE0D6), // acento brillante
         onTertiary: _darkTextColor,
-        surface: const Color(0xFF071B1C), // fondo cards/áreas
+        surface: const Color(0xFF001b26), // fondo cards/áreas
         onSurface: _darkTextColor,
+        primaryContainer: const Color.fromARGB(255, 239, 247, 246),
+        surfaceContainer: const Color.fromARGB(69, 0, 27, 38),
       );
 
   static TextTheme get textTheme => const TextTheme(
@@ -228,28 +230,28 @@ class AppTheme {
     );
 
     return ThemeData(
-      brightness: Brightness.dark,
+      // brightness: Brightness.dark,
       useMaterial3: true,
       colorScheme: cs,
       primaryColor: cs.primary,
       // Fondos
-      scaffoldBackgroundColor: cs.surface,
+      scaffoldBackgroundColor: cs.secondary,
       // AppBar
       appBarTheme: AppBarTheme(
-        backgroundColor: cs.primary,
+        backgroundColor: cs.secondary,
         elevation: 0,
         titleTextStyle: darkTextTheme.displaySmall?.copyWith(color: cs.onPrimary),
-        iconTheme: IconThemeData(color: cs.onPrimary),
-        actionsIconTheme: IconThemeData(color: cs.onPrimary),
+        iconTheme: IconThemeData(color: cs.onSecondary),
+        actionsIconTheme: IconThemeData(color: cs.onSurface),
       ),
       // Textos
       textTheme: darkTextTheme,
       primaryTextTheme: darkTextTheme,
-      iconTheme: IconThemeData(color: cs.tertiary),
+      iconTheme: IconThemeData(color: cs.onSurface),
       // Tarjetas
       cardTheme: CardThemeData(
-        color: cs.surfaceContainer,
-        elevation: 2,
+        color: cs.primary,
+        elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       // Divisor
@@ -275,10 +277,10 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: cs.tertiary, width: 2),
+          // borderSide: BorderSide(color: cs.tertiary, width: 2),
         ),
         filled: true,
-        fillColor: cs.surface,
+        // fillColor: cs.surfaceContainer
       ),
       // ListTile
       listTileTheme: ListTileThemeData(
