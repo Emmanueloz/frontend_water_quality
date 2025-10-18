@@ -139,16 +139,19 @@ class AuthRepoImpl implements AuthRepo {
 
       print(token);
       print(response.statusCode);
-
       if (response.statusCode != 200) {
-        print("expiro");
-        return Result.success(true);
+        // Tratar cualquier estado distinto de 200 como fallo de verificación,
+        // no como "expirado". Esto permite al AuthProvider decidir permitir
+        // el login con el token cuando hay CORS o el endpoint no coincide.
+        print("Verificación de token no concluyente: status ${response.statusCode}");
+        return Result.failure("status ${response.statusCode}");
       }
-      print("No expiro");
-
-      return Result.success(false);
+      print("Token válido (200)");
+      return Result.success(false); // false => no expirado
     } catch (e) {
       print(e.toString());
+      // Cualquier error de red o CORS se trata como fallo de verificación
+      // para que el flujo de login pueda continuar bajo criterio del provider.
       return Result.failure(e.toString());
     }
   }

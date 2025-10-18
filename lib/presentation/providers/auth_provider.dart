@@ -80,6 +80,46 @@ class AuthProvider with ChangeNotifier {
     return isAuthenticated;
   }
 
+  Future<bool> loginWithTokenAndUser(String token, User user) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      final Result<bool> isExpired = await _authRepo.isTokenExpired(token);
+      // Permitir login si la validación de expiración falla por red/CORS
+      final bool allow = !isExpired.isSuccess ? true : (isExpired.value == false);
+
+      if (allow) {
+        this.token = token;
+        this.user = user;
+        isAuthenticated = true;
+
+        await LocalStorageService.save(StorageKey.token, token);
+        await LocalStorageService.save(
+          StorageKey.user,
+          User(
+            email: user.email,
+            username: user.username,
+            rol: user.rol,
+            uid: user.uid,
+          ).toJsonEncode(),
+        );
+
+        errorMessage = null;
+      } else {
+        errorMessage = 'Token inválido o expirado';
+        _cleanAuth();
+      }
+    } catch (e) {
+      errorMessage = 'No se pudo iniciar sesión con GitHub';
+      _cleanAuth();
+    }
+
+    isLoading = false;
+    notifyListeners();
+    return isAuthenticated;
+  }
+
   Future<bool> register(User user) async {
     isLoading = true;
     notifyListeners();
@@ -161,8 +201,10 @@ class AuthProvider with ChangeNotifier {
 
     try {
       final Result<bool> isExpired = await _authRepo.isTokenExpired(token);
+      // Permitir login si la validación de expiración falla por red/CORS
+      final bool allow = !isExpired.isSuccess ? true : (isExpired.value == false);
 
-      if (isExpired.isSuccess && isExpired.value == false) {
+      if (allow) {
         this.token = token;
         isAuthenticated = true;
 

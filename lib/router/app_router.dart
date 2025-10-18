@@ -31,6 +31,8 @@ import 'package:frontend_water_quality/presentation/pages/view_meter_ubications.
 import 'package:frontend_water_quality/presentation/pages/view_notification_details.dart';
 import 'package:frontend_water_quality/presentation/pages/list_meter.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
+import 'package:frontend_water_quality/domain/models/user.dart';
+import 'package:frontend_water_quality/core/enums/roles.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_meters.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_workspace.dart';
@@ -69,13 +71,80 @@ class AppRouter {
   ) async {
     print("redirect");
 
-    if (state.uri.path == Routes.splash.path ||
-        state.uri.path == Routes.aboutUs.path) {
+    if (state.uri.path == Routes.aboutUs.path) {
       return null;
     }
 
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    // 1) Capturar token/usuario desde cualquier ruta (query o fragment) para
+    // completar el login aunque el backend no redirija exactamente a /#/auth/callback
+    try {
+      // Intento por query
+      String? token = state.uri.queryParameters['token'];
+      String? email = state.uri.queryParameters['email'];
+      String? username = state.uri.queryParameters['username'];
+      String? uid = state.uri.queryParameters['uid'];
+      String? rolStr = state.uri.queryParameters['rol'];
+
+      // Intento adicional por fragment (hash) en Web
+      if ((token == null || token.isEmpty) && kIsWeb) {
+        final fragment = Uri.base.fragment; // ej: "/auth/callback?token=..."
+        if (fragment.isNotEmpty) {
+          final hasQuery = fragment.contains('?');
+          final query = hasQuery ? fragment.split('?').last : '';
+          if (query.isNotEmpty) {
+            final params = Uri.splitQueryString(query);
+            token = params['token'] ?? token;
+            email = params['email'] ?? email;
+            username = params['username'] ?? username;
+            uid = params['uid'] ?? uid;
+            rolStr = params['rol'] ?? rolStr;
+          }
+        }
+      }
+
+      if (!authProvider.isAuthenticated && token != null && token.isNotEmpty) {
+        bool ok = false;
+        if (email != null && email.isNotEmpty) {
+          String normalizeRole(String? value) {
+            if (value == null || value.isEmpty) return 'unknown';
+            final raw = value.contains('.') ? value.split('.').last : value;
+            return raw.toLowerCase();
+          }
+
+          final normalized = normalizeRole(rolStr);
+          final role = AppRoles.values.firstWhere(
+            (e) => e.name == normalized,
+            orElse: () => AppRoles.unknown,
+          );
+
+          final user = User(
+            uid: uid,
+            email: email,
+            username: username,
+            phone: null,
+            rol: role,
+          );
+
+          ok = await authProvider.loginWithTokenAndUser(token, user);
+        } else {
+          ok = await authProvider.loginWithToken(token);
+        }
+
+        if (ok) {
+          return Routes.workspaces.path;
+        }
+      }
+    } catch (_) {
+      // Si algo falla en la lectura del fragment/query, continuamos con el flujo normal
+    }
+
+    // Evitar rebotes mientras se está autenticando (previene ir a /login por carrera)
+    if (authProvider.isLoading) {
+      return null;
+    }
     final List<String> publicRoutes = [
+      Routes.splash.path,
       Routes.login.path,
       Routes.register.path,
       Routes.recoveryPassword.path,
@@ -92,6 +161,11 @@ class AppRouter {
     authProvider.cleanError();
 
     if (!authProvider.isAuthenticated && !isOnPublicRoute) {
+      // Si hay token en storage pero el provider aún no se marca auth, evita mandar a login
+      final storedToken = await LocalStorageService.get(StorageKey.token);
+      if (storedToken != null && storedToken.isNotEmpty) {
+        return null;
+      }
       return Routes.login.path;
     }
 
@@ -475,13 +549,64 @@ class AppRouter {
         path: Routes.authCallback.path,
         name: Routes.authCallback.name,
         builder: (context, state) {
-          final token = state.uri.queryParameters['token'];
+          // Intento 1: Path URL Strategy (state.uri)
+          String? token = state.uri.queryParameters['token'];
+          String? email = state.uri.queryParameters['email'];
+          String? username = state.uri.queryParameters['username'];
+          String? uid = state.uri.queryParameters['uid'];
+          String? rolStr = state.uri.queryParameters['rol'];
 
-          // Ejecutar login con token y redirigir
+          // Intento 2: Hash URL Strategy (fragmento de Uri.base)
+          if ((token == null || token.isEmpty) && kIsWeb) {
+            final fragment = Uri.base.fragment; // ej: "/oauth/callback?token=...&email=..."
+            if (fragment.isNotEmpty) {
+              final hasQuery = fragment.contains('?');
+              final query = hasQuery ? fragment.split('?').last : '';
+              if (query.isNotEmpty) {
+                final params = Uri.splitQueryString(query);
+                token = params['token'] ?? token;
+                email = params['email'] ?? email;
+                username = params['username'] ?? username;
+                uid = params['uid'] ?? uid;
+                rolStr = params['rol'] ?? rolStr;
+              }
+            }
+          }
+
+          // Ejecutar login con token (y usuario si viene) y redirigir
           Future.microtask(() async {
             if (token != null && token.isNotEmpty) {
               final auth = Provider.of<AuthProvider>(context, listen: false);
-              final ok = await auth.loginWithToken(token);
+
+              bool ok = false;
+              if (email != null && email.isNotEmpty) {
+                String normalizeRole(String? value) {
+                  if (value == null || value.isEmpty) return 'unknown';
+                  final raw = value.contains('.')
+                      ? value.split('.').last
+                      : value;
+                  return raw.toLowerCase();
+                }
+
+                final normalized = normalizeRole(rolStr);
+                final role = AppRoles.values.firstWhere(
+                  (e) => e.name == normalized,
+                  orElse: () => AppRoles.unknown,
+                );
+
+                final user = User(
+                  uid: uid,
+                  email: email,
+                  username: username,
+                  phone: null, // backend aún no envía phone
+                  rol: role,
+                );
+
+                ok = await auth.loginWithTokenAndUser(token, user);
+              } else {
+                ok = await auth.loginWithToken(token);
+              }
+
               if (ok && context.mounted) {
                 context.goNamed(Routes.workspaces.name);
               } else if (context.mounted) {
