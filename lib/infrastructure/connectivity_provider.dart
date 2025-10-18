@@ -16,7 +16,7 @@ class ConnectivityProvider with ChangeNotifier {
   bool get isOffline => !_state.isOnline;
 
   final Dio _dio;
-  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+  StreamSubscription? _connectivitySubscription;
 
   // Se recibe la instancia de Dio desde el exterior.
   ConnectivityProvider(this._dio) {
@@ -36,9 +36,20 @@ class ConnectivityProvider with ChangeNotifier {
         .onConnectivityChanged
         .handleError((err) => print(err))
         .listen(
-      (results) {
-        final bool hasConnection =
-            results.any((result) => result != ConnectivityResult.none);
+      (dynamic payload) {
+        bool hasConnection = false;
+        try {
+          if (payload is ConnectivityResult) {
+            hasConnection = payload != ConnectivityResult.none;
+          } else if (payload is List<ConnectivityResult>) {
+            hasConnection = payload.any((r) => r != ConnectivityResult.none);
+          } else {
+            // Desconocido: asumimos offline para ser conservadores
+            hasConnection = false;
+          }
+        } catch (_) {
+          hasConnection = false;
+        }
 
         // Dispara la verificación real solo si hay un cambio de estado de bajo nivel.
         if (hasConnection != _state.isOnline) {
