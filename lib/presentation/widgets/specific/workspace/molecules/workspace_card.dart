@@ -30,8 +30,6 @@ class WorkspaceCard extends StatelessWidget {
           'iconContainerSize': 46.0,
           'leftPadding': 16.0,
           'contentPadding': 12.0,
-          'titleFontSize': 16.0,
-          'subtitleFontSize': 14.0,
         };
       case ScreenSize.tablet:
         return {
@@ -40,8 +38,6 @@ class WorkspaceCard extends StatelessWidget {
           'iconContainerSize': 70.0,
           'leftPadding': 20.0,
           'contentPadding': 14.0,
-          'titleFontSize': 18.0,
-          'subtitleFontSize': 14.0,
         };
       case ScreenSize.smallDesktop:
         return {
@@ -50,8 +46,6 @@ class WorkspaceCard extends StatelessWidget {
           'iconContainerSize': 76.0,
           'leftPadding': 28.0,
           'contentPadding': 16.0,
-          'titleFontSize': 20.0,
-          'subtitleFontSize': 15.0,
         };
       case ScreenSize.largeDesktop:
         return {
@@ -60,8 +54,6 @@ class WorkspaceCard extends StatelessWidget {
           'iconContainerSize': 82.0,
           'leftPadding': 32.0,
           'contentPadding': 18.0,
-          'titleFontSize': 22.0,
-          'subtitleFontSize': 16.0,
         };
     }
   }
@@ -77,8 +69,6 @@ class WorkspaceCard extends StatelessWidget {
     final iconContainerSize = dims['iconContainerSize']!;
     final leftPadding = dims['leftPadding']!;
     final contentPadding = dims['contentPadding']!;
-    final titleFontSize = dims['titleFontSize']!;
-    final subtitleFontSize = dims['subtitleFontSize']!;
 
     final headerColor = cs.primary;
     final headerTextColor = cs.onPrimary;
@@ -110,12 +100,12 @@ class WorkspaceCard extends StatelessWidget {
             children: [
               // Cuerpo de la tarjeta
               Container(
-                color: cs.primary.withValues(alpha: 0.73),
+                color: cs.primary.withValues(alpha: 0.38),
                 width: double.infinity,
-                margin: EdgeInsets.only(top: screenSize == ScreenSize.mobile ? headerHeight * 0.8 : headerHeight),
+                margin: EdgeInsets.only(top: screenSize == ScreenSize.mobile ? headerHeight * 0.8 : headerHeight,),
                 padding: EdgeInsets.only(
                   top: (iconContainerSize * 0.5) + 8,
-                  left: contentPadding,
+                  left: leftPadding,
                   right: contentPadding,
                   bottom: contentPadding,
                 ),
@@ -125,17 +115,15 @@ class WorkspaceCard extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       'Propietario:',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontSize: subtitleFontSize - 1,
-                        color: bodyTextColor.withValues(alpha: 0.22),
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: bodyTextColor.withValues(alpha: 0.62),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       owner,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontSize: subtitleFontSize,
+                      style: theme.textTheme.bodyLarge?.copyWith(
                         color: bodyTextColor,
                         fontWeight: FontWeight.w400,
                       ),
@@ -166,7 +154,6 @@ class WorkspaceCard extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.displaySmall?.copyWith(
-                      fontSize: titleFontSize,
                       color: headerTextColor,
                       fontWeight: FontWeight.bold,
                     ),
