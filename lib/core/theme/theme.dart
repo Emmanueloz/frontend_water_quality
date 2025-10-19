@@ -70,7 +70,7 @@ class AppTheme {
       colorScheme: colorScheme,
       appBarTheme: AppBarTheme(
         actionsPadding: const EdgeInsets.all(4),
-        color: colorScheme.surface,
+        backgroundColor: colorScheme.surface,
         elevation: 0,
         actionsIconTheme: IconThemeData(color: colorScheme.onPrimary),
         iconTheme: IconThemeData(color: colorScheme.onPrimary),
@@ -81,13 +81,18 @@ class AppTheme {
       dividerTheme: DividerThemeData(color: colorScheme.primary),
       primaryTextTheme: textTheme,
       textTheme: textTheme,
-      iconTheme: IconThemeData(color: colorScheme.surface),
+      iconTheme: IconThemeData(color: colorScheme.tertiary),
       listTileTheme: ListTileThemeData(
         textColor: textColor,
         iconColor: textColor,
         selectedColor: colorScheme.secondary,
         selectedTileColor: colorScheme.tertiary,
         titleTextStyle: textTheme.titleMedium,
+      ),
+      dataTableTheme: DataTableThemeData(
+        headingTextStyle: textTheme.bodyMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+        ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         labelStyle: textTheme.bodyMedium,
