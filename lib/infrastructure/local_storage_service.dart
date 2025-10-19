@@ -2,6 +2,7 @@ import 'package:frontend_water_quality/core/enums/storage_key.dart';
 import 'package:frontend_water_quality/domain/models/storage_model.dart';
 import 'package:frontend_water_quality/domain/models/user.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -11,7 +12,10 @@ class LocalStorageService {
   // Inicializar Hive según plataforma
   static Future<void> init() async {
     if (_initialized) return;
-    if (!kIsWeb) {
+    if (kIsWeb) {
+      // Necesario para Flutter Web
+      await Hive.initFlutter();
+    } else {
       final dir = await getApplicationDocumentsDirectory();
       Hive.init(dir.path);
     }
@@ -25,7 +29,11 @@ class LocalStorageService {
 
   // Guardar valor
   static Future<void> save(StorageKey key, String value) async {
-    (await _box).put(key.name, value);
+    try {
+      (await _box).put(key.name, value);
+    } catch (e) {
+      print('LocalStorageService.save error: '+e.toString());
+    }
   }
 
   // Consultar valor
@@ -33,7 +41,7 @@ class LocalStorageService {
     try {
       return (await _box).get(key.name, defaultValue: null);
     } catch (e) {
-      print(e.toString());
+      print('LocalStorageService.get error: '+e.toString());
       return null;
     }
   }
@@ -53,7 +61,7 @@ class LocalStorageService {
         user: user,
       );
     } catch (e) {
-      print(e.toString());
+      print('LocalStorageService.getAll error: '+e.toString());
 
       return StorageModel();
     }
@@ -61,6 +69,10 @@ class LocalStorageService {
 
   // Eliminar valor
   static Future<void> remove(StorageKey key) async {
-    await (await _box).delete(key.name);
+    try {
+      await (await _box).delete(key.name);
+    } catch (e) {
+      print('LocalStorageService.remove error: '+e.toString());
+    }
   }
 }

@@ -2,9 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/theme/theme.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter/services.dart';
 
-class Splash extends StatelessWidget {
+class Splash extends StatefulWidget {
   const Splash({super.key});
+
+  @override
+  State<Splash> createState() => _SplashState();
+}
+
+class _SplashState extends State<Splash> {
+  static const MethodChannel _channel = MethodChannel('aquaminds/deeplink');
+
+  @override
+  void initState() {
+    super.initState();
+    _setupDeepLinkHandling();
+  }
+
+  Future<void> _setupDeepLinkHandling() async {
+    void handleUriString(String? uriString) {
+      if (uriString == null || uriString.isEmpty) return;
+      final uri = Uri.tryParse(uriString);
+      if (uri == null) return;
+      if (uri.scheme == 'aquaminds' && (uri.host == 'login-success' || uri.path == '/login-success')) {
+        final query = uri.query;
+        if (!mounted) return;
+        final target = query.isNotEmpty ? '${Routes.authCallback.path}?$query' : Routes.authCallback.path;
+        context.go(target);
+      }
+    }
+
+    try {
+      final initial = await _channel.invokeMethod<String>('getInitialLink');
+      handleUriString(initial);
+    } catch (_) {}
+
+    _channel.setMethodCallHandler((call) async {
+      if (call.method == 'onDeepLink') {
+        final uriString = call.arguments as String?;
+        handleUriString(uriString);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
