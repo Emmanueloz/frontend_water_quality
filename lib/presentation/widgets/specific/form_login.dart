@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:frontend_water_quality/router/routes.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 
 class LoginForm extends StatefulWidget {
   final bool isLoading;
@@ -23,8 +27,97 @@ class _LoginFormState extends State<LoginForm> {
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  bool _isLaunchingOAuth = false;
 
-  final String backendBaseUrl = "https://api.aqua-minds.org";
+  final String backendBaseUrl = "http://127.0.0.1:8000";
+  static const MethodChannel _deeplinkChannel =
+      MethodChannel('aquaminds/deeplink');
+
+  String get _apiBase {
+    if (!kIsWeb) {
+      if (backendBaseUrl.contains('://localhost')) {
+        return backendBaseUrl.replaceFirst('localhost', '10.0.2.2');
+      }
+      if (backendBaseUrl.contains('://127.0.0.1')) {
+        return backendBaseUrl.replaceFirst('127.0.0.1', '10.0.2.2');
+      }
+    }
+    return backendBaseUrl;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _deeplinkChannel.setMethodCallHandler((call) async {
+      if (!mounted) return null;
+      if (call.method == 'onDeepLink') {
+        final String? uriString = call.arguments as String?;
+        if (uriString != null) {
+          _handleDeepLink(uriString);
+        }
+      }
+      return null;
+    });
+    _checkInitialLink();
+  }
+
+  Future<void> _checkInitialLink() async {
+    try {
+      final String? initial =
+          await _deeplinkChannel.invokeMethod<String>('getInitialLink');
+      if (initial != null) {
+        _handleDeepLink(initial);
+      }
+    } catch (_) {}
+  }
+
+  void _handleDeepLink(String uriString) async {
+    final uri = Uri.tryParse(uriString);
+    if (uri == null) return;
+    final token = uri.queryParameters['token'] ?? uri.queryParameters['code'];
+    if (token != null) {
+      debugPrint('DeepLink recibido: $uriString');
+      debugPrint('Token/Code: $token');
+      if (!mounted) return;
+
+      try {
+        // Resetear bandera para permitir futuros intentos si el usuario cierra sesión
+        if (mounted && _isLaunchingOAuth) {
+          setState(() => _isLaunchingOAuth = false);
+        }
+        // TODO: Implementar la lógica para validar el token y obtener los datos del usuario
+        // Ejemplo:
+        // final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        // final success = await authProvider.loginWithGitHub(token);
+
+        // if (success) {
+        //   context.goNamed(Routes.workspaces.name);
+        // } else {
+        //   throw Exception('No se pudo autenticar con GitHub');
+        // }
+        final auth = context.read<AuthProvider>();
+        final success = await auth.loginWithToken(token);
+        if (success) {
+          if (!mounted) return;
+          context.goNamed(Routes.workspaces.name);
+          return;
+        }
+        throw Exception('No se pudo autenticar con GitHub');
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text("Error al procesar el token de GitHub: ${e.toString()}"),
+            backgroundColor: Colors.red,
+          ),
+        );
+        if (mounted && _isLaunchingOAuth) {
+          setState(() => _isLaunchingOAuth = false);
+        }
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -35,26 +128,25 @@ class _LoginFormState extends State<LoginForm> {
 
   /// 🔹 Inicia sesión con GitHub usando el navegador del sistema
   Future<void> _loginWithGitHub() async {
-    final Uri githubLoginUrl = Uri.parse("$backendBaseUrl/auth/github/login");
+    if (_isLaunchingOAuth) return;
+    final Uri url = kIsWeb
+        ? Uri.parse("$_apiBase/auth/github/login")
+        : Uri.parse("$_apiBase/auth/github/login/mobile");
 
-    if (!await canLaunchUrl(githubLoginUrl)) {
+    debugPrint('Abriendo login OAuth en: $url');
+
+    if (!await canLaunchUrl(url)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("No se pudo abrir el navegador.")),
       );
       return;
     }
 
-    // Abre el navegador
+    setState(() => _isLaunchingOAuth = true);
     await launchUrl(
-      githubLoginUrl,
+      url,
       mode: LaunchMode.externalApplication,
     );
-
-    // 🚨 IMPORTANTE:
-    // Tu backend debería redirigir al usuario a una página de éxito que indique
-    // que ya puede volver a la app.
-    // Si quieres manejar el token en Flutter, puedes hacerlo usando un endpoint
-    // de confirmación, o detectando la sesión en tu backend.
   }
 
   @override
