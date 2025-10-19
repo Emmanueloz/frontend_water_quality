@@ -29,19 +29,11 @@ class _LoginFormState extends State<LoginForm> {
   final passwordController = TextEditingController();
   bool _isLaunchingOAuth = false;
 
-  final String backendBaseUrl = "http://127.0.0.1:8000";
+  final String backendBaseUrl = "https://aqua-minds.org";
   static const MethodChannel _deeplinkChannel =
       MethodChannel('aquaminds/deeplink');
 
   String get _apiBase {
-    if (!kIsWeb) {
-      if (backendBaseUrl.contains('://localhost')) {
-        return backendBaseUrl.replaceFirst('localhost', '10.0.2.2');
-      }
-      if (backendBaseUrl.contains('://127.0.0.1')) {
-        return backendBaseUrl.replaceFirst('127.0.0.1', '10.0.2.2');
-      }
-    }
     return backendBaseUrl;
   }
 
