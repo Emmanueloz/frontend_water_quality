@@ -29,7 +29,7 @@ class _LoginFormState extends State<LoginForm> {
   final passwordController = TextEditingController();
   bool _isLaunchingOAuth = false;
 
-  final String backendBaseUrl = "https://aqua-minds.org";
+  final String backendBaseUrl = "https://api.aqua-minds.org";
   static const MethodChannel _deeplinkChannel =
       MethodChannel('aquaminds/deeplink');
 
