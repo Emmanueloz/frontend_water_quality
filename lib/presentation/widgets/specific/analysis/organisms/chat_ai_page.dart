@@ -455,15 +455,16 @@ class _ChatAiPageState extends State<ChatAiPage> {
                       )
                     : _isInTestEnvironment()
                         ? Text(
-                            text,
+                            _cleanAiResponseText(text),
                             style: theme.textTheme.bodyLarge?.copyWith(
                               color: theme.textTheme.bodyLarge?.color,
                             ),
                           )
-                        : _buildMarkdownContent(text, theme),
+                        : _buildMarkdownContent(
+                            _cleanAiResponseText(text), theme),
               ),
-              // Add copy button only for AI responses
-              if (!isUser) _buildCopyButton(text, theme),
+              // Add copy button only for AI responses (with cleaned text)
+              if (!isUser) _buildCopyButton(_cleanAiResponseText(text), theme),
             ],
           ),
         ),
@@ -598,9 +599,41 @@ class _ChatAiPageState extends State<ChatAiPage> {
         WidgetsBinding.instance.runtimeType.toString().contains('Test');
   }
 
+  String _cleanAiResponseText(String text) {
+    // Remove common AI model artifacts and special tokens
+    String cleanedText = text;
+
+    // Remove begin of sentence tokens
+    cleanedText = cleanedText.replaceAll(RegExp(r'<｜begin▁of▁sentence｜>'), '');
+    cleanedText =
+        cleanedText.replaceAll(RegExp(r'<\|begin_of_sentence\|>'), '');
+
+    // Remove end of sentence tokens
+    cleanedText = cleanedText.replaceAll(RegExp(r'<｜end▁of▁sentence｜>'), '');
+    cleanedText = cleanedText.replaceAll(RegExp(r'<\|end_of_sentence\|>'), '');
+
+    // Remove other common special tokens
+    cleanedText = cleanedText.replaceAll(RegExp(r'<\|.*?\|>'), '');
+    cleanedText = cleanedText.replaceAll(RegExp(r'<｜.*?｜>'), '');
+
+    // Remove system tokens
+    cleanedText = cleanedText.replaceAll(RegExp(r'<\|system\|>'), '');
+    cleanedText = cleanedText.replaceAll(RegExp(r'<\|user\|>'), '');
+    cleanedText = cleanedText.replaceAll(RegExp(r'<\|assistant\|>'), '');
+
+    // Remove extra whitespace and trim
+    cleanedText = cleanedText.replaceAll(
+        RegExp(r'\n\s*\n\s*\n'), '\n\n'); // Multiple newlines to double
+    cleanedText = cleanedText.trim();
+
+    return cleanedText;
+  }
+
   Future<void> _copyToClipboard(String text) async {
     try {
-      await FlutterClipboard.copy(text);
+      // Ensure we copy the cleaned text
+      final cleanedText = _cleanAiResponseText(text);
+      await FlutterClipboard.copy(cleanedText);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -616,7 +649,8 @@ class _ChatAiPageState extends State<ChatAiPage> {
     } catch (e) {
       // Fallback to system clipboard if FlutterClipboard fails
       try {
-        await Clipboard.setData(ClipboardData(text: text));
+        final cleanedText = _cleanAiResponseText(text);
+        await Clipboard.setData(ClipboardData(text: cleanedText));
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

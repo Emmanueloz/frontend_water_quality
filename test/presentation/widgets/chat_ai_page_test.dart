@@ -413,6 +413,29 @@ void main() {
       await tester.pump();
     });
 
+    testWidgets('cleans AI response text from special tokens', (WidgetTester tester) async {
+      final messages = [
+        ChatMessage(
+          id: '1',
+          role: 'assistant',
+          content: '<｜begin▁of▁sentence｜>AI response with special tokens<｜end▁of▁sentence｜>',
+          timestamp: DateTime.now(),
+        ),
+      ];
+
+      mockProvider.setMessages(messages);
+      mockProvider.setHasSession(true);
+
+      await tester.pumpWidget(createTestWidget(analysisId: null));
+      await tester.pump();
+
+      // Verify the cleaned text is displayed (without special tokens)
+      expect(find.text('AI response with special tokens'), findsOneWidget);
+      // Verify the special tokens are not displayed
+      expect(find.textContaining('<｜begin▁of▁sentence｜>'), findsNothing);
+      expect(find.textContaining('<｜end▁of▁sentence｜>'), findsNothing);
+    });
+
     group('Error Message Translation', () {
       testWidgets('translates authentication errors',
           (WidgetTester tester) async {
