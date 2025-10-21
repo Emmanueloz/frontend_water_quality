@@ -35,6 +35,66 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
     required this.onDelete,
   });
 
+  /// Checks if chat functionality is available for the current analysis
+  bool get isChatAvailable {
+    if (selectedItem == null) return false;
+    if (selectedItem!.id == null || selectedItem!.id!.isEmpty) return false;
+    if (selectedItem!.status == null) return false;
+    
+    // Chat is only available for analyses with "saved" status
+    return selectedItem!.status!.toLowerCase() == 'saved';
+  }
+
+  /// Gets the analysis ID to use for chat session
+  String? get analysisIdForChat {
+    if (!isChatAvailable) return null;
+    return selectedItem!.id;
+  }
+
+  /// Gets a user-friendly message explaining why chat is not available
+  String get chatUnavailableMessage {
+    if (selectedItem == null) {
+      return 'Selecciona un análisis para usar el chat';
+    }
+    if (selectedItem!.id == null || selectedItem!.id!.isEmpty) {
+      return 'El análisis no tiene un ID válido';
+    }
+    if (selectedItem!.status == null) {
+      return 'El estado del análisis no está disponible';
+    }
+    
+    final status = selectedItem!.status!.toLowerCase();
+    switch (status) {
+      case 'pending':
+        return 'El análisis está pendiente de procesamiento';
+      case 'processing':
+        return 'El análisis se está procesando';
+      case 'error':
+        return 'El análisis tiene errores y no está disponible para chat';
+      case 'saved':
+        return 'Chat disponible';
+      default:
+        return 'El análisis debe estar completado antes de usar el chat';
+    }
+  }
+
+  /// Determines if the chat should be automatically closed when analysis changes
+  bool shouldCloseChatOnAnalysisChange(T? previousAnalysis) {
+    // Close chat if switching to a different analysis
+    if (previousAnalysis?.id != selectedItem?.id) {
+      return true;
+    }
+    
+    // Close chat if analysis becomes unavailable for chat
+    if (previousAnalysis != null && 
+        previousAnalysis.status?.toLowerCase() == 'saved' && 
+        !isChatAvailable) {
+      return true;
+    }
+    
+    return false;
+  }
+
   void _showDetailBottomSheet(BuildContext context) {
     final PageController pageController = PageController();
 
@@ -62,7 +122,7 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
                 ),
               ),
               // Indicador de página
-              if (chatAverageId != null)
+              if (isChatAvailable)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Row(
@@ -95,17 +155,24 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
                               }
                             },
                             analysis: selectedItem,
+                            isChatAvailable: isChatAvailable,
+                            chatUnavailableMessage: chatUnavailableMessage,
                             child: chartWidget!,
                           ),
                     // Página del chat
-                    if (chatAverageId != null)
+                    if (isChatAvailable)
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: ChatAiPage(
-                          averageId: chatAverageId ?? "",
+                          analysisId: analysisIdForChat,
                           screenSize: screenSize,
                           isInBottomSheet: true,
                         ),
+                      )
+                    else
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: _buildChatUnavailableMessage(),
                       ),
                   ],
                 ),
@@ -121,6 +188,73 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => formWidget ?? Container(),
+    );
+  }
+
+  Widget _buildChatUnavailableMessage() {
+    final status = selectedItem?.status?.toLowerCase();
+    IconData iconData;
+    Color? iconColor;
+    
+    switch (status) {
+      case 'pending':
+      case 'processing':
+        iconData = Icons.hourglass_empty;
+        iconColor = Colors.orange[400];
+        break;
+      case 'error':
+        iconData = Icons.error_outline;
+        iconColor = Colors.red[400];
+        break;
+      default:
+        iconData = Icons.chat_bubble_outline;
+        iconColor = Colors.grey[400];
+    }
+    
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              iconData,
+              size: 64,
+              color: iconColor,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Chat no disponible',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              chatUnavailableMessage,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[600],
+              ),
+            ),
+            if (status == 'processing' || status == 'pending') ...[
+              const SizedBox(height: 16),
+              Text(
+                'El chat estará disponible cuando el análisis esté completado.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[500],
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 
@@ -171,17 +305,21 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
                   onOpenChat: onToggleChat,
                   onDelete: onDelete,
                   analysis: selectedItem,
+                  isChatAvailable: isChatAvailable,
+                  chatUnavailableMessage: chatUnavailableMessage,
                   child: chartWidget!,
                 ),
         ),
-        if (showChat && chatAverageId != null) ...[
+        if (showChat) ...[
           const VerticalDivider(),
           Expanded(
-            child: ChatAiPage(
-              averageId: chatAverageId ?? "",
-              screenSize: screenSize,
-              isInBottomSheet: false,
-            ),
+            child: isChatAvailable
+                ? ChatAiPage(
+                    analysisId: analysisIdForChat,
+                    screenSize: screenSize,
+                    isInBottomSheet: false,
+                  )
+                : _buildChatUnavailableMessage(),
           ),
         ]
       ],
