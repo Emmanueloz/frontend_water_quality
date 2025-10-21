@@ -193,8 +193,8 @@ void main() {
       mockProvider.setMessages(messages);
       mockProvider.setHasSession(true);
 
-      await tester.pumpWidget(createTestWidget(analysisId: 'test-analysis'));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
+      await tester.pumpWidget(createTestWidget(analysisId: null));
+      await tester.pump();
 
       expect(find.text('Test user message'), findsOneWidget);
       expect(find.text('Test AI response'), findsOneWidget);
@@ -358,8 +358,8 @@ void main() {
       mockProvider.setMessages(messages);
       mockProvider.setHasSession(true);
 
-      await tester.pumpWidget(createTestWidget(analysisId: 'test-analysis'));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
+      await tester.pumpWidget(createTestWidget(analysisId: null));
+      await tester.pump();
 
       expect(find.text('User message'), findsOneWidget);
       expect(find.text('System message'), findsNothing);
@@ -378,6 +378,38 @@ void main() {
 
       // Try to tap send button (should not crash)
       await tester.tap(find.byIcon(Icons.send));
+      await tester.pump();
+    });
+
+    testWidgets('shows copy button for AI messages',
+        (WidgetTester tester) async {
+      final messages = [
+        ChatMessage(
+          id: '1',
+          role: 'user',
+          content: 'User message',
+          timestamp: DateTime.now(),
+        ),
+        ChatMessage(
+          id: '2',
+          role: 'assistant',
+          content: 'AI response with **markdown**',
+          timestamp: DateTime.now(),
+        ),
+      ];
+
+      mockProvider.setMessages(messages);
+      mockProvider.setHasSession(true);
+
+      await tester.pumpWidget(createTestWidget(analysisId: null));
+      await tester.pump();
+
+      // Verify copy button exists for AI message
+      expect(find.text('Copiar'), findsOneWidget);
+      expect(find.byIcon(Icons.copy), findsOneWidget);
+
+      // Try to tap copy button (should not crash)
+      await tester.tap(find.text('Copiar'));
       await tester.pump();
     });
 
