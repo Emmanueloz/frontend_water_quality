@@ -65,6 +65,7 @@ dev_dependencies:
     sdk: flutter
   
   flutter_launcher_icons: "^0.14.4"
+  flutter_native_splash: ^2.4.7
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -123,3 +124,19 @@ flutter_launcher_icons:
   web:
     generate: true
     image_path: "assets/images/logo_aquaminds.png"
+
+flutter_native_splash:
+  color: "#ffffff"  # Background color of the splash screen
+  image: assets/images/logo_aquaminds.png  # Path to your logo or splash image
+  image_web: assets/images/logotipo_aquaminds.png  # Path to your logo or splash image for web
+  android: true  # Enable splash screen for Android
+  ios: true  # Enable splash screen for iOS
+  android_gravity: center  # Position of the image on Android (center, bottom, etc.)
+  ios_content_mode: scaleAspectFit  # Position of the image on iOS (scaleAspectFit, scaleToFill, etc.)
+  fullscreen: true  # Enable full-screen mode (removes the status bar)
+  web: true  # Disable splash screen for web
+
+  # Optional advanced configuration
+  android_12:
+    image: assets/images/logo_aquaminds.png
+    icon_background_color: "#ffffff"
