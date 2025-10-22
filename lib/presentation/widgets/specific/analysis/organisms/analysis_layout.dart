@@ -40,7 +40,7 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
     if (selectedItem == null) return false;
     if (selectedItem!.id == null || selectedItem!.id!.isEmpty) return false;
     if (selectedItem!.status == null) return false;
-    
+
     // Chat is only available for analyses with "saved" status
     return selectedItem!.status!.toLowerCase() == 'saved';
   }
@@ -62,7 +62,7 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
     if (selectedItem!.status == null) {
       return 'El estado del análisis no está disponible';
     }
-    
+
     final status = selectedItem!.status!.toLowerCase();
     switch (status) {
       case 'pending':
@@ -84,14 +84,14 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
     if (previousAnalysis?.id != selectedItem?.id) {
       return true;
     }
-    
+
     // Close chat if analysis becomes unavailable for chat
-    if (previousAnalysis != null && 
-        previousAnalysis.status?.toLowerCase() == 'saved' && 
+    if (previousAnalysis != null &&
+        previousAnalysis.status?.toLowerCase() == 'saved' &&
         !isChatAvailable) {
       return true;
     }
-    
+
     return false;
   }
 
@@ -101,13 +101,14 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) {
         return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.8,
+          height: MediaQuery.of(context).size.height * 0.96,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -195,7 +196,7 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
     final status = selectedItem?.status?.toLowerCase();
     IconData iconData;
     Color? iconColor;
-    
+
     switch (status) {
       case 'pending':
       case 'processing':
@@ -210,7 +211,7 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
         iconData = Icons.chat_bubble_outline;
         iconColor = Colors.grey[400];
     }
-    
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
