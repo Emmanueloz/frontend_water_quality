@@ -32,6 +32,7 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return SingleChildScrollView(
       child: Form(
         key: formKey,
@@ -44,7 +45,7 @@ class _LoginFormState extends State<LoginForm> {
                 height: 150),
             Text(
               'Bienvenido',
-              style: Theme.of(context).textTheme.displayLarge,
+              style: theme.textTheme.headlineMedium,
             ),
             TextFormField(
               controller: emailController,
@@ -93,11 +94,15 @@ class _LoginFormState extends State<LoginForm> {
                           }
                         }
                       },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.secondary.withAlpha(74),
+                ),
                 child: widget.isLoading
                     ? const CircularProgressIndicator(
                         color: Colors.white,
                       )
                     : const Text('Iniciar sesión'),
+                
               ),
             ),
             if (widget.errorMessage.isNotEmpty)
