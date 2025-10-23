@@ -79,7 +79,7 @@ class MeterCard extends StatelessWidget {
                     if (location.nameLocation != null)
                       Text(
                         location.nameLocation!,
-                        style: theme.textTheme.titleLarge?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           height: 1.25,
                         ),
                         maxLines: 3,
