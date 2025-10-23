@@ -277,8 +277,9 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          // borderSide: BorderSide(color: cs.tertiary, width: 2),
+          borderSide: BorderSide(color: cs.tertiary, width: 2),
         ),
+        fillColor: cs.secondary.withAlpha(74),
         filled: true,
         // fillColor: cs.surfaceContainer
       ),
@@ -374,7 +375,7 @@ class AppTheme {
       // Elevated Button
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: cs.tertiary,
+          backgroundColor: cs.secondary.withAlpha( 74),
           foregroundColor: cs.onTertiary,
           textStyle: darkTextTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
           elevation: 2,
