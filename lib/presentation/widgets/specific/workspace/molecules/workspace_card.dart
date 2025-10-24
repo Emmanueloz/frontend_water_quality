@@ -100,7 +100,7 @@ class WorkspaceCard extends StatelessWidget {
             children: [
               // Cuerpo de la tarjeta
               Container(
-                color: cs.primary.withValues(alpha: 0.38),
+                color: Color(0xFFF4F8F9).withAlpha(38),
                 width: double.infinity,
                 margin: EdgeInsets.only(top: screenSize == ScreenSize.mobile ? headerHeight * 0.8 : headerHeight,),
                 padding: EdgeInsets.only(
@@ -170,7 +170,7 @@ class WorkspaceCard extends StatelessWidget {
                   width: iconContainerSize,
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: cs.primary,
+                    color: headerColor,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
