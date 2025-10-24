@@ -24,7 +24,7 @@ class BaseContainer extends StatelessWidget {
       margin: margin,
       padding: padding,
       decoration: BoxDecoration(
-        color: colorScheme.surface,
+        color: colorScheme.secondary,
       ),
       child: child,
     );
