@@ -20,7 +20,7 @@ class AppTheme {
   static ColorScheme get darkColorScheme => ColorScheme.dark(
         primary: const Color(0xFF386b70), // header teal oscuro
         onPrimary: _darkTextColor,
-        secondary: const Color(0xFF001b26),
+        secondary: const Color.fromARGB(255, 0, 15, 23),
         onSecondary: _darkTextColor,
         tertiary: const Color(0xFF2BE0D6), // acento brillante
         onTertiary: _darkTextColor,
@@ -317,7 +317,7 @@ class AppTheme {
       ),
       // Navigation Rail
       navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: cs.primary,
+        backgroundColor: const Color.fromARGB(255, 2, 24, 32),
         selectedIconTheme: IconThemeData(color: cs.tertiary),
         unselectedIconTheme: IconThemeData(color: cs.onSurface.withValues(alpha: 0.6)),
         indicatorColor: cs.tertiary.withValues(alpha: 0.2),

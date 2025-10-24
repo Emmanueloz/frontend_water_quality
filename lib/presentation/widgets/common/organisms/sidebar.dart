@@ -44,7 +44,7 @@ class Sidebar extends StatelessWidget {
           Text(
             "Aqua Minds",
             style: theme.textTheme.displayMedium?.copyWith(
-              color: theme.colorScheme.surface,
+              color: theme.colorScheme.onPrimary,
             ),
           ),
       ],
