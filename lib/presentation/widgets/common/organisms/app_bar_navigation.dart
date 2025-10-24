@@ -40,7 +40,7 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
           actions = [
             ...actions,
             TextButton(
-              child: const Text("Espacios de trabajo"),
+              child: Text("Espacios de trabajo", style: theme.textTheme.bodyMedium,),
               onPressed: () {
                 if (isOffline) {
                   return;
@@ -49,7 +49,7 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
               },
             ),
             IconButton(
-              icon: const Icon(Icons.notifications_outlined),
+              icon:  Icon(Icons.notifications_outlined, color: theme.colorScheme.tertiary),
               style: styleButton,
               onPressed: () {
                 if (isOffline) {
