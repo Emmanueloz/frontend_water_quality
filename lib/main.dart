@@ -44,6 +44,8 @@ void main() async {
 
   final MeterSocketService meterSocketService = MeterSocketService();
 
+  final MeterRepoImpl meterRepoImpl = MeterRepoImpl(dio);
+
   runApp(
     MultiProvider(
       providers: [
@@ -65,11 +67,12 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) => BlueProvider(
             BLEService(),
+            meterRepoImpl,
           ),
         ),
         ChangeNotifierProxyProvider<AuthProvider, MeterProvider>(
           create: (context) => MeterProvider(
-            MeterRepoImpl(dio),
+            meterRepoImpl,
             context.read<AuthProvider>(),
           ),
           update: (context, authProvider, meterProvider) {
