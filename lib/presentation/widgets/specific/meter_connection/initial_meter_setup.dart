@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/interface/meter_setup.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/meter_connection/meter_pairing_status.dart';
 
 class InitialMeterSetup extends StatefulWidget {
   final String idWorkspace;
@@ -13,6 +14,7 @@ class InitialMeterSetup extends StatefulWidget {
   final Future<void> Function() onCalibratePh4;
   final Future<void> Function() onCalibratePh6;
   final VoidCallback onDisconnect;
+  final Function(String token)? onTokenUpdated;
 
   const InitialMeterSetup({
     super.key,
@@ -26,6 +28,7 @@ class InitialMeterSetup extends StatefulWidget {
     required this.onCalibratePh4,
     required this.onCalibratePh6,
     required this.onDisconnect,
+    this.onTokenUpdated,
   });
 
   @override
@@ -73,6 +76,7 @@ class _InitialMeterSetupState extends State<InitialMeterSetup>
       spacing: 16,
       children: [
         _buildDeviceHeader(theme),
+        _buildPairingSection(),
         _buildWifiSection(theme),
         _buildCalibrationSection(theme),
       ],
@@ -115,6 +119,15 @@ class _InitialMeterSetupState extends State<InitialMeterSetup>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildPairingSection() {
+    return MeterPairingStatus(
+      idWorkspace: widget.idWorkspace,
+      idMeter: widget.idMeter,
+      deviceToken: widget.initialSetup?.token,
+      onTokenUpdated: widget.onTokenUpdated,
     );
   }
 

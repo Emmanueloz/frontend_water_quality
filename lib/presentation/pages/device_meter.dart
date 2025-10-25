@@ -3,13 +3,48 @@ import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/presentation/providers/blue_provider.dart';
+import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/meter_connection/initial_meter_setup.dart';
 
-class DeviceMeter extends StatelessWidget {
+class DeviceMeter extends StatefulWidget {
   final String id;
   final String idMeter;
   const DeviceMeter({super.key, required this.id, required this.idMeter});
+
+  @override
+  State<DeviceMeter> createState() => _DeviceMeterState();
+}
+
+class _DeviceMeterState extends State<DeviceMeter> {
+  bool _hasSetupContext = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Setup validation context after the widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _setupValidationContext();
+    });
+  }
+
+  void _setupValidationContext() {
+    if (_hasSetupContext) return;
+    
+    final blueProvider = Provider.of<BlueProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    if (authProvider.isAuthenticated && authProvider.token != null) {
+      _hasSetupContext = true;
+
+
+      blueProvider.setValidationContext(
+        userToken: authProvider.token!,
+        workspaceId: widget.id,
+        meterId: widget.idMeter,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +61,8 @@ class DeviceMeter extends StatelessWidget {
               )
             : SingleChildScrollView(
                 child: InitialMeterSetup(
-                  idWorkspace: id,
-                  idMeter: idMeter,
+                  idWorkspace: widget.id,
+                  idMeter: widget.idMeter,
                   nameDevice: blueProvider.connectedDevice!.advName,
                   initialSetup: blueProvider.currentMeterSetup,
                   onSaveWifi: (String ssid, String password) async {
@@ -49,6 +84,10 @@ class DeviceMeter extends StatelessWidget {
                     context.pop();
                   },
                   onResetCalibration: () async {},
+                  onTokenUpdated: (String token) {
+                    // Update the meter setup with the new token
+                    blueProvider.updateMeterSetupToken(token);
+                  },
                 ),
               ),
       ),

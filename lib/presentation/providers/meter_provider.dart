@@ -115,4 +115,39 @@ class MeterProvider with ChangeNotifier {
       return e.toString();
     }
   }
+
+  Future<Result<dynamic>> validateToken(String idWorkspace, String idMeter, String deviceToken) async {
+    if (_authProvider?.token == null) {
+      return Result.failure("User not authenticated");
+    }
+
+    try {
+      final result = await _meterRepo.validateToken(
+        _authProvider!.token!,
+        idWorkspace,
+        idMeter,
+        deviceToken,
+      );
+      return result;
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
+  }
+
+  Future<Result<dynamic>> pairMeter(String idWorkspace, String idMeter) async {
+    if (_authProvider?.token == null) {
+      return Result.failure("User not authenticated");
+    }
+
+    try {
+      final result = await _meterRepo.pairMeter(
+        _authProvider!.token!,
+        idWorkspace,
+        idMeter,
+      );
+      return result;
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
+  }
 }
