@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/infrastructure/connectivity_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/atoms/theme_toggle_button.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/atoms/theme_toggle_icon_button.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/atoms/theme_toggle_switch.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/molecules/button_profile.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
@@ -68,6 +71,9 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
                 context.goNamed(Routes.profile.name);
               },
             ),
+            // ThemeToggleIconButton(),
+            // ThemeToggleSwitch(),
+            ThemeToggleButton(),
             IconButton(
               onPressed: () {
                 if (isOffline) {
