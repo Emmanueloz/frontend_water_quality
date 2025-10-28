@@ -30,7 +30,7 @@ class ButtonProfile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(username, style: theme.textTheme.bodyLarge,),
-            Text(email, style: theme.textTheme.bodyMedium,),
+            Text(email, style: theme.textTheme.bodySmall,),
           ],
         ),
       ),
