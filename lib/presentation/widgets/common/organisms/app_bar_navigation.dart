@@ -52,7 +52,7 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
               },
             ),
             IconButton(
-              icon:  Icon(Icons.notifications_outlined, color: theme.colorScheme.tertiary),
+              icon:  Icon(Icons.notifications_outlined,),
               style: styleButton,
               onPressed: () {
                 if (isOffline) {
