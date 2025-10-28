@@ -29,7 +29,7 @@ class BaseCard extends StatelessWidget {
     final isMobileOrTablet = screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet;
 
     return Card(
-      color: Color(0xFFF4F8F9).withAlpha(38),
+      color: theme.colorScheme.shadow,
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12), // esquinas redondeadas
