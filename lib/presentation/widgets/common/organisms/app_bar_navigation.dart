@@ -73,7 +73,13 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
             ),
             // ThemeToggleIconButton(),
             // ThemeToggleSwitch(),
+            SizedBox(
+              width: 7
+            ),
             ThemeToggleButton(),
+            SizedBox(
+              width: 5,
+            ),
             IconButton(
               onPressed: () {
                 if (isOffline) {
