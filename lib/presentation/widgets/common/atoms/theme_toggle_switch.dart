@@ -53,6 +53,7 @@ class _ThemeToggleSwitchState extends State<ThemeToggleSwitch>
   Widget build(BuildContext context) {
     final themeProvider = context.watch<ThemeProvider>();
     final isDark = themeProvider.isDarkMode;
+    final colorScheme = Theme.of(context).colorScheme;
 
     // Sync animation with theme state
     if (isDark && _controller.value != 1.0) {
@@ -76,30 +77,19 @@ class _ThemeToggleSwitchState extends State<ThemeToggleSwitch>
               gradient: LinearGradient(
                 colors: [
                   Color.lerp(
-                    const Color(0xFFFFD93D), // Light mode yellow
-                    const Color(0xFF1E3A8A), // Dark mode blue
+                    colorScheme.tertiary,
+                    colorScheme.primary,
                     _toggleAnimation.value,
                   )!,
                   Color.lerp(
-                    const Color(0xFFFFA500), // Light mode orange
-                    const Color(0xFF0F172A), // Dark mode dark blue
+                    colorScheme.surface, // Light mode 
+                    colorScheme.secondary, // Dark mode 
                     _toggleAnimation.value,
                   )!,
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Color.lerp(
-                    Colors.orange.withOpacity(0.3),
-                    Colors.blue.withOpacity(0.3),
-                    _toggleAnimation.value,
-                  )!,
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
             ),
             child: Stack(
               children: [
@@ -119,7 +109,7 @@ class _ThemeToggleSwitchState extends State<ThemeToggleSwitch>
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withValues(alpha: 0.2),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -131,7 +121,7 @@ class _ThemeToggleSwitchState extends State<ThemeToggleSwitch>
                         isDark ? Icons.nightlight_round : Icons.wb_sunny,
                         size: widget.height - 16,
                         color: Color.lerp(
-                          const Color(0xFFFF8C00),
+                          colorScheme.primary,
                           const Color(0xFF1E3A8A),
                           _toggleAnimation.value,
                         ),
