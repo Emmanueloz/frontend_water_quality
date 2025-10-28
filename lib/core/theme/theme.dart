@@ -7,14 +7,15 @@ class AppTheme {
   static ColorScheme get colorScheme => ColorScheme.light(
         primary: const Color(0xFF2563ab),
         onPrimary: textColor,
-        secondary: const Color(0xFF2563ab),
+        secondary: const Color.fromARGB(255, 191, 223, 218),
         onSecondary: textColor,
         tertiary: const Color(0xFF5bcdc5),
         onTertiary: textColor,
-        surface: const Color.fromARGB(255, 228, 243, 241),
+        surface: const Color.fromARGB(255, 191, 223, 218),
         onSurface: textColor,
         primaryContainer: const Color.fromARGB(255, 239, 247, 246),
         surfaceContainer: const Color(0xFF49ace1),
+        shadow: Color.fromARGB(255, 230, 240, 239),
       );
 
   static ColorScheme get darkColorScheme => ColorScheme.dark(
@@ -28,6 +29,7 @@ class AppTheme {
         onSurface: _darkTextColor,
         primaryContainer: const Color.fromARGB(255, 239, 247, 246),
         surfaceContainer: const Color.fromARGB(69, 0, 27, 38),
+        shadow: Color(0xFFF4F8F9).withAlpha(38),
       );
 
   static TextTheme get textTheme => const TextTheme(
@@ -84,7 +86,7 @@ class AppTheme {
       colorScheme: colorScheme,
       appBarTheme: AppBarTheme(
         actionsPadding: const EdgeInsets.all(4),
-        backgroundColor: colorScheme.surface,
+        backgroundColor: colorScheme.secondary,
         elevation: 0,
         actionsIconTheme: IconThemeData(color: colorScheme.onPrimary),
         iconTheme: IconThemeData(color: colorScheme.onPrimary),
@@ -147,7 +149,7 @@ class AppTheme {
         ),
       ),
       navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: colorScheme.primary,
+        backgroundColor: const Color(0xFF2563ab),
         selectedIconTheme: IconThemeData(color: colorScheme.onPrimary),
         unselectedIconTheme: IconThemeData(color: colorScheme.surface),
         indicatorColor: colorScheme.tertiary,
