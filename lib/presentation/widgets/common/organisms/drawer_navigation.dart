@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/atoms/theme_toggle_button.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/atoms/theme_toggle_icon_button.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/atoms/theme_toggle_switch.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -94,6 +97,11 @@ class DrawerNavigation extends StatelessWidget {
             onTap: () {
               context.goNamed(Routes.profile.name);
             },
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            alignment: Alignment.centerLeft,
+            child: ThemeToggleSwitch(),
           ),
           Divider(
             indent: 20,
