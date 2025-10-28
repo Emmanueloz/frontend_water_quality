@@ -28,7 +28,7 @@ class ThemeProvider extends ChangeNotifier {
     ThemeMode mode;
 
     if (storedValue == null) {
-      mode = ThemeMode.system;
+      mode = ThemeMode.light;
     } else if (storedValue.contains('dark')) {
       mode = ThemeMode.dark;
     } else if (storedValue.contains('light')) {
