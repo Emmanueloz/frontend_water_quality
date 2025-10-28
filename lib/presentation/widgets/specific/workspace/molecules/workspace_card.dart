@@ -154,7 +154,7 @@ class WorkspaceCard extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.displaySmall?.copyWith(
-                      color: headerTextColor,
+                      color: theme.colorScheme.primaryContainer,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
