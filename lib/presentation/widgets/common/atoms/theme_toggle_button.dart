@@ -113,24 +113,16 @@ class _ThemeToggleButtonState extends State<ThemeToggleButton>
                 gradient: LinearGradient(
                   colors: isDark
                       ? [
-                          const Color(0xFF1E3A8A),
-                          const Color(0xFF3B82F6),
+                          theme.colorScheme.primary,
+                          theme.colorScheme.secondary,
                         ]
                       : [
-                          const Color(0xFFFFD93D),
-                          const Color(0xFFFFA500),
+                          theme.colorScheme.tertiary,
+                          theme.colorScheme.surface,
                         ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: (isDark ? Colors.blue : Colors.orange)
-                        .withOpacity(0.4),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
               ),
               child: Material(
                 color: Colors.transparent,
