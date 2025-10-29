@@ -40,9 +40,9 @@ class _RadialGaugeMeterState extends State<RadialGaugeMeter> {
             : widget.min;
 
     List<Color> colors = [
-      const Color.fromARGB(255, 41, 189, 248),
-      const Color.fromARGB(255, 6, 247, 126),
-      const Color.fromARGB(255, 182, 24, 3),
+      // const Color.fromARGB(255, 13, 50, 151),
+      Theme.of(context).colorScheme.tertiary,
+      const Color.fromARGB(255, 253, 153, 3),
     ];
 
     return Card(
@@ -95,7 +95,10 @@ class _RadialGaugeMeterState extends State<RadialGaugeMeter> {
                     thickness: 1,
                   ),
                   style: RadialGaugeStyle(
-                    thickness: 10,
+                    thickness: 12,
+                    backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(
+                      alpha: 30,
+                    ),
                     gradient: LinearGradient(
                       colors: colors,
                     ),
