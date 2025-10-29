@@ -37,16 +37,17 @@ class DrawerNavigation extends StatelessWidget {
                 Text(
                   title,
                   style: Theme.of(context).primaryTextTheme.bodyLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.primaryContainer,
                         fontWeight: FontWeight.bold,
                       ),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(authProvider.user?.username ?? ""),
+                    Text(authProvider.user?.username ?? "", style: Theme.of(context).primaryTextTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.primaryContainer),),
                     Text(
                       authProvider.user?.email ?? "",
-                      style: Theme.of(context).primaryTextTheme.bodyMedium,
+                      style: Theme.of(context).primaryTextTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.primaryContainer),
                     ),
                     Chip(
                       label: Text(
