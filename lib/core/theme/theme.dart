@@ -5,7 +5,7 @@ class AppTheme {
   static const Color _darkTextColor = Color(0xFFE6F7F5);
 
   static ColorScheme get colorScheme => ColorScheme.light(
-        primary: const Color(0xFF2563ab),
+        primary: const Color(0xFF386b70),
         onPrimary: textColor,
         secondary: const Color(0xFFE4F3F1),
         onSecondary: textColor,
@@ -149,7 +149,7 @@ class AppTheme {
         ),
       ),
       navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: const Color(0xFF2563ab),
+        backgroundColor: const Color(0xFF386b70),
         selectedIconTheme: IconThemeData(color: colorScheme.onPrimary),
         unselectedIconTheme: IconThemeData(color: colorScheme.surface),
         indicatorColor: colorScheme.tertiary,
