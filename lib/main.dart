@@ -16,6 +16,7 @@ import 'package:frontend_water_quality/infrastructure/guest_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/alert_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/workspace_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/meter_repo_impl.dart';
+import 'package:frontend_water_quality/infrastructure/ai_chat_repo_impl.dart';
 import 'package:frontend_water_quality/presentation/providers/analysis_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/user_provider.dart';
@@ -24,6 +25,7 @@ import 'package:frontend_water_quality/presentation/providers/guest_provider.dar
 import 'package:frontend_water_quality/presentation/providers/blue_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/workspace_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_provider.dart';
+import 'package:frontend_water_quality/presentation/providers/ai_chat_provider.dart';
 import 'package:frontend_water_quality/router/app_router.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_record_provider.dart';
@@ -37,11 +39,14 @@ void main() async {
   final ThemeProvider themeProvider = await ThemeProvider.initialize();
   final AuthProvider authProvider = AuthProvider(
     AuthRepoImpl(dio),
+    UserRepoImpl(dio),
   );
 
   await authProvider.loadSettings(storageModel);
 
   final MeterSocketService meterSocketService = MeterSocketService();
+
+  final MeterRepoImpl meterRepoImpl = MeterRepoImpl(dio);
 
   runApp(
     MultiProvider(
@@ -65,11 +70,12 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) => BlueProvider(
             BLEService(),
+            meterRepoImpl,
           ),
         ),
         ChangeNotifierProxyProvider<AuthProvider, MeterProvider>(
           create: (context) => MeterProvider(
-            MeterRepoImpl(dio),
+            meterRepoImpl,
             context.read<AuthProvider>(),
           ),
           update: (context, authProvider, meterProvider) {
@@ -140,6 +146,24 @@ void main() async {
           },
           update: (context, authProvider, previousAnalysisProvider) {
             return previousAnalysisProvider!..setAuthProvider(authProvider);
+          },
+        ),
+        ChangeNotifierProxyProvider2<AuthProvider, ConnectivityProvider, AiChatProvider>(
+          create: (context) {
+            final authProvider = context.read<AuthProvider>();
+            final connectivityProvider = context.read<ConnectivityProvider>();
+            final aiChatProvider = AiChatProvider(
+              AiChatRepositoryImpl(dio),
+              authProvider,
+              connectivityProvider,
+            );
+            return aiChatProvider;
+          },
+          update: (context, authProvider, connectivityProvider, previousAiChatProvider) {
+            previousAiChatProvider!.clean();
+            return previousAiChatProvider
+              ..setAuthProvider(authProvider)
+              ..setConnectivityProvider(connectivityProvider);
           },
         ),
         ChangeNotifierProxyProvider<AuthProvider, UserProvider>(

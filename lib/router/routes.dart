@@ -37,6 +37,11 @@ class Routes {
     path: "/change-password",
   );
 
+  static RouteProperties authCallback = RouteProperties(
+    name: "authCallback",
+    path: "/auth/callback",
+  );
+
   // Workspace
   static RouteProperties workspaces = RouteProperties(
     name: "workspaces",

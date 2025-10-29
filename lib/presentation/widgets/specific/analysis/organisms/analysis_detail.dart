@@ -11,6 +11,9 @@ class AnalysisDetail extends StatelessWidget {
   final void Function() onOpenChat;
   final void Function() onDelete;
   final Widget child;
+  final bool isChatAvailable;
+  final String chatUnavailableMessage;
+  
   const AnalysisDetail({
     super.key,
     required this.analysis,
@@ -20,6 +23,8 @@ class AnalysisDetail extends StatelessWidget {
     required this.onOpenChat,
     required this.screenSize,
     required this.onDelete,
+    this.isChatAvailable = false,
+    this.chatUnavailableMessage = 'Chat no disponible',
   });
 
   final BaseAnalysis? analysis;
@@ -72,12 +77,7 @@ class AnalysisDetail extends StatelessWidget {
                     spacing: 10,
                     children: [
                       _deleteButton(theme),
-                      IconButton(
-                        onPressed: onOpenChat,
-                        icon: Icon(
-                          Icons.auto_awesome,
-                        ),
-                      ),
+                      _chatButton(theme),
                     ],
                   )
                 ],
@@ -116,6 +116,21 @@ class AnalysisDetail extends StatelessWidget {
         side: BorderSide(color: theme.colorScheme.error),
       ),
       icon: Icon(Icons.delete),
+    );
+  }
+
+  Widget _chatButton(ThemeData theme) {
+    return Tooltip(
+      message: isChatAvailable ? 'Abrir chat con IA' : chatUnavailableMessage,
+      child: IconButton(
+        onPressed: isChatAvailable ? onOpenChat : null,
+        icon: Icon(
+          Icons.auto_awesome,
+          color: isChatAvailable 
+              ? theme.colorScheme.primary 
+              : theme.disabledColor,
+        ),
+      ),
     );
   }
 
