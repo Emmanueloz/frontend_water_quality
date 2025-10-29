@@ -7,15 +7,15 @@ class AppTheme {
   static ColorScheme get colorScheme => ColorScheme.light(
         primary: const Color(0xFF2563ab),
         onPrimary: textColor,
-        secondary: const Color.fromARGB(255, 191, 223, 218),
+        secondary: const Color(0xFFE4F3F1),
         onSecondary: textColor,
         tertiary: const Color(0xFF5bcdc5),
         onTertiary: textColor,
-        surface: const Color.fromARGB(255, 191, 223, 218),
+        surface: const Color(0xFFE4F3F1),
         onSurface: textColor,
         primaryContainer: const Color.fromARGB(255, 239, 247, 246),
         surfaceContainer: const Color(0xFF49ace1),
-        shadow: Color.fromARGB(255, 230, 240, 239),
+        shadow: Color.fromARGB(211, 255, 255, 255),
       );
 
   static ColorScheme get darkColorScheme => ColorScheme.dark(
@@ -327,7 +327,7 @@ class AppTheme {
           color: cs.tertiary,
         ),
         unselectedLabelTextStyle: darkTextTheme.titleMedium?.copyWith(
-          color: cs.onSurface.withValues(alpha: 0.6),
+          color: cs.onSurface.withValues(alpha: 0.8),
         ),
       ),
       // Chips
