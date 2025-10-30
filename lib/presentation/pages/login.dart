@@ -16,7 +16,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Layout(
-      title: "Inicio de sesión",
+      title: "",
       builder: (context, screenSize) {
         if (screenSize == ScreenSize.mobile) {
           // Solo formulario sin contenedor blanco ni sombra
@@ -32,7 +32,7 @@ class LoginPage extends StatelessWidget {
               height: 700,
               margin: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary,
+                color: theme.colorScheme.shadow,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: const [
                   BoxShadow(
