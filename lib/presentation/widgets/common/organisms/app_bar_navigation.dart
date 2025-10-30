@@ -111,6 +111,10 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
               onPressed: () {
                 context.goNamed(Routes.register.name);
               },
+            ),
+            ThemeToggleButton(),
+            SizedBox(
+              width: 10,
             )
           ];
         }
