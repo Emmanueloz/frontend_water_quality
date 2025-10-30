@@ -136,7 +136,7 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         elevation: 0,
         backgroundColor: colorScheme.tertiary,
-        indicatorColor: colorScheme.primary,
+        indicatorColor: colorScheme.primary.withValues(alpha: 0.4),
         iconTheme: WidgetStatePropertyAll(
           IconThemeData(
             color: colorScheme.secondary,
