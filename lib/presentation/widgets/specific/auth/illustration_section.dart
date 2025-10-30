@@ -9,7 +9,7 @@ class IllustrationSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: theme.colorScheme.secondary.withValues(alpha: 0.35),
+        color: theme.colorScheme.secondary.withValues(alpha: 0.15),
         borderRadius: BorderRadius.only(
           topRight: Radius.circular(16),
           bottomRight: Radius.circular(16),
