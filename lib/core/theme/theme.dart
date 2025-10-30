@@ -135,11 +135,11 @@ class AppTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         elevation: 0,
-        backgroundColor: colorScheme.secondary,
-        indicatorColor: colorScheme.tertiary,
+        backgroundColor: colorScheme.tertiary,
+        indicatorColor: colorScheme.primary,
         iconTheme: WidgetStatePropertyAll(
           IconThemeData(
-            color: colorScheme.surface,
+            color: colorScheme.secondary,
           ),
         ),
         labelTextStyle: WidgetStatePropertyAll(
