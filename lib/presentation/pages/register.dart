@@ -15,6 +15,7 @@ class RegisterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Layout(
       title: "Registro",
       builder: (context, screenSize) {
@@ -30,7 +31,7 @@ class RegisterPage extends StatelessWidget {
               height: 700,
               margin: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: theme.colorScheme.shadow,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: const [
                   BoxShadow(

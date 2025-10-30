@@ -48,10 +48,12 @@ class _SplashState extends State<Splash> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Aqua Minds', style: TextStyle(color: Colors.white)),
-        backgroundColor: AppTheme.colorScheme.secondary,
+        backgroundColor: theme.colorScheme.primary,
         foregroundColor: Colors.white,
         actions: [
           TextButton(
@@ -86,7 +88,7 @@ class _SplashState extends State<Splash> {
                   height: 250,
                   margin: EdgeInsets.only(top: 10),
                   decoration: BoxDecoration(
-                      color: AppTheme.colorScheme.secondary,
+                      color: theme.colorScheme.primary,
                       borderRadius: BorderRadius.circular(10)),
                   child: Center(
                     child: Column(
@@ -138,7 +140,7 @@ class _SplashState extends State<Splash> {
                                 .headlineSmall
                                 ?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: AppTheme.textColor,
+                                  color: theme.colorScheme.onSurface,
                                 ),
                           ),
                           const SizedBox(height: 16),
@@ -146,7 +148,7 @@ class _SplashState extends State<Splash> {
                             "Ser reconocidos como líderes en la creación de soluciones tecnológicas transformadoras que conviertan desafíos en oportunidades de desarrollo. Aspiramos a inspirar la toma de decisiones basada en datos y a generar un impacto sostenible en la sociedad, adaptándonos a las necesidades de nuestros usuarios. Para lograrlo, cultivamos un equipo de profesionales apasionados, creativos y comprometidos con la innovación y el bienestar social.",
                             style:
                                 Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                      color: AppTheme.textColor,
+                                      color: theme.colorScheme.onSurface,
                                     ),
                           ),
                         ],
@@ -162,7 +164,7 @@ class _SplashState extends State<Splash> {
                                 .headlineSmall
                                 ?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: AppTheme.textColor,
+                                  color: theme.colorScheme.onSurface,
                                 ),
                           ),
                           const SizedBox(height: 16),
@@ -170,7 +172,7 @@ class _SplashState extends State<Splash> {
                             "Desarrollar soluciones tecnológicas accesibles e innovadoras que faciliten el análisis y la resolución de desafíos sociales. Mediante el diseño de software, servicios digitales y el aprovechamiento de tecnologías emergentes, buscamos empoderar a las comunidades y promover el cambio social positivo. Nos comprometemos a colaborar con entidades públicas y privadas, ofreciendo soluciones personalizadas y efectivas que respondan a las necesidades de un mundo en constante evolución.",
                             style:
                                 Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                      color: AppTheme.textColor,
+                                      color: theme.colorScheme.onSurface,
                                     ),
                           ),
                         ],
@@ -189,7 +191,7 @@ class _SplashState extends State<Splash> {
                         style:
                             Theme.of(context).textTheme.headlineSmall?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: AppTheme.textColor,
+                                  color: theme.colorScheme.onSurface,
                                 ),
                       ),
                       const SizedBox(height: 16),
@@ -215,22 +217,15 @@ class _SplashState extends State<Splash> {
                                 const SizedBox(height: 12),
                                 Text(
                                   "Mediciones",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
-                                      ?.copyWith(
+                                  style: theme.textTheme.titleMedium?.copyWith(
                                         fontWeight: FontWeight.bold,
-                                        color: AppTheme.textColor,
                                       ),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   "Sensores captura datos en tiempo real",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(
-                                        color: AppTheme.textColor
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                        color: theme.colorScheme.onSurface
                                             .withValues(alpha: 0.7),
                                       ),
                                   textAlign: TextAlign.center,
@@ -256,23 +251,16 @@ class _SplashState extends State<Splash> {
                                 ),
                                 const SizedBox(height: 12),
                                 Text(
-                                  "Visualization",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
-                                      ?.copyWith(
+                                  "Visualización",
+                                  style: theme.textTheme.titleMedium?.copyWith(
                                         fontWeight: FontWeight.bold,
-                                        color: AppTheme.textColor,
                                       ),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   "Datos presentados en dashboards",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(
-                                        color: AppTheme.textColor
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                        color: theme.colorScheme.onSurface
                                             .withValues(alpha: 0.7),
                                       ),
                                   textAlign: TextAlign.center,
@@ -282,6 +270,7 @@ class _SplashState extends State<Splash> {
                           ),
                           Expanded(
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Container(
                                   width: 60,
@@ -299,24 +288,17 @@ class _SplashState extends State<Splash> {
                                 const SizedBox(height: 12),
                                 Text(
                                   "Acciones",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
-                                      ?.copyWith(
+                                  style: theme.textTheme.titleMedium?.copyWith(
                                         fontWeight: FontWeight.bold,
-                                        color: AppTheme.textColor,
                                       ),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   "Toma de decisiones",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(
-                                        color: AppTheme.textColor
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                        color: theme.colorScheme.onSurface
                                             .withValues(alpha: 0.7),
-                                      ),
+                                  ),
                                   textAlign: TextAlign.center,
                                 ),
                               ],
@@ -330,10 +312,9 @@ class _SplashState extends State<Splash> {
 
                 Text(
                   "Nuestros productos",
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.textColor,
-                      ),
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Row(
                   children: [
@@ -428,7 +409,7 @@ class _SplashState extends State<Splash> {
                   height: 200,
                   margin: EdgeInsets.only(bottom: 10),
                   decoration: BoxDecoration(
-                      color: AppTheme.colorScheme.primary,
+                      color: theme.colorScheme.primary,
                       borderRadius: BorderRadius.circular(10)),
                   child: Center(
                     child: Column(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/atoms/theme_toggle_switch.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -36,16 +37,17 @@ class DrawerNavigation extends StatelessWidget {
                 Text(
                   title,
                   style: Theme.of(context).primaryTextTheme.bodyLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.primaryContainer,
                         fontWeight: FontWeight.bold,
                       ),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(authProvider.user?.username ?? ""),
+                    Text(authProvider.user?.username ?? "", style: Theme.of(context).primaryTextTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.primaryContainer),),
                     Text(
                       authProvider.user?.email ?? "",
-                      style: Theme.of(context).primaryTextTheme.bodyMedium,
+                      style: Theme.of(context).primaryTextTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.primaryContainer),
                     ),
                     Chip(
                       label: Text(
@@ -94,6 +96,11 @@ class DrawerNavigation extends StatelessWidget {
             onTap: () {
               context.goNamed(Routes.profile.name);
             },
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            alignment: Alignment.centerLeft,
+            child: ThemeToggleSwitch(),
           ),
           Divider(
             indent: 20,

@@ -157,6 +157,7 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
   }
 
   List<Marker> _buildMarkers(BuildContext context) {
+    final theme = Theme.of(context);
     return widget.ubications.map((d) {
       return Marker(
         point: LatLng(d.latitude, d.longitude),
@@ -171,7 +172,7 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.colorScheme.primary,
                   borderRadius: BorderRadius.circular(4),
                   boxShadow: const [
                     BoxShadow(color: Colors.black26, blurRadius: 2)
@@ -182,6 +183,7 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
                   style: TextStyle(
                     fontSize: d.name.length > 12 ? 8 : 12,
                     fontWeight: FontWeight.w400,
+                    color: theme.colorScheme.primaryContainer
                   ),
                 ),
               ),

@@ -85,6 +85,10 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
         return Dialog(
           child: Container(
             width: 300,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+              borderRadius: BorderRadius.circular(12),
+            ),
             padding: const EdgeInsets.all(16),
             child: _CustomDatePicker(
               initialDate: initialDate,
@@ -212,7 +216,7 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
         Text(
           label,
           style: theme.textTheme.titleSmall?.copyWith(
-            color: theme.colorScheme.secondary,
+            color: theme.colorScheme.onPrimary,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -223,12 +227,13 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
             height: 40,
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             decoration: BoxDecoration(
+              
               border: Border.all(
                 color: theme.colorScheme.primary,
                 width: 1,
               ),
               borderRadius: BorderRadius.circular(10),
-              color: theme.colorScheme.surface,
+              color: theme.colorScheme.primary.withValues(alpha: 0.12),
             ),
             child: Row(
               children: [
@@ -237,15 +242,15 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
                     date != null ? _dateFormat.format(date) : 'mm/dd/yyyy',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: date != null
-                          ? theme.colorScheme.secondary
-                          : theme.colorScheme.secondary.withValues(alpha: 0.6),
+                          ? theme.colorScheme.onPrimary
+                          : theme.colorScheme.onPrimary.withValues(alpha: 0.6),
                     ),
                   ),
                 ),
                 Icon(
                   Icons.calendar_today,
                   size: 18,
-                  color: theme.colorScheme.secondary.withValues(alpha: 0.7),
+                  color: theme.colorScheme.tertiary.withValues(alpha: 0.7),
                 ),
               ],
             ),
@@ -283,6 +288,7 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
       icon: Icon(
         icon,
         size: 30,
+        color: Theme.of(context).colorScheme.tertiary,
       ),
     );
   }
@@ -398,7 +404,7 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
             Text(
               '${monthNames[_currentDate.month - 1]} ${_currentDate.year}',
               style: theme.textTheme.titleMedium?.copyWith(
-                color: theme.colorScheme.secondary,
+                color: theme.colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -418,7 +424,7 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
                 child: Text(
                   day,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.secondary,
+                    color: theme.colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -436,16 +442,20 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
           children: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancelar'),
+              style: TextButton.styleFrom(
+                backgroundColor: theme.colorScheme.secondary.withAlpha(72),
+                foregroundColor: theme.colorScheme.secondary,
+              ),
+              child: Text('Cancelar', style: theme.textTheme.bodyMedium),
             ),
             const SizedBox(width: 8),
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(_selectedDate),
               style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.secondary,
+                backgroundColor: theme.colorScheme.tertiary.withAlpha(112),
                 foregroundColor: theme.colorScheme.surface,
               ),
-              child: Text('Seleccionar'),
+              child: Text('Seleccionar', style: theme.textTheme.bodyMedium),
             ),
           ],
         ),
@@ -485,7 +495,7 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
             width: 32,
             decoration: BoxDecoration(
               color: isSelected
-                  ? theme.colorScheme.secondary
+                  ? theme.colorScheme.tertiary
                   : isToday
                       ? theme.colorScheme.primary.withValues(alpha: 0.3)
                       : Colors.transparent,
@@ -497,7 +507,7 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: isSelected
                       ? theme.colorScheme.surface
-                      : theme.colorScheme.secondary,
+                      : theme.colorScheme.onPrimary,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 ),
               ),

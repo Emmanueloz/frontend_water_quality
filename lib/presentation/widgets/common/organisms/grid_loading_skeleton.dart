@@ -36,6 +36,7 @@ class _GridLoadingSkeletonState extends State<GridLoadingSkeleton>
     int crossAxisCount;
     double childAspectRatio;
     double gap;
+    final theme = Theme.of(context);
 
     if (widget.screenSize == ScreenSize.mobile) {
       crossAxisCount = 1;
@@ -70,7 +71,7 @@ class _GridLoadingSkeletonState extends State<GridLoadingSkeleton>
               animation: _controller,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
+                  color: theme.colorScheme.shadow,
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),

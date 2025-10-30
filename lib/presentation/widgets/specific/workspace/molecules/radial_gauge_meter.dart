@@ -40,14 +40,15 @@ class _RadialGaugeMeterState extends State<RadialGaugeMeter> {
             : widget.min;
 
     List<Color> colors = [
+      // const Color.fromARGB(255, 13, 50, 151),
       Theme.of(context).colorScheme.tertiary,
-      Theme.of(context).colorScheme.primary,
-      Theme.of(context).colorScheme.secondary,
+      const Color.fromARGB(255, 253, 153, 3),
     ];
 
     return Card(
       //width: widget.size.width,
       //height: widget.size.height,
+      color: Theme.of(context).colorScheme.shadow,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         spacing: 5,
@@ -78,18 +79,26 @@ class _RadialGaugeMeterState extends State<RadialGaugeMeter> {
                   showNeedle: true,
                   showLabels: true,
                   showMajorTicks: true,
-                  labelTickStyle: const RadialTickLabelStyle(
+                  labelTickStyle: RadialTickLabelStyle(
+                    style: TextStyle(
+                      // fontSize: 12,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                     position: RadialElementPosition.inside,
                     padding: 10,
                   ),
+                  
                   majorTickStyle: RadialTickStyle(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).colorScheme.onSurface,
                     position: RadialElementPosition.inside,
                     length: 8,
                     thickness: 1,
                   ),
                   style: RadialGaugeStyle(
-                    thickness: 10,
+                    thickness: 12,
+                    backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(
+                      alpha: 30,
+                    ),
                     gradient: LinearGradient(
                       colors: colors,
                     ),

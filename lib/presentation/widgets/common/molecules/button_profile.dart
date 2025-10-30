@@ -14,6 +14,7 @@ class ButtonProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return TextButton.icon(
       style: TextButton.styleFrom(
         backgroundColor: Theme.of(context).colorScheme.surface,
@@ -28,8 +29,8 @@ class ButtonProfile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(username),
-            Text(email),
+            Text(username, style: theme.textTheme.bodyLarge,),
+            Text(email, style: theme.textTheme.titleSmall,),
           ],
         ),
       ),

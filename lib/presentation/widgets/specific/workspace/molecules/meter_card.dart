@@ -18,14 +18,30 @@ class MeterCard extends StatelessWidget {
     this.onTap,
   });
 
+  IconData? get _statusIcon {
+    switch (state) {
+      case 'disconnected':
+        return Icons.wifi_off_rounded;
+      case 'connected':
+        return Icons.wifi_rounded;
+      case 'sending_data':
+        return Icons.cloud_upload_rounded;
+      case 'error':
+        return Icons.error_rounded;
+      default:
+        return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BaseCard(
       title: name,
-      chip: Chip(
-        label: Text(state),
-      ),
+      tag: "Ubicación",
+      subtitle: location.nameLocation,
+      icon: _statusIcon,
       onTap: onTap,
+      state: state,
     );
   }
 }
