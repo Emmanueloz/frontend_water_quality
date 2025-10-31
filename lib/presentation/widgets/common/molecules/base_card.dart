@@ -32,14 +32,13 @@ class BaseCard extends StatelessWidget {
       color: theme.colorScheme.shadow,
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12), // esquinas redondeadas
+        borderRadius: BorderRadius.circular(12),
       ),
-      clipBehavior: Clip.antiAlias, // para que el borde se recorte bien
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
-            // color: Color(0xFFF4F8F9).withAlpha(38),
             border: Border(
               left: BorderSide(
                 color: theme.colorScheme.tertiary,
@@ -48,15 +47,13 @@ class BaseCard extends StatelessWidget {
             ),
           ),
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 18.0, horizontal: 20.0),
+            padding: const EdgeInsets.symmetric(vertical: 18.0, horizontal: 20.0),
             child: Stack(
               children: [
                 // Contenido principal (columna con título y ubicación)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // verificar si el title tiene mas de 15 caracteres y en ese caso reducir el tamaño de la fuente
                     Text(
                       title.length > 15 && isMobileOrTablet
                           ? '${title.substring(0, 13)}\n${title.substring(13)}'
@@ -85,11 +82,9 @@ class BaseCard extends StatelessWidget {
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                       ),
-                    // espacio flexible
                     const SizedBox(height: 6),
                   ],
                 ),
-                const Spacer(),
                 // Status pill (esquina superior derecha)
                 if (state != null)
                   Positioned(
@@ -98,10 +93,8 @@ class BaseCard extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 6),
-                      // margin: const EdgeInsets.only(top: 6),
                       decoration: BoxDecoration(
-                        color:
-                            theme.colorScheme.primary.withValues(alpha: 0.62),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.62),
                         borderRadius: BorderRadius.circular(19),
                       ),
                       child: Row(
