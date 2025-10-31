@@ -377,11 +377,10 @@ class AppTheme {
       // Elevated Button
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: cs.secondary.withAlpha( 74),
-          foregroundColor: cs.onTertiary,
+          backgroundColor: cs.tertiary.withValues(alpha: 0.15),
+          foregroundColor: cs.tertiary,
           textStyle: darkTextTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
-          elevation: 2,
-          shadowColor: cs.tertiary.withValues(alpha: 0.4),
+          elevation: 0,
         ),
       ),
       // Outlined Button

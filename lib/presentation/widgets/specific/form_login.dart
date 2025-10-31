@@ -209,11 +209,11 @@ class _LoginFormState extends State<LoginForm> {
                         }
                       },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.secondary.withAlpha(74),
+                  backgroundColor: theme.colorScheme.tertiary,
                 ),
                 child: widget.isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Iniciar sesión'),
+                    :  Text('Iniciar sesión', style: TextStyle(color: theme.colorScheme.secondary),),
                 
               ),
             ),
@@ -224,6 +224,8 @@ class _LoginFormState extends State<LoginForm> {
               label: const Text('Iniciar sesión con GitHub'),
               onPressed: widget.isLoading ? null : _loginWithGitHub,
               style: OutlinedButton.styleFrom(
+                backgroundColor: theme.colorScheme.surface,
+                // foregroundColor: Colors.black,
                 padding:
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
               ),
