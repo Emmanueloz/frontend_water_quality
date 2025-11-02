@@ -8,7 +8,8 @@ class NotificationRepoImpl implements NotificationRepository {
   final Dio _dio;
   NotificationRepoImpl(this._dio);
   @override
-  Future<Result<String>> changeStatus(String userToken, String notificationId, NotificationStatus status) async{
+  Future<Result<String>> changeStatus(String userToken, String notificationId,
+      NotificationStatus status) async {
     try {
       final response = await _dio.put(
         '/alerts/notifications/$notificationId/',
@@ -32,7 +33,8 @@ class NotificationRepoImpl implements NotificationRepository {
   }
 
   @override
-  Future<Result<NotificationModel>> getNotificationDetails(String userToken, String notificationId) async{
+  Future<Result<NotificationModel>> getNotificationDetails(
+      String userToken, String notificationId) async {
     try {
       final response = await _dio.get(
         '/alerts/notifications/$notificationId/',
@@ -46,7 +48,8 @@ class NotificationRepoImpl implements NotificationRepository {
       if (response.statusCode != 200) {
         return Result.failure('Error: codigo ${response.statusCode}');
       }
-      final notification = NotificationModel.fromJson(response.data['notification']);
+      final notification =
+          NotificationModel.fromJson(response.data['notification']);
       return Result.success(notification);
     } catch (e) {
       return Result.failure(e.toString());
@@ -54,31 +57,33 @@ class NotificationRepoImpl implements NotificationRepository {
   }
 
   @override
-  Future<Result<List<NotificationModel>>> listNotifications(String userToken, bool isRead, NotificationStatus status) async{
+  Future<Result<List<NotificationModel>>> listNotifications(
+      String userToken, bool isRead, NotificationStatus status) async {
     try {
-        final response = await _dio.get(
-      '/alerts/notifications/',
-      options: Options(
-        headers: {
-          'Authorization': 'Bearer $userToken',
+      final response = await _dio.get(
+        '/alerts/notifications/',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $userToken',
+          },
+        ),
+        queryParameters: {
+          'convert_timestamp': true,
+          'read': isRead,
+          'status': status.name,
         },
-      ),
-      queryParameters: {
-        'read': isRead,
-        'status': status.name,
-      },
-    );
-
-    if (response.statusCode != 200) {
-      return Result.failure('Error: codigo ${response.statusCode}');
-    }
-    final List<dynamic> data = response.data['notifications'] as List<dynamic>;
-    final notifications = data.map((item) => NotificationModel.fromJson(item)).toList();
-    return Result.success(notifications);
+      );
+      if (response.statusCode != 200) {
+        return Result.failure('Error: codigo ${response.statusCode}');
+      }
+      final rawList = response.data['notifications'] as List<dynamic>?;
+      final notifications = (rawList ?? <dynamic>[])
+          .map((item) => NotificationModel.fromJson(
+              Map<String, dynamic>.from(item as Map)))
+          .toList();
+      return Result.success(notifications);
     } catch (e) {
       return Result.failure(e.toString());
     }
-
   }
-
 }
