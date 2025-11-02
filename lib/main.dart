@@ -10,6 +10,7 @@ import 'package:frontend_water_quality/infrastructure/dio_helper.dart';
 import 'package:frontend_water_quality/infrastructure/local_storage_service.dart';
 import 'package:frontend_water_quality/infrastructure/meter_records_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/meter_socket_service.dart';
+import 'package:frontend_water_quality/infrastructure/notification_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/user_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/weather_meter_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/guest_repo_impl.dart';
@@ -19,6 +20,7 @@ import 'package:frontend_water_quality/infrastructure/meter_repo_impl.dart';
 import 'package:frontend_water_quality/infrastructure/ai_chat_repo_impl.dart';
 import 'package:frontend_water_quality/presentation/providers/analysis_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
+import 'package:frontend_water_quality/presentation/providers/notification_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/user_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/weather_meter_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/guest_provider.dart';
@@ -67,6 +69,13 @@ void main() async {
             return workspaceProvider!..setAuthProvider(authProvider);
           },
         ),
+        ChangeNotifierProxyProvider<AuthProvider, NotificationProvider>
+        (create: (context) => NotificationProvider(
+          NotificationRepoImpl(dio),
+          context.read<AuthProvider>(),
+        ), update: (context, authProvider, notificationProvider) {
+          return notificationProvider!..setAuthProvider(authProvider);
+        },),
         ChangeNotifierProvider(
           create: (_) => BlueProvider(
             BLEService(),
@@ -110,7 +119,7 @@ void main() async {
             previousMeterRecordProvider!.clean();
             return previousMeterRecordProvider..setAuthProvider(authProvider);
           },
-        ),
+        ),        
         ChangeNotifierProxyProvider<AuthProvider, WeatherMeterProvider>(
           create: (context) {
             final authProvider = context.read<AuthProvider>();
