@@ -14,35 +14,44 @@ class NotificationModel {
     required this.read,
     required this.title,
     required this.body,
-    required this.userIds,
+    this.userIds,
     required this.date,
-    required this.status ,
+    required this.status,
     this.aprovedBy,
     required this.recordParameters,
   });
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
+    // Conversión segura de user_ids -> List<String>
+    final userIdsList = (json['user_ids'] as List<dynamic>?)
+            ?.map((e) => e?.toString() ?? '')
+            .where((s) => s.isNotEmpty)
+            .toList() ??
+        <String>[];
+
+    // record_parameters -> List<RecordParameter> (asegurando Map<String,dynamic>)
+    final rp = (json['record_parameters'] as List?)
+            ?.map((item) => RecordParameter.fromJson(
+                Map<String, dynamic>.from(item as Map)))
+            .toList() ??
+        <RecordParameter>[];
     return NotificationModel(
       id: json['id'] ?? '',
-      read: json['read'] == 'true',
+      read: json['read'] == true,
       title: json['title'] ?? '',
       body: json['body'] ?? '',
-      userIds: json['user_ids'] ?? '',
-      date: DateTime.parse(json['date']),
+      userIds: userIdsList,
+      date: DateTime.parse(json['datetime']),
       status: json['status'] ?? '',
       aprovedBy: json['aproved_by'],
-      recordParameters: json['record_parameters'] != null
-          ? List<RecordParameter>.from(
-              json['record_parameters']
-                  .map((x) => RecordParameter.fromJson(x)))
-          : [], 
+      recordParameters: rp,
     );
   }
 }
 
-class RecordParameter{
+class RecordParameter {
   final String parameter;
-  final String value;
+  final double value;
 
   RecordParameter({
     required this.parameter,
