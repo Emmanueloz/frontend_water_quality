@@ -59,14 +59,14 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
     }
   }
 
-  void _showActionModal(NotificationStatus action) {
+  void _showActionModal(NotificationStatus action, ScreenSize screenSize) {
     showDialog(
       context: context,
       builder: (context) => NotificationActionModal(
         action: action,
         onConfirm: () {
           Navigator.of(context).pop();
-          _changeNotificationStatus(action);
+          _changeNotificationStatus(action, screenSize);
         },
         onCancel: () {
           Navigator.of(context).pop();
@@ -75,11 +75,15 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
     );
   }
 
-  Future<void> _changeNotificationStatus(NotificationStatus status) async {
+  Future<void> _changeNotificationStatus(
+      NotificationStatus status, ScreenSize screenSize) async {
     setState(() {
       _isUpdatingStatus = true;
     });
-
+    final theme = Theme.of(context);
+    final isMobile = screenSize == ScreenSize.mobile;
+    final maxWidth = isMobile ? double.infinity : 800.0;
+    print('maxWidth: $maxWidth');
     final notificationProvider = context.read<NotificationProvider>();
     final result = await notificationProvider.changeStatus(
       widget.notificationId,
@@ -98,14 +102,21 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
-                status == NotificationStatus.accepted
-                    ? 'Notificación aprobada exitosamente'
-                    : 'Notificación rechazada exitosamente',
+              content: Center(
+                child: SizedBox(
+                  width: maxWidth,
+                  height: 48,
+                  child: Text(
+                    status == NotificationStatus.accepted
+                        ? 'Notificación aprobada exitosamente'
+                        : 'Notificación rechazada exitosamente',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.colorScheme.onPrimary,
+                    ),
+                  ),
+                ),
               ),
-              backgroundColor: status == NotificationStatus.accepted
-                  ? Colors.green
-                  : Colors.red,
+              backgroundColor: theme.colorScheme.primary,
             ),
           );
         }
@@ -113,8 +124,19 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(result.message ?? 'Error al cambiar el estado'),
-              backgroundColor: Colors.red,
+              content: Center(
+                child: SizedBox(
+                  width: maxWidth,
+                  height: 48,
+                  child: Text(
+                    result.message ?? 'Error al cambiar el estado',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onPrimary,
+                    ),
+                  ),
+                ),
+              ),
+              backgroundColor: theme.colorScheme.error,
             ),
           );
         }
@@ -240,8 +262,8 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
+                                  horizontal: 6,
+                                  vertical: 5,
                                 ),
                                 decoration: BoxDecoration(
                                   color: statusColor.withValues(alpha: 0.15),
@@ -260,14 +282,12 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
                                       size: 20,
                                     ),
                                     const SizedBox(width: 8),
-                                    Text(
-                                      _getStatusText(notification.status),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        color: statusColor,
-                                      ),
-                                    ),
+                                    Text(_getStatusText(notification.status),
+                                        style:
+                                            theme.textTheme.bodySmall?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          color: theme.colorScheme.onPrimary,
+                                        )),
                                   ],
                                 ),
                               ),
@@ -286,7 +306,8 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
                                 else ...[
                                   IconButton(
                                     onPressed: () => _showActionModal(
-                                        NotificationStatus.accepted),
+                                        NotificationStatus.accepted,
+                                        screenSize),
                                     icon: const Icon(Icons.check_circle),
                                     color: theme.colorScheme.tertiary,
                                     tooltip: 'Aprobar',
@@ -298,7 +319,8 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
                                   const SizedBox(width: 8),
                                   IconButton(
                                     onPressed: () => _showActionModal(
-                                        NotificationStatus.rejected),
+                                        NotificationStatus.rejected,
+                                        screenSize),
                                     icon: const Icon(Icons.cancel),
                                     color: theme.colorScheme.error,
                                     tooltip: 'Rechazar',
@@ -452,7 +474,8 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
                                       .withValues(alpha: 0.08),
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
-                                    color: theme.colorScheme.tertiary.withValues(alpha: 0.3),
+                                    color: theme.colorScheme.tertiary
+                                        .withValues(alpha: 0.3),
                                   ),
                                 ),
                                 child: Row(
@@ -462,8 +485,8 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
                                     Expanded(
                                       child: Text(
                                         param.parameter,
-                                        style: theme.textTheme.bodyLarge
-                                            ?.copyWith(
+                                        style:
+                                            theme.textTheme.bodyLarge?.copyWith(
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
@@ -522,7 +545,10 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
                             ],
                             if (notification.userIds != null &&
                                 notification.userIds!.isNotEmpty)
-                              UsersList(userIds: notification.userIds!, isMobile: isMobile,),
+                              UsersList(
+                                userIds: notification.userIds!,
+                                isMobile: isMobile,
+                              ),
                           ],
                         ),
                       ),
