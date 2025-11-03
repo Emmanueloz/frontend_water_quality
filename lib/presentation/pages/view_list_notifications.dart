@@ -107,7 +107,7 @@ class _ViewListNotificationsState extends State<ViewListNotifications> {
                           // mobile: dropdown full width
                           Expanded(
                             child: DropdownButtonFormField<NotificationStatus>(
-                              value: _selectedStatus,
+                              initialValue: _selectedStatus,
                               decoration: const InputDecoration(
                                 labelText: 'Estado',
                                 border: OutlineInputBorder(),
@@ -129,7 +129,7 @@ class _ViewListNotificationsState extends State<ViewListNotifications> {
                           SizedBox(
                             width: 200,
                             child: DropdownButtonFormField<NotificationStatus>(
-                              value: _selectedStatus,
+                              initialValue: _selectedStatus,
                               decoration: const InputDecoration(
                                 labelText: 'Estado',
                                 border: OutlineInputBorder(),
@@ -230,7 +230,7 @@ class _ViewListNotificationsState extends State<ViewListNotifications> {
             Icon(
               Icons.notifications_none,
               size: 64,
-              color: theme.colorScheme.onSurface.withOpacity(0.5),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 16),
             Text(

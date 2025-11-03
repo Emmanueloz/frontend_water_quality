@@ -64,8 +64,9 @@ class MainListNotifications extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12.0),
                 child: Card(
-                  elevation: 2,
-                  shadowColor: theme.colorScheme.primary.withOpacity(0.1),
+                  elevation: 0,
+                  // shadowColor: theme.colorScheme.surface.withOpacity(0.1),
+                  color: theme.colorScheme.shadow,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -89,12 +90,12 @@ class MainListNotifications extends StatelessWidget {
                             width: screenSize == ScreenSize.mobile ? 25 : 48,
                             height: screenSize == ScreenSize.mobile ? 25 : 48,
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withOpacity(0.12),
+                              color: Colors.transparent,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Icon(
                               Icons.notifications,
-                              color: theme.colorScheme.primary,
+                              color: theme.colorScheme.tertiary,
                               size: screenSize == ScreenSize.mobile ? 17 : 24,
                             ),
                           ),
@@ -120,17 +121,17 @@ class MainListNotifications extends StatelessWidget {
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withOpacity(0.12),
+                              color: Colors.transparent,
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: theme.colorScheme.primary.withOpacity(0.16),
+                                color: theme.colorScheme.tertiary,
                                 width: 0.8,
                               ),
                             ),
                             child: Text(
                               formattedDate,
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.primary,
+                                color: theme.colorScheme.onPrimary,
                                 fontWeight: FontWeight.w600,
                                 fontSize: screenSize == ScreenSize.mobile ? 10 : null,
                               ),
