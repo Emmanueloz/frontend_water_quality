@@ -12,7 +12,7 @@ class NotificationRepoImpl implements NotificationRepository {
       NotificationStatus status) async {
     try {
       final response = await _dio.put(
-        '/alerts/notifications/$notificationId/',
+        '/alerts/notifications/status/$notificationId/',
         options: Options(
           headers: {
             'Authorization': 'Bearer $userToken',
