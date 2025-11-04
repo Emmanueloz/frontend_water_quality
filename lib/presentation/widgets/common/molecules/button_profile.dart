@@ -18,21 +18,27 @@ class ButtonProfile extends StatelessWidget {
     return TextButton.icon(
       style: TextButton.styleFrom(
         backgroundColor: Theme.of(context).colorScheme.surface,
+        padding: const EdgeInsets.all(10.0),
       ),
       icon: const Icon(
         Icons.account_circle,
         size: 30,
       ),
-      label: Container(
-        padding: EdgeInsets.all(2),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(username, style: theme.textTheme.bodyLarge,),
-            Text(email, style: theme.textTheme.titleSmall,),
-          ],
-        ),
+      label: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            username,
+            style: theme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            email,
+            style: theme.textTheme.bodySmall,
+          ),
+        ],
       ),
       onPressed: onPressed,
     );
