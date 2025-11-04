@@ -243,6 +243,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
                             : 'Actualizar',
                         style: ActionButtonStyle.filled,
                         width: widget.width == double.infinity ? 100 : 200,
+                        padding: const EdgeInsets.symmetric(vertical: 5),
                       ),
                     ),
                   ],
