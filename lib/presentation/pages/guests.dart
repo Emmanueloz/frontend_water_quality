@@ -57,15 +57,18 @@ class _GuestsPageState extends State<GuestsPage> {
     return _buildMain(context, screenSize, guestProvider);
   }
 
-  Widget _buildMain(BuildContext context, ScreenSize screenSize, GuestProvider guestProvider) {
+  Widget _buildMain(BuildContext context, ScreenSize screenSize,
+      GuestProvider guestProvider) {
     // Configurar márgenes responsivos
-    final margin = screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet
-        ? const EdgeInsets.all(10)
-        : EdgeInsets.zero;
+    final margin =
+        screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet
+            ? const EdgeInsets.all(10)
+            : EdgeInsets.zero;
 
     if (guestProvider.isLoading) {
       return BaseContainer(
         margin: margin,
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             Expanded(
@@ -77,28 +80,27 @@ class _GuestsPageState extends State<GuestsPage> {
     }
 
     // Solo mostrar error real (no estado vacío)
-    if (guestProvider.errorMessage != null && 
+    if (guestProvider.errorMessage != null &&
         guestProvider.errorMessage != 'No se encontraron invitados') {
       return BaseContainer(
         margin: margin,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 10,
             children: [
               Icon(
                 Icons.error_outline,
                 size: 64,
                 color: Colors.grey[600],
               ),
-              const SizedBox(height: 16),
               Text(
                 guestProvider.errorMessage!,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey[600],
-                ),
+                      color: Colors.grey[600],
+                    ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
                   guestProvider.cleanError();

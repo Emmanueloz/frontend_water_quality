@@ -42,31 +42,31 @@ class GuestGrid extends StatelessWidget {
             title: Text(
               title,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             actions: [
+              if (onReloadPressed != null)
+                IconButton(
+                  onPressed: onReloadPressed!,
+                  icon: Icon(Icons.refresh),
+                ),
               if (onAddPressed != null && guests.isNotEmpty)
                 ElevatedButton.icon(
                   onPressed: onAddPressed!,
                   icon: const Icon(Icons.person_add),
                   label: const Text("Agregar Invitado"),
                 ),
-              if (onReloadPressed != null)
-                ElevatedButton.icon(
-                  onPressed: onReloadPressed!,
-                  icon: const Icon(Icons.refresh),
-                  label: const Text("Recargar"),
-                ),
             ],
             screenSize: screenSize,
           ),
           const SizedBox(height: 16),
           Expanded(
-            child: guests.isEmpty 
+            child: guests.isEmpty
                 ? EmptyStateView(
                     title: 'No se encontraron invitados',
-                    subtitle: 'Los invitados aparecerán aquí cuando sean agregados',
+                    subtitle:
+                        'Los invitados aparecerán aquí cuando sean agregados',
                     icon: Icons.people_outline,
                     onAction: onAddPressed,
                     actionText: 'Agregar Invitado',
@@ -79,11 +79,13 @@ class GuestGrid extends StatelessWidget {
                       mainAxisSpacing: config.gap,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      children: guests.map((guest) => GuestCard(
-                        guest: guest,
-                        workspaceId: workspaceId,
-                        workspaceTitle: title,
-                      )).toList(),
+                      children: guests
+                          .map((guest) => GuestCard(
+                                guest: guest,
+                                workspaceId: workspaceId,
+                                workspaceTitle: title,
+                              ))
+                          .toList(),
                     ),
                   ),
           ),
@@ -132,4 +134,4 @@ class GridConfig {
     required this.childAspectRatio,
     required this.gap,
   });
-} 
+}

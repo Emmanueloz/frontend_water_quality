@@ -224,191 +224,205 @@ class AppTheme {
     );
   }
 
-    static ThemeData get darkTheme {
-    final cs = darkColorScheme;
+  static ThemeData get darkTheme {
+    //final cs = darkColorScheme;
     final darkTextTheme = textTheme.apply(
-      bodyColor: cs.onSurface,
-      displayColor: cs.onSurface,
+      bodyColor: darkColorScheme.onSurface,
+      displayColor: darkColorScheme.onSurface,
     );
 
     return ThemeData(
       // brightness: Brightness.dark,
       useMaterial3: true,
-      colorScheme: cs,
-      primaryColor: cs.primary,
+      colorScheme: darkColorScheme,
+      primaryColor: darkColorScheme.primary,
       // Fondos
-      scaffoldBackgroundColor: cs.secondary,
+      scaffoldBackgroundColor: darkColorScheme.secondary,
       // AppBar
       appBarTheme: AppBarTheme(
-        backgroundColor: cs.secondary,
+        backgroundColor: darkColorScheme.secondary,
         elevation: 0,
-        titleTextStyle: darkTextTheme.displaySmall?.copyWith(color: cs.onPrimary),
-        iconTheme: IconThemeData(color: cs.onSecondary),
-        actionsIconTheme: IconThemeData(color: cs.onSurface),
+        titleTextStyle: darkTextTheme.displaySmall
+            ?.copyWith(color: darkColorScheme.onPrimary),
+        iconTheme: IconThemeData(color: darkColorScheme.onSecondary),
+        actionsIconTheme: IconThemeData(color: darkColorScheme.onSurface),
       ),
       // Textos
       textTheme: darkTextTheme,
       primaryTextTheme: darkTextTheme,
-      iconTheme: IconThemeData(color: cs.onSurface),
+      iconTheme: IconThemeData(color: darkColorScheme.onSurface),
       // Tarjetas
       cardTheme: CardThemeData(
-        color: cs.primary,
+        color: darkColorScheme.primary,
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       // Divisor
       dividerTheme: DividerThemeData(
-        color: cs.tertiary.withValues(alpha: 0.2),
+        color: darkColorScheme.tertiary.withValues(alpha: 0.2),
         thickness: 1,
       ),
       // Input Fields
       inputDecorationTheme: InputDecorationTheme(
-        labelStyle: darkTextTheme.bodyMedium?.copyWith(color: cs.onSurface),
-        hintStyle: darkTextTheme.bodyMedium?.copyWith(color: cs.onSurface.withValues(alpha: 0.6)),
-        iconColor: cs.tertiary,
-        prefixIconColor: cs.tertiary,
-        suffixIconColor: cs.tertiary,
+        labelStyle: darkTextTheme.bodyMedium
+            ?.copyWith(color: darkColorScheme.onSurface),
+        hintStyle: darkTextTheme.bodyMedium
+            ?.copyWith(color: darkColorScheme.onSurface.withValues(alpha: 0.6)),
+        iconColor: darkColorScheme.tertiary,
+        prefixIconColor: darkColorScheme.tertiary,
+        suffixIconColor: darkColorScheme.tertiary,
         floatingLabelBehavior: FloatingLabelBehavior.auto,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: cs.tertiary.withValues(alpha: 0.3), width: 1),
+          borderSide: BorderSide(
+              color: darkColorScheme.tertiary.withValues(alpha: 0.3), width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: cs.tertiary.withValues(alpha: 0.3), width: 1),
+          borderSide: BorderSide(
+              color: darkColorScheme.tertiary.withValues(alpha: 0.3), width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: cs.tertiary, width: 2),
+          borderSide: BorderSide(color: darkColorScheme.tertiary, width: 2),
         ),
-        fillColor: cs.secondary.withAlpha(74),
+        fillColor: darkColorScheme.secondary.withAlpha(74),
         filled: true,
         // fillColor: cs.surfaceContainer
       ),
       // ListTile
       listTileTheme: ListTileThemeData(
-        textColor: cs.onSurface,
-        iconColor: cs.tertiary,
-        selectedColor: cs.tertiary,
-        selectedTileColor: cs.tertiary.withValues(alpha: 0.15),
+        textColor: darkColorScheme.onSurface,
+        iconColor: darkColorScheme.tertiary,
+        selectedColor: darkColorScheme.tertiary,
+        selectedTileColor: darkColorScheme.tertiary.withValues(alpha: 0.15),
         titleTextStyle: darkTextTheme.titleMedium,
       ),
       // Data Table
       dataTableTheme: DataTableThemeData(
         headingTextStyle: darkTextTheme.bodyMedium?.copyWith(
           fontWeight: FontWeight.bold,
-          color: cs.tertiary,
+          color: darkColorScheme.tertiary,
         ),
-        dataTextStyle: darkTextTheme.bodyMedium?.copyWith(color: cs.onSurface),
+        dataTextStyle: darkTextTheme.bodyMedium
+            ?.copyWith(color: darkColorScheme.onSurface),
         decoration: BoxDecoration(
-          color: cs.surfaceContainer,
+          color: darkColorScheme.surfaceContainer,
           borderRadius: BorderRadius.circular(8),
         ),
       ),
       // Navigation Bar
       navigationBarTheme: NavigationBarThemeData(
         elevation: 0,
-        backgroundColor: cs.primary,
-        indicatorColor: cs.tertiary.withValues(alpha: 0.2),
+        backgroundColor: darkColorScheme.primary,
+        indicatorColor: darkColorScheme.tertiary.withValues(alpha: 0.2),
         iconTheme: WidgetStatePropertyAll(
-          IconThemeData(color: cs.onSurface),
+          IconThemeData(color: darkColorScheme.onSurface),
         ),
         labelTextStyle: WidgetStatePropertyAll(
-          darkTextTheme.bodySmall?.copyWith(color: cs.onSurface),
+          darkTextTheme.bodySmall?.copyWith(color: darkColorScheme.onSurface),
         ),
       ),
       // Navigation Rail
       navigationRailTheme: NavigationRailThemeData(
         backgroundColor: const Color.fromARGB(255, 2, 24, 32),
-        selectedIconTheme: IconThemeData(color: cs.tertiary),
-        unselectedIconTheme: IconThemeData(color: cs.onSurface.withValues(alpha: 0.6)),
-        indicatorColor: cs.tertiary.withValues(alpha: 0.2),
+        selectedIconTheme: IconThemeData(color: darkColorScheme.tertiary),
+        unselectedIconTheme: IconThemeData(
+            color: darkColorScheme.onSurface.withValues(alpha: 0.6)),
+        indicatorColor: darkColorScheme.tertiary.withValues(alpha: 0.2),
         selectedLabelTextStyle: darkTextTheme.titleMedium?.copyWith(
-          color: cs.tertiary,
+          color: darkColorScheme.tertiary,
         ),
         unselectedLabelTextStyle: darkTextTheme.titleMedium?.copyWith(
-          color: cs.onSurface.withValues(alpha: 0.8),
+          color: darkColorScheme.onSurface.withValues(alpha: 0.8),
         ),
       ),
       // Chips
       chipTheme: ChipThemeData(
-        backgroundColor: cs.tertiary.withValues(alpha: 0.15),
+        backgroundColor: darkColorScheme.tertiary.withValues(alpha: 0.15),
         labelStyle: darkTextTheme.bodySmall?.copyWith(
-          color: cs.tertiary,
+          color: darkColorScheme.tertiary,
           fontWeight: FontWeight.bold,
         ),
-        iconTheme: IconThemeData(color: cs.tertiary),
+        iconTheme: IconThemeData(color: darkColorScheme.tertiary),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
-          side: BorderSide(color: cs.tertiary.withValues(alpha: 0.5), width: 1),
+          side: BorderSide(
+              color: darkColorScheme.tertiary.withValues(alpha: 0.5), width: 1),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       ),
       // Expansion Tile
       expansionTileTheme: ExpansionTileThemeData(
-        textColor: cs.onSurface,
-        collapsedTextColor: cs.onSurface,
-        iconColor: cs.tertiary,
-        collapsedIconColor: cs.tertiary,
+        textColor: darkColorScheme.onSurface,
+        collapsedTextColor: darkColorScheme.onSurface,
+        iconColor: darkColorScheme.tertiary,
+        collapsedIconColor: darkColorScheme.tertiary,
         shape: const BeveledRectangleBorder(side: BorderSide.none),
       ),
       // Dropdown Menu
       dropdownMenuTheme: DropdownMenuThemeData(
-        textStyle: darkTextTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+        textStyle:
+            darkTextTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
         inputDecorationTheme: InputDecorationTheme(
-          suffixIconColor: cs.tertiary,
+          suffixIconColor: darkColorScheme.tertiary,
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: cs.tertiary.withValues(alpha: 0.3), width: 1),
+            borderSide: BorderSide(
+                color: darkColorScheme.tertiary.withValues(alpha: 0.3),
+                width: 1),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: cs.tertiary, width: 2),
+            borderSide: BorderSide(color: darkColorScheme.tertiary, width: 2),
           ),
           filled: true,
-          fillColor: cs.surface,
+          fillColor: darkColorScheme.surface,
         ),
       ),
       // Toggle Buttons
       toggleButtonsTheme: ToggleButtonsThemeData(
-        color: cs.onSurface.withValues(alpha: 0.6),
+        color: darkColorScheme.onSurface.withValues(alpha: 0.6),
         textStyle: darkTextTheme.bodyMedium,
-        selectedColor: cs.onSurface,
-        fillColor: cs.tertiary.withValues(alpha: 0.2),
+        selectedColor: darkColorScheme.onSurface,
+        fillColor: darkColorScheme.tertiary.withValues(alpha: 0.2),
       ),
       // Elevated Button
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: cs.tertiary.withValues(alpha: 0.15),
-          foregroundColor: cs.tertiary,
-          textStyle: darkTextTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+          backgroundColor: darkColorScheme.tertiary,
+          foregroundColor: darkColorScheme.secondary,
+          textStyle: darkTextTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
           elevation: 0,
         ),
       ),
       // Outlined Button
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          side: BorderSide(color: cs.tertiary, width: 1.5),
-          foregroundColor: cs.tertiary,
-          textStyle: darkTextTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+          side: BorderSide(color: darkColorScheme.tertiary, width: 1.5),
+          foregroundColor: darkColorScheme.tertiary,
+          textStyle:
+              darkTextTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
       ),
       // Icon Button
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
-          backgroundColor: cs.tertiary.withValues(alpha: 0.15),
-          foregroundColor: cs.tertiary,
+          backgroundColor: darkColorScheme.tertiary.withValues(alpha: 0.15),
+          foregroundColor: darkColorScheme.tertiary,
         ),
       ),
       // Text Button
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: cs.tertiary,
+          foregroundColor: darkColorScheme.tertiary,
           textStyle: darkTextTheme.bodyMedium,
         ),
       ),
       // Floating Action Button
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: cs.tertiary,
-        foregroundColor: cs.onTertiary,
+        backgroundColor: darkColorScheme.tertiary,
+        foregroundColor: darkColorScheme.onTertiary,
         elevation: 4,
         hoverElevation: 8,
       ),

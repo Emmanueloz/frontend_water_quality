@@ -152,8 +152,7 @@ class _LoginFormState extends State<LoginForm> {
           crossAxisAlignment: CrossAxisAlignment.center,
           spacing: 20,
           children: [
-            Image.asset('assets/images/logotipo_aquaminds.png',
-                height: 150),
+            Image.asset('assets/images/logotipo_aquaminds.png', height: 150),
             Text(
               'Bienvenido',
               style: theme.textTheme.headlineMedium,
@@ -208,13 +207,11 @@ class _LoginFormState extends State<LoginForm> {
                           }
                         }
                       },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.tertiary,
-                ),
                 child: widget.isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
-                    :  Text('Iniciar sesión', style: TextStyle(color: theme.colorScheme.secondary),),
-                
+                    : Text(
+                        'Iniciar sesión',
+                      ),
               ),
             ),
 

@@ -42,55 +42,30 @@ class BaseCard extends StatelessWidget {
               ),
             ),
           ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 18.0, horizontal: 20.0),
-            child: Stack(
-              children: [
-                // Contenido principal (columna con título y ubicación)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          padding: const EdgeInsets.symmetric(vertical: 18.0, horizontal: 20.0),
+          child: Column(
+            spacing: 10,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (state != null && icon != null)
+                Row(
                   children: [
-                    Text(
-                      title.length > 10 && state != null
-                          ? '${title.substring(0, 10)}\n${title.substring(10)}'
-                          : title,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 14),
-                    if (tag != null)
-                      Text(
-                        tag!,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.onPrimary.withAlpha(185),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
                         ),
-                      ),
-                    const SizedBox(height: 10),
-                    if (subtitle != null)
-                      Text(
-                        subtitle!,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          height: 1.25,
-                        ),
-                        maxLines: 3,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                    const SizedBox(height: 6),
-                  ],
-                ),
-                // Status pill (esquina superior derecha)
-                if (state != null)
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    child: Container(
+                    ),
+                    Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.62),
+                        color:
+                            theme.colorScheme.primary.withValues(alpha: 0.62),
                         borderRadius: BorderRadius.circular(19),
                       ),
                       child: Row(
@@ -110,15 +85,41 @@ class BaseCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                    ),
+                    )
+                  ],
+                )
+              else
+                Text(
+                  title,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
-                if (chip != null)
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: chip!,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              if (tag != null)
+                Text(
+                  tag!,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: theme.colorScheme.onPrimary.withAlpha(185),
                   ),
-              ],
-            ),
+                ),
+              if (subtitle != null)
+                Text(
+                  subtitle!,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    height: 1.25,
+                  ),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              const Spacer(),
+              if (chip != null)
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: chip!,
+                ),
+            ],
           ),
         ),
       ),

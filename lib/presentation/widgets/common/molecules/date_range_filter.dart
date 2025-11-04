@@ -228,7 +228,6 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
             height: 40,
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             decoration: BoxDecoration(
-              
               border: Border.all(
                 color: theme.colorScheme.primary,
                 width: 1,
@@ -300,15 +299,6 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
 
     return ElevatedButton(
       onPressed: widget.isLoading ? null : _applyFilters,
-      style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        padding: EdgeInsets.symmetric(
-          horizontal: isMobile ? 16 : 20,
-          vertical: 6,
-        ),
-      ),
       child: widget.isLoading
           ? SizedBox(
               width: 16,
@@ -322,9 +312,6 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
             )
           : Text(
               'Aplicar filtros',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
             ),
     );
   }
