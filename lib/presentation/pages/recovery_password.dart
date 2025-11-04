@@ -19,7 +19,7 @@ class _RecoveryPasswordPageState extends State<RecoveryPasswordPage> {
 
   void nextPage(String token) {
     context.goNamed(Routes.changePassword.name, queryParameters: {
-      'token': token,
+      'temporaryToken': token,
     });
   }
 
