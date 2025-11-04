@@ -63,6 +63,7 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final markers = _buildMarkers(context);
     final mapWidget = MainMap(
       mapController: _mapController,
@@ -111,11 +112,11 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
                   padding: const EdgeInsets.all(8),
                   constraints: const BoxConstraints(maxWidth: 220),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: theme.colorScheme.primary,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Colors.black.withValues(alpha: 0.2),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
@@ -129,8 +130,7 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
                         children: [
                           Expanded(
                             child: Text(_selectedUbication!.name,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 14)),
+                                style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.onPrimary)),
                           ),
                           IconButton(
                             icon: const Icon(Icons.close, size: 16),
@@ -140,7 +140,7 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
                       ),
                       const SizedBox(height: 4),
                       Text(_selectedUbication?.nameLocation ?? "Ubicación desconocida",
-                          style: const TextStyle(fontSize: 12)),
+                          style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onPrimary)),
                       const SizedBox(height: 4),
                       Text(
                           "Estado: ${_selectedUbication?.state ?? 'Desconocido'}",
