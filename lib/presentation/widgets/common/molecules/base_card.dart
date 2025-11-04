@@ -56,7 +56,7 @@ class BaseCard extends StatelessWidget {
                   children: [
                     Text(
                       title.length > 12
-                          ? '${title.substring(0, 12)}\n${title.substring(12)}'
+                          ? '${title.substring(0, 12)}\n${title.substring(1)}'
                           : title,
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
