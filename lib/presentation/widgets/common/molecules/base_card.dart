@@ -55,8 +55,8 @@ class BaseCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      title.length > 15 && isMobileOrTablet
-                          ? '${title.substring(0, 13)}\n${title.substring(13)}'
+                      title.length > 12
+                          ? '${title.substring(0, 12)}\n${title.substring(12)}'
                           : title,
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
