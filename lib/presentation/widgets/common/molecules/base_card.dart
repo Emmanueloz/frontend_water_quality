@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/core/enums/screen_size.dart';
-import 'package:frontend_water_quality/presentation/widgets/layout/responsive_screen_size.dart';
 
 class BaseCard extends StatelessWidget {
   final String title;
@@ -25,8 +23,6 @@ class BaseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final screenSize = ResponsiveScreenSize.getScreenSize(context);
-    final isMobileOrTablet = screenSize == ScreenSize.mobile || screenSize == ScreenSize.tablet;
 
     return Card(
       color: theme.colorScheme.shadow,

@@ -71,7 +71,6 @@ class WorkspaceCard extends StatelessWidget {
     final contentPadding = dims['contentPadding']!;
 
     final headerColor = cs.primary;
-    final headerTextColor = cs.onPrimary;
     final bodyTextColor = cs.onSurface;
     final iconColor = cs.tertiary;
 
