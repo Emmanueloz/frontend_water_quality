@@ -47,7 +47,7 @@ class _GridLoadingSkeletonState extends State<GridLoadingSkeleton>
       gap = 5;
       childAspectRatio = 1 / 0.6;
     } else if (widget.screenSize == ScreenSize.smallDesktop) {
-      crossAxisCount = 3;
+      crossAxisCount = 2;
       gap = 10;
       childAspectRatio = 1 / 0.6;
     } else {

@@ -27,7 +27,7 @@ class GridItemBuilder extends StatelessWidget {
       gap = 5;
       childAspectRatio = 1 / 0.6;
     } else if (screenSize == ScreenSize.smallDesktop) {
-      crossAxisCount = 3;
+      crossAxisCount = 2;
       gap = 10;
       childAspectRatio = 1 / 0.6;
     } else {
