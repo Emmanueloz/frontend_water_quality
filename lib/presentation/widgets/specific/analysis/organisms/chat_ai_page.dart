@@ -435,8 +435,8 @@ class _ChatAiPageState extends State<ChatAiPage> {
         child: Card(
           elevation: 0,
           color: isUser
-              ? theme.primaryColor.withValues(alpha: 25)
-              : theme.cardColor,
+              ? theme.colorScheme.primary
+              : theme.colorScheme.shadow,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -450,7 +450,7 @@ class _ChatAiPageState extends State<ChatAiPage> {
                     ? Text(
                         text,
                         style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.surface,
+                          color: theme.colorScheme.primaryContainer,
                         ),
                       )
                     : _isInTestEnvironment()

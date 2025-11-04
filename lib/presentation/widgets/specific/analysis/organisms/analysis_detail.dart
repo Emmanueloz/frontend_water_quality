@@ -127,7 +127,7 @@ class AnalysisDetail extends StatelessWidget {
         icon: Icon(
           Icons.auto_awesome,
           color: isChatAvailable 
-              ? theme.colorScheme.primary 
+              ? theme.colorScheme.onPrimary
               : theme.disabledColor,
         ),
       ),
