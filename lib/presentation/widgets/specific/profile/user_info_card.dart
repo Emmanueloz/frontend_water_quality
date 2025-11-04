@@ -74,7 +74,6 @@ class _UserInfoCardState extends State<UserInfoCard> {
       email: _emailController.text.trim(),
       phone: _phoneController.text.trim(),
     );
-    print(updatedUser.toJson());
 
     final provider = context.read<UserProvider>();
     final resultMessage = await provider.updateUser(updatedUser);
