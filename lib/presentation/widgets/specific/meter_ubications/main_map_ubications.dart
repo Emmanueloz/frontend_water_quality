@@ -63,6 +63,7 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final markers = _buildMarkers(context);
     final mapWidget = MainMap(
       mapController: _mapController,
@@ -97,7 +98,6 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
             child: const Icon(Icons.refresh),
           ),
         ),
-
         if (_selectedUbication != null && _markerScreenPosition != null)
           Positioned(
             left: _markerScreenPosition!.dx - 140,
@@ -111,11 +111,11 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
                   padding: const EdgeInsets.all(8),
                   constraints: const BoxConstraints(maxWidth: 220),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: theme.colorScheme.surface,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Colors.black.withValues(alpha: 0.2),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
@@ -129,8 +129,8 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
                         children: [
                           Expanded(
                             child: Text(_selectedUbication!.name,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 14)),
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                    color: theme.colorScheme.onPrimary)),
                           ),
                           IconButton(
                             icon: const Icon(Icons.close, size: 16),
@@ -139,13 +139,15 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
                         ],
                       ),
                       const SizedBox(height: 4),
-                      Text(_selectedUbication?.nameLocation ?? "Ubicación desconocida",
-                          style: const TextStyle(fontSize: 12)),
+                      Text(
+                          _selectedUbication?.nameLocation ??
+                              "Ubicación desconocida",
+                          style: theme.textTheme.bodyMedium
+                              ?.copyWith(color: theme.colorScheme.onPrimary)),
                       const SizedBox(height: 4),
                       Text(
                           "Estado: ${_selectedUbication?.state ?? 'Desconocido'}",
                           style: const TextStyle(fontSize: 12)),
-                          
                     ],
                   ),
                 ),
@@ -157,6 +159,7 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
   }
 
   List<Marker> _buildMarkers(BuildContext context) {
+    final theme = Theme.of(context);
     return widget.ubications.map((d) {
       return Marker(
         point: LatLng(d.latitude, d.longitude),
@@ -168,10 +171,9 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.colorScheme.primary,
                   borderRadius: BorderRadius.circular(4),
                   boxShadow: const [
                     BoxShadow(color: Colors.black26, blurRadius: 2)
@@ -180,17 +182,15 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
                 child: Text(
                   d.name,
                   style: TextStyle(
-                    fontSize: d.name.length > 12 ? 8 : 12,
-                    fontWeight: FontWeight.w400,
-                  ),
+                      fontSize: d.name.length > 12 ? 8 : 12,
+                      fontWeight: FontWeight.w400,
+                      color: theme.colorScheme.primaryContainer),
                 ),
               ),
               const SizedBox(height: 4),
-              Icon(
-                Icons.location_pin, 
-                color: _selectedUbication == d ? Colors.red : Colors.blue, 
-                size: 40
-              ),
+              Icon(Icons.location_pin,
+                  color: _selectedUbication == d ? Colors.red : Colors.blue,
+                  size: 40),
             ],
           ),
         ),

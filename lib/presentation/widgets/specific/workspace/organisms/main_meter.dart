@@ -210,7 +210,7 @@ class _MainMeterState extends State<MainMeter> {
         margin: _getMargin(),
         padding: _getPadding(),
         child: Align(
-          alignment: Alignment.topCenter,
+          alignment: Alignment.center,
           child: ResizableContainer(
             resizable: _resizable,
             width: ScreenSize.smallDesktop == widget.screenSize ||

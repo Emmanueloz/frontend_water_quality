@@ -143,6 +143,7 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return SingleChildScrollView(
       child: Form(
         key: formKey,
@@ -152,9 +153,10 @@ class _LoginFormState extends State<LoginForm> {
           spacing: 20,
           children: [
             Image.asset('assets/images/logotipo_aquaminds.png', height: 150),
-            Text('Bienvenido', style: Theme.of(context).textTheme.displayLarge),
-
-            // --- Campo email ---
+            Text(
+              'Bienvenido',
+              style: theme.textTheme.headlineMedium,
+            ),
             TextFormField(
               controller: emailController,
               decoration: const InputDecoration(
@@ -207,7 +209,9 @@ class _LoginFormState extends State<LoginForm> {
                       },
                 child: widget.isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Iniciar sesión'),
+                    : Text(
+                        'Iniciar sesión',
+                      ),
               ),
             ),
 
@@ -217,6 +221,8 @@ class _LoginFormState extends State<LoginForm> {
               label: const Text('Iniciar sesión con GitHub'),
               onPressed: widget.isLoading ? null : _loginWithGitHub,
               style: OutlinedButton.styleFrom(
+                backgroundColor: theme.colorScheme.surface,
+                // foregroundColor: Colors.black,
                 padding:
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
               ),

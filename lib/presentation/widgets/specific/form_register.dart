@@ -146,14 +146,6 @@ class _RegisterFormState extends State<RegisterForm> {
               },
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xff145c57),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 50, vertical: 18),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
               onPressed: widget.isLoading
                   ? null
                   : () async {

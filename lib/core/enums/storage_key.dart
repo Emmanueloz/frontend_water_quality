@@ -4,4 +4,5 @@ enum StorageKey {
   meterId,
   user,
   lastRecords,
+  themeMode,
 }

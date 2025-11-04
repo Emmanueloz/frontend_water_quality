@@ -110,11 +110,8 @@ class RecordResponse {
   factory RecordResponse.fromString(String recordString) {
     try {
       dynamic recordJson = jsonDecode(recordString);
-      print("record json");
-      print(recordJson);
       return RecordResponse.fromJson(recordJson);
     } catch (e) {
-      print(e);
       return RecordResponse.empty;
     }
   }

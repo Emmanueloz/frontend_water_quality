@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/infrastructure/connectivity_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/atoms/theme_toggle_button.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/molecules/button_profile.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
@@ -40,7 +41,7 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
           actions = [
             ...actions,
             TextButton(
-              child: const Text("Espacios de trabajo"),
+              child: Text("Espacios de trabajo", style: theme.textTheme.bodyMedium,),
               onPressed: () {
                 if (isOffline) {
                   return;
@@ -49,7 +50,7 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
               },
             ),
             IconButton(
-              icon: const Icon(Icons.notifications_outlined),
+              icon:  Icon(Icons.notifications_outlined,),
               style: styleButton,
               onPressed: () {
                 if (isOffline) {
@@ -67,6 +68,15 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
                 }
                 context.goNamed(Routes.profile.name);
               },
+            ),
+            // ThemeToggleIconButton(),
+            // ThemeToggleSwitch(),
+            SizedBox(
+              width: 7
+            ),
+            ThemeToggleButton(),
+            SizedBox(
+              width: 5,
             ),
             IconButton(
               onPressed: () {
@@ -99,6 +109,10 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
               onPressed: () {
                 context.goNamed(Routes.register.name);
               },
+            ),
+            ThemeToggleButton(),
+            SizedBox(
+              width: 10,
             )
           ];
         }

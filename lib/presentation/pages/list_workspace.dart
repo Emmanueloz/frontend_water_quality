@@ -261,6 +261,7 @@ class _ListWorkspaceState extends State<ListWorkspace>
                     },
                   );
                 },
+                screenSize: screenSize,
               );
             },
           );
@@ -289,6 +290,7 @@ class _ListWorkspaceState extends State<ListWorkspace>
                     },
                   );
                 },
+                screenSize: screenSize,
               );
             },
           );
@@ -316,6 +318,7 @@ class _ListWorkspaceState extends State<ListWorkspace>
                   },
                 );
               },
+              screenSize: screenSize,
             );
           },
         );

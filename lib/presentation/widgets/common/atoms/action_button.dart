@@ -30,7 +30,7 @@ class ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final Color primary = theme.colorScheme.secondary;
+    final Color primary = theme.colorScheme.primary;
     final Color onPrimary = theme.colorScheme.onSecondary;
 
     // Colores por defecto según estilo
@@ -45,7 +45,7 @@ class ActionButton extends StatelessWidget {
         button = OutlinedButton(
           onPressed: onPressed,
           style: OutlinedButton.styleFrom(
-            side: BorderSide(color: primary),
+            side: BorderSide(color: theme.colorScheme.tertiary, width: 1),
             backgroundColor: bg,
             foregroundColor: fg,
             shape: RoundedRectangleBorder(
@@ -56,7 +56,7 @@ class ActionButton extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          child: Text(label),
+          child: Text(label, style: TextStyle(color: theme.colorScheme.onPrimary),),
         );
         break;
 

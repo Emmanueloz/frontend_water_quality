@@ -153,12 +153,12 @@ class _ProfileAvatar extends StatelessWidget {
       width: ProfileConstants.avatarSize,
       height: ProfileConstants.avatarSize,
       decoration: BoxDecoration(
-        color: colorScheme.secondary,
+        color: colorScheme.tertiary,
         shape: BoxShape.circle,
       ),
       child: Icon(
         Icons.person,
-        color: colorScheme.primary,
+        color: colorScheme.secondary,
         size: 30,
       ),
     );

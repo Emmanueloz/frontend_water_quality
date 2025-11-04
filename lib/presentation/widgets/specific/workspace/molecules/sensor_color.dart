@@ -13,7 +13,9 @@ class SensorColor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Card(
+      color: theme.colorScheme.shadow,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         spacing: 5,
