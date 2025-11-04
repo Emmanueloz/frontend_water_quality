@@ -126,7 +126,8 @@ flutter_launcher_icons:
     image_path: "assets/images/logo_aquaminds.png"
 
 flutter_native_splash:
-  color: "#ffffff"  # Background color of the splash screen
+  color: "#e4f3f1"  # Background color of the splash screen
+  color_dark: "#000f17"  # Background color for dark mode
   image: assets/images/logo_aquaminds.png  # Path to your logo or splash image
   image_web: assets/images/logotipo_aquaminds.png  # Path to your logo or splash image for web
   android: true  # Enable splash screen for Android
@@ -139,4 +140,5 @@ flutter_native_splash:
   # Optional advanced configuration
   android_12:
     image: assets/images/logo_aquaminds.png
-    icon_background_color: "#ffffff"
+    icon_background_color: "#e4f3f1"
+    icon_background_color_dark: "#000f17"

@@ -66,53 +66,68 @@ class _RadialGaugeMeterState extends State<RadialGaugeMeter> {
               duration: const Duration(milliseconds: 800),
               curve: Curves.easeOutCubic,
               builder: (context, animatedValue, _) {
-                return GxRadialGauge(
-                  startAngleInDegree: 140,
-                  sweepAngleInDegree: 260,
-                  value: GaugeValue(
-                    value: animatedValue,
-                    min: widget.min,
-                    max: widget.max,
-                  ),
-                  size: widget.size,
-                  interval: widget.interval,
-                  showNeedle: true,
-                  showLabels: true,
-                  showMajorTicks: true,
-                  labelTickStyle: RadialTickLabelStyle(
-                    style: TextStyle(
-                      // fontSize: 12,
-                      color: Theme.of(context).colorScheme.onSurface,
+                return Stack(
+                  fit: StackFit.expand,
+                  alignment: Alignment.center,
+                  children: [
+                    GxRadialGauge(
+                      showValueAtCenter: false,
+                      startAngleInDegree: 140,
+                      sweepAngleInDegree: 260,
+                      value: GaugeValue(
+                        value: animatedValue,
+                        min: widget.min,
+                        max: widget.max,
+                      ),
+                      size: widget.size,
+                      interval: widget.interval,
+                      showNeedle: true,
+                      showLabels: true,
+                      showMajorTicks: true,
+                      labelTickStyle: RadialTickLabelStyle(
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                        position: RadialElementPosition.inside,
+                        padding: 10,
+                      ),
+                      majorTickStyle: RadialTickStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        position: RadialElementPosition.inside,
+                        length: 8,
+                        thickness: 1,
+                      ),
+                      style: RadialGaugeStyle(
+                        thickness: 12,
+                        backgroundColor:
+                            Theme.of(context).colorScheme.onSurface.withValues(
+                                  alpha: 30,
+                                ),
+                        gradient: LinearGradient(
+                          colors: colors,
+                        ),
+                      ),
+                      pointers: [
+                        RadialPointer(
+                          value: animatedValue,
+                          shape: RadialPointerShape.circle,
+                          showNeedle: false,
+                          style: RadialPointerStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            paintingStyle: PaintingStyle.fill,
+                            size: 12,
+                            thickness: 2,
+                          ),
+                        ),
+                      ],
                     ),
-                    position: RadialElementPosition.inside,
-                    padding: 10,
-                  ),
-                  
-                  majorTickStyle: RadialTickStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    position: RadialElementPosition.inside,
-                    length: 8,
-                    thickness: 1,
-                  ),
-                  style: RadialGaugeStyle(
-                    thickness: 12,
-                    backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(
-                      alpha: 30,
-                    ),
-                    gradient: LinearGradient(
-                      colors: colors,
-                    ),
-                  ),
-                  pointers: [
-                    RadialPointer(
-                      value: animatedValue,
-                      shape: RadialPointerShape.circle,
-                      showNeedle: false,
-                      style: RadialPointerStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        paintingStyle: PaintingStyle.fill,
-                        size: 12,
-                        thickness: 2,
+                    Center(
+                      child: Text(
+                        valueValid.toStringAsFixed(1),
+                        style: Theme.of(context)
+                            .textTheme
+                            .displayLarge
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],

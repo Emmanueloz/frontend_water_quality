@@ -27,6 +27,7 @@ class AppTheme {
         onTertiary: _darkTextColor,
         surface: const Color(0xFF001b26), // fondo cards/áreas
         onSurface: _darkTextColor,
+        onInverseSurface: const Color.fromARGB(255, 2, 24, 32),
         primaryContainer: const Color.fromARGB(255, 239, 247, 246),
         surfaceContainer: const Color.fromARGB(69, 0, 27, 38),
         shadow: Color(0xFFF4F8F9).withAlpha(38),
@@ -135,7 +136,7 @@ class AppTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         elevation: 0,
-        backgroundColor: colorScheme.tertiary,
+        backgroundColor: colorScheme.primary,
         indicatorColor: colorScheme.primary.withValues(alpha: 0.4),
         iconTheme: WidgetStatePropertyAll(
           IconThemeData(
@@ -241,6 +242,7 @@ class AppTheme {
       // AppBar
       appBarTheme: AppBarTheme(
         backgroundColor: darkColorScheme.secondary,
+        actionsPadding: const EdgeInsets.all(4),
         elevation: 0,
         titleTextStyle: darkTextTheme.displaySmall
             ?.copyWith(color: darkColorScheme.onPrimary),
@@ -314,8 +316,8 @@ class AppTheme {
       // Navigation Bar
       navigationBarTheme: NavigationBarThemeData(
         elevation: 0,
-        backgroundColor: darkColorScheme.primary,
-        indicatorColor: darkColorScheme.tertiary.withValues(alpha: 0.2),
+        backgroundColor: darkColorScheme.onInverseSurface,
+        indicatorColor: darkColorScheme.tertiary,
         iconTheme: WidgetStatePropertyAll(
           IconThemeData(color: darkColorScheme.onSurface),
         ),
@@ -325,7 +327,7 @@ class AppTheme {
       ),
       // Navigation Rail
       navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: const Color.fromARGB(255, 2, 24, 32),
+        backgroundColor: darkColorScheme.onInverseSurface,
         selectedIconTheme: IconThemeData(color: darkColorScheme.tertiary),
         unselectedIconTheme: IconThemeData(
             color: darkColorScheme.onSurface.withValues(alpha: 0.6)),

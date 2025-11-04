@@ -41,7 +41,10 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
           actions = [
             ...actions,
             TextButton(
-              child: Text("Espacios de trabajo", style: theme.textTheme.bodyMedium,),
+              child: Text(
+                "Espacios de trabajo",
+                style: theme.textTheme.bodyMedium,
+              ),
               onPressed: () {
                 if (isOffline) {
                   return;
@@ -50,7 +53,9 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
               },
             ),
             IconButton(
-              icon:  Icon(Icons.notifications_outlined,),
+              icon: Icon(
+                Icons.notifications_outlined,
+              ),
               style: styleButton,
               onPressed: () {
                 if (isOffline) {
@@ -59,6 +64,7 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
                 context.goNamed(Routes.listNotifications.name);
               },
             ),
+            SizedBox(width: 7),
             ButtonProfile(
               username: authProvider.user?.username ?? "",
               email: authProvider.user?.email ?? "",
@@ -69,11 +75,7 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
                 context.goNamed(Routes.profile.name);
               },
             ),
-            // ThemeToggleIconButton(),
-            // ThemeToggleSwitch(),
-            SizedBox(
-              width: 7
-            ),
+            SizedBox(width: 7),
             ThemeToggleButton(),
             SizedBox(
               width: 5,
