@@ -43,7 +43,7 @@ class _GridLoadingSkeletonState extends State<GridLoadingSkeleton>
       childAspectRatio = 1 / 0.4;
       gap = 5;
     } else if (widget.screenSize == ScreenSize.tablet) {
-      crossAxisCount = 2;
+      crossAxisCount = 1;
       gap = 5;
       childAspectRatio = 1 / 0.6;
     } else if (widget.screenSize == ScreenSize.smallDesktop) {
