@@ -10,8 +10,27 @@ import 'package:frontend_water_quality/presentation/widgets/specific/profile/use
 import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/core/interface/result.dart';
 
-class Profile extends StatelessWidget {
-  const Profile({Key? key}) : super(key: key);
+class Profile extends StatefulWidget {
+  const Profile({super.key});
+
+  @override
+  State<Profile> createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile>  {
+  late Future<Result<User>> _userFuture;
+
+  
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  void _loadUser() {
+    _userFuture = context.read<UserProvider>().getUser();
+  }
 
   Future<void> _handleSubmit(BuildContext context, User updatedUser) async {
     final provider = context.read<UserProvider>();
@@ -24,13 +43,12 @@ class Profile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = context.read<UserProvider>();
 
     return Layout(
       title: 'Perfil',
       builder: (context, screenSize) {
         return FutureBuilder<Result<User>>(
-          future: userProvider.getUser(),
+          future: _userFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -72,7 +90,10 @@ class Profile extends StatelessWidget {
     if (screenSize != ScreenSize.mobile && screenSize != ScreenSize.tablet) {
       return Align(alignment: Alignment.topCenter, child: content);
     }
-    return SingleChildScrollView(child: content);
+    return SingleChildScrollView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+      child: content,
+    );
   }
 }
 

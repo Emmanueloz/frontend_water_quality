@@ -9,7 +9,7 @@ class ProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -17,12 +17,14 @@ class ProfileHeader extends StatelessWidget {
         children: [
           Text(
             user.username ?? 'Usuario',
-            style: theme.textTheme.displaySmall?.copyWith(
-              color: theme.colorScheme.surface, // Texto blanco sobre fondo oscuro
-            ),
+            style: theme.textTheme.displaySmall,
           ),
           const SizedBox(height: 8),
-          Chip(label: Text( user.rol?.name ?? 'Sin rol', style: TextStyle(fontSize: 14),)),
+          Chip(
+              label: Text(
+            user.rol?.name ?? 'Sin rol',
+            style: TextStyle(fontSize: 14),
+          )),
         ],
       ),
     );

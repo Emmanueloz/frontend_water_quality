@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/domain/models/user.dart';
 import 'package:frontend_water_quality/presentation/providers/user_provider.dart';
-import 'package:frontend_water_quality/presentation/widgets/common/atoms/action_button.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/profile/profile_info_field.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +18,7 @@ class UserInfoCard extends StatefulWidget {
   State<UserInfoCard> createState() => _UserInfoCardState();
 }
 
-class _UserInfoCardState extends State<UserInfoCard> {
+class _UserInfoCardState extends State<UserInfoCard> with AutomaticKeepAliveClientMixin {
   final _formKey = GlobalKey<FormState>();
   final _passwordFormKey = GlobalKey<FormState>();
 
@@ -34,6 +33,9 @@ class _UserInfoCardState extends State<UserInfoCard> {
 
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -112,8 +114,10 @@ class _UserInfoCardState extends State<UserInfoCard> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
+      spacing: 10,
       children: [
         Form(
           key: _formKey,
@@ -121,59 +125,55 @@ class _UserInfoCardState extends State<UserInfoCard> {
             width: widget.width,
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
             child: Column(
+              spacing: 20,
               children: [
                 ProfileInfoField(
                   label: 'Nombre de usuario',
                   controller: _usernameController,
                   fieldType: FieldType.name,
                 ),
-                const SizedBox(height: 20),
                 ProfileInfoField(
                   label: 'Correo electrónico',
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   fieldType: FieldType.email,
                 ),
-                const SizedBox(height: 20),
                 ProfileInfoField(
                   label: 'Teléfono',
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
                   fieldType: FieldType.phone,
                 ),
-                const SizedBox(height: 20),
                 Row(
+                  spacing: 10,
                   children: [
                     Expanded(
-                      child: ActionButton(
+                      child: OutlinedButton(
                         onPressed: _handleResetUser,
-                        label: 'Resetear',
-                        style: ActionButtonStyle.outlined,
+                        child: const Text('Resetear'),
                       ),
                     ),
-                    const SizedBox(width: 10),
                     Expanded(
-                      child: ActionButton(
+                      child: ElevatedButton(
                         onPressed: () async => await _handleSaveUser(),
-                        label: _isLoadingUser ? 'Guardando...' : 'Guardar',
-                        style: ActionButtonStyle.filled,
+                        child: Text(
+                          _isLoadingUser ? 'Guardando...' : 'Actualizar',
+                        ),
                       ),
-                    ),
+                    )
                   ],
                 ),
               ],
             ),
           ),
         ),
-
-        const SizedBox(height: 5),
-
         Form(
           key: _passwordFormKey,
           child: Container(
             width: widget.width,
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
             child: Column(
+              spacing: 20,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -183,70 +183,51 @@ class _UserInfoCardState extends State<UserInfoCard> {
                       .titleMedium
                       ?.copyWith(fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        children: [
-                          ProfileInfoField(
-                            label: 'Nueva contraseña',
-                            controller: _passwordController,
-                            obscureText: _obscurePassword,
-                            keyboardType: TextInputType.visiblePassword,
-                            fieldType: FieldType.password,
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscurePassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                              ),
-                              onPressed: () {
-                                setState(
-                                    () => _obscurePassword = !_obscurePassword);
-                              },
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          ProfileInfoField(
-                            label: 'Confirmar contraseña',
-                            controller: _confirmPasswordController,
-                            obscureText: _obscureConfirmPassword,
-                            keyboardType: TextInputType.visiblePassword,
-                            fieldType: FieldType.confirmPassword,
-                            passwordController:
-                                _passwordController,
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscureConfirmPassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                              ),
-                              onPressed: () {
-                                setState(() => _obscureConfirmPassword =
-                                    !_obscureConfirmPassword);
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
+                ProfileInfoField(
+                  label: 'Nueva contraseña',
+                  controller: _passwordController,
+                  obscureText: _obscurePassword,
+                  keyboardType: TextInputType.visiblePassword,
+                  fieldType: FieldType.password,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
                     ),
-                    const SizedBox(width: 10),
-                    SizedBox(
-                      height: 35, 
-                      child: ActionButton(
-                        onPressed: () async {
-                          await _handleUpdatePassword();
-                        },
-                        label: _isLoadingPassword
-                            ? 'Actualizando...'
-                            : 'Actualizar',
-                        style: ActionButtonStyle.filled,
-                        width: widget.width == double.infinity ? 100 : 200,
-                        padding: const EdgeInsets.symmetric(vertical: 5),
-                      ),
+                    onPressed: () {
+                      setState(() => _obscurePassword = !_obscurePassword);
+                    },
+                  ),
+                ),
+                ProfileInfoField(
+                  label: 'Confirmar contraseña',
+                  controller: _confirmPasswordController,
+                  obscureText: _obscureConfirmPassword,
+                  keyboardType: TextInputType.visiblePassword,
+                  fieldType: FieldType.confirmPassword,
+                  passwordController: _passwordController,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscureConfirmPassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
                     ),
-                  ],
+                    onPressed: () {
+                      setState(() =>
+                          _obscureConfirmPassword = !_obscureConfirmPassword);
+                    },
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      await _handleUpdatePassword();
+                    },
+                    child: Text(
+                        _isLoadingPassword ? 'Actualizando...' : 'Actualizar'),
+                  ),
                 ),
               ],
             ),

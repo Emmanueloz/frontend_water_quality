@@ -45,6 +45,7 @@ class _InitialMeterSetupState extends State<InitialMeterSetup>
   double _ph6Value = 0.0;
 
   late TabController _tabController;
+  bool _obscurePassword = true;
 
   @override
   void initState() {
@@ -100,8 +101,7 @@ class _InitialMeterSetupState extends State<InitialMeterSetup>
           Row(
             spacing: 8,
             children: [
-              Icon(Icons.bluetooth_connected,
-                  color: theme.colorScheme.secondary),
+              Icon(Icons.bluetooth_connected, color: theme.colorScheme.primary),
               Text(
                 widget.nameDevice,
                 style: theme.textTheme.titleMedium?.copyWith(
@@ -172,9 +172,19 @@ class _InitialMeterSetupState extends State<InitialMeterSetup>
             ),
             TextFormField(
               controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(
+              obscureText: _obscurePassword,
+              decoration: InputDecoration(
                 labelText: 'Contraseña',
+                suffixIcon: IconButton(
+                  icon: Icon(_obscurePassword
+                      ? Icons.visibility_off
+                      : Icons.visibility),
+                  onPressed: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
+                ),
               ),
               validator: (value) {
                 if (value!.isEmpty) {
@@ -231,7 +241,7 @@ class _InitialMeterSetupState extends State<InitialMeterSetup>
           TabBar(
             controller: _tabController,
             indicatorColor: theme.colorScheme.primary,
-            labelColor: theme.colorScheme.secondary,
+            labelColor: theme.colorScheme.onSurface,
             unselectedLabelColor: Colors.grey,
             tabs: const [
               Tab(text: 'Ajuste manual'),
