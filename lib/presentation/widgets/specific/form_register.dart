@@ -31,6 +31,8 @@ class _RegisterFormState extends State<RegisterForm> {
   final confirmPasswordController = TextEditingController();
 
   MobileNumber? number;
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   @override
   void dispose() {
@@ -120,8 +122,18 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
             TextFormField(
               controller: passwordController,
-              obscureText: true,
-              decoration: inputDecoration('Contraseña', Icons.lock_outline),
+              obscureText: _obscurePassword,
+              decoration:
+                  inputDecoration('Contraseña', Icons.lock_outline).copyWith(
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                  ),
+                  onPressed: () {
+                    setState(() => _obscurePassword = !_obscurePassword);
+                  },
+                ),
+              ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Porfavor ingresa una contraseña';
@@ -133,9 +145,22 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
             TextFormField(
               controller: confirmPasswordController,
-              obscureText: true,
+              obscureText: _obscureConfirmPassword,
               decoration: inputDecoration(
-                  'Confirmar contraseña', Icons.lock_reset_outlined),
+                      'Confirmar contraseña', Icons.lock_reset_outlined)
+                  .copyWith(
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscureConfirmPassword
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                  ),
+                  onPressed: () {
+                    setState(() =>
+                        _obscureConfirmPassword = !_obscureConfirmPassword);
+                  },
+                ),
+              ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Porfavor confirma tu contraseña';
