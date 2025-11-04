@@ -86,7 +86,7 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
           child: Container(
             width: 300,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.shadow,
               borderRadius: BorderRadius.circular(12),
             ),
             padding: const EdgeInsets.all(16),
@@ -147,6 +147,7 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
                 onPressed: widget.onClear,
                 icon: const Icon(Icons.clear_all),
                 tooltip: 'Quitar filtros',
+                color: Theme.of(context).colorScheme.onPrimary,
               ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -285,10 +286,11 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
   ) {
     return IconButton(
       onPressed: onPressed,
+      color: Colors.transparent,
       icon: Icon(
         icon,
         size: 30,
-        color: Theme.of(context).colorScheme.tertiary,
+        color: Theme.of(context).colorScheme.onPrimary,
       ),
     );
   }
