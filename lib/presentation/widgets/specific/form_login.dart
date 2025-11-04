@@ -28,6 +28,7 @@ class _LoginFormState extends State<LoginForm> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   bool _isLaunchingOAuth = false;
+  bool _obscurePassword = true;
 
   final String backendBaseUrl = "https://api.aqua-minds.org";
   static const MethodChannel _deeplinkChannel =
@@ -177,10 +178,17 @@ class _LoginFormState extends State<LoginForm> {
             // --- Campo contraseña ---
             TextFormField(
               controller: passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(
+              obscureText: _obscurePassword,
+              decoration: InputDecoration(
                 labelText: 'Contraseña',
-                suffixIcon: Icon(Icons.visibility_outlined),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                  ),
+                  onPressed: () {
+                    setState(() => _obscurePassword = !_obscurePassword);
+                  },
+                ),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
