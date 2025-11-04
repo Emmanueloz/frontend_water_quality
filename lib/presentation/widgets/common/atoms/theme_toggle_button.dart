@@ -11,7 +11,7 @@ class ThemeToggleButton extends StatefulWidget {
 
   const ThemeToggleButton({
     super.key,
-    this.size = 48.0,
+    this.size = 35.0,
     this.animationDuration = const Duration(milliseconds: 400),
     this.showTooltip = true,
   });
@@ -118,7 +118,7 @@ class _ThemeToggleButtonState extends State<ThemeToggleButton>
                         ]
                       : [
                           theme.colorScheme.tertiary,
-                          theme.colorScheme.surface,
+                          theme.colorScheme.primary,
                         ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
