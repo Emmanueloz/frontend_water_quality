@@ -564,13 +564,18 @@ class AppRouter {
         path: Routes.notificationDetails.path,
         name: Routes.notificationDetails.name,
         builder: (context, state) {
-          final id = state.pathParameters['id'] ?? 'default';
+          final notificationId = state.pathParameters['id'];
+          
+          if (notificationId == null || notificationId.isEmpty) {
+            // Si no hay ID, redirigir a la lista
+            Future.microtask(() => context.goNamed(Routes.listNotifications.name));
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+          
           return NotificationDetailPage(
-            title: 'Notification Details $id',
-            date: DateTime.now(),
-            description: "Nueva notificacion",
-            qualityLevel: "buena",
-            id: id,
+            notificationId: notificationId,
           );
         },
       ),
