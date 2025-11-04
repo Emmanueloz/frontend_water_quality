@@ -565,15 +565,16 @@ class AppRouter {
         name: Routes.notificationDetails.name,
         builder: (context, state) {
           final notificationId = state.pathParameters['id'];
-          
+
           if (notificationId == null || notificationId.isEmpty) {
             // Si no hay ID, redirigir a la lista
-            Future.microtask(() => context.goNamed(Routes.listNotifications.name));
+            Future.microtask(
+                () => context.goNamed(Routes.listNotifications.name));
             return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
             );
           }
-          
+
           return NotificationDetailPage(
             notificationId: notificationId,
           );
@@ -593,7 +594,7 @@ class AppRouter {
         path: Routes.changePassword.path,
         name: Routes.changePassword.name,
         builder: (context, state) {
-          final token = state.uri.queryParameters['token'];
+          final token = state.uri.queryParameters['temporaryToken'];
 
           return ChangePasswordPage(
             token: token,
