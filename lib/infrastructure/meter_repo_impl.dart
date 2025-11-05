@@ -25,6 +25,10 @@ class MeterRepoImpl implements MeterRepo {
         return Result.success(BaseResponse.fromJson(response.data));
       }
 
+      if (response.statusCode == 403) {
+        return Result.failure('Error: No tiene permisos para crear el medidor');
+      }
+
       return Result.failure('Error: codigo ${response.statusCode}');
     } catch (e) {
       return Result.failure(e.toString());

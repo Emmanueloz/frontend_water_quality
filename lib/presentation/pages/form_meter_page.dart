@@ -27,6 +27,7 @@ class FormMeterPage extends StatefulWidget {
 class _FormMeterPageState extends State<FormMeterPage> {
   late Future<Result<Meter>>? _meterFuture;
   bool _isLoading = false;
+  String? errorMessage;
 
   @override
   void initState() {
@@ -45,15 +46,14 @@ class _FormMeterPageState extends State<FormMeterPage> {
     setState(() => _isLoading = true);
 
     final provider = context.read<MeterProvider>();
-    String? error;
 
     if (widget.idMeter != null) {
-      error = await provider.updateMeter(widget.idWorkspace, meter);
-      print("Error updating meter: $error");
+      errorMessage = await provider.updateMeter(widget.idWorkspace, meter);
+      print("Error updating meter: $errorMessage");
     } else {
-      error = await provider.createMeter(widget.idWorkspace, meter);
-      print("Error creating meter: $error");
-      if (error == null && context.mounted && widget.idMeter == null) {
+      errorMessage = await provider.createMeter(widget.idWorkspace, meter);
+      print("Error creating meter: $errorMessage");
+      if (errorMessage == null && context.mounted && widget.idMeter == null) {
         context.pop();
       }
     }
@@ -144,7 +144,7 @@ class _FormMeterPageState extends State<FormMeterPage> {
               title: title,
               idWorkspace: widget.idWorkspace,
               isLoading: _isLoading,
-              errorMessage: "",
+              errorMessage: errorMessage ?? "",
               onSave: (meter) => _handleSubmit(context, meter),
             ),
     );
