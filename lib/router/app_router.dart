@@ -3,6 +3,8 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/storage_key.dart';
 import 'package:frontend_water_quality/infrastructure/local_storage_service.dart';
@@ -40,10 +42,9 @@ import 'package:frontend_water_quality/domain/models/user.dart';
 import 'package:frontend_water_quality/core/enums/roles.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_meters.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout_workspace.dart';
+import 'package:frontend_water_quality/presentation/widgets/layout/workspace_context.dart';
 import 'package:frontend_water_quality/presentation/pages/weather_page.dart';
 import 'package:frontend_water_quality/router/routes.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/presentation/pages/form_invite_guest.dart';
 import 'package:frontend_water_quality/presentation/providers/guest_provider.dart';
 import 'package:frontend_water_quality/domain/models/guests.dart';
@@ -156,11 +157,8 @@ class AppRouter {
       Routes.authCallback.path,
     ];
 
-    print(state.uri.path);
-    print(authProvider.isAuthenticated);
 
-    final isOnPublicRoute = publicRoutes.contains(state.uri.path);
-    print(isOnPublicRoute);
+    final isOnPublicRoute = publicRoutes.contains(state.uri.path); 
 
     authProvider.cleanError();
 
@@ -242,7 +240,10 @@ class AppRouter {
               return LayoutWorkspace(
                 title: 'Espacio de trabajo $id',
                 id: id,
-                builder: (context, screenSize) => child,
+                builder: (context, screenSize, workspace) => WorkspaceContext(
+                  workspace: workspace,
+                  child: child,
+                ),
               );
             },
             routes: [

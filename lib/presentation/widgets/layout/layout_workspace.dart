@@ -16,7 +16,7 @@ import 'package:frontend_water_quality/router/routes.dart';
 class LayoutWorkspace extends StatefulWidget {
   final String title;
   final String id;
-  final Widget Function(BuildContext context, ScreenSize screenSize) builder;
+  final Widget Function(BuildContext context, ScreenSize screenSize, Workspace? workspace) builder;
 
   const LayoutWorkspace({
     super.key,
@@ -160,7 +160,7 @@ class _LayoutWorkspaceState extends State<LayoutWorkspace> {
           onDestinationSelected: (index) =>
               _onDestinationSelected(index, workspace?.role),
           destinations: destinations,
-          builder: widget.builder,
+          builder: (context, screenSize) => widget.builder(context, screenSize, workspace),
         );
       },
     );
