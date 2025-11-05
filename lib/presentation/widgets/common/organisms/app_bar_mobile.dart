@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/atoms/theme_toggle_button.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +27,8 @@ class AppBarMobile extends StatelessWidget implements PreferredSizeWidget {
             context.goNamed(Routes.login.name);
           },
         ),
+        SizedBox(width: 7),
+        ThemeToggleButton(),
       ];
     }
 
