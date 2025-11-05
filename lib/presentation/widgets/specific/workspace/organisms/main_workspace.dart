@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
+import 'package:frontend_water_quality/core/enums/work_roles.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/organisms/grid_item_builder.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/organisms/grid_loading_skeleton.dart';
@@ -14,6 +15,7 @@ class MainWorkspace extends StatelessWidget {
   final String? errorMessage;
   final int itemCount;
   final void Function()? onRefresh;
+  final WorkRole? role;
 
   final Widget Function(BuildContext, int) itemBuilder;
 
@@ -26,11 +28,18 @@ class MainWorkspace extends StatelessWidget {
     this.itemCount = 0,
     required this.itemBuilder,
     this.onRefresh,
+    this.role,
   });
 
   @override
   Widget build(BuildContext context) {
     return _buildMain(context);
+  }
+
+  /// Determines if the add meter button should be shown based on user role
+  bool _shouldShowAddButton() {
+    //print(role);
+    return role != WorkRole.visitor && role != WorkRole.unknown;
   }
 
   Widget _buildMain(BuildContext context) {
@@ -61,16 +70,17 @@ class MainWorkspace extends StatelessWidget {
                 onPressed: onRefresh,
                 icon: Icon(Icons.refresh),
               ),
-              ElevatedButton.icon(
-                onPressed: () {
-                  context.goNamed(
-                    Routes.createMeter.name,
-                    pathParameters: {"id": id},
-                  );
-                },
-                icon: const Icon(Icons.add),
-                label: const Text("Agregar"),
-              )
+              if (_shouldShowAddButton())
+                ElevatedButton.icon(
+                  onPressed: () {
+                    context.goNamed(
+                      Routes.createMeter.name,
+                      pathParameters: {"id": id},
+                    );
+                  },
+                  icon: const Icon(Icons.add),
+                  label: const Text("Agregar"),
+                )
             ],
             screenSize: screenSize,
           ),
