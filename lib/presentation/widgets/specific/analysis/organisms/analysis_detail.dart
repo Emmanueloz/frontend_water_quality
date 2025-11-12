@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/domain/models/analysis/base_analysis.dart';
+import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/molecules/base_card.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/organisms/pdf_viewer.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class AnalysisDetail extends StatelessWidget {
   final bool isExpanded;
@@ -13,7 +16,7 @@ class AnalysisDetail extends StatelessWidget {
   final Widget child;
   final bool isChatAvailable;
   final String chatUnavailableMessage;
-  
+
   const AnalysisDetail({
     super.key,
     required this.analysis,
@@ -33,6 +36,8 @@ class AnalysisDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     String typeSensor = "5";
     String? sensor = analysis!.parameters!.sensor;
+
+    final token = Provider.of<AuthProvider>(context, listen: false).token;
 
     final theme = Theme.of(context);
 
@@ -59,6 +64,7 @@ class AnalysisDetail extends StatelessWidget {
                 screenSize == ScreenSize.largeDesktop)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                spacing: 10,
                 children: [
                   IconButton(
                     onPressed: onExpanded,
@@ -73,18 +79,15 @@ class AnalysisDetail extends StatelessWidget {
                         ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   Spacer(),
-                  Row(
-                    spacing: 10,
-                    children: [
-                      _deleteButton(theme),
-                      _chatButton(theme),
-                    ],
-                  )
+                  _deleteButton(theme),
+                  _dowloadPDF(context, token ?? ""),
+                  _chatButton(theme),
                 ],
               ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   _cardInfo(context, "Estado", analysis!.status ?? ""),
                   _cardInfo(context, "Parametros", "$startDate $endDate"),
@@ -94,15 +97,37 @@ class AnalysisDetail extends StatelessWidget {
               ),
             ),
             if (screenSize == ScreenSize.mobile ||
-                screenSize == ScreenSize.tablet) ...[
-              Align(
-                alignment: Alignment.topRight,
-                child: _deleteButton(theme),
-              )
-            ],
+                screenSize == ScreenSize.tablet)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  _deleteButton(theme),
+                  _dowloadPDF(context, token ?? ""),
+                ],
+              ),
             child,
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _dowloadPDF(BuildContext context, String token) {
+    return IconButton(
+      onPressed: () {
+        showDialog(
+          context: context,
+          useSafeArea: true,
+          useRootNavigator: true,
+          builder: (context) => PdfViewer(
+            url:
+                "https://api.aqua-minds.org/analysis/${analysis!.id}/report/pdf",
+            token: token,
+          ),
+        );
+      },
+      icon: Icon(
+        Icons.picture_as_pdf,
       ),
     );
   }
@@ -126,7 +151,7 @@ class AnalysisDetail extends StatelessWidget {
         onPressed: isChatAvailable ? onOpenChat : null,
         icon: Icon(
           Icons.auto_awesome,
-          color: isChatAvailable 
+          color: isChatAvailable
               ? theme.colorScheme.onPrimary
               : theme.disabledColor,
         ),
