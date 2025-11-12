@@ -127,7 +127,7 @@ class AnalysisDetail extends StatelessWidget {
         );
       },
       icon: Icon(
-        Icons.download,
+        Icons.picture_as_pdf,
       ),
     );
   }
