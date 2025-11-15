@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:frontend_water_quality/core/enums/sensor_type.dart';
 
 /// Widget de Heatmap de Correlación personalizable
 class CorrelationHeatmap extends StatelessWidget {
@@ -7,7 +8,7 @@ class CorrelationHeatmap extends StatelessWidget {
   final List<List<double>> matrix;
 
   /// Etiquetas para las filas y columnas
-  final List<String> labels;
+  final List<SensorType> labels;
 
   /// Color principal del heatmap (se usará con opacidad según el valor)
   final Color primaryColor;
@@ -70,7 +71,7 @@ class CorrelationHeatmap extends StatelessWidget {
 /// Painter personalizado para dibujar el heatmap
 class HeatmapPainter extends CustomPainter {
   final List<List<double>> matrix;
-  final List<String> labels;
+  final List<SensorType> labels;
   final Color primaryColor;
   final bool showValues;
   final int decimals;
@@ -162,7 +163,7 @@ class HeatmapPainter extends CustomPainter {
 
       _drawRotatedText(
         canvas: canvas,
-        text: labels[i],
+        text: labels[i].nameSpanish,
         x: x,
         y: y,
         angle: -math.pi / 4, // -45 grados
@@ -177,7 +178,7 @@ class HeatmapPainter extends CustomPainter {
 
       _drawText(
         canvas: canvas,
-        text: labels[i],
+        text: labels[i].nameSpanish,
         x: x,
         y: y,
         fontSize: labelSize * 0.25,

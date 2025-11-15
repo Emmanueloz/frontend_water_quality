@@ -205,6 +205,7 @@ class AnalysisRepoImpl extends AnalysisRepo {
       if (response.statusCode != 200) {
         return Result.failure('Error: codigo ${response.statusCode}');
       }
+      
       final Map<String, dynamic> data =
           response.data['result'] as Map<String, dynamic>;
 

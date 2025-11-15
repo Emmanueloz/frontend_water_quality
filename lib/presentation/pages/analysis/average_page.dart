@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/constants/limit_chart_sensor.dart';
+import 'package:frontend_water_quality/core/enums/analysis_type.dart';
+import 'package:frontend_water_quality/core/enums/sensor_type.dart';
 import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average/average.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average/data_average_all.dart';
@@ -10,6 +12,7 @@ import 'package:frontend_water_quality/presentation/widgets/specific/analysis/mo
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_table.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/average_chart.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/chart_description.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/form_average_dialog.dart';
 import 'package:provider/provider.dart';
 
@@ -185,16 +188,21 @@ class _AveragePageState extends State<AveragePage> {
       );
     }
 
-    if (_current!.parameters!.sensor != null) {
-      return _ChartSensor(
-        dataAverage: _current!.data as DataAverageSensor,
-        sensor: _current!.parameters?.sensor ?? "",
-      );
-    } else {
-      return _AllChartSensor(
-        dataAverage: _current!.data as DataAverageAll,
-      );
-    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const ChartDescription(type: AnalysisType.average),
+        if (_current!.parameters!.sensor != null)
+          _ChartSensor(
+            dataAverage: _current!.data as DataAverageSensor,
+            sensor: _current!.parameters!.sensor!,
+          )
+        else
+          _AllChartSensor(
+            dataAverage: _current!.data as DataAverageAll,
+          ),
+      ],
+    );
   }
 }
 
@@ -208,14 +216,15 @@ class _AllChartSensor extends StatelessWidget {
       spacing: 10,
       runSpacing: 10,
       children: dataAverage.result!
+          .where((av) => av.sensor != null)
           .map(
             (av) => AverageChart(
                 width: 300,
                 average: av.average ?? 0,
                 min: av.min ?? 0,
                 max: av.max ?? 0,
-                maxY: LimitChartSensor.getMaxY(av.sensor ?? ""),
-                name: av.sensor ?? ""),
+                maxY: LimitChartSensor.getMaxY(av.sensor!),
+                name: av.sensor!),
           )
           .toList(),
     );
@@ -224,7 +233,7 @@ class _AllChartSensor extends StatelessWidget {
 
 class _ChartSensor extends StatelessWidget {
   final DataAverageSensor dataAverage;
-  final String sensor;
+  final SensorType sensor;
   const _ChartSensor({required this.dataAverage, required this.sensor});
 
   @override

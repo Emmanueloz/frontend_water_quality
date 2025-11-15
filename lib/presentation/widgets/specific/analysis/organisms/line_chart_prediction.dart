@@ -2,10 +2,11 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/constants/limit_chart_sensor.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
+import 'package:frontend_water_quality/core/enums/sensor_type.dart';
 import 'package:intl/intl.dart';
 
 class LineChartPrediction extends StatelessWidget {
-  final String sensor;
+  final SensorType sensor;
   final List<DateTime?> titles;
   final List<double?> dataValues;
   final List<double?> predValues;
@@ -40,7 +41,7 @@ class LineChartPrediction extends StatelessWidget {
               spacing: 20,
               children: [
                 Text(
-                  "${sensor.toUpperCase()} - Cantidad de valores $length",
+                  "${sensor.nameSpanish} - Cantidad de valores $length",
                   style: theme.textTheme.bodyLarge
                       ?.copyWith(fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
