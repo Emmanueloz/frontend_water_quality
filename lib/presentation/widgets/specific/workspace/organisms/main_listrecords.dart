@@ -7,6 +7,76 @@ import 'package:frontend_water_quality/presentation/widgets/common/molecules/dat
 import 'package:provider/provider.dart';
 import 'package:frontend_water_quality/presentation/providers/meter_record_provider.dart';
 
+/// Configuration class for sensor display properties
+class SensorConfig {
+  final String name;
+  final String unit;
+  final double minY;
+  final double maxY;
+  final double intervalY;
+  final double minThreshold;
+  final double maxThreshold;
+
+  const SensorConfig({
+    required this.name,
+    required this.unit,
+    required this.minY,
+    required this.maxY,
+    required this.intervalY,
+    required this.minThreshold,
+    required this.maxThreshold,
+  });
+}
+
+/// Sensor configuration constants with measurement units and thresholds
+const Map<String, SensorConfig> sensorConfigs = {
+  'temperature': SensorConfig(
+    name: 'Temperatura',
+    unit: '°C',
+    minY: 0,
+    maxY: 60,
+    intervalY: 10,
+    minThreshold: 10,
+    maxThreshold: 35,
+  ),
+  'ph': SensorConfig(
+    name: 'PH',
+    unit: 'pH',
+    minY: 0,
+    maxY: 14,
+    intervalY: 2,
+    minThreshold: 6.5,
+    maxThreshold: 8.5,
+  ),
+  'tds': SensorConfig(
+    name: 'Total de sólidos disueltos',
+    unit: 'ppm',
+    minY: 0,
+    maxY: 500,
+    intervalY: 50,
+    minThreshold: 300,
+    maxThreshold: 490,
+  ),
+  'conductivity': SensorConfig(
+    name: 'Conductividad',
+    unit: 'µS/cm',
+    minY: 0,
+    maxY: 3200,
+    intervalY: 300,
+    minThreshold: 0,
+    maxThreshold: 1000,
+  ),
+  'turbidity': SensorConfig(
+    name: 'Turbidez',
+    unit: 'NTU',
+    minY: 0,
+    maxY: 50,
+    intervalY: 5,
+    minThreshold: 0,
+    maxThreshold: 5,
+  ),
+};
+
 class MainListrecords extends StatefulWidget {
   final String id;
   final String idMeter;
@@ -152,13 +222,11 @@ class _MainListrecordsState extends State<MainListrecords> {
     }
 
     final List<Widget> linegraphs = [
-      _buildGraph(records.temperatureRecords, "Temperatura", 0, 60, 10, 10, 35),
-      _buildGraph(records.phRecords, "PH", 0, 14, 2, 6.5, 8.5),
-      _buildGraph(records.tdsRecords, "Total de sólidos disueltos", 0, 500, 50,
-          300, 490),
-      _buildGraph(
-          records.conductivityRecords, "Conductividad", 0, 3200, 300, 0, 1000),
-      _buildGraph(records.turbidityRecords, "Turbidez", 0, 50, 5, 0, 5),
+      _buildGraph(records.temperatureRecords, sensorConfigs['temperature']!),
+      _buildGraph(records.phRecords, sensorConfigs['ph']!),
+      _buildGraph(records.tdsRecords, sensorConfigs['tds']!),
+      _buildGraph(records.conductivityRecords, sensorConfigs['conductivity']!),
+      _buildGraph(records.turbidityRecords, sensorConfigs['turbidity']!),
     ];
 
     return BaseContainer(
@@ -210,8 +278,7 @@ class _MainListrecordsState extends State<MainListrecords> {
     );
   }
 
-  Widget _buildGraph(List<dynamic> records, String sensorType, double minY,
-      double maxY, double intervalY, double minThreshold, double maxThreshold) {
+  Widget _buildGraph(List<dynamic> records, SensorConfig config) {
     if (records.isEmpty) {
       return Card(
         child: Container(
@@ -221,7 +288,7 @@ class _MainListrecordsState extends State<MainListrecords> {
             children: [
               Icon(Icons.show_chart, size: 48, color: Colors.grey[400]),
               const SizedBox(height: 8),
-              Text(sensorType,
+              Text(config.name,
                   style: const TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 4),
               Text('Sin datos disponibles',
@@ -239,15 +306,16 @@ class _MainListrecordsState extends State<MainListrecords> {
         data.isNotEmpty ? double.parse(data.last.toStringAsFixed(1)) : 0.0;
 
     return LineGraph(
-      sensorType: sensorType,
+      sensorType: config.name,
       value: currentValue,
       dates: dates,
       data: data,
-      minY: minY,
-      maxY: maxY,
-      intervalY: intervalY,
-      minThreshold: minThreshold,
-      maxThreshold: maxThreshold,
+      minY: config.minY,
+      maxY: config.maxY,
+      intervalY: config.intervalY,
+      minThreshold: config.minThreshold,
+      maxThreshold: config.maxThreshold,
+      unit: config.unit,
     );
   }
 
