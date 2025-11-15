@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 class ButtonProfile extends StatelessWidget {
   final String username;
   final String email;
+  final String? role;
   final void Function()? onPressed;
 
   const ButtonProfile({
     super.key,
     required this.username,
     required this.email,
+    this.role,
     this.onPressed,
   });
 
@@ -38,6 +40,13 @@ class ButtonProfile extends StatelessWidget {
             email,
             style: theme.textTheme.bodySmall,
           ),
+          if (role != null && role!.isNotEmpty)
+            Text(
+              role!,
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontStyle: FontStyle.italic,
+              ),
+            ),
         ],
       ),
       onPressed: onPressed,
