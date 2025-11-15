@@ -19,13 +19,15 @@ class Routes {
     path: "/profile",
   );
 
-  static RouteProperties notificationDetails = RouteProperties(
-    name: "notificationDetails",
-    path: "/notification/:id",
-  );
   static RouteProperties listNotifications = RouteProperties(
     name: "listNotifications",
     path: "/notifications",
+  );
+  
+  static RouteProperties notificationDetails = RouteProperties(
+    name: "notificationDetails",
+    path: ":id",
+    pathRoot: "/notifications",
   );
 
   static RouteProperties recoveryPassword = RouteProperties(
