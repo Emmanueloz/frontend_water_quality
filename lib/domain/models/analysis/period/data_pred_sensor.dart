@@ -1,10 +1,11 @@
+import 'package:frontend_water_quality/core/enums/sensor_type.dart';
 import 'package:frontend_water_quality/domain/models/analysis/data.dart';
 import 'package:frontend_water_quality/domain/models/analysis/period/date_parser_mixin.dart';
 
 class DataPredSensor extends Data {
   TimeSeriesData? data;
   TimeSeriesData? pred;
-  String? sensor;
+  SensorType? sensor;
 
   DataPredSensor({
     this.data,
@@ -17,7 +18,9 @@ class DataPredSensor extends Data {
             json["data"] == null ? null : TimeSeriesData.fromJson(json["data"]),
         pred:
             json["pred"] == null ? null : TimeSeriesData.fromJson(json["pred"]),
-        sensor: json["sensor"],
+        sensor: json["sensor"] == null
+            ? null
+            : SensorTypeExtension.fromString(json["sensor"]),
       );
 }
 

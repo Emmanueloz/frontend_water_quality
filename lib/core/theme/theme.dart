@@ -113,9 +113,9 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         labelStyle: textTheme.bodyMedium,
-        iconColor: colorScheme.primary,
-        prefixIconColor: colorScheme.secondary,
-        suffixIconColor: colorScheme.secondary,
+        iconColor: colorScheme.tertiary,
+        prefixIconColor: colorScheme.tertiary,
+        suffixIconColor: colorScheme.onPrimary,
         floatingLabelBehavior: FloatingLabelBehavior.auto,
         border: OutlineInputBorder(
           borderRadius: const BorderRadius.all(Radius.circular(10)),
