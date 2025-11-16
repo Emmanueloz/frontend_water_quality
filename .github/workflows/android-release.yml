@@ -1,0 +1,55 @@
+name: Flutter CI/CD a Release (Android)
+
+# Este workflow se ejecuta cuando se crea una etiqueta (tag) en Git.
+# Las etiquetas son la mejor forma de marcar y disparar un nuevo Release.
+on:
+  push:
+    tags:
+      - 'v*.*.*' # Ejemplo: solo se dispara si la etiqueta comienza con 'v' (ej: v1.0.0)
+
+jobs:
+  build_android_release:
+    name: Construir APK y crear Release
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: ⬇️ Checkout del Código
+        uses: actions/checkout@v4
+        
+      - name: ☕ Configurar Java (para Android)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: 🐦 Configurar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.1' # Puedes cambiar la versión de Flutter aquí
+          channel: 'stable'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+
+      - name: 📥 Obtener Dependencias de Flutter
+        run: flutter pub get
+        
+      - name: ⚙️ Construir el APK de Lanzamiento
+        run: flutter build apk --release
+        
+      # --- Paso Clave: Creación del Release y Subida del APK ---
+      - name: 📤 Crear y Adjuntar APK al Release
+        uses: softprops/action-gh-release@v1
+        # El paso se ejecuta SÓLO si se disparó por una etiqueta (tag)
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          # El nombre de la etiqueta se usa como nombre del Release
+          name: Versión ${{ github.ref_name }}
+          # Especifica la ruta y el nombre del archivo APK.
+          # ¡Asegúrate de que este nombre (app-release.apk) sea el que usas en el enlace permanente!
+          files: |
+            build/app/outputs/flutter-apk/app-release.apk
+        env:
+          # Necesitas un token con permisos para crear Releases.
+          # ${{ secrets.GITHUB_TOKEN }} es el token predeterminado de GitHub y funciona.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
