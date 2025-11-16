@@ -257,6 +257,21 @@ class AuthProvider with ChangeNotifier {
     LocalStorageService.remove(StorageKey.meterId);
   }
 
+  void updateUserData(User updatedUser) {
+    user = updatedUser;
+    LocalStorageService.save(
+      StorageKey.user,
+      User(
+        email: updatedUser.email,
+        username: updatedUser.username,
+        rol: updatedUser.rol,
+        uid: updatedUser.uid,
+        phone: updatedUser.phone,
+      ).toJsonEncode(),
+    );
+    notifyListeners();
+  }
+
   void logout() {
     _cleanAuth();
     notifyListeners();

@@ -11,6 +11,7 @@ class LineGraph extends StatefulWidget {
   final double intervalY;
   final double? minThreshold;
   final double? maxThreshold;
+  final String? unit;
 
   const LineGraph({
     super.key,
@@ -23,6 +24,7 @@ class LineGraph extends StatefulWidget {
     required this.intervalY,
     this.minThreshold,
     this.maxThreshold,
+    this.unit,
   });
 
   @override
@@ -46,16 +48,45 @@ class _LineGraphState extends State<LineGraph> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Text(
-                '${widget.sensorType} - ${widget.value}',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      widget.sensorType,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+                
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '${widget.value.toStringAsFixed(1)}${widget.unit ?? ''}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    if (widget.minThreshold != null && widget.maxThreshold != null && widget.unit != null)
+                      Text(
+                        'Rango: ${widget.minThreshold} - ${widget.maxThreshold} ${widget.unit}',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                  ],
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             Expanded(
@@ -111,7 +142,7 @@ class _LineGraphState extends State<LineGraph> {
           sideTitles: SideTitles(
             showTitles: true,
             interval: widget.intervalY,
-            reservedSize: 35,
+            reservedSize: 45,
             getTitlesWidget: (value, meta) {
               return Text(value.toStringAsFixed(1), style: const TextStyle(fontSize: 12));
             },

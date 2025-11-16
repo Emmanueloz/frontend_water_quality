@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/constants/limit_chart_sensor.dart';
+import 'package:frontend_water_quality/core/enums/analysis_type.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average_period/average_period.dart';
@@ -12,6 +13,7 @@ import 'package:frontend_water_quality/presentation/widgets/specific/analysis/or
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_table.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/average_all_period_chart.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/average_period_chart.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/chart_description.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/form_period_dialog.dart';
 import 'package:provider/provider.dart';
 
@@ -188,23 +190,28 @@ class _AveragePeriodPageState extends State<AveragePeriodPage> {
       );
     }
 
-    if (_current!.parameters!.sensor != null) {
-      return AveragePeriodChart(
-        width: 650,
-        screenSize: screenSize,
-        name: _current!.parameters?.sensor ?? "",
-        data: _current!.data as DataAvgSensor,
-        periodType: _current!.parameters?.periodType ?? "days",
-        maxY: LimitChartSensor.getMaxY(
-          _current!.parameters?.sensor ?? "",
-        ),
-      );
-    } else {
-      return AverageAllPeriodChart(
-        screenSize: screenSize,
-        data: _current!.data as DataAvgAll,
-        periodType: _current!.parameters?.periodType ?? "days",
-      );
-    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const ChartDescription(type: AnalysisType.averagePeriod),
+        if (_current!.parameters!.sensor != null)
+          AveragePeriodChart(
+            width: 650,
+            screenSize: screenSize,
+            name: _current!.parameters!.sensor!,
+            data: _current!.data as DataAvgSensor,
+            periodType: _current!.parameters?.periodType ?? "days",
+            maxY: LimitChartSensor.getMaxY(
+              _current!.parameters!.sensor!,
+            ),
+          )
+        else
+          AverageAllPeriodChart(
+            screenSize: screenSize,
+            data: _current!.data as DataAvgAll,
+            periodType: _current!.parameters?.periodType ?? "days",
+          ),
+      ],
+    );
   }
 }

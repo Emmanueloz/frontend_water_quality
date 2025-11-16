@@ -1,7 +1,9 @@
+import 'package:frontend_water_quality/core/enums/sensor_type.dart';
+
 class DataCorrelationMatrix {
   List<List<double>>? matrix;
   String? method;
-  List<String>? sensors;
+  List<SensorType>? sensors;
 
   DataCorrelationMatrix({
     this.matrix,
@@ -18,7 +20,8 @@ class DataCorrelationMatrix {
         method: json["method"],
         sensors: json["sensors"] == null
             ? []
-            : List<String>.from(json["sensors"]!.map((x) => x)),
+            : List<SensorType>.from(json["sensors"]!
+                .map((x) => SensorTypeExtension.fromString(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -27,7 +30,8 @@ class DataCorrelationMatrix {
             : List<dynamic>.from(
                 matrix!.map((x) => List<dynamic>.from(x.map((x) => x)))),
         "method": method,
-        "sensors":
-            sensors == null ? [] : List<dynamic>.from(sensors!.map((x) => x)),
+        "sensors": sensors == null
+            ? []
+            : List<dynamic>.from(sensors!.map((x) => x.nameEnglish)),
       };
 }

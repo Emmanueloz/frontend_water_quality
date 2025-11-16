@@ -1,18 +1,18 @@
+import 'package:frontend_water_quality/core/enums/sensor_type.dart';
+
 class LimitChartSensor {
-  static double getMaxY(String sensor) {
+  static double getMaxY(SensorType sensor) {
     switch (sensor) {
-      case "temperature":
+      case SensorType.temperature:
         return 60;
-      case "ph":
+      case SensorType.ph:
         return 14.0;
-      case "tds":
+      case SensorType.tds:
         return 700.0;
-      case "conductivity":
+      case SensorType.conductivity:
         return 3000.0;
-      case "turbidity":
+      case SensorType.turbidity:
         return 70;
-      default:
-        return 0;
     }
   }
 }

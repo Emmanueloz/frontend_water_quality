@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/analysis_status.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/domain/models/analysis/base_analysis.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_detail.dart';
@@ -42,7 +43,7 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
     if (selectedItem!.status == null) return false;
 
     // Chat is only available for analyses with "saved" status
-    return selectedItem!.status!.toLowerCase() == 'saved';
+    return selectedItem!.status == AnalysisStatus.saved;
   }
 
   /// Gets the analysis ID to use for chat session
@@ -63,18 +64,16 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
       return 'El estado del análisis no está disponible';
     }
 
-    final status = selectedItem!.status!.toLowerCase();
+    final status = selectedItem!.status!;
     switch (status) {
-      case 'pending':
-        return 'El análisis está pendiente de procesamiento';
-      case 'processing':
-        return 'El análisis se está procesando';
-      case 'error':
+      case AnalysisStatus.creating:
+        return 'El análisis se está creando';
+      case AnalysisStatus.updating:
+        return 'El análisis se está actualizando';
+      case AnalysisStatus.error:
         return 'El análisis tiene errores y no está disponible para chat';
-      case 'saved':
+      case AnalysisStatus.saved:
         return 'Chat disponible';
-      default:
-        return 'El análisis debe estar completado antes de usar el chat';
     }
   }
 
@@ -87,7 +86,7 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
 
     // Close chat if analysis becomes unavailable for chat
     if (previousAnalysis != null &&
-        previousAnalysis.status?.toLowerCase() == 'saved' &&
+        previousAnalysis.status == AnalysisStatus.saved &&
         !isChatAvailable) {
       return true;
     }
@@ -193,17 +192,17 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
   }
 
   Widget _buildChatUnavailableMessage() {
-    final status = selectedItem?.status?.toLowerCase();
+    final status = selectedItem?.status;
     IconData iconData;
     Color? iconColor;
 
     switch (status) {
-      case 'pending':
-      case 'processing':
+      case AnalysisStatus.creating:
+      case AnalysisStatus.updating:
         iconData = Icons.hourglass_empty;
         iconColor = Colors.orange[400];
         break;
-      case 'error':
+      case AnalysisStatus.error:
         iconData = Icons.error_outline;
         iconColor = Colors.red[400];
         break;
@@ -241,7 +240,8 @@ class AnalysisLayout<T extends BaseAnalysis> extends StatelessWidget {
                 color: Colors.grey[600],
               ),
             ),
-            if (status == 'processing' || status == 'pending') ...[
+            if (status == AnalysisStatus.creating ||
+                status == AnalysisStatus.updating) ...[
               const SizedBox(height: 16),
               Text(
                 'El chat estará disponible cuando el análisis esté completado.',

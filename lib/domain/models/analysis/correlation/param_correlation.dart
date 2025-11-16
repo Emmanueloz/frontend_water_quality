@@ -1,9 +1,10 @@
+import 'package:frontend_water_quality/core/enums/sensor_type.dart';
 import 'package:frontend_water_quality/domain/models/analysis/parameters.dart';
 
 class ParamCorrelation extends Parameters {
   String? periodType;
   String? method;
-  List<String>? sensors;
+  List<SensorType>? sensors;
 
   ParamCorrelation({
     super.endDate,
@@ -21,12 +22,14 @@ class ParamCorrelation extends Parameters {
         startDate: json["start_date"] == null
             ? null
             : DateTime.parse(json["start_date"]),
-        sensor: json["sensor_type"],
+        sensor: json["sensor_type"] == null
+            ? null
+            : SensorTypeExtension.fromString(json["sensor_type"]),
         periodType: json["period_type"],
         sensors: json["sensors"] == null
             ? []
-            : List<String>.from(
-                json["sensors"]!.map((x) => x),
+            : List<SensorType>.from(
+                json["sensors"]!.map((x) => SensorTypeExtension.fromString(x)),
               ),
       );
 
@@ -34,13 +37,13 @@ class ParamCorrelation extends Parameters {
   Map<String, dynamic> toJson() => {
         "end_date": endDate?.toIso8601String(),
         "start_date": startDate?.toIso8601String(),
-        if (sensor != null) "sensor_type": sensor,
+        if (sensor != null) "sensor_type": sensor!.nameEnglish,
         "period_type": periodType,
         "method": method,
         "sensors": sensors == null
             ? []
             : List<dynamic>.from(
-                sensors!.map((x) => x),
+                sensors!.map((x) => x.nameEnglish),
               ),
       };
 }

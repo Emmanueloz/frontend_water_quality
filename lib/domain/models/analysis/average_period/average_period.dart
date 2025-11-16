@@ -1,3 +1,5 @@
+import 'package:frontend_water_quality/core/enums/analysis_status.dart';
+import 'package:frontend_water_quality/core/enums/analysis_type.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average_period/data_avg_all.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average_period/data_avg_sensor.dart';
 import 'package:frontend_water_quality/domain/models/analysis/average_period/param_period.dart';
@@ -32,8 +34,12 @@ class AveragePeriod extends BaseAnalysis<Data, ParamPeriod> {
       error: json["error"],
       meterId: json["meter_id"],
       parameters: json["parameters"] == null ? null : param,
-      status: json["status"],
-      type: json["type"],
+      status: json["status"] == null
+          ? null
+          : AnalysisStatusExtension.fromString(json["status"]),
+      type: json["type"] == null
+          ? null
+          : AnalysisTypeExtension.fromString(json["type"]),
       updatedAt: json["updated_at"] == null
           ? null
           : DateTime.parse(json["updated_at"]),

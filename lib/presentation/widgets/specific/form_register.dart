@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/domain/models/user.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/atoms/mobile_field.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl_mobile_field/country_picker_dialog.dart';
-import 'package:intl_mobile_field/intl_mobile_field.dart';
 import 'package:intl_mobile_field/mobile_number.dart';
 
 class RegisterForm extends StatefulWidget {
@@ -95,27 +94,9 @@ class _RegisterFormState extends State<RegisterForm> {
                 return null;
               },
             ),
-            IntlMobileField(
-              languageCode: "mx",
+            MobileField(
               controller: phoneController,
-              pickerDialogStyle: PickerDialogStyle(
-                width: 600,
-                searchFieldInputDecoration: InputDecoration(
-                  label: Text("Buscar Pais"),
-                ),
-              ),
-              initialCountryCode: "MX",
-              invalidNumberMessage: "Numero de telefono invalido",
-              decoration: inputDecoration("Telefono", Icons.phone),
-              validator: (value) {
-                if (value == null || value.number.isEmpty) {
-                  return 'Por favor, introduzca un número de móvil';
-                }
-                if (!RegExp(r'^[0-9]+$').hasMatch(value.number)) {
-                  return 'Solo se permiten dígitos';
-                }
-                return null;
-              },
+              inputDecoration: inputDecoration("Telefono", Icons.phone),
               onChanged: (value) {
                 number = value;
               },

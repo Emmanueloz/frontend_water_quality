@@ -1,3 +1,5 @@
+import 'package:frontend_water_quality/core/enums/analysis_status.dart';
+import 'package:frontend_water_quality/core/enums/analysis_type.dart';
 import 'package:frontend_water_quality/domain/models/analysis/base_analysis.dart';
 import 'package:frontend_water_quality/domain/models/analysis/correlation/data_correlation_matrix.dart';
 import 'package:frontend_water_quality/domain/models/analysis/correlation/param_correlation.dart';
@@ -31,8 +33,12 @@ class Correlation
       error: json["error"],
       meterId: json["meter_id"],
       parameters: json["parameters"] == null ? null : param,
-      status: json["status"],
-      type: json["type"],
+      status: json["status"] == null
+          ? null
+          : AnalysisStatusExtension.fromString(json["status"]),
+      type: json["type"] == null
+          ? null
+          : AnalysisTypeExtension.fromString(json["type"]),
       updatedAt: json["updated_at"] == null
           ? null
           : DateTime.parse(json["updated_at"]),
