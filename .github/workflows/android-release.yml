@@ -1,20 +1,32 @@
 name: Flutter CI/CD a Release (Android)
 
-# Este workflow se ejecuta cuando se crea una etiqueta (tag) en Git.
-# Las etiquetas son la mejor forma de marcar y disparar un nuevo Release.
+# Este workflow se ejecuta cuando el workflow "Auto Tag on Merge" ha finalizado con éxito.
 on:
-  push:
-    tags:
-      - 'v*.*.*' # Ejemplo: solo se dispara si la etiqueta comienza con 'v' (ej: v1.0.0)
+  workflow_run:
+    workflows: ["Auto Tag on Merge"]
+    types:
+      - completed
 
 jobs:
   build_android_release:
+    # Solo se ejecuta si el workflow anterior (auto-tag) fue exitoso
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Construir APK y crear Release
     runs-on: ubuntu-latest
     
     steps:
       - name: ⬇️ Checkout del Código
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Requerido para poder leer todos los tags del repositorio
+
+      - name: 🏷️ Obtener la última etiqueta creada
+        id: get_tag
+        run: |
+          # Obtenemos la etiqueta más reciente, que debería ser la que creó el workflow anterior
+          TAG=$(git describe --tags --abbrev=0)
+          echo "Etiqueta encontrada para el release: $TAG"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
         
       - name: ☕ Configurar Java (para Android)
         uses: actions/setup-java@v4
@@ -40,16 +52,13 @@ jobs:
       # --- Paso Clave: Creación del Release y Subida del APK ---
       - name: 📤 Crear y Adjuntar APK al Release
         uses: softprops/action-gh-release@v1
-        # El paso se ejecuta SÓLO si se disparó por una etiqueta (tag)
-        if: startsWith(github.ref, 'refs/tags/')
         with:
-          # El nombre de la etiqueta se usa como nombre del Release
-          name: Versión ${{ github.ref_name }}
+          # El nombre de la etiqueta se obtiene del paso anterior
+          tag_name: ${{ steps.get_tag.outputs.tag }}
+          name: Versión ${{ steps.get_tag.outputs.tag }}
           # Especifica la ruta y el nombre del archivo APK.
-          # ¡Asegúrate de que este nombre (app-release.apk) sea el que usas en el enlace permanente!
           files: |
             build/app/outputs/flutter-apk/app-release.apk
         env:
-          # Necesitas un token con permisos para crear Releases.
-          # ${{ secrets.GITHUB_TOKEN }} es el token predeterminado de GitHub y funciona.
+          # El token predeterminado tiene permisos suficientes para este evento
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
