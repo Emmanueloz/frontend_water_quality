@@ -13,6 +13,8 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Construir APK y crear Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     
     steps:
       - name: ⬇️ Checkout del Código
