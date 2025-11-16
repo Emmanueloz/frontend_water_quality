@@ -49,7 +49,7 @@ jobs:
         run: flutter pub get
         
       - name: ⚙️ Construir el APK de Lanzamiento
-        run: flutter build apk --release
+        run: flutter build apk --release --build-name=${{ steps.get_tag.outputs.tag }}
         
       # --- Paso Clave: Creación del Release y Subida del APK ---
       - name: 📤 Crear y Adjuntar APK al Release
