@@ -179,9 +179,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                 const SizedBox(width: 12),
                 Text(
                   'Aqua Minds',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
+                  style: theme.textTheme.displaySmall?.copyWith(
                     color: theme.colorScheme.primary,
                   ),
                 ),
@@ -202,8 +200,11 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                       borderRadius: BorderRadius.circular(50),
                     ),
                   ),
-                  child: const Text('Iniciar',
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  child: Text('Iniciar',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      )),
                 ),
               ],
             ),
@@ -282,12 +283,11 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                       child: Text(
                         'Aqua Minds',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 64,
-                          fontWeight: FontWeight.w800,
-                          color: Theme.of(context).colorScheme.primary,
-                          height: 1.1,
-                        ),
+                        style:
+                            Theme.of(context).textTheme.headlineLarge?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  height: 1.1,
+                                ),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -306,11 +306,10 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                       child: Text(
                         'Monitoreo Inteligente de la Calidad del Agua',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w600,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                        style:
+                            Theme.of(context).textTheme.displayMedium?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -329,12 +328,12 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                       child: Text(
                         'Soluciones tecnológicas innovadoras para resolver desafíos ambientales y sociales mediante monitoreo inteligente del agua',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 20,
-                          color:
-                              isDarkMode ? Colors.grey[300] : Colors.grey[600],
-                          height: 1.6,
-                        ),
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              color: isDarkMode
+                                  ? Colors.grey[300]
+                                  : Colors.grey[600],
+                              height: 1.6,
+                            ),
                       ),
                     ),
                     const SizedBox(height: 48),
@@ -365,10 +364,12 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                               ? const Color(0xFF66C2C2).withValues(alpha: 0.4)
                               : const Color(0xFF66BB6A).withValues(alpha: 0.4),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Comenzar Monitoreo',
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w600),
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
                         ),
                       ),
                     ),
@@ -399,11 +400,9 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
               Text(
                 'Nuestros Tres Pilares Fundamentales',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.w700,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
               ),
               const SizedBox(height: 60),
               LayoutBuilder(
@@ -470,55 +469,93 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 
   Widget _buildPillarCard(String title, String description, IconData icon) {
     final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.all(80),
-      decoration: BoxDecoration(
-        color: isDarkMode
-            ? theme.colorScheme.surface.withValues(alpha: 0.4)
-            : Colors.white.withValues(alpha: 0.8),
-        border: Border.all(
-          color: theme.colorScheme.primary
-              .withValues(alpha: isDarkMode ? 0.2 : 0.1),
-          width: 2,
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        child: Builder(
+          builder: (context) {
+            bool isHovered = false;
+            return StatefulBuilder(
+              builder: (context, setState) {
+                return MouseRegion(
+                  onEnter: (_) => setState(() => isHovered = true),
+                  onExit: (_) => setState(() => isHovered = false),
+                  child: AnimatedScale(
+                    scale: isHovered ? 1.05 : 1.0,
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                    child: Container(
+                      height: 400,
+                      padding: const EdgeInsets.all(40),
+                      decoration: BoxDecoration(
+                        color: isDarkMode
+                            ? theme.colorScheme.surface.withValues(alpha: 0.4)
+                            : Colors.white.withValues(alpha: 0.8),
+                        border: Border.all(
+                          color: theme.colorScheme.primary
+                              .withValues(alpha: isDarkMode ? 0.2 : 0.1),
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: isHovered
+                            ? [
+                                BoxShadow(
+                                  color: theme.colorScheme.primary
+                                      .withValues(alpha: 0.2),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 10),
+                                ),
+                              ]
+                            : [],
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.tertiary
+                                  .withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Icon(
+                              icon,
+                              size: 40,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          Text(
+                            title,
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.displaySmall?.copyWith(
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Flexible(
+                            child: Text(
+                              description,
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: isDarkMode
+                                    ? Colors.grey[400]
+                                    : Colors.grey[600],
+                                height: 1.6,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
         ),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.tertiary.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Icon(
-              icon,
-              size: 40,
-              color: theme.colorScheme.primary,
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              color: theme.colorScheme.primary,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            description,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16,
-              color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-              height: 1.6,
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -537,11 +574,9 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
               Text(
                 'Flujo de Trabajo',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.w700,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
               ),
               const SizedBox(height: 40),
               LayoutBuilder(
@@ -788,11 +823,10 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                       Text(
                         workflowData[selectedWorkflowStep].title,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                       ),
                       const SizedBox(height: 16),
                       Text(
@@ -834,11 +868,9 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
               Text(
                 'Acerca de Minds',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.w700,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
               ),
               const SizedBox(height: 60),
               LayoutBuilder(
@@ -904,17 +936,14 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
           const SizedBox(height: 24),
           Text(
             'Misión',
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.w700,
+            style: theme.textTheme.displayLarge?.copyWith(
               color: theme.colorScheme.primary,
             ),
           ),
           const SizedBox(height: 24),
           Text(
             'Desarrollar soluciones tecnológicas accesibles e innovadoras que faciliten el análisis y la resolución de desafíos sociales. Mediante el diseño de software, servicios digitales y el aprovechamiento de tecnologías emergentes, buscamos empoderar a las comunidades y promover el cambio social positivo. Nos comprometemos a colaborar con entidades públicas y privadas, ofreciendo soluciones personalizadas y efectivas que respondan a las necesidades de un mundo en constante evolución.',
-            style: TextStyle(
-              fontSize: 18,
+            style: theme.textTheme.bodyLarge?.copyWith(
               color: isDarkMode ? Colors.grey[300] : Colors.grey[600],
               height: 1.8,
             ),
@@ -958,17 +987,14 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
           const SizedBox(height: 24),
           Text(
             'Visión',
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.w700,
+            style: theme.textTheme.displayLarge?.copyWith(
               color: theme.colorScheme.primary,
             ),
           ),
           const SizedBox(height: 24),
           Text(
             'Ser reconocidos como líderes en la creación de soluciones tecnológicas transformadoras que conviertan desafíos en oportunidades de desarrollo. Aspiramos a inspirar la toma de decisiones basada en datos y a generar un impacto sostenible en la sociedad, adaptándonos a las necesidades de nuestros usuarios. Para lograrlo, cultivamos un equipo de profesionales apasionados, creativos y comprometidos con la innovación y el bienestar social.',
-            style: TextStyle(
-              fontSize: 18,
+            style: theme.textTheme.bodyLarge?.copyWith(
               color: isDarkMode ? Colors.grey[300] : Colors.grey[600],
               height: 1.8,
             ),
