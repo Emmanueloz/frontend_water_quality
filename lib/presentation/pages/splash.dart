@@ -189,6 +189,17 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
               children: [
                 const ThemeToggleButton(),
                 const SizedBox(width: 16),
+                TextButton(
+                  onPressed: () => context.go(Routes.aboutUs.path),
+                  child: Text(
+                    'Sobre Nosotros',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
                 ElevatedButton(
                   onPressed: () => context.go(Routes.login.path),
                   style: ElevatedButton.styleFrom(

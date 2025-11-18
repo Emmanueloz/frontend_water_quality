@@ -3,74 +3,95 @@ import 'package:frontend_water_quality/core/theme/theme.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
-class AboutUsPage extends StatelessWidget {
+class AboutUsPage extends StatefulWidget {
   const AboutUsPage({super.key});
 
   @override
+  State<AboutUsPage> createState() => _AboutUsPageState();
+}
+
+class _AboutUsPageState extends State<AboutUsPage> {
+  @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sobre Nosotros', style: TextStyle(color: Colors.white)),
-        backgroundColor: AppTheme.colorScheme.secondary,
-        foregroundColor: Colors.white,
+        title: Text(
+          'Sobre Nosotros',
+          style: theme.textTheme.displaySmall?.copyWith(
+            color: theme.colorScheme.onPrimary,
+          ),
+        ),
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: theme.colorScheme.onPrimary),
           onPressed: () => context.go("/"),
         ),
       ),
       body: SingleChildScrollView(
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: Container(
-            constraints: BoxConstraints(maxWidth: 1024),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              spacing: 24,
-              children: [
-                // Hero Section
-                Container(
-                  height: 250,
-                  margin: EdgeInsets.only(top: 10),
-                  decoration: BoxDecoration(
-                    color: AppTheme.colorScheme.secondary,
-                    borderRadius: BorderRadius.circular(10)
-                  ),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Sobre Nosotros - Aqua Minds",
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
+        child: Column(
+          children: [
+            // Hero Section
+            Container(
+              width: double.infinity,
+              constraints: const BoxConstraints(minHeight: 500),
+              decoration: BoxDecoration(
+                color: isDarkMode
+                    ? theme.colorScheme.surface.withValues(alpha: 0.4)
+                    : theme.colorScheme.primary.withValues(alpha: 0.1),
+              ),
+              child: Align(
+                alignment: Alignment.center,
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 1200),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 100),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Sobre Nosotros - Aqua Minds",
+                        style: theme.textTheme.displayLarge?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(height: 10),
-                        Text(
-                          "Innovando en el monitoreo de calidad del agua para un futuro más seguro",
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Colors.white.withValues(alpha: 0.9),
-                          ),
-                          textAlign: TextAlign.center,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        "Innovando en el monitoreo de calidad del agua para un futuro más seguro",
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color:
+                              isDarkMode ? Colors.grey[300] : Colors.grey[600],
                         ),
-                      ],
-                    ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                 ),
+              ),
+            ),
 
-                // Nuestra Historia
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
+            // Nuestra Historia
+            Container(
+              width: double.infinity,
+              constraints: const BoxConstraints(minHeight: 400),
+              color: theme.scaffoldBackgroundColor,
+              child: Align(
+                alignment: Alignment.center,
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 1200),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 100),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         "Nuestra Historia",
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.textColor,
+                        style: theme.textTheme.displayLarge?.copyWith(
+                          color: theme.colorScheme.primary,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -79,169 +100,76 @@ class AboutUsPage extends StatelessWidget {
                         "Fundada por un equipo de ingenieros y científicos especializados en tecnologías del agua, nuestra empresa "
                         "se estableció con la visión de crear soluciones tecnológicas innovadoras que permitan a las comunidades, "
                         "empresas y gobiernos monitorear la calidad del agua de manera precisa y en tiempo real.",
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: AppTheme.textColor,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color:
+                              isDarkMode ? Colors.grey[300] : Colors.grey[600],
+                          height: 1.6,
                         ),
                       ),
                     ],
                   ),
                 ),
+              ),
+            ),
 
-                // Nuestros Valores
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
+            // Nuestros Valores
+            Container(
+              width: double.infinity,
+              constraints: const BoxConstraints(minHeight: 500),
+              decoration: BoxDecoration(
+                color: (isDarkMode
+                        ? const Color(0xFF66C2C2)
+                        : const Color(0xFF306B6B))
+                    .withValues(alpha: 0.1),
+              ),
+              child: Align(
+                alignment: Alignment.center,
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 1200),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 100),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         "Nuestros Valores",
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.textColor,
+                        style: theme.textTheme.displayLarge?.copyWith(
+                          color: theme.colorScheme.primary,
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 40),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        spacing: 16,
                         children: [
                           Expanded(
-                            child: Column(
-                              children: [
-                                Container(
-                                  width: 60,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.colorScheme.tertiary,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.lightbulb,
-                                    size: 30,
-                                    color: AppTheme.colorScheme.secondary,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  "Innovación",
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: AppTheme.textColor,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
+                            child: _ValueCard(
+                              icon: Icons.lightbulb,
+                              title: "Innovación",
+                              description:
                                   "Desarrollamos tecnologías de vanguardia",
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: AppTheme.textColor.withValues(alpha: 0.7),
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
                             ),
                           ),
                           Expanded(
-                            child: Column(
-                              children: [
-                                Container(
-                                  width: 60,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.colorScheme.tertiary,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.verified,
-                                    size: 30,
-                                    color: AppTheme.colorScheme.secondary,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  "Calidad",
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: AppTheme.textColor,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
+                            child: _ValueCard(
+                              icon: Icons.verified,
+                              title: "Calidad",
+                              description:
                                   "Mantenemos los más altos estándares",
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: AppTheme.textColor.withValues(alpha: 0.7),
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
                             ),
                           ),
                           Expanded(
-                            child: Column(
-                              children: [
-                                Container(
-                                  width: 60,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.colorScheme.tertiary,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.eco,
-                                    size: 30,
-                                    color: AppTheme.colorScheme.secondary,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  "Sostenibilidad",
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: AppTheme.textColor,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  "Promovemos prácticas responsables",
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: AppTheme.textColor.withValues(alpha: 0.7),
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
+                            child: _ValueCard(
+                              icon: Icons.eco,
+                              title: "Sostenibilidad",
+                              description: "Promovemos prácticas responsables",
                             ),
                           ),
                           Expanded(
-                            child: Column(
-                              children: [
-                                Container(
-                                  width: 60,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.colorScheme.tertiary,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.accessibility,
-                                    size: 30,
-                                    color: AppTheme.colorScheme.secondary,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  "Accesibilidad",
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: AppTheme.textColor,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  "Hacemos la tecnología accesible",
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: AppTheme.textColor.withValues(alpha: 0.7),
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
+                            child: _ValueCard(
+                              icon: Icons.accessibility,
+                              title: "Accesibilidad",
+                              description: "Hacemos la tecnología accesible",
                             ),
                           ),
                         ],
@@ -249,106 +177,45 @@ class AboutUsPage extends StatelessWidget {
                     ],
                   ),
                 ),
+              ),
+            ),
 
-                // Nuestro Equipo
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
+            // Nuestro Equipo
+            Container(
+              width: double.infinity,
+              constraints: const BoxConstraints(minHeight: 600),
+              color: theme.scaffoldBackgroundColor,
+              child: Align(
+                alignment: Alignment.center,
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 1200),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 100),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         "Nuestro Equipo",
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.textColor,
+                        style: theme.textTheme.displayLarge?.copyWith(
+                          color: theme.colorScheme.primary,
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 40),
                       Row(
                         children: [
                           Expanded(
-                            child: Card(
-                              elevation: 4,
-                              color: AppTheme.colorScheme.surface,
-                              child: Padding(
-                                padding: const EdgeInsets.all(24.0),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      width: 80,
-                                      height: 80,
-                                      decoration: BoxDecoration(
-                                        color: AppTheme.colorScheme.tertiary,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Icon(
-                                        Icons.person,
-                                        size: 40,
-                                        color: AppTheme.colorScheme.secondary,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      "David Emmanuel Ozuna Navarro",
-                                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: AppTheme.textColor,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    Text(
-                                      "Ingeniero de Software",
-                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        color: AppTheme.textColor.withValues(alpha: 0.7),
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            child: _TeamCard(
+                              icon: Icons.person,
+                              name: "David Emmanuel Ozuna Navarro",
+                              role: "Ingeniero de Software",
                             ),
                           ),
                           const SizedBox(width: 16),
                           Expanded(
-                            child: Card(
-                              elevation: 4,
-                              color: AppTheme.colorScheme.surface,
-                              child: Padding(
-                                padding: const EdgeInsets.all(24.0),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      width: 80,
-                                      height: 80,
-                                      decoration: BoxDecoration(
-                                        color: AppTheme.colorScheme.tertiary,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Icon(
-                                        Icons.engineering,
-                                        size: 40,
-                                        color: AppTheme.colorScheme.secondary,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      "Angel Alfredo Ruiz Lopez",
-                                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: AppTheme.textColor,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    Text(
-                                      "Especialista en IoT",
-                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        color: AppTheme.textColor.withValues(alpha: 0.7),
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            child: _TeamCard(
+                              icon: Icons.engineering,
+                              name: "Angel Alfredo Ruiz Lopez",
+                              role: "Especialista en IoT",
                             ),
                           ),
                         ],
@@ -357,88 +224,18 @@ class AboutUsPage extends StatelessWidget {
                       Row(
                         children: [
                           Expanded(
-                            child: Card(
-                              elevation: 4,
-                              color: AppTheme.colorScheme.surface,
-                              child: Padding(
-                                padding: const EdgeInsets.all(24.0),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      width: 80,
-                                      height: 80,
-                                      decoration: BoxDecoration(
-                                        color: AppTheme.colorScheme.tertiary,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Icon(
-                                        Icons.analytics,
-                                        size: 40,
-                                        color: AppTheme.colorScheme.secondary,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      "Raul de Jesus Najera Jimenez",
-                                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: AppTheme.textColor,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    Text(
-                                      "Analista de Datos",
-                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        color: AppTheme.textColor.withValues(alpha: 0.7),
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            child: _TeamCard(
+                              icon: Icons.analytics,
+                              name: "Raul de Jesus Najera Jimenez",
+                              role: "Analista de Datos",
                             ),
                           ),
                           const SizedBox(width: 16),
                           Expanded(
-                            child: Card(
-                              elevation: 4,
-                              color: AppTheme.colorScheme.surface,
-                              child: Padding(
-                                padding: const EdgeInsets.all(24.0),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      width: 80,
-                                      height: 80,
-                                      decoration: BoxDecoration(
-                                        color: AppTheme.colorScheme.tertiary,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Icon(
-                                        Icons.design_services,
-                                        size: 40,
-                                        color: AppTheme.colorScheme.secondary,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      "Josue Daniel Sanchez Hernandez",
-                                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: AppTheme.textColor,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    Text(
-                                      "Diseñador UX/UI",
-                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        color: AppTheme.textColor.withValues(alpha: 0.7),
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            child: _TeamCard(
+                              icon: Icons.design_services,
+                              name: "Josue Daniel Sanchez Hernandez",
+                              role: "Diseñador UX/UI",
                             ),
                           ),
                         ],
@@ -446,47 +243,240 @@ class AboutUsPage extends StatelessWidget {
                     ],
                   ),
                 ),
+              ),
+            ),
 
-                // Call to Action
-                Container(
-                  height: 200,
-                  margin: EdgeInsets.only(bottom: 10),
-                  decoration: BoxDecoration(
-                    color: AppTheme.colorScheme.primary,
-                    borderRadius: BorderRadius.circular(10)
-                  ),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "¿Listo para comenzar?",
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            // Call to Action
+            Container(
+              width: double.infinity,
+              constraints: const BoxConstraints(minHeight: 500),
+              decoration: BoxDecoration(
+                color: isDarkMode
+                    ? const Color(0xFF001a24).withValues(alpha: 0.4)
+                    : const Color(0xFF306B6B).withValues(alpha: 0.05),
+              ),
+              child: Align(
+                alignment: Alignment.center,
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 1200),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 100),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "¿Listo para comenzar?",
+                        style: theme.textTheme.displayLarge?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        "Únete a nosotros en la revolución del monitoreo de calidad del agua",
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color:
+                              isDarkMode ? Colors.grey[300] : Colors.grey[600],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 32),
+                      ElevatedButton(
+                        onPressed: () => context.go(Routes.login.path),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.colorScheme.tertiary,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 16,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        ),
+                        child: Text(
+                          "Comenzar Ahora",
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
                             color: Colors.white,
-                            fontWeight: FontWeight.bold,
                           ),
-                          textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 10),
-                        Text(
-                          "Únete a nosotros en la revolución del monitoreo de calidad del agua",
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Colors.white.withValues(alpha: 0.9),
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: () => context.go(Routes.login.path),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: AppTheme.colorScheme.primary,
-                          ),
-                          child: const Text("Comenzar Ahora"),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ValueCard extends StatefulWidget {
+  final IconData icon;
+  final String title;
+  final String description;
+
+  const _ValueCard({
+    required this.icon,
+    required this.title,
+    required this.description,
+  });
+
+  @override
+  State<_ValueCard> createState() => _ValueCardState();
+}
+
+class _ValueCardState extends State<_ValueCard> {
+  bool isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => isHovered = true),
+      onExit: (_) => setState(() => isHovered = false),
+      child: AnimatedScale(
+        scale: isHovered ? 1.05 : 1.0,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          height: 180,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDarkMode
+                ? theme.colorScheme.surface.withValues(alpha: 0.4)
+                : Colors.white.withValues(alpha: 0.8),
+            border: Border.all(
+              color: theme.colorScheme.primary
+                  .withValues(alpha: isDarkMode ? 0.2 : 0.1),
+              width: 2,
+            ),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: isHovered
+                ? [
+                    BoxShadow(
+                      color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ]
+                : [],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.tertiary.withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  widget.icon,
+                  size: 30,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                widget.title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Flexible(
+                child: Text(
+                  widget.description,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TeamCard extends StatefulWidget {
+  final IconData icon;
+  final String name;
+  final String role;
+
+  const _TeamCard({
+    required this.icon,
+    required this.name,
+    required this.role,
+  });
+
+  @override
+  State<_TeamCard> createState() => _TeamCardState();
+}
+
+class _TeamCardState extends State<_TeamCard> {
+  bool isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => isHovered = true),
+      onExit: (_) => setState(() => isHovered = false),
+      child: AnimatedScale(
+        scale: isHovered ? 1.05 : 1.0,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        child: Card(
+          elevation: 4,
+          color: AppTheme.colorScheme.surface,
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: AppTheme.colorScheme.tertiary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    widget.icon,
+                    size: 40,
+                    color: AppTheme.colorScheme.secondary,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  widget.name,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.textColor,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  widget.role,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: AppTheme.textColor.withValues(alpha: 0.7),
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),
