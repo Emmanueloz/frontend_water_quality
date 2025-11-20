@@ -673,6 +673,10 @@ void main() {
         expect(find.text('Message for analysis 2'), findsOneWidget);
         expect(find.text('Message for analysis 1'), findsNothing);
 
+        // Wait for any pending scroll timers (100ms delay + 300ms animation)
+        await tester.pump(const Duration(milliseconds: 500));
+        await tester.pumpAndSettle();
+
         // Should not have any exceptions
         expect(tester.takeException(), isNull);
       });
@@ -684,6 +688,10 @@ void main() {
         await tester.pumpWidget(createTestWidget(
           screenSize: const Size(800, 600),
         ));
+        await tester.pumpAndSettle();
+
+        // Wait for any pending scroll timers before disposal
+        await tester.pump(const Duration(milliseconds: 500));
         await tester.pumpAndSettle();
 
         // Dispose the widget tree
