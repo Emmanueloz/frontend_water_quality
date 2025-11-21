@@ -3,7 +3,6 @@ import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/domain/models/ai/chat_session.dart';
 import 'package:frontend_water_quality/domain/models/ai/chat_response.dart';
 import 'package:frontend_water_quality/domain/models/ai/session_response.dart';
-import 'package:frontend_water_quality/domain/models/ai/session_metadata.dart';
 import 'package:frontend_water_quality/domain/models/user.dart';
 import 'package:frontend_water_quality/domain/repositories/ai_chat_repo.dart';
 import 'package:frontend_water_quality/domain/repositories/auth_repo.dart';
