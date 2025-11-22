@@ -5,10 +5,9 @@ import 'package:frontend_water_quality/domain/models/ai/chat_response.dart';
 import 'package:frontend_water_quality/domain/models/ai/session_response.dart';
 import 'package:frontend_water_quality/domain/models/user.dart';
 import 'package:frontend_water_quality/domain/repositories/ai_chat_repo.dart';
-import 'package:frontend_water_quality/domain/repositories/auth_repo.dart';
-import 'package:frontend_water_quality/domain/repositories/user_repo.dart';
 import 'package:frontend_water_quality/presentation/providers/ai_chat_provider.dart';
-import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
+import '../../mocks/mocks.dart';
+
 
 class MockAiChatRepository implements AiChatRepository {
   Result<SessionResponse>? mockCreateSessionResult;
@@ -56,50 +55,6 @@ class MockAiChatRepository implements AiChatRepository {
     }
     return mockGetSessionResult ?? Result.failure('Mock not configured');
   }
-}
-
-class MockAuthProvider extends AuthProvider {
-  User? _mockUser;
-  String? _mockToken;
-  bool _isAuthenticated = false;
-
-  MockAuthProvider() : super(_MockAuthRepo(), _MockUserRepo());
-
-  void setMockUser(User? user, String? token) {
-    _mockUser = user;
-    _mockToken = token;
-    _isAuthenticated = user != null && token != null && token.isNotEmpty;
-  }
-
-  @override
-  User? get user => _mockUser;
-
-  @override
-  String? get token => _mockToken;
-
-  @override
-  bool get isAuthenticated => _isAuthenticated;
-}
-
-class _MockAuthRepo implements AuthRepo {
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-class _MockUserRepo implements UserRepo {
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-class MockConnectivityProvider {
-  bool _isOnline = true;
-
-  void setOnlineStatus(bool isOnline) {
-    _isOnline = isOnline;
-  }
-
-  bool get isOnline => _isOnline;
-  bool get isOffline => !_isOnline;
 }
 
 void main() {
@@ -371,10 +326,9 @@ void main() {
 
           // Assert
           expect(result, isFalse);
-          expect(
-              mockRepository.callCount, greaterThan(1)); // Should have retried
+          expect(mockRepository.callCount, greaterThan(1)); // Should have retried
           expect(provider.errorMessage, contains('connection timeout'));
-        });
+        }, timeout: Timeout(Duration(seconds: 15)));
 
         test('should retry on connection error', () async {
           // Arrange
@@ -389,10 +343,9 @@ void main() {
 
           // Assert
           expect(result, isFalse);
-          expect(
-              mockRepository.callCount, greaterThan(1)); // Should have retried
+          expect(mockRepository.callCount, greaterThan(1)); // Should have retried
           expect(provider.errorMessage, contains('connection error'));
-        });
+        }, timeout: Timeout(Duration(seconds: 15)));
 
         test('should not retry on authentication errors', () async {
           // Arrange
@@ -429,10 +382,9 @@ void main() {
 
           // Assert
           expect(result, isFalse);
-          expect(
-              mockRepository.callCount, greaterThan(1)); // Should have retried
+          expect(mockRepository.callCount, greaterThan(1)); // Should have retried
           expect(provider.errorMessage, contains('Network error'));
-        });
+        }, timeout: Timeout(Duration(seconds: 15)));
       });
 
       group('API Error Responses', () {
@@ -524,7 +476,7 @@ void main() {
 
           // Wait for completion
           await future;
-        });
+        }, timeout: Timeout(Duration(seconds: 15)));
 
         test('should reset retry state after successful operation', () async {
           // Arrange
