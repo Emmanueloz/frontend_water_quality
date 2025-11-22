@@ -4,7 +4,7 @@ import 'package:frontend_water_quality/infrastructure/user_repo_impl.dart';
 import 'package:frontend_water_quality/domain/models/user.dart';
 import 'package:frontend_water_quality/core/interface/response/base_response.dart';
 import 'package:frontend_water_quality/core/enums/roles.dart';
-import '../utils/mock_dio.dart';
+import '../mocks/mock_dio.dart';
 
 void main() {
   group('UserRepositoryImpl Tests', () {

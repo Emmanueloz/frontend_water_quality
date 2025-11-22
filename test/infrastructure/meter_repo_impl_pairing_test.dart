@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:dio/dio.dart';
 import 'package:frontend_water_quality/infrastructure/meter_repo_impl.dart';
 import 'package:frontend_water_quality/domain/models/pairing_response.dart';
-import '../utils/mock_dio.dart';
+import '../mocks/mock_dio.dart';
 
 void main() {
   group('MeterRepoImpl Pairing Tests', () {

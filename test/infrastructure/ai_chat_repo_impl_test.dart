@@ -4,7 +4,7 @@ import 'package:frontend_water_quality/infrastructure/ai_chat_repo_impl.dart';
 import 'package:frontend_water_quality/domain/models/ai/session_response.dart';
 import 'package:frontend_water_quality/domain/models/ai/chat_response.dart';
 import 'package:frontend_water_quality/domain/models/ai/chat_session.dart';
-import '../utils/mock_dio.dart';
+import '../mocks/mock_dio.dart';
 
 void main() {
   group('AiChatRepositoryImpl Tests', () {

@@ -10,7 +10,7 @@ import 'package:frontend_water_quality/domain/models/analysis/average_period/ave
 import 'package:frontend_water_quality/domain/models/analysis/correlation/correlation.dart';
 import 'package:frontend_water_quality/domain/models/analysis/period/prediction.dart';
 import 'package:frontend_water_quality/core/enums/sensor_type.dart';
-import '../utils/mock_dio.dart';
+import '../mocks/mock_dio.dart';
 
 void main() {
   group('AnalysisRepositoryImpl Tests', () {

@@ -6,7 +6,7 @@ import 'package:frontend_water_quality/core/interface/response/login_response.da
 import 'package:frontend_water_quality/core/interface/response/base_response.dart';
 import 'package:frontend_water_quality/core/interface/response/verify_code_response.dart';
 import 'package:frontend_water_quality/core/enums/roles.dart';
-import '../utils/mock_dio.dart';
+import '../mocks/mock_dio.dart';
 
 void main() {
   group('AuthRepositoryImpl Tests', () {

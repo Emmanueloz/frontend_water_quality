@@ -4,7 +4,7 @@ import 'package:frontend_water_quality/infrastructure/workspace_repo_impl.dart';
 import 'package:frontend_water_quality/domain/models/workspace.dart';
 import 'package:frontend_water_quality/core/enums/type_workspace.dart';
 import 'package:frontend_water_quality/core/interface/response/base_response.dart';
-import '../utils/mock_dio.dart';
+import '../mocks/mock_dio.dart';
 
 void main() {
   group('WorkspaceRepositoryImpl Tests', () {

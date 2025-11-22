@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:frontend_water_quality/infrastructure/alert_repo_impl.dart';
 import 'package:frontend_water_quality/domain/models/alert.dart';
 import 'package:frontend_water_quality/core/enums/alert_type.dart';
-import '../utils/mock_dio.dart';
+import '../mocks/mock_dio.dart';
 
 void main() {
   group('AlertRepositoryImpl Tests', () {

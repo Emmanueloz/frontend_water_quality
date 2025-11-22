@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:frontend_water_quality/infrastructure/notification_repo_impl.dart';
 import 'package:frontend_water_quality/domain/models/notification_model.dart';
 import 'package:frontend_water_quality/core/enums/notification_status.dart';
-import '../utils/mock_dio.dart';
+import '../mocks/mock_dio.dart';
 
 void main() {
   group('NotificationRepositoryImpl Tests', () {
