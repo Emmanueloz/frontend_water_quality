@@ -125,7 +125,7 @@ class _FormInviteGuestPageState extends State<FormInviteGuestPage> {
             const SizedBox(height: 10),
             // Campo de rol
             DropdownButtonFormField<String>(
-              value: _selectedRole,
+              initialValue: _selectedRole,
               decoration: const InputDecoration(
                 labelText: 'Rol',
                 prefixIcon: Icon(Icons.security),

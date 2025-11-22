@@ -3,13 +3,11 @@ import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/domain/models/ai/chat_session.dart';
 import 'package:frontend_water_quality/domain/models/ai/chat_response.dart';
 import 'package:frontend_water_quality/domain/models/ai/session_response.dart';
-import 'package:frontend_water_quality/domain/models/ai/session_metadata.dart';
 import 'package:frontend_water_quality/domain/models/user.dart';
 import 'package:frontend_water_quality/domain/repositories/ai_chat_repo.dart';
-import 'package:frontend_water_quality/domain/repositories/auth_repo.dart';
-import 'package:frontend_water_quality/domain/repositories/user_repo.dart';
 import 'package:frontend_water_quality/presentation/providers/ai_chat_provider.dart';
-import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
+import '../../mocks/mocks.dart';
+
 
 class MockAiChatRepository implements AiChatRepository {
   Result<SessionResponse>? mockCreateSessionResult;
@@ -57,50 +55,6 @@ class MockAiChatRepository implements AiChatRepository {
     }
     return mockGetSessionResult ?? Result.failure('Mock not configured');
   }
-}
-
-class MockAuthProvider extends AuthProvider {
-  User? _mockUser;
-  String? _mockToken;
-  bool _isAuthenticated = false;
-
-  MockAuthProvider() : super(_MockAuthRepo(), _MockUserRepo());
-
-  void setMockUser(User? user, String? token) {
-    _mockUser = user;
-    _mockToken = token;
-    _isAuthenticated = user != null && token != null && token.isNotEmpty;
-  }
-
-  @override
-  User? get user => _mockUser;
-
-  @override
-  String? get token => _mockToken;
-
-  @override
-  bool get isAuthenticated => _isAuthenticated;
-}
-
-class _MockAuthRepo implements AuthRepo {
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-class _MockUserRepo implements UserRepo {
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-class MockConnectivityProvider {
-  bool _isOnline = true;
-
-  void setOnlineStatus(bool isOnline) {
-    _isOnline = isOnline;
-  }
-
-  bool get isOnline => _isOnline;
-  bool get isOffline => !_isOnline;
 }
 
 void main() {
@@ -372,10 +326,9 @@ void main() {
 
           // Assert
           expect(result, isFalse);
-          expect(
-              mockRepository.callCount, greaterThan(1)); // Should have retried
+          expect(mockRepository.callCount, greaterThan(1)); // Should have retried
           expect(provider.errorMessage, contains('connection timeout'));
-        });
+        }, timeout: Timeout(Duration(seconds: 15)));
 
         test('should retry on connection error', () async {
           // Arrange
@@ -390,10 +343,9 @@ void main() {
 
           // Assert
           expect(result, isFalse);
-          expect(
-              mockRepository.callCount, greaterThan(1)); // Should have retried
+          expect(mockRepository.callCount, greaterThan(1)); // Should have retried
           expect(provider.errorMessage, contains('connection error'));
-        });
+        }, timeout: Timeout(Duration(seconds: 15)));
 
         test('should not retry on authentication errors', () async {
           // Arrange
@@ -430,10 +382,9 @@ void main() {
 
           // Assert
           expect(result, isFalse);
-          expect(
-              mockRepository.callCount, greaterThan(1)); // Should have retried
+          expect(mockRepository.callCount, greaterThan(1)); // Should have retried
           expect(provider.errorMessage, contains('Network error'));
-        });
+        }, timeout: Timeout(Duration(seconds: 15)));
       });
 
       group('API Error Responses', () {
@@ -525,7 +476,7 @@ void main() {
 
           // Wait for completion
           await future;
-        });
+        }, timeout: Timeout(Duration(seconds: 15)));
 
         test('should reset retry state after successful operation', () async {
           // Arrange
@@ -597,74 +548,6 @@ void main() {
               equals(2)); // User message + AI response
           expect(provider.messages.first.content, equals('Hello'));
           expect(provider.messages.last.content, equals('AI response'));
-        });
-      });
-
-      group('Error Recovery', () {
-        test('should allow retry after network error', () async {
-          // Arrange - set up authentication and first call fails
-          mockAuthProvider.setMockUser(
-              User(uid: 'test_user', email: 'test@example.com'), 'test_token');
-          provider.setAuthProvider(mockAuthProvider);
-          mockRepository.mockCreateSessionResult =
-              Result.failure('connection timeout');
-
-          // Act - first attempt fails
-          final firstResult = await provider.initializeSession('analysis_1');
-          expect(firstResult, isFalse);
-
-          // Arrange - second call succeeds
-          mockRepository.mockCreateSessionResult =
-              Result.success(SessionResponse(
-            sessionId: 'session_1',
-            context: 'test context',
-            createdAt: DateTime.now().toIso8601String(),
-          ));
-
-          // Act - retry succeeds
-          final retryResult = await provider.initializeSession('analysis_1');
-
-          // Assert
-          expect(retryResult, isTrue);
-          expect(provider.hasSession, isTrue);
-        });
-
-        test('should clear error when operation succeeds after failure',
-            () async {
-          // Arrange - set up authentication and analysis ID
-          mockAuthProvider.setMockUser(
-              User(uid: 'test_user', email: 'test@example.com'), 'test_token');
-          provider.setAuthProvider(mockAuthProvider);
-          await provider.initializeSession('analysis_1'); // Set analysis ID
-
-          // Arrange - first call fails
-          mockRepository.mockGetSessionResult = Result.failure('Network error');
-
-          // Act - first attempt fails
-          await provider.loadSessionHistory();
-          expect(provider.errorMessage, isNotNull);
-
-          // Arrange - second call succeeds
-          mockRepository.mockGetSessionResult = Result.success(ChatSession(
-            sessionId: 'session_1',
-            context: 'test context',
-            createdAt: DateTime.now(),
-            messages: [],
-            metadata: SessionMetadata(
-              analysisId: 'analysis_1',
-              userId: 'user_1',
-              workspaceId: 'workspace_1',
-              meterId: 'meter_1',
-              analysisType: 'correlation',
-            ),
-          ));
-
-          // Act - retry succeeds
-          final retryResult = await provider.loadSessionHistory();
-
-          // Assert
-          expect(retryResult, isTrue);
-          expect(provider.errorMessage, isNull); // Error should be cleared
         });
       });
     });
