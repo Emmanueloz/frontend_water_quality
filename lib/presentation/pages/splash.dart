@@ -169,22 +169,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.water_drop,
-                  color: theme.colorScheme.primary,
-                  size: 32,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Aqua Minds',
-                  style: theme.textTheme.displaySmall?.copyWith(
-                    color: theme.colorScheme.primary,
-                  ),
-                ),
-              ],
-            ),
+            const _LogoHeader(),
             Row(
               children: [
                 const ThemeToggleButton(),
@@ -914,104 +899,22 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   }
 
   Widget _buildMissionCard() {
-    final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.all(48),
-      decoration: BoxDecoration(
-        color: isDarkMode
-            ? theme.colorScheme.surface.withValues(alpha: 0.3)
-            : Colors.white.withValues(alpha: 0.9),
-        border: Border.all(
-          color: theme.colorScheme.primary
-              .withValues(alpha: isDarkMode ? 0.2 : 0.1),
-          width: 2,
-        ),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.tertiary.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Icon(
-              Icons.flag,
-              size: 40,
-              color: theme.colorScheme.primary,
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'Misión',
-            style: theme.textTheme.displayLarge?.copyWith(
-              color: theme.colorScheme.primary,
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'Desarrollar soluciones tecnológicas accesibles e innovadoras que faciliten el análisis y la resolución de desafíos sociales. Mediante el diseño de software, servicios digitales y el aprovechamiento de tecnologías emergentes, buscamos empoderar a las comunidades y promover el cambio social positivo. Nos comprometemos a colaborar con entidades públicas y privadas, ofreciendo soluciones personalizadas y efectivas que respondan a las necesidades de un mundo en constante evolución.',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: isDarkMode ? Colors.grey[300] : Colors.grey[600],
-              height: 1.8,
-            ),
-          ),
-        ],
-      ),
+    return _MissionVisionCard(
+      icon: Icons.flag,
+      title: 'Misión',
+      description:
+          'Desarrollar soluciones tecnológicas accesibles e innovadoras que faciliten el análisis y la resolución de desafíos sociales. Mediante el diseño de software, servicios digitales y el aprovechamiento de tecnologías emergentes, buscamos empoderar a las comunidades y promover el cambio social positivo. Nos comprometemos a colaborar con entidades públicas y privadas, ofreciendo soluciones personalizadas y efectivas que respondan a las necesidades de un mundo en constante evolución.',
+      isDarkMode: isDarkMode,
     );
   }
 
   Widget _buildVisionCard() {
-    final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.all(48),
-      decoration: BoxDecoration(
-        color: isDarkMode
-            ? theme.colorScheme.surface.withValues(alpha: 0.3)
-            : Colors.white.withValues(alpha: 0.9),
-        border: Border.all(
-          color: theme.colorScheme.primary
-              .withValues(alpha: isDarkMode ? 0.2 : 0.1),
-          width: 2,
-        ),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.tertiary.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Icon(
-              Icons.visibility,
-              size: 40,
-              color: theme.colorScheme.primary,
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'Visión',
-            style: theme.textTheme.displayLarge?.copyWith(
-              color: theme.colorScheme.primary,
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'Ser reconocidos como líderes en la creación de soluciones tecnológicas transformadoras que conviertan desafíos en oportunidades de desarrollo. Aspiramos a inspirar la toma de decisiones basada en datos y a generar un impacto sostenible en la sociedad, adaptándonos a las necesidades de nuestros usuarios. Para lograrlo, cultivamos un equipo de profesionales apasionados, creativos y comprometidos con la innovación y el bienestar social.',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: isDarkMode ? Colors.grey[300] : Colors.grey[600],
-              height: 1.8,
-            ),
-          ),
-        ],
-      ),
+    return _MissionVisionCard(
+      icon: Icons.visibility,
+      title: 'Visión',
+      description:
+          'Ser reconocidos como líderes en la creación de soluciones tecnológicas transformadoras que conviertan desafíos en oportunidades de desarrollo. Aspiramos a inspirar la toma de decisiones basada en datos y a generar un impacto sostenible en la sociedad, adaptándonos a las necesidades de nuestros usuarios. Para lograrlo, cultivamos un equipo de profesionales apasionados, creativos y comprometidos con la innovación y el bienestar social.',
+      isDarkMode: isDarkMode,
     );
   }
 }
@@ -1053,4 +956,141 @@ class WaterWavesPainter extends CustomPainter {
   @override
   bool shouldRepaint(WaterWavesPainter oldDelegate) =>
       animation != oldDelegate.animation;
+}
+
+class _LogoHeader extends StatefulWidget {
+  const _LogoHeader();
+
+  @override
+  State<_LogoHeader> createState() => _LogoHeaderState();
+}
+
+class _LogoHeaderState extends State<_LogoHeader> {
+  bool isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => isHovered = true),
+      onExit: (_) => setState(() => isHovered = false),
+      child: GestureDetector(
+        onTap: () => context.go("/"),
+        child: AnimatedScale(
+          scale: isHovered ? 1.05 : 1.0,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          child: Row(
+            children: [
+              Image.asset(
+                'assets/images/logo_aquaminds.png',
+                height: 90,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Aqua Minds',
+                style: theme.textTheme.displaySmall?.copyWith(
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MissionVisionCard extends StatefulWidget {
+  final IconData icon;
+  final String title;
+  final String description;
+  final bool isDarkMode;
+
+  const _MissionVisionCard({
+    required this.icon,
+    required this.title,
+    required this.description,
+    required this.isDarkMode,
+  });
+
+  @override
+  State<_MissionVisionCard> createState() => _MissionVisionCardState();
+}
+
+class _MissionVisionCardState extends State<_MissionVisionCard> {
+  bool isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => isHovered = true),
+      onExit: (_) => setState(() => isHovered = false),
+      child: AnimatedScale(
+        scale: isHovered ? 1.05 : 1.0,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        child: Container(
+          padding: const EdgeInsets.all(48),
+          decoration: BoxDecoration(
+            color: widget.isDarkMode
+                ? theme.colorScheme.surface.withValues(alpha: 0.3)
+                : Colors.white.withValues(alpha: 0.9),
+            border: Border.all(
+              color: theme.colorScheme.primary
+                  .withValues(alpha: widget.isDarkMode ? 0.2 : 0.1),
+              width: 2,
+            ),
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: isHovered
+                ? [
+                    BoxShadow(
+                      color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ]
+                : [],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.tertiary.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Icon(
+                  widget.icon,
+                  size: 40,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                widget.title,
+                style: theme.textTheme.displayLarge?.copyWith(
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                widget.description,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color:
+                      widget.isDarkMode ? Colors.grey[300] : Colors.grey[600],
+                  height: 1.8,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
