@@ -75,6 +75,15 @@ class WorkspaceProvider with ChangeNotifier {
     }
   }
 
+  Future<Result<List<Workspace>>> getPublicWorkspaces() async {
+    try {
+      final result = await _workspaceRepo.getPublic();
+      return result;
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
+  }
+
   Future<Result<List<Workspace>>> getSharedWorkspaces() async {
     if (_authProvider == null || _authProvider!.token == null) {
       return Result.failure("User not authenticated");

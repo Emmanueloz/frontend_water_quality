@@ -32,14 +32,17 @@ class _ListWorkspaceState extends State<ListWorkspace>
   bool isLoadingOwn = false;
   bool isLoadingShared = false;
   bool isLoadingAll = false;
+  bool isLoadingPublic = false;
 
   String? errorOwn;
   String? errorShared;
   String? errorAll;
+  String? errorPublic;
 
   List<Workspace> ownWorkspaces = [];
   List<Workspace> sharedWorkspaces = [];
   List<Workspace> allWorkspaces = [];
+  List<Workspace> publicWorkspaces = [];
 
   @override
   void initState() {
@@ -61,18 +64,32 @@ class _ListWorkspaceState extends State<ListWorkspace>
       case ListWorkspaces.shared:
         currentIndex = 1;
         break;
-      case ListWorkspaces.all:
+      case ListWorkspaces.public:
         currentIndex = 2;
+        break;
+      case ListWorkspaces.all:
+        currentIndex = 3;
         break;
     }
   }
 
   Future<void> _loadWorkspaces() async {
-    await Future.wait([
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (!authProvider.isAuthenticated) {
+      return;
+    }
+
+    final listLoader = [
       _fetchOwnWorkspaces(),
       _fetchSharedWorkspaces(),
-      _fetchAllWorkspaces(),
-    ]);
+      _fetchPublicWorkspaces(),
+    ];
+
+    if (authProvider.user?.rol == AppRoles.admin) {
+      listLoader.add(_fetchAllWorkspaces());
+    }
+
+    await Future.wait(listLoader);
   }
 
   @override
@@ -174,6 +191,24 @@ class _ListWorkspaceState extends State<ListWorkspace>
     }
   }
 
+  Future<void> _fetchPublicWorkspaces() async {
+    setState(() {
+      isLoadingPublic = true;
+      errorPublic = null;
+    });
+
+    final provider = Provider.of<WorkspaceProvider>(context, listen: false);
+    final Result<List<Workspace>> result = await provider.getPublicWorkspaces();
+
+    if (mounted) {
+      setState(() {
+        errorPublic = result.message;
+        publicWorkspaces = result.value ?? [];
+        isLoadingPublic = false;
+      });
+    }
+  }
+
   void _onDestinationSelected(int index) {
     setState(() {
       currentIndex = index;
@@ -199,6 +234,16 @@ class _ListWorkspaceState extends State<ListWorkspace>
         },
       );
     } else if (index == 2) {
+      setState(() {
+        _type = ListWorkspaces.public;
+      });
+      context.goNamed(
+        Routes.workspaces.name,
+        queryParameters: {
+          "type": ListWorkspaces.public.name,
+        },
+      );
+    } else if (index == 3) {
       setState(() {
         _type = ListWorkspaces.all;
       });
@@ -230,6 +275,11 @@ class _ListWorkspaceState extends State<ListWorkspace>
           icon: Icons.share_outlined,
           selectedIcon: Icons.share,
         ),
+        NavigationItem(
+          label: "Publicos",
+          icon: Icons.public_outlined,
+          selectedIcon: Icons.public,
+        ),
         if (authProvider.user?.rol == AppRoles.admin)
           NavigationItem(
             label: "Todos",
@@ -252,6 +302,35 @@ class _ListWorkspaceState extends State<ListWorkspace>
                 id: workspace.id ?? '',
                 title: workspace.name ?? "Sin nombre",
                 owner: workspace.user?.username ?? "Sin propietario",
+                type: workspace.type,
+                onTap: () {
+                  context.goNamed(
+                    Routes.workspace.name,
+                    pathParameters: {
+                      'id': workspace.id ?? '',
+                    },
+                  );
+                },
+                screenSize: screenSize,
+              );
+            },
+          );
+        }
+
+        if (_type == ListWorkspaces.public) {
+          return MainGridWorkspaces(
+            type: _type,
+            screenSize: screenSize,
+            isLoading: isLoadingPublic,
+            errorMessage: errorPublic,
+            itemCount: publicWorkspaces.length,
+            onRefresh: _fetchPublicWorkspaces,
+            itemBuilder: (context, index) {
+              final workspace = publicWorkspaces[index];
+              return WorkspaceCard(
+                id: workspace.id ?? '',
+                title: workspace.name ?? "Sin nombre",
+                owner: workspace.user?.username ?? "No disponible",
                 type: workspace.type,
                 onTap: () {
                   context.goNamed(

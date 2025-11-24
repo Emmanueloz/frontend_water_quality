@@ -10,4 +10,5 @@ abstract class WorkspaceRepo {
   Future<Result<List<Workspace>>> getAll(String userToken);
   Future<Result<List<Workspace>>> getFullAll(String userToken);
   Future<Result<List<Workspace>>> getShared(String userToken);
+  Future<Result<List<Workspace>>> getPublic();
 }

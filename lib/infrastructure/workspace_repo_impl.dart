@@ -57,6 +57,25 @@ class WorkspaceRepoImpl implements WorkspaceRepo {
   }
 
   @override
+  Future<Result<List<Workspace>>> getPublic() async {
+    try {
+      final response = await _dio.get(
+        '/workspaces/public/',
+      );
+
+      if (response.statusCode != 200) {
+        return Result.failure('Error: codigo ${response.statusCode}');
+      }
+
+      final List<dynamic> data = response.data['workspaces'] as List<dynamic>;
+      final workspaces = data.map((item) => Workspace.fromJson(item)).toList();
+      return Result.success(workspaces);
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
+  }
+
+  @override
   Future<Result<Workspace>> getById(String userToken, String id) async {
     try {
       final response = await _dio.get(
