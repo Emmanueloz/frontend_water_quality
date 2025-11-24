@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/theme/theme.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/atoms/theme_toggle_button.dart';
 
 class AboutUsPage extends StatefulWidget {
   const AboutUsPage({super.key});
@@ -16,27 +17,14 @@ class _AboutUsPageState extends State<AboutUsPage> {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Sobre Nosotros',
-          style: theme.textTheme.displaySmall?.copyWith(
-            color: theme.colorScheme.onPrimary,
-          ),
-        ),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: theme.colorScheme.onPrimary),
-          onPressed: () => context.go("/"),
-        ),
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            _buildHeader(),
             // Hero Section
             Container(
               width: double.infinity,
-              constraints: const BoxConstraints(minHeight: 500),
+              constraints: const BoxConstraints(minHeight: 650),
               decoration: BoxDecoration(
                 color: isDarkMode
                     ? theme.colorScheme.surface.withValues(alpha: 0.4)
@@ -47,7 +35,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
                 child: Container(
                   constraints: const BoxConstraints(maxWidth: 1200),
                   margin:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 100),
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 120),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -77,34 +65,32 @@ class _AboutUsPageState extends State<AboutUsPage> {
             // Nuestra Historia
             Container(
               width: double.infinity,
-              constraints: const BoxConstraints(minHeight: 400),
+              constraints: const BoxConstraints(minHeight: 550),
               color: theme.scaffoldBackgroundColor,
               child: Align(
                 alignment: Alignment.center,
                 child: Container(
                   constraints: const BoxConstraints(maxWidth: 1200),
                   margin:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 100),
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 120),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         "Nuestra Historia",
                         style: theme.textTheme.displayLarge?.copyWith(
                           color: theme.colorScheme.primary,
                         ),
+                        textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 16),
-                      Text(
-                        "Aqua Minds nació de la necesidad urgente de democratizar el acceso a información sobre la calidad del agua. "
-                        "Fundada por un equipo de ingenieros y científicos especializados en tecnologías del agua, nuestra empresa "
-                        "se estableció con la visión de crear soluciones tecnológicas innovadoras que permitan a las comunidades, "
-                        "empresas y gobiernos monitorear la calidad del agua de manera precisa y en tiempo real.",
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color:
-                              isDarkMode ? Colors.grey[300] : Colors.grey[600],
-                          height: 1.6,
-                        ),
+                      const SizedBox(height: 40),
+                      _HistoryCard(
+                        description:
+                            "Aqua Minds nació de la necesidad urgente de democratizar el acceso a información sobre la calidad del agua. "
+                            "Fundada por un equipo de ingenieros y científicos especializados en tecnologías del agua, nuestra empresa "
+                            "se estableció con la visión de crear soluciones tecnológicas innovadoras que permitan a las comunidades, "
+                            "empresas y gobiernos monitorear la calidad del agua de manera precisa y en tiempo real.",
+                        isDarkMode: isDarkMode,
                       ),
                     ],
                   ),
@@ -115,7 +101,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
             // Nuestros Valores
             Container(
               width: double.infinity,
-              constraints: const BoxConstraints(minHeight: 500),
+              constraints: const BoxConstraints(minHeight: 650),
               decoration: BoxDecoration(
                 color: (isDarkMode
                         ? const Color(0xFF66C2C2)
@@ -127,7 +113,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
                 child: Container(
                   constraints: const BoxConstraints(maxWidth: 1200),
                   margin:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 100),
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 120),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -183,14 +169,14 @@ class _AboutUsPageState extends State<AboutUsPage> {
             // Nuestro Equipo
             Container(
               width: double.infinity,
-              constraints: const BoxConstraints(minHeight: 600),
+              constraints: const BoxConstraints(minHeight: 750),
               color: theme.scaffoldBackgroundColor,
               child: Align(
                 alignment: Alignment.center,
                 child: Container(
                   constraints: const BoxConstraints(maxWidth: 1200),
                   margin:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 100),
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 120),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -249,7 +235,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
             // Call to Action
             Container(
               width: double.infinity,
-              constraints: const BoxConstraints(minHeight: 500),
+              constraints: const BoxConstraints(minHeight: 650),
               decoration: BoxDecoration(
                 color: isDarkMode
                     ? const Color(0xFF001a24).withValues(alpha: 0.4)
@@ -260,7 +246,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
                 child: Container(
                   constraints: const BoxConstraints(maxWidth: 1200),
                   margin:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 100),
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 120),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -313,6 +299,121 @@ class _AboutUsPageState extends State<AboutUsPage> {
       ),
     );
   }
+
+  Widget _buildHeader() {
+    final theme = Theme.of(context);
+    return Align(
+      alignment: Alignment.center,
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 1200),
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const _LogoHeader(),
+            Row(
+              children: [
+                const ThemeToggleButton(),
+                const SizedBox(width: 16),
+                TextButton(
+                  onPressed: () => context.go("/"),
+                  child: Text(
+                    'Principal',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                ElevatedButton(
+                  onPressed: () => context.go(Routes.login.path),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.tertiary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                  ),
+                  child: Text('Iniciar',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      )),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HistoryCard extends StatefulWidget {
+  final String description;
+  final bool isDarkMode;
+
+  const _HistoryCard({
+    required this.description,
+    required this.isDarkMode,
+  });
+
+  @override
+  State<_HistoryCard> createState() => _HistoryCardState();
+}
+
+class _HistoryCardState extends State<_HistoryCard> {
+  bool isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => isHovered = true),
+      onExit: (_) => setState(() => isHovered = false),
+      child: AnimatedScale(
+        scale: isHovered ? 1.02 : 1.0,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        child: Container(
+          padding: const EdgeInsets.all(48),
+          decoration: BoxDecoration(
+            color: widget.isDarkMode
+                ? theme.colorScheme.surface.withValues(alpha: 0.4)
+                : Colors.white.withValues(alpha: 0.8),
+            border: Border.all(
+              color: theme.colorScheme.primary
+                  .withValues(alpha: widget.isDarkMode ? 0.2 : 0.1),
+              width: 2,
+            ),
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: isHovered
+                ? [
+                    BoxShadow(
+                      color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ]
+                : [],
+          ),
+          child: Text(
+            widget.description,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: widget.isDarkMode ? Colors.grey[300] : Colors.grey[600],
+              height: 1.8,
+              fontSize: 18,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _ValueCard extends StatefulWidget {
@@ -347,8 +448,8 @@ class _ValueCardState extends State<_ValueCard> {
         curve: Curves.easeInOut,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          height: 180,
-          padding: const EdgeInsets.all(16),
+          height: 220,
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: isDarkMode
                 ? theme.colorScheme.surface.withValues(alpha: 0.4)
@@ -480,6 +581,50 @@ class _TeamCardState extends State<_TeamCard> {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LogoHeader extends StatefulWidget {
+  const _LogoHeader();
+
+  @override
+  State<_LogoHeader> createState() => _LogoHeaderState();
+}
+
+class _LogoHeaderState extends State<_LogoHeader> {
+  bool isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => isHovered = true),
+      onExit: (_) => setState(() => isHovered = false),
+      child: GestureDetector(
+        onTap: () => context.go("/"),
+        child: AnimatedScale(
+          scale: isHovered ? 1.05 : 1.0,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          child: Row(
+            children: [
+              Image.asset(
+                'assets/images/logo_aquaminds.png',
+                height: 90,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Aqua Minds',
+                style: theme.textTheme.displaySmall?.copyWith(
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+            ],
           ),
         ),
       ),
