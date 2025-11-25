@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/analysis_type.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/domain/models/analysis/period/data_pred_all.dart';
@@ -9,6 +10,7 @@ import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/molecules/analysis_modal_delete.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_table.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/chart_description.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/form_prediction_dialog.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/line_chart_prediction.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/prediction_all_chart.dart';
@@ -180,25 +182,37 @@ class _PredictionPageState extends State<PredictionPage> {
       );
     }
 
-    if (_current?.parameters?.sensor != null) {
-      final DataPredSensor data = _current?.data as DataPredSensor;
-      return LineChartPrediction(
-        width: 650,
-        sensor: _current?.parameters?.sensor ?? "",
-        periodType: _current?.parameters?.periodType ?? "",
-        titles: [...?data.data!.labels, ...?data.pred!.labels],
-        dataValues: data.data!.values ?? [],
-        predValues: data.pred!.values ?? [],
-        screenSize: screenSize,
-      );
-    }
-
-    final DataPredAll data = _current?.data as DataPredAll;
-
-    return PredictionAllChart(
-      data: data,
-      periodType: _current?.parameters?.periodType ?? "",
-      screenSize: screenSize,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const ChartDescription(type: AnalysisType.prediction),
+        if (_current?.parameters?.sensor != null)
+          Builder(
+            builder: (context) {
+              final DataPredSensor data = _current?.data as DataPredSensor;
+              return LineChartPrediction(
+                width: 650,
+                sensor: _current!.parameters!.sensor!,
+                periodType: _current?.parameters?.periodType ?? "",
+                titles: [...?data.data!.labels, ...?data.pred!.labels],
+                dataValues: data.data!.values ?? [],
+                predValues: data.pred!.values ?? [],
+                screenSize: screenSize,
+              );
+            },
+          )
+        else
+          Builder(
+            builder: (context) {
+              final DataPredAll data = _current?.data as DataPredAll;
+              return PredictionAllChart(
+                data: data,
+                periodType: _current?.parameters?.periodType ?? "",
+                screenSize: screenSize,
+              );
+            },
+          ),
+      ],
     );
   }
 }

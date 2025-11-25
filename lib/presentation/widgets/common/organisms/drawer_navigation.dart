@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
+import 'package:frontend_water_quality/core/enums/roles.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/theme_toggle_switch.dart';
 import 'package:frontend_water_quality/router/routes.dart';
@@ -17,7 +18,7 @@ class DrawerNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context);
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -51,7 +52,7 @@ class DrawerNavigation extends StatelessWidget {
                     ),
                     Chip(
                       label: Text(
-                        authProvider.user?.rol?.name ?? "",
+                        authProvider.user?.rol?.nameSpanish ?? "",
                       ),
                     ),
                   ],

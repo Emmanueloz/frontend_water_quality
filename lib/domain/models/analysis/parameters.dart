@@ -1,7 +1,9 @@
+import 'package:frontend_water_quality/core/enums/sensor_type.dart';
+
 class Parameters {
   DateTime? endDate;
   DateTime? startDate;
-  String? sensor;
+  SensorType? sensor;
 
   Parameters({
     this.endDate,
@@ -15,12 +17,14 @@ class Parameters {
         startDate: json["start_date"] == null
             ? null
             : DateTime.parse(json["start_date"]),
-        sensor: json["sensor_type"],
+        sensor: json["sensor_type"] == null
+            ? null
+            : SensorTypeExtension.fromString(json["sensor_type"]),
       );
 
   Map<String, dynamic> toJson() => {
         "end_date": endDate?.toIso8601String(),
         "start_date": startDate?.toIso8601String(),
-        if (sensor != null) "sensor_type": sensor
+        if (sensor != null) "sensor_type": sensor!.nameEnglish
       };
 }

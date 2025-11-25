@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/domain/models/user.dart';
 import 'package:frontend_water_quality/presentation/providers/user_provider.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/atoms/mobile_field.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/profile/profile_info_field.dart';
 import 'package:provider/provider.dart';
+import 'package:intl_mobile_field/mobile_number.dart';
 
 class UserInfoCard extends StatefulWidget {
   final User user;
@@ -18,7 +20,8 @@ class UserInfoCard extends StatefulWidget {
   State<UserInfoCard> createState() => _UserInfoCardState();
 }
 
-class _UserInfoCardState extends State<UserInfoCard> with AutomaticKeepAliveClientMixin {
+class _UserInfoCardState extends State<UserInfoCard>
+    with AutomaticKeepAliveClientMixin {
   final _formKey = GlobalKey<FormState>();
   final _passwordFormKey = GlobalKey<FormState>();
 
@@ -33,6 +36,8 @@ class _UserInfoCardState extends State<UserInfoCard> with AutomaticKeepAliveClie
 
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+
+  MobileNumber? number;
 
   @override
   bool get wantKeepAlive => true;
@@ -62,7 +67,7 @@ class _UserInfoCardState extends State<UserInfoCard> with AutomaticKeepAliveClie
     setState(() {
       _usernameController.text = widget.user.username ?? '';
       _emailController.text = widget.user.email;
-      _phoneController.text = widget.user.phone ?? '';
+      _phoneController.text = widget.user.phone ?? "";
     });
   }
 
@@ -71,10 +76,11 @@ class _UserInfoCardState extends State<UserInfoCard> with AutomaticKeepAliveClie
 
     setState(() => _isLoadingUser = true);
 
+    print("${number?.countryCode}${number?.number}");
     User updatedUser = widget.user.copyWith(
       username: _usernameController.text.trim(),
       email: _emailController.text.trim(),
-      phone: _phoneController.text.trim(),
+      phone: "${number?.countryCode }${number?.number}",
     );
 
     final provider = context.read<UserProvider>();
@@ -138,11 +144,14 @@ class _UserInfoCardState extends State<UserInfoCard> with AutomaticKeepAliveClie
                   keyboardType: TextInputType.emailAddress,
                   fieldType: FieldType.email,
                 ),
-                ProfileInfoField(
-                  label: 'Teléfono',
+                MobileField(
                   controller: _phoneController,
-                  keyboardType: TextInputType.phone,
-                  fieldType: FieldType.phone,
+                  inputDecoration: const InputDecoration(
+                    labelText: 'Teléfono',
+                  ),
+                  onChanged: (phone) {
+                    number = phone;
+                  },
                 ),
                 Row(
                   spacing: 10,

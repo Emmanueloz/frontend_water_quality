@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/analysis_status.dart';
+import 'package:frontend_water_quality/core/enums/analysis_type.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
 import 'package:frontend_water_quality/domain/models/analysis/base_analysis.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
@@ -32,6 +34,21 @@ class AnalysisDetail extends StatelessWidget {
 
   final BaseAnalysis? analysis;
 
+  // Sensor label mapping for Spanish names
+  static const Map<String, String> sensorLabels = {
+    'temperature': 'Temperatura',
+    'ph': 'pH',
+    'tds': 'TDS',
+    'conductivity': 'Conductividad',
+    'turbidity': 'Turbidez',
+  };
+
+  String _getSensorLabelSpanish(String? sensor) {
+    if (sensor == null) return '5';
+    final lowerSensor = sensor.toLowerCase();
+    return sensorLabels[lowerSensor] ?? sensor;
+  }
+
   @override
   Widget build(BuildContext context) {
     String typeSensor = "5";
@@ -48,8 +65,12 @@ class AnalysisDetail extends StatelessWidget {
         .format(analysis!.parameters!.endDate ?? DateTime.now());
 
     if (sensor != null) {
-      typeSensor = "Sensor: $sensor";
+      typeSensor = "Sensor: ${_getSensorLabelSpanish(sensor)}";
     }
+
+    // Get Spanish translations from model enums
+    final statusSpanish = analysis!.status?.nameSpanish ?? '';
+    final typeSpanish = analysis!.type?.nameSpanish ?? '';
 
     return Container(
       width: double.infinity,
@@ -89,10 +110,10 @@ class AnalysisDetail extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  _cardInfo(context, "Estado", analysis!.status ?? ""),
+                  _cardInfo(context, "Estado", statusSpanish),
                   _cardInfo(context, "Parametros", "$startDate $endDate"),
                   _cardInfo(context, "Sensores", typeSensor),
-                  _cardInfo(context, "Tipo", analysis!.type ?? ""),
+                  _cardInfo(context, "Tipo", typeSpanish),
                 ],
               ),
             ),

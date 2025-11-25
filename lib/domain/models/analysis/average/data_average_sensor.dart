@@ -1,7 +1,8 @@
+import 'package:frontend_water_quality/core/enums/sensor_type.dart';
 import 'package:frontend_water_quality/domain/models/analysis/data.dart';
 
 class DataAverageSensor extends Data {
-  String? sensor;
+  SensorType? sensor;
   Stats? stats;
 
   DataAverageSensor({
@@ -11,13 +12,15 @@ class DataAverageSensor extends Data {
 
   factory DataAverageSensor.fromJson(Map<String, dynamic> json) =>
       DataAverageSensor(
-        sensor: json["sensor"],
+        sensor: json["sensor"] == null
+            ? null
+            : SensorTypeExtension.fromString(json["sensor"]),
         stats: json["stats"] == null ? null : Stats.fromJson(json["stats"]),
       );
 
   @override
   Map<String, dynamic> toJson() => {
-        "sensor": sensor,
+        "sensor": sensor?.nameEnglish,
         "stats": stats?.toJson(),
       };
 }

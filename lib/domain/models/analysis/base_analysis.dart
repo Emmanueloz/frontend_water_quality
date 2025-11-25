@@ -1,3 +1,6 @@
+import 'package:frontend_water_quality/core/enums/analysis_status.dart';
+import 'package:frontend_water_quality/core/enums/analysis_type.dart';
+
 class BaseAnalysis<TData, TParameters> {
   String? id;
   DateTime? createdAt;
@@ -5,8 +8,8 @@ class BaseAnalysis<TData, TParameters> {
   String? error;
   String? meterId;
   TParameters? parameters;
-  String? status;
-  String? type;
+  AnalysisStatus? status;
+  AnalysisType? type;
   DateTime? updatedAt;
   String? workspaceId;
 

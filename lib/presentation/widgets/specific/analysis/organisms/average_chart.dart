@@ -1,12 +1,13 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/sensor_type.dart';
 
 class AverageChart extends StatelessWidget {
   final double average;
   final double min;
   final double max;
   final double maxY;
-  final String name;
+  final SensorType name;
   final double? width;
 
   const AverageChart({
@@ -33,7 +34,7 @@ class AverageChart extends StatelessWidget {
               spacing: 20,
               children: [
                 Text(
-                  name.toUpperCase(),
+                  name.nameSpanish,
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge

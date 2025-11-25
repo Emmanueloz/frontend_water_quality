@@ -51,7 +51,7 @@ class _FormCorrelationDialogState extends State<FormCorrelationDialog> {
         endDate: _endDate,
         periodType: _selectedPeriod.value,
         method: _selectedMethod.value,
-        sensors: _selectedSensors.map((s) => s.value).toList(),
+        sensors: _selectedSensors.map((s) => s).toList(),
       );
       widget.onSubmit(parameters);
       Navigator.of(context).pop();
@@ -143,7 +143,7 @@ class _FormCorrelationDialogState extends State<FormCorrelationDialog> {
                         runSpacing: 10,
                         children: SensorType.values.map((sensor) {
                           return FilterChip(
-                            label: Text(sensor.label),
+                            label: Text(sensor.nameSpanish),
                             selected: _selectedSensors.contains(sensor),
                             onSelected: (bool selected) {
                               setState(() {

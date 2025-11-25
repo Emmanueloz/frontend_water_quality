@@ -562,29 +562,31 @@ class AppRouter {
         builder: (context, state) => const Profile(),
       ),
       GoRoute(
-        path: Routes.notificationDetails.path,
-        name: Routes.notificationDetails.name,
-        builder: (context, state) {
-          final notificationId = state.pathParameters['id'];
-
-          if (notificationId == null || notificationId.isEmpty) {
-            // Si no hay ID, redirigir a la lista
-            Future.microtask(
-                () => context.goNamed(Routes.listNotifications.name));
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          }
-
-          return NotificationDetailPage(
-            notificationId: notificationId,
-          );
-        },
-      ),
-      GoRoute(
         path: Routes.listNotifications.path,
         name: Routes.listNotifications.name,
         builder: (context, state) => const ViewListNotifications(),
+        routes: [
+          GoRoute(
+            path: Routes.notificationDetails.path,
+            name: Routes.notificationDetails.name,
+            builder: (context, state) {
+              final notificationId = state.pathParameters['id'];
+
+              if (notificationId == null || notificationId.isEmpty) {
+                // Si no hay ID, redirigir a la lista
+                Future.microtask(
+                    () => context.goNamed(Routes.listNotifications.name));
+                return const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              return NotificationDetailPage(
+                notificationId: notificationId,
+              );
+            },
+          ),
+        ],
       ),
       GoRoute(
         path: Routes.recoveryPassword.path,

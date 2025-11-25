@@ -51,6 +51,8 @@ class UserProvider with ChangeNotifier {
 
       if (result.isSuccess) {
         user = updatedUser;
+        errorMessage = null;
+        _authProvider?.updateUserData(updatedUser);
         notifyListeners();
       } else {
         errorMessage = result.message;

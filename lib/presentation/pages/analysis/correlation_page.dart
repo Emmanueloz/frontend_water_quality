@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/analysis_type.dart';
 import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/domain/models/analysis/correlation/correlation.dart';
 import 'package:frontend_water_quality/presentation/providers/analysis_provider.dart';
@@ -7,6 +8,7 @@ import 'package:frontend_water_quality/presentation/widgets/specific/analysis/mo
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/molecules/correlation_heatmap.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/analysis_table.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/chart_description.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/form_correlation_dialog.dart';
 import 'package:provider/provider.dart';
 
@@ -176,13 +178,20 @@ class _CorrelationPageState extends State<CorrelationPage> {
       );
     }
 
-    return CorrelationHeatmap(
-      labels: _current?.data?.sensors ?? [],
-      matrix: _current?.data?.matrix ?? [],
-      textColor: theme.colorScheme.onPrimary,
-      gridColor: theme.colorScheme.tertiary,
-      primaryColor: theme.colorScheme.tertiary,
-      size: 400,
+    
+
+    return Column(
+      children: [
+        const ChartDescription(type: AnalysisType.correlation),
+        CorrelationHeatmap(
+          labels: _current?.data?.sensors ?? [],
+          matrix: _current?.data?.matrix ?? [],
+          textColor: theme.colorScheme.onPrimary,
+          gridColor: theme.colorScheme.tertiary,
+          primaryColor: theme.colorScheme.tertiary,
+          size: 400,
+        ),
+      ],
     );
   }
 }

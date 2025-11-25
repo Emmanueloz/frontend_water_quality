@@ -83,7 +83,6 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
     final theme = Theme.of(context);
     final isMobile = screenSize == ScreenSize.mobile;
     final maxWidth = isMobile ? double.infinity : 800.0;
-    print('maxWidth: $maxWidth');
     final notificationProvider = context.read<NotificationProvider>();
     final result = await notificationProvider.changeStatus(
       widget.notificationId,
@@ -262,15 +261,14 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 5,
+                                  horizontal: 12,
+                                  vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: statusColor.withValues(alpha: 0.15),
-                                  borderRadius: BorderRadius.circular(8),
+                                  color: statusColor.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(16),
                                   border: Border.all(
                                     color: statusColor.withValues(alpha: 0.3),
-                                    width: 1.5,
                                   ),
                                 ),
                                 child: Row(
@@ -279,59 +277,20 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
                                     Icon(
                                       _getStatusIcon(notification.status),
                                       color: statusColor,
-                                      size: 20,
+                                      size: 16,
                                     ),
-                                    const SizedBox(width: 8),
-                                    Text(_getStatusText(notification.status),
-                                        style:
-                                            theme.textTheme.bodySmall?.copyWith(
-                                          fontWeight: FontWeight.w600,
-                                          color: theme.colorScheme.onPrimary,
-                                        )),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      _getStatusText(notification.status),
+                                      style: TextStyle(
+                                        color: statusColor,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 12,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
-
-                              // Botones de Aprobar/Rechazar (solo para pending)
-                              if (notification.status.toLowerCase() ==
-                                  'pending') ...[
-                                const SizedBox(width: 12),
-                                if (_isUpdatingStatus)
-                                  const SizedBox(
-                                    width: 24,
-                                    height: 24,
-                                    child: CircularProgressIndicator(
-                                        strokeWidth: 2),
-                                  )
-                                else ...[
-                                  IconButton(
-                                    onPressed: () => _showActionModal(
-                                        NotificationStatus.accepted,
-                                        screenSize),
-                                    icon: const Icon(Icons.check_circle),
-                                    color: theme.colorScheme.tertiary,
-                                    tooltip: 'Aprobar',
-                                    iconSize: 24,
-                                    style: IconButton.styleFrom(
-                                      backgroundColor: Colors.transparent,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  IconButton(
-                                    onPressed: () => _showActionModal(
-                                        NotificationStatus.rejected,
-                                        screenSize),
-                                    icon: const Icon(Icons.cancel),
-                                    color: theme.colorScheme.error,
-                                    tooltip: 'Rechazar',
-                                    iconSize: 24,
-                                    style: IconButton.styleFrom(
-                                      backgroundColor: Colors.transparent,
-                                    ),
-                                  ),
-                                ],
-                              ],
-
                               const Spacer(),
                               // Read/Unread indicator
                               Container(
@@ -372,6 +331,42 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
                               ),
                             ],
                           ),
+                          
+                          // Botones de Aprobar/Rechazar (solo para pending)
+                          if (notification.status.toLowerCase() == 'pending') ...[
+                            const SizedBox(height: 16),
+                            if (_isUpdatingStatus)
+                              const Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            else
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                      onPressed: () => _showActionModal(
+                                        NotificationStatus.accepted,
+                                        screenSize,
+                                      ),
+                                      icon: const Icon(Icons.check),
+                                      label: const Text('Aprobar'),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: OutlinedButton.icon(
+                                      onPressed: () => _showActionModal(
+                                        NotificationStatus.rejected,
+                                        screenSize,
+                                      ),
+                                      icon: const Icon(Icons.close),
+                                      label: const Text('Rechazar'),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                          ],
+                          
                           const SizedBox(height: 20),
                           // Título
                           Text(

@@ -1,0 +1,66 @@
+name: Flutter CI/CD a Release (Android)
+
+# Este workflow se ejecuta cuando el workflow "Auto Tag on Merge" ha finalizado con éxito.
+on:
+  workflow_run:
+    workflows: ["Auto Tag on Merge"]
+    types:
+      - completed
+
+jobs:
+  build_android_release:
+    # Solo se ejecuta si el workflow anterior (auto-tag) fue exitoso
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    name: Construir APK y crear Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: ⬇️ Checkout del Código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Requerido para poder leer todos los tags del repositorio
+
+      - name: 🏷️ Obtener la última etiqueta creada
+        id: get_tag
+        run: |
+          # Obtenemos la etiqueta más reciente, que debería ser la que creó el workflow anterior
+          TAG=$(git describe --tags --abbrev=0)
+          echo "Etiqueta encontrada para el release: $TAG"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+        
+      - name: ☕ Configurar Java (para Android)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: 🐦 Configurar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.1' # Puedes cambiar la versión de Flutter aquí
+          channel: 'stable'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+
+      - name: 📥 Obtener Dependencias de Flutter
+        run: flutter pub get
+        
+      - name: ⚙️ Construir el APK de Lanzamiento
+        run: flutter build apk --release --build-name=${{ steps.get_tag.outputs.tag }}
+        
+      # --- Paso Clave: Creación del Release y Subida del APK ---
+      - name: 📤 Crear y Adjuntar APK al Release
+        uses: softprops/action-gh-release@v1
+        with:
+          # El nombre de la etiqueta se obtiene del paso anterior
+          tag_name: ${{ steps.get_tag.outputs.tag }}
+          name: Versión ${{ steps.get_tag.outputs.tag }}
+          # Especifica la ruta y el nombre del archivo APK.
+          files: |
+            build/app/outputs/flutter-apk/app-release.apk
+        env:
+          # El token predeterminado tiene permisos suficientes para este evento
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

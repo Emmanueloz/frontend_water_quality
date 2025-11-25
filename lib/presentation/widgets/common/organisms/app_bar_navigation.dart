@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/roles.dart';
 import 'package:frontend_water_quality/infrastructure/connectivity_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/theme_toggle_button.dart';
@@ -68,6 +69,7 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
             ButtonProfile(
               username: authProvider.user?.username ?? "",
               email: authProvider.user?.email ?? "",
+              role: authProvider.user?.rol?.nameSpanish,
               onPressed: () {
                 if (isOffline) {
                   return;

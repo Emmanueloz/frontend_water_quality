@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
+import 'package:frontend_water_quality/core/enums/sensor_type.dart';
 import 'package:frontend_water_quality/domain/models/analysis/period/data_pred_all.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/analysis/organisms/line_chart_prediction.dart';
 
@@ -26,7 +27,7 @@ class PredictionAllChart extends StatelessWidget {
         children: [
           LineChartPrediction(
             width: width,
-            sensor: "conductivity",
+            sensor: SensorType.conductivity,
             titles: titles,
             periodType: periodType,
             dataValues: data.data?.conductivity ?? [],
@@ -35,7 +36,7 @@ class PredictionAllChart extends StatelessWidget {
           ),
           LineChartPrediction(
             width: width,
-            sensor: "ph",
+            sensor: SensorType.ph,
             titles: titles,
             periodType: periodType,
             dataValues: data.data?.ph ?? [],
@@ -44,7 +45,7 @@ class PredictionAllChart extends StatelessWidget {
           ),
           LineChartPrediction(
             width: width,
-            sensor: "tds",
+            sensor: SensorType.tds,
             titles: titles,
             periodType: periodType,
             dataValues: data.data?.tds ?? [],
@@ -53,7 +54,7 @@ class PredictionAllChart extends StatelessWidget {
           ),
           LineChartPrediction(
             width: width,
-            sensor: "temperature",
+            sensor: SensorType.temperature,
             titles: titles,
             periodType: periodType,
             dataValues: data.data?.temperature ?? [],
@@ -62,7 +63,7 @@ class PredictionAllChart extends StatelessWidget {
           ),
           LineChartPrediction(
             width: width,
-            sensor: "turbidity",
+            sensor: SensorType.turbidity,
             titles: titles,
             periodType: periodType,
             dataValues: data.data?.turbidity ?? [],

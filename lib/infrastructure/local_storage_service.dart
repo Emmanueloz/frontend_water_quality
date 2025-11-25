@@ -1,7 +1,6 @@
 import 'package:frontend_water_quality/core/enums/storage_key.dart';
 import 'package:frontend_water_quality/domain/models/storage_model.dart';
 import 'package:frontend_water_quality/domain/models/user.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
