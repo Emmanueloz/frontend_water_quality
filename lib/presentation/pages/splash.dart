@@ -551,6 +551,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 
   Widget _buildPillarCard(String title, String description, IconData icon) {
     final theme = Theme.of(context);
+    final isMobile = MediaQuery.of(context).size.width <= 900;
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: AnimatedContainer(
@@ -564,7 +565,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                   onEnter: (_) => setState(() => isHovered = true),
                   onExit: (_) => setState(() => isHovered = false),
                   child: AnimatedScale(
-                    scale: isHovered ? 1.05 : 1.0,
+                    scale: (isHovered && !isMobile) ? 1.05 : 1.0,
                     duration: const Duration(milliseconds: 200),
                     curve: Curves.easeInOut,
                     child: Container(
@@ -967,13 +968,15 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
               LayoutBuilder(
                 builder: (context, constraints) {
                   if (constraints.maxWidth > 900) {
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(child: _buildMissionCard()),
-                        const SizedBox(width: 40),
-                        Expanded(child: _buildVisionCard()),
-                      ],
+                    return IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(child: _buildMissionCard()),
+                          const SizedBox(width: 40),
+                          Expanded(child: _buildVisionCard()),
+                        ],
+                      ),
                     );
                   } else {
                     return Column(
@@ -1076,15 +1079,17 @@ class _MissionVisionCardState extends State<_MissionVisionCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isMobile = MediaQuery.of(context).size.width <= 900;
 
     return MouseRegion(
       onEnter: (_) => setState(() => isHovered = true),
       onExit: (_) => setState(() => isHovered = false),
       child: AnimatedScale(
-        scale: isHovered ? 1.05 : 1.0,
+        scale: (isHovered && !isMobile) ? 1.05 : 1.0,
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
         child: Container(
+          height: double.infinity,
           padding: const EdgeInsets.all(48),
           decoration: BoxDecoration(
             color: widget.isDarkMode

@@ -135,41 +135,144 @@ class _AboutUsPageState extends State<AboutUsPage> {
                         ),
                       ),
                       const SizedBox(height: 40),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        spacing: 16,
-                        children: [
-                          Expanded(
-                            child: _ValueCard(
-                              icon: Icons.lightbulb,
-                              title: "Innovación",
-                              description:
-                                  "Desarrollamos tecnologías de vanguardia",
-                            ),
-                          ),
-                          Expanded(
-                            child: _ValueCard(
-                              icon: Icons.verified,
-                              title: "Calidad",
-                              description:
-                                  "Mantenemos los más altos estándares",
-                            ),
-                          ),
-                          Expanded(
-                            child: _ValueCard(
-                              icon: Icons.eco,
-                              title: "Sostenibilidad",
-                              description: "Promovemos prácticas responsables",
-                            ),
-                          ),
-                          Expanded(
-                            child: _ValueCard(
-                              icon: Icons.accessibility,
-                              title: "Accesibilidad",
-                              description: "Hacemos la tecnología accesible",
-                            ),
-                          ),
-                        ],
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          if (constraints.maxWidth > 900) {
+                            // Desktop: 4 columns
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              spacing: 16,
+                              children: [
+                                Expanded(
+                                  child: _ValueCard(
+                                    icon: Icons.lightbulb,
+                                    title: "Innovación",
+                                    description:
+                                        "Desarrollamos tecnologías de vanguardia",
+                                  ),
+                                ),
+                                Expanded(
+                                  child: _ValueCard(
+                                    icon: Icons.verified,
+                                    title: "Calidad",
+                                    description:
+                                        "Mantenemos los más altos estándares",
+                                  ),
+                                ),
+                                Expanded(
+                                  child: _ValueCard(
+                                    icon: Icons.eco,
+                                    title: "Sostenibilidad",
+                                    description:
+                                        "Promovemos prácticas responsables",
+                                  ),
+                                ),
+                                Expanded(
+                                  child: _ValueCard(
+                                    icon: Icons.accessibility,
+                                    title: "Accesibilidad",
+                                    description:
+                                        "Hacemos la tecnología accesible",
+                                  ),
+                                ),
+                              ],
+                            );
+                          } else if (constraints.maxWidth > 600) {
+                            // Tablet: 2 columns
+                            return Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: _ValueCard(
+                                        icon: Icons.lightbulb,
+                                        title: "Innovación",
+                                        description:
+                                            "Desarrollamos tecnologías de vanguardia",
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: _ValueCard(
+                                        icon: Icons.verified,
+                                        title: "Calidad",
+                                        description:
+                                            "Mantenemos los más altos estándares",
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: _ValueCard(
+                                        icon: Icons.eco,
+                                        title: "Sostenibilidad",
+                                        description:
+                                            "Promovemos prácticas responsables",
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: _ValueCard(
+                                        icon: Icons.accessibility,
+                                        title: "Accesibilidad",
+                                        description:
+                                            "Hacemos la tecnología accesible",
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          } else {
+                            // Mobile: 1 column
+                            return Column(
+                              children: [
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: _ValueCard(
+                                    icon: Icons.lightbulb,
+                                    title: "Innovación",
+                                    description:
+                                        "Desarrollamos tecnologías de vanguardia",
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: _ValueCard(
+                                    icon: Icons.verified,
+                                    title: "Calidad",
+                                    description:
+                                        "Mantenemos los más altos estándares",
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: _ValueCard(
+                                    icon: Icons.eco,
+                                    title: "Sostenibilidad",
+                                    description:
+                                        "Promovemos prácticas responsables",
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: _ValueCard(
+                                    icon: Icons.accessibility,
+                                    title: "Accesibilidad",
+                                    description:
+                                        "Hacemos la tecnología accesible",
+                                  ),
+                                ),
+                              ],
+                            );
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -200,44 +303,96 @@ class _AboutUsPageState extends State<AboutUsPage> {
                         ),
                       ),
                       const SizedBox(height: 40),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _TeamCard(
-                              icon: Icons.person,
-                              name: "David Emmanuel Ozuna Navarro",
-                              role: "Ingeniero de Software",
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: _TeamCard(
-                              icon: Icons.engineering,
-                              name: "Angel Alfredo Ruiz Lopez",
-                              role: "Especialista en IoT",
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _TeamCard(
-                              icon: Icons.analytics,
-                              name: "Raul de Jesus Najera Jimenez",
-                              role: "Analista de Datos",
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: _TeamCard(
-                              icon: Icons.design_services,
-                              name: "Josue Daniel Sanchez Hernandez",
-                              role: "Diseñador UX/UI",
-                            ),
-                          ),
-                        ],
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          if (constraints.maxWidth > 900) {
+                            // Desktop: 2x2 grid
+                            return Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: _TeamCard(
+                                        icon: Icons.person,
+                                        name: "David Emmanuel Ozuna Navarro",
+                                        role: "Ingeniero de Software",
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: _TeamCard(
+                                        icon: Icons.engineering,
+                                        name: "Angel Alfredo Ruiz Lopez",
+                                        role: "Especialista en IoT",
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: _TeamCard(
+                                        icon: Icons.analytics,
+                                        name: "Raul de Jesus Najera Jimenez",
+                                        role: "Analista de Datos",
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: _TeamCard(
+                                        icon: Icons.design_services,
+                                        name: "Josue Daniel Sanchez Hernandez",
+                                        role: "Diseñador UX/UI",
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          } else {
+                            // Mobile/Tablet: 1 column
+                            return Column(
+                              children: [
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: _TeamCard(
+                                    icon: Icons.person,
+                                    name: "David Emmanuel Ozuna Navarro",
+                                    role: "Ingeniero de Software",
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: _TeamCard(
+                                    icon: Icons.engineering,
+                                    name: "Angel Alfredo Ruiz Lopez",
+                                    role: "Especialista en IoT",
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: _TeamCard(
+                                    icon: Icons.analytics,
+                                    name: "Raul de Jesus Najera Jimenez",
+                                    role: "Analista de Datos",
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: _TeamCard(
+                                    icon: Icons.design_services,
+                                    name: "Josue Daniel Sanchez Hernandez",
+                                    role: "Diseñador UX/UI",
+                                  ),
+                                ),
+                              ],
+                            );
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -459,12 +614,13 @@ class _HistoryCardState extends State<_HistoryCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isMobile = MediaQuery.of(context).size.width <= 900;
 
     return MouseRegion(
       onEnter: (_) => setState(() => isHovered = true),
       onExit: (_) => setState(() => isHovered = false),
       child: AnimatedScale(
-        scale: isHovered ? 1.02 : 1.0,
+        scale: (isHovered && !isMobile) ? 1.02 : 1.0,
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
         child: Container(
@@ -526,12 +682,13 @@ class _ValueCardState extends State<_ValueCard> {
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final theme = Theme.of(context);
+    final isMobile = MediaQuery.of(context).size.width <= 900;
 
     return MouseRegion(
       onEnter: (_) => setState(() => isHovered = true),
       onExit: (_) => setState(() => isHovered = false),
       child: AnimatedScale(
-        scale: isHovered ? 1.05 : 1.0,
+        scale: (isHovered && !isMobile) ? 1.05 : 1.0,
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
         child: AnimatedContainer(
@@ -624,55 +781,59 @@ class _TeamCardState extends State<_TeamCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final isMobile = MediaQuery.of(context).size.width <= 900;
 
     return MouseRegion(
       onEnter: (_) => setState(() => isHovered = true),
       onExit: (_) => setState(() => isHovered = false),
       child: AnimatedScale(
-        scale: isHovered ? 1.05 : 1.0,
+        scale: (isHovered && !isMobile) ? 1.05 : 1.0,
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
-        child: Card(
-          elevation: 4,
-          color: isDarkMode
-              ? theme.colorScheme.surface.withValues(alpha: 0.4)
-              : AppTheme.colorScheme.surface,
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              children: [
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    color: AppTheme.colorScheme.tertiary,
-                    shape: BoxShape.circle,
+        child: SizedBox(
+          height: 220,
+          child: Card(
+            elevation: 4,
+            color: isDarkMode
+                ? theme.colorScheme.surface.withValues(alpha: 0.4)
+                : AppTheme.colorScheme.surface,
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                children: [
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: AppTheme.colorScheme.tertiary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      widget.icon,
+                      size: 40,
+                      color: AppTheme.colorScheme.secondary,
+                    ),
                   ),
-                  child: Icon(
-                    widget.icon,
-                    size: 40,
-                    color: AppTheme.colorScheme.secondary,
+                  const SizedBox(height: 16),
+                  Text(
+                    widget.name,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: isDarkMode ? Colors.white : AppTheme.textColor,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  widget.name,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: isDarkMode ? Colors.white : AppTheme.textColor,
+                  Text(
+                    widget.role,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: isDarkMode
+                          ? Colors.white.withValues(alpha: 0.9)
+                          : AppTheme.textColor.withValues(alpha: 0.7),
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                Text(
-                  widget.role,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: isDarkMode
-                        ? Colors.white.withValues(alpha: 0.9)
-                        : AppTheme.textColor.withValues(alpha: 0.7),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
