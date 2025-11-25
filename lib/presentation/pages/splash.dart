@@ -141,12 +141,17 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
     isDarkMode = brightness == Brightness.dark;
+    final isDesktop = MediaQuery.of(context).size.width >= 900;
 
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: _buildAppBar(context, isDesktop),
+      ),
+      endDrawer: !isDesktop ? _buildDrawer(context) : null,
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildHeader(),
             _buildHeroSection(),
             _buildSectionDivider(),
             _buildPillarsSection(),
@@ -159,53 +164,129 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildAppBar(BuildContext context, bool isDesktop) {
     final theme = Theme.of(context);
-    return Align(
-      alignment: Alignment.center,
-      child: Container(
-        constraints: const BoxConstraints(maxWidth: 1200),
-        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const _LogoHeader(),
-            Row(
-              children: [
-                const ThemeToggleButton(),
-                const SizedBox(width: 16),
-                TextButton(
-                  onPressed: () => context.go(Routes.aboutUs.path),
-                  child: Text(
-                    'Sobre Nosotros',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
+    final isDark = theme.brightness == Brightness.dark;
+
+    return AppBar(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      elevation: 0,
+      title: Row(
+        children: [
+          Image.asset(
+            'assets/images/logo_aquaminds.png',
+            height: 50,
+          ),
+          const SizedBox(width: 12),
+          Text(
+            'Aqua Minds',
+            style: theme.textTheme.titleLarge?.copyWith(
+              color: isDark ? Colors.white : theme.colorScheme.primary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+      actions: isDesktop
+          ? [
+              const ThemeToggleButton(),
+              const SizedBox(width: 16),
+              TextButton(
+                onPressed: () => context.go(Routes.aboutUs.path),
+                child: Text(
+                  'Sobre Nosotros',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: isDark ? Colors.white : theme.colorScheme.primary,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(width: 16),
-                ElevatedButton(
-                  onPressed: () => context.go(Routes.login.path),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.tertiary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
-                    ),
+              ),
+              const SizedBox(width: 16),
+              ElevatedButton(
+                onPressed: () => context.go(Routes.login.path),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.tertiary,
+                  foregroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
                   ),
-                  child: Text('Iniciar',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      )),
+                ),
+                child: Text(
+                  'Iniciar',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+            ]
+          : null,
+    );
+  }
+
+  Widget _buildDrawer(BuildContext context) {
+    final theme = Theme.of(context);
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/logo_aquaminds.png',
+                  height: 60,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Aqua Minds',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          ListTile(
+            leading: Icon(Icons.info, color: theme.colorScheme.primary),
+            title: const Text('Sobre Nosotros'),
+            onTap: () {
+              Navigator.pop(context);
+              context.go(Routes.aboutUs.path);
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.login, color: theme.colorScheme.primary),
+            title: const Text('Iniciar'),
+            onTap: () {
+              Navigator.pop(context);
+              context.go(Routes.login.path);
+            },
+          ),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              children: [
+                Text(
+                  'Tema',
+                  style: theme.textTheme.bodyMedium,
+                ),
+                const Spacer(),
+                const ThemeToggleButton(),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -281,7 +362,9 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                         textAlign: TextAlign.center,
                         style:
                             Theme.of(context).textTheme.headlineLarge?.copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : Theme.of(context).colorScheme.primary,
                                   height: 1.1,
                                 ),
                       ),
@@ -304,7 +387,9 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                         textAlign: TextAlign.center,
                         style:
                             Theme.of(context).textTheme.displayMedium?.copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : Theme.of(context).colorScheme.primary,
                                 ),
                       ),
                     ),
@@ -325,9 +410,8 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                         'Soluciones tecnológicas innovadoras para resolver desafíos ambientales y sociales mediante monitoreo inteligente del agua',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              color: isDarkMode
-                                  ? Colors.grey[300]
-                                  : Colors.grey[600],
+                              color:
+                                  isDarkMode ? Colors.white : Colors.grey[600],
                               height: 1.6,
                             ),
                       ),
@@ -397,7 +481,9 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                 'Nuestros Tres Pilares Fundamentales',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: isDarkMode
+                          ? Colors.white
+                          : Theme.of(context).colorScheme.primary,
                     ),
               ),
               const SizedBox(height: 60),
@@ -519,7 +605,9 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                             child: Icon(
                               icon,
                               size: 40,
-                              color: theme.colorScheme.primary,
+                              color: isDarkMode
+                                  ? Colors.white
+                                  : theme.colorScheme.primary,
                             ),
                           ),
                           const SizedBox(height: 24),
@@ -527,7 +615,9 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                             title,
                             textAlign: TextAlign.center,
                             style: theme.textTheme.displaySmall?.copyWith(
-                              color: theme.colorScheme.primary,
+                              color: isDarkMode
+                                  ? Colors.white
+                                  : theme.colorScheme.primary,
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -571,7 +661,9 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                 'Flujo de Trabajo',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: isDarkMode
+                          ? Colors.white
+                          : Theme.of(context).colorScheme.primary,
                     ),
               ),
               const SizedBox(height: 40),
@@ -821,7 +913,9 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.primary,
+                              color: isDarkMode
+                                  ? Colors.white
+                                  : Theme.of(context).colorScheme.primary,
                             ),
                       ),
                       const SizedBox(height: 16),
@@ -830,8 +924,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 15,
-                          color:
-                              isDarkMode ? Colors.grey[300] : Colors.grey[700],
+                          color: isDarkMode ? Colors.white : Colors.grey[700],
                           height: 1.6,
                         ),
                       ),
@@ -865,7 +958,9 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                 'Acerca de Minds',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: isDarkMode
+                          ? Colors.white
+                          : Theme.of(context).colorScheme.primary,
                     ),
               ),
               const SizedBox(height: 60),
@@ -958,50 +1053,6 @@ class WaterWavesPainter extends CustomPainter {
       animation != oldDelegate.animation;
 }
 
-class _LogoHeader extends StatefulWidget {
-  const _LogoHeader();
-
-  @override
-  State<_LogoHeader> createState() => _LogoHeaderState();
-}
-
-class _LogoHeaderState extends State<_LogoHeader> {
-  bool isHovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => isHovered = true),
-      onExit: (_) => setState(() => isHovered = false),
-      child: GestureDetector(
-        onTap: () => context.go("/"),
-        child: AnimatedScale(
-          scale: isHovered ? 1.05 : 1.0,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-          child: Row(
-            children: [
-              Image.asset(
-                'assets/images/logo_aquaminds.png',
-                height: 90,
-              ),
-              const SizedBox(width: 12),
-              Text(
-                'Aqua Minds',
-                style: theme.textTheme.displaySmall?.copyWith(
-                  color: theme.colorScheme.primary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _MissionVisionCard extends StatefulWidget {
   final IconData icon;
   final String title;
@@ -1068,22 +1119,25 @@ class _MissionVisionCardState extends State<_MissionVisionCard> {
                 child: Icon(
                   widget.icon,
                   size: 40,
-                  color: theme.colorScheme.primary,
+                  color: widget.isDarkMode
+                      ? Colors.white
+                      : theme.colorScheme.primary,
                 ),
               ),
               const SizedBox(height: 24),
               Text(
                 widget.title,
                 style: theme.textTheme.displayLarge?.copyWith(
-                  color: theme.colorScheme.primary,
+                  color: widget.isDarkMode
+                      ? Colors.white
+                      : theme.colorScheme.primary,
                 ),
               ),
               const SizedBox(height: 24),
               Text(
                 widget.description,
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  color:
-                      widget.isDarkMode ? Colors.grey[300] : Colors.grey[600],
+                  color: widget.isDarkMode ? Colors.white : Colors.grey[600],
                   height: 1.8,
                 ),
               ),
