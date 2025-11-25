@@ -16,11 +16,17 @@ class _AboutUsPageState extends State<AboutUsPage> {
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final theme = Theme.of(context);
+    final isDesktop = MediaQuery.of(context).size.width >= 900;
+
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: _buildAppBar(context, isDesktop, theme),
+      ),
+      endDrawer: !isDesktop ? _buildDrawer(context, theme) : null,
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildHeader(),
             // Hero Section
             Container(
               width: double.infinity,
@@ -42,7 +48,9 @@ class _AboutUsPageState extends State<AboutUsPage> {
                       Text(
                         "Sobre Nosotros - Aqua Minds",
                         style: theme.textTheme.displayLarge?.copyWith(
-                          color: theme.colorScheme.primary,
+                          color: isDarkMode
+                              ? Colors.white
+                              : theme.colorScheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
                         textAlign: TextAlign.center,
@@ -51,8 +59,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
                       Text(
                         "Innovando en el monitoreo de calidad del agua para un futuro más seguro",
                         style: theme.textTheme.titleLarge?.copyWith(
-                          color:
-                              isDarkMode ? Colors.grey[300] : Colors.grey[600],
+                          color: isDarkMode ? Colors.white : Colors.grey[600],
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -79,7 +86,9 @@ class _AboutUsPageState extends State<AboutUsPage> {
                       Text(
                         "Nuestra Historia",
                         style: theme.textTheme.displayLarge?.copyWith(
-                          color: theme.colorScheme.primary,
+                          color: isDarkMode
+                              ? Colors.white
+                              : theme.colorScheme.primary,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -120,7 +129,9 @@ class _AboutUsPageState extends State<AboutUsPage> {
                       Text(
                         "Nuestros Valores",
                         style: theme.textTheme.displayLarge?.copyWith(
-                          color: theme.colorScheme.primary,
+                          color: isDarkMode
+                              ? Colors.white
+                              : theme.colorScheme.primary,
                         ),
                       ),
                       const SizedBox(height: 40),
@@ -183,7 +194,9 @@ class _AboutUsPageState extends State<AboutUsPage> {
                       Text(
                         "Nuestro Equipo",
                         style: theme.textTheme.displayLarge?.copyWith(
-                          color: theme.colorScheme.primary,
+                          color: isDarkMode
+                              ? Colors.white
+                              : theme.colorScheme.primary,
                         ),
                       ),
                       const SizedBox(height: 40),
@@ -253,7 +266,9 @@ class _AboutUsPageState extends State<AboutUsPage> {
                       Text(
                         "¿Listo para comenzar?",
                         style: theme.textTheme.displayLarge?.copyWith(
-                          color: theme.colorScheme.primary,
+                          color: isDarkMode
+                              ? Colors.white
+                              : theme.colorScheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
                         textAlign: TextAlign.center,
@@ -262,8 +277,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
                       Text(
                         "Únete a nosotros en la revolución del monitoreo de calidad del agua",
                         style: theme.textTheme.titleLarge?.copyWith(
-                          color:
-                              isDarkMode ? Colors.grey[300] : Colors.grey[600],
+                          color: isDarkMode ? Colors.white : Colors.grey[600],
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -300,53 +314,127 @@ class _AboutUsPageState extends State<AboutUsPage> {
     );
   }
 
-  Widget _buildHeader() {
-    final theme = Theme.of(context);
-    return Align(
-      alignment: Alignment.center,
-      child: Container(
-        constraints: const BoxConstraints(maxWidth: 1200),
-        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const _LogoHeader(),
-            Row(
-              children: [
-                const ThemeToggleButton(),
-                const SizedBox(width: 16),
-                TextButton(
-                  onPressed: () => context.go("/"),
-                  child: Text(
-                    'Principal',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
+  Widget _buildAppBar(BuildContext context, bool isDesktop, ThemeData theme) {
+    final isDark = theme.brightness == Brightness.dark;
+
+    return AppBar(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      elevation: 0,
+      title: Row(
+        children: [
+          Image.asset(
+            'assets/images/logo_aquaminds.png',
+            height: 50,
+          ),
+          const SizedBox(width: 12),
+          Text(
+            'Aqua Minds',
+            style: theme.textTheme.titleLarge?.copyWith(
+              color: isDark ? Colors.white : theme.colorScheme.primary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+      actions: isDesktop
+          ? [
+              const ThemeToggleButton(),
+              const SizedBox(width: 16),
+              TextButton(
+                onPressed: () => context.go("/"),
+                child: Text(
+                  'Principal',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: isDark ? Colors.white : theme.colorScheme.primary,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(width: 16),
-                ElevatedButton(
-                  onPressed: () => context.go(Routes.login.path),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.tertiary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
-                    ),
+              ),
+              const SizedBox(width: 16),
+              ElevatedButton(
+                onPressed: () => context.go(Routes.login.path),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.tertiary,
+                  foregroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
                   ),
-                  child: Text('Iniciar',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      )),
+                ),
+                child: Text(
+                  'Iniciar',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+            ]
+          : null,
+    );
+  }
+
+  Widget _buildDrawer(BuildContext context, ThemeData theme) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/logo_aquaminds.png',
+                  height: 60,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Aqua Minds',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          ListTile(
+            leading: Icon(Icons.home, color: theme.colorScheme.primary),
+            title: const Text('Principal'),
+            onTap: () {
+              Navigator.pop(context);
+              context.go("/");
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.login, color: theme.colorScheme.primary),
+            title: const Text('Iniciar'),
+            onTap: () {
+              Navigator.pop(context);
+              context.go(Routes.login.path);
+            },
+          ),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              children: [
+                Text(
+                  'Tema',
+                  style: theme.textTheme.bodyMedium,
+                ),
+                const Spacer(),
+                const ThemeToggleButton(),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -404,7 +492,7 @@ class _HistoryCardState extends State<_HistoryCard> {
           child: Text(
             widget.description,
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: widget.isDarkMode ? Colors.grey[300] : Colors.grey[600],
+              color: widget.isDarkMode ? Colors.white : Colors.grey[600],
               height: 1.8,
               fontSize: 18,
             ),
@@ -491,7 +579,7 @@ class _ValueCardState extends State<_ValueCard> {
                 widget.title,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.primary,
+                  color: isDarkMode ? Colors.white : theme.colorScheme.primary,
                 ),
               ),
               const SizedBox(height: 4),
@@ -499,7 +587,7 @@ class _ValueCardState extends State<_ValueCard> {
                 child: Text(
                   widget.description,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                    color: isDarkMode ? Colors.white : Colors.grey[600],
                   ),
                   textAlign: TextAlign.center,
                   maxLines: 2,
@@ -535,6 +623,7 @@ class _TeamCardState extends State<_TeamCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return MouseRegion(
       onEnter: (_) => setState(() => isHovered = true),
@@ -545,7 +634,9 @@ class _TeamCardState extends State<_TeamCard> {
         curve: Curves.easeInOut,
         child: Card(
           elevation: 4,
-          color: AppTheme.colorScheme.surface,
+          color: isDarkMode
+              ? theme.colorScheme.surface.withValues(alpha: 0.4)
+              : AppTheme.colorScheme.surface,
           child: Padding(
             padding: const EdgeInsets.all(24.0),
             child: Column(
@@ -568,63 +659,21 @@ class _TeamCardState extends State<_TeamCard> {
                   widget.name,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.textColor,
+                    color: isDarkMode ? Colors.white : AppTheme.textColor,
                   ),
                   textAlign: TextAlign.center,
                 ),
                 Text(
                   widget.role,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppTheme.textColor.withValues(alpha: 0.7),
+                    color: isDarkMode
+                        ? Colors.white.withValues(alpha: 0.9)
+                        : AppTheme.textColor.withValues(alpha: 0.7),
                   ),
                   textAlign: TextAlign.center,
                 ),
               ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _LogoHeader extends StatefulWidget {
-  const _LogoHeader();
-
-  @override
-  State<_LogoHeader> createState() => _LogoHeaderState();
-}
-
-class _LogoHeaderState extends State<_LogoHeader> {
-  bool isHovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => isHovered = true),
-      onExit: (_) => setState(() => isHovered = false),
-      child: GestureDetector(
-        onTap: () => context.go("/"),
-        child: AnimatedScale(
-          scale: isHovered ? 1.05 : 1.0,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-          child: Row(
-            children: [
-              Image.asset(
-                'assets/images/logo_aquaminds.png',
-                height: 90,
-              ),
-              const SizedBox(width: 12),
-              Text(
-                'Aqua Minds',
-                style: theme.textTheme.displaySmall?.copyWith(
-                  color: theme.colorScheme.primary,
-                ),
-              ),
-            ],
           ),
         ),
       ),
