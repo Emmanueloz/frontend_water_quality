@@ -126,7 +126,7 @@ void main() {
     group('Initial State', () {
       test('should have correct initial state', () {
         // Assert
-        expect(provider.shouldReloadList, isTrue);
+        expect(provider.shouldReloadType('mine'), isTrue);
       });
     });
 
@@ -432,7 +432,7 @@ void main() {
 
         // Assert
         expect(result, isNull); // Result.success doesn't set message
-        expect(provider.shouldReloadList, isTrue);
+        expect(provider.shouldReloadType('mine'), isTrue);
         expect(mockRepository.callCount, equals(1));
         expect(listenerCalled, isTrue);
       });
@@ -471,14 +471,14 @@ void main() {
         mockRepository.mockCreateResult = Result.success(createResponse);
 
         // Confirm list reloaded to reset flag
-        provider.confirmListReloaded();
-        expect(provider.shouldReloadList, isFalse);
+        provider.confirmListReloaded(type: 'mine');
+        expect(provider.shouldReloadType('mine'), isFalse);
 
         // Act
         await provider.createWorkspace(testWorkspace1);
 
         // Assert
-        expect(provider.shouldReloadList, isTrue);
+        expect(provider.shouldReloadType('mine'), isTrue);
       });
 
       test('should notify listeners when creating workspace', () async {
@@ -533,7 +533,7 @@ void main() {
         // Assert
         expect(result.$1, isTrue);
         expect(result.$2, isNull);
-        expect(provider.shouldReloadList, isTrue);
+        expect(provider.shouldReloadType('mine'), isTrue);
         expect(provider.shouldReloadWorkspace('workspace_1'), isTrue);
         expect(mockRepository.callCount, equals(1));
         expect(listenerCalled, isTrue);
@@ -575,9 +575,9 @@ void main() {
         mockRepository.mockUpdateResult = Result.success(updateResponse);
 
         // Confirm reloads to reset flags
-        provider.confirmListReloaded();
+        provider.confirmListReloaded(type: 'mine');
         provider.confirmWorkspaceReloaded('workspace_1');
-        expect(provider.shouldReloadList, isFalse);
+        expect(provider.shouldReloadType('mine'), isFalse);
         expect(provider.shouldReloadWorkspace('workspace_1'),
             isTrue); // Default is true
 
@@ -585,7 +585,7 @@ void main() {
         await provider.updateWorkspace(testWorkspace1);
 
         // Assert
-        expect(provider.shouldReloadList, isTrue);
+        expect(provider.shouldReloadType('mine'), isTrue);
         expect(provider.shouldReloadWorkspace('workspace_1'), isTrue);
       });
 
@@ -610,9 +610,11 @@ void main() {
     });
 
     group('Reload Flags Management', () {
-      test('should have shouldReloadList true by default', () {
+      test('should have shouldReloadType true by default', () {
         // Assert
-        expect(provider.shouldReloadList, isTrue);
+        expect(provider.shouldReloadType('mine'), isTrue);
+        expect(provider.shouldReloadType('shared'), isTrue);
+        expect(provider.shouldReloadType('public'), isTrue);
       });
 
       test('should have shouldReloadWorkspace true by default for any id', () {
@@ -624,8 +626,8 @@ void main() {
 
       test('should mark list for reload', () {
         // Arrange
-        provider.confirmListReloaded();
-        expect(provider.shouldReloadList, isFalse);
+        provider.confirmListReloaded(type: 'mine');
+        expect(provider.shouldReloadType('mine'), isFalse);
         bool listenerCalled = false;
 
         provider.addListener(() {
@@ -633,10 +635,10 @@ void main() {
         });
 
         // Act
-        provider.markListForReload();
+        provider.markListForReload(type: 'mine');
 
         // Assert
-        expect(provider.shouldReloadList, isTrue);
+        expect(provider.shouldReloadType('mine'), isTrue);
         expect(listenerCalled, isTrue);
       });
 
@@ -661,14 +663,14 @@ void main() {
 
       test('should confirm list reloaded', () {
         // Arrange
-        provider.markListForReload();
-        expect(provider.shouldReloadList, isTrue);
+        provider.markListForReload(type: 'mine');
+        expect(provider.shouldReloadType('mine'), isTrue);
 
         // Act
-        provider.confirmListReloaded();
+        provider.confirmListReloaded(type: 'mine');
 
         // Assert
-        expect(provider.shouldReloadList, isFalse);
+        expect(provider.shouldReloadType('mine'), isFalse);
       });
 
       test('should confirm workspace reloaded', () {

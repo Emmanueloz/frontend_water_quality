@@ -10,19 +10,27 @@ class WorkspaceProvider with ChangeNotifier {
   AuthProvider? _authProvider;
   final WorkspaceRepo _workspaceRepo;
 
-  // Flags para control de recarga
-  bool _shouldReloadList = true;
+  // Flags para control de recarga por tipo
+  final Map<String, bool> _shouldReloadByType = {};
   final Map<String, bool> _shouldReloadWorkspace = {};
 
   WorkspaceProvider(this._workspaceRepo, this._authProvider);
 
   // Getters para los flags
-  bool get shouldReloadList => _shouldReloadList;
+  bool shouldReloadType(String type) => _shouldReloadByType[type] ?? true;
   bool shouldReloadWorkspace(String id) => _shouldReloadWorkspace[id] ?? true;
 
   // Métodos para marcar recargas
-  void markListForReload() {
-    _shouldReloadList = true;
+  void markListForReload({String? type}) {
+    if (type != null) {
+      _shouldReloadByType[type] = true;
+    } else {
+      // Marcar todos los tipos para recarga
+      _shouldReloadByType['mine'] = true;
+      _shouldReloadByType['shared'] = true;
+      _shouldReloadByType['public'] = true;
+      _shouldReloadByType['all'] = true;
+    }
     notifyListeners();
   }
 
@@ -32,8 +40,12 @@ class WorkspaceProvider with ChangeNotifier {
   }
 
   // Métodos para confirmar recargas completadas
-  void confirmListReloaded() {
-    _shouldReloadList = false;
+  void confirmListReloaded({String? type}) {
+    if (type != null) {
+      _shouldReloadByType[type] = false;
+    } else {
+      _shouldReloadByType.clear();
+    }
   }
 
   void confirmWorkspaceReloaded(String id) {

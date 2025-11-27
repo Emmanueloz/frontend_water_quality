@@ -34,6 +34,12 @@ class _ListWorkspaceState extends State<ListWorkspace>
   bool isLoadingAll = false;
   bool isLoadingPublic = false;
 
+  // Flags para rastrear qué tipos ya se han cargado
+  bool _hasLoadedOwn = false;
+  bool _hasLoadedShared = false;
+  bool _hasLoadedAll = false;
+  bool _hasLoadedPublic = false;
+
   String? errorOwn;
   String? errorShared;
   String? errorAll;
@@ -79,26 +85,62 @@ class _ListWorkspaceState extends State<ListWorkspace>
       return;
     }
 
-    final listLoader = [
-      _fetchOwnWorkspaces(),
-      _fetchSharedWorkspaces(),
-      _fetchPublicWorkspaces(),
-    ];
-
-    if (authProvider.user?.rol == AppRoles.admin) {
-      listLoader.add(_fetchAllWorkspaces());
+    // Solo cargar el tipo actual
+    switch (_type) {
+      case ListWorkspaces.mine:
+        if (!_hasLoadedOwn) {
+          await _fetchOwnWorkspaces();
+          _hasLoadedOwn = true;
+        }
+        break;
+      case ListWorkspaces.shared:
+        if (!_hasLoadedShared) {
+          await _fetchSharedWorkspaces();
+          _hasLoadedShared = true;
+        }
+        break;
+      case ListWorkspaces.public:
+        if (!_hasLoadedPublic) {
+          await _fetchPublicWorkspaces();
+          _hasLoadedPublic = true;
+        }
+        break;
+      case ListWorkspaces.all:
+        if (!_hasLoadedAll && authProvider.user?.rol == AppRoles.admin) {
+          await _fetchAllWorkspaces();
+          _hasLoadedAll = true;
+        }
+        break;
     }
-
-    await Future.wait(listLoader);
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final provider = Provider.of<WorkspaceProvider>(context);
-    if (provider.shouldReloadList) {
-      _loadWorkspaces();
-      provider.confirmListReloaded();
+
+    // Verificar si el tipo actual necesita recarga
+    final typeKey = _type.name;
+    if (provider.shouldReloadType(typeKey)) {
+      _reloadCurrentType();
+      provider.confirmListReloaded(type: typeKey);
+    }
+  }
+
+  Future<void> _reloadCurrentType() async {
+    switch (_type) {
+      case ListWorkspaces.mine:
+        await _fetchOwnWorkspaces();
+        break;
+      case ListWorkspaces.shared:
+        await _fetchSharedWorkspaces();
+        break;
+      case ListWorkspaces.public:
+        await _fetchPublicWorkspaces();
+        break;
+      case ListWorkspaces.all:
+        await _fetchAllWorkspaces();
+        break;
     }
   }
 
@@ -217,6 +259,10 @@ class _ListWorkspaceState extends State<ListWorkspace>
       setState(() {
         _type = ListWorkspaces.mine;
       });
+      // Cargar si no se ha cargado aún
+      if (!_hasLoadedOwn) {
+        _loadWorkspaces();
+      }
       context.goNamed(
         Routes.workspaces.name,
         queryParameters: {
@@ -227,6 +273,10 @@ class _ListWorkspaceState extends State<ListWorkspace>
       setState(() {
         _type = ListWorkspaces.shared;
       });
+      // Cargar si no se ha cargado aún
+      if (!_hasLoadedShared) {
+        _loadWorkspaces();
+      }
       context.goNamed(
         Routes.workspaces.name,
         queryParameters: {
@@ -237,6 +287,10 @@ class _ListWorkspaceState extends State<ListWorkspace>
       setState(() {
         _type = ListWorkspaces.public;
       });
+      // Cargar si no se ha cargado aún
+      if (!_hasLoadedPublic) {
+        _loadWorkspaces();
+      }
       context.goNamed(
         Routes.workspaces.name,
         queryParameters: {
@@ -247,6 +301,10 @@ class _ListWorkspaceState extends State<ListWorkspace>
       setState(() {
         _type = ListWorkspaces.all;
       });
+      // Cargar si no se ha cargado aún
+      if (!_hasLoadedAll) {
+        _loadWorkspaces();
+      }
       context.goNamed(
         Routes.workspaces.name,
         queryParameters: {
