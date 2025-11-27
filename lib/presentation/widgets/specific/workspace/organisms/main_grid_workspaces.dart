@@ -18,6 +18,7 @@ class MainGridWorkspaces extends StatelessWidget {
   final int itemCount;
   final Widget Function(BuildContext, int) itemBuilder;
   final void Function()? onRefresh;
+  final Widget? paginationControls;
 
   const MainGridWorkspaces({
     super.key,
@@ -28,11 +29,25 @@ class MainGridWorkspaces extends StatelessWidget {
     required this.itemBuilder,
     this.errorMessage,
     this.onRefresh,
+    this.paginationControls,
   });
 
   @override
   Widget build(BuildContext context) {
     return _buildMain(context);
+  }
+
+  String _getTitle() {
+    switch (type) {
+      case ListWorkspaces.mine:
+        return "Mis espacios de trabajo";
+      case ListWorkspaces.shared:
+        return "Espacios de trabajo invitados";
+      case ListWorkspaces.public:
+        return "Espacios de trabajo públicos";
+      case ListWorkspaces.all:
+        return "Todos los espacios de trabajo";
+    }
   }
 
   Widget _buildMain(BuildContext context) {
@@ -51,13 +66,14 @@ class MainGridWorkspaces extends StatelessWidget {
         children: [
           ButtonActions(
             title: Text(
-              "Espacios de trabajo",
+              _getTitle(),
               style: Theme.of(context)
                   .textTheme
                   .bodyLarge
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
             actions: [
+              if (paginationControls != null) paginationControls!,
               IconButton(
                 onPressed: onRefresh,
                 icon: Icon(Icons.refresh),

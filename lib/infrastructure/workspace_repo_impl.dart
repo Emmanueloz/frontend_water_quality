@@ -36,10 +36,17 @@ class WorkspaceRepoImpl implements WorkspaceRepo {
   }
 
   @override
-  Future<Result<List<Workspace>>> getAll(String userToken) async {
+  Future<Result<List<Workspace>>> getAll(String userToken,
+      {String? index, int limit = 10}) async {
     try {
+      final queryParams = <String, dynamic>{
+        'limit': limit,
+        if (index != null) 'index': index,
+      };
+
       final response = await _dio.get(
         '/workspaces/',
+        queryParameters: queryParams,
         options: Options(headers: {'Authorization': 'Bearer $userToken'}),
       );
       print(response.data);
@@ -49,6 +56,32 @@ class WorkspaceRepoImpl implements WorkspaceRepo {
       }
 
       final List<dynamic> data = response.data['data'] as List<dynamic>;
+      final workspaces = data.map((item) => Workspace.fromJson(item)).toList();
+      return Result.success(workspaces);
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
+  }
+
+  @override
+  Future<Result<List<Workspace>>> getPublic(
+      {String? index, int limit = 10}) async {
+    try {
+      final queryParams = <String, dynamic>{
+        'limit': limit,
+        if (index != null) 'index': index,
+      };
+
+      final response = await _dio.get(
+        '/workspaces/public/',
+        queryParameters: queryParams,
+      );
+
+      if (response.statusCode != 200) {
+        return Result.failure('Error: codigo ${response.statusCode}');
+      }
+
+      final List<dynamic> data = response.data['workspaces'] as List<dynamic>;
       final workspaces = data.map((item) => Workspace.fromJson(item)).toList();
       return Result.success(workspaces);
     } catch (e) {
@@ -76,10 +109,17 @@ class WorkspaceRepoImpl implements WorkspaceRepo {
   }
 
   @override
-  Future<Result<List<Workspace>>> getFullAll(String userToken) async {
+  Future<Result<List<Workspace>>> getFullAll(String userToken,
+      {String? index, int limit = 10}) async {
     try {
+      final queryParams = <String, dynamic>{
+        'limit': limit,
+        if (index != null) 'index': index,
+      };
+
       final response = await _dio.get(
         '/workspaces/all/',
+        queryParameters: queryParams,
         options: Options(headers: {'Authorization': 'Bearer $userToken'}),
       );
 
@@ -95,10 +135,17 @@ class WorkspaceRepoImpl implements WorkspaceRepo {
   }
 
   @override
-  Future<Result<List<Workspace>>> getShared(String userToken) async {
+  Future<Result<List<Workspace>>> getShared(String userToken,
+      {String? index, int limit = 10}) async {
     try {
+      final queryParams = <String, dynamic>{
+        'limit': limit,
+        if (index != null) 'index': index,
+      };
+
       final response = await _dio.get(
         '/workspaces/share/',
+        queryParameters: queryParams,
         options: Options(headers: {'Authorization': 'Bearer $userToken'}),
       );
 

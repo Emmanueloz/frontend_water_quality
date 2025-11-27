@@ -7,7 +7,15 @@ abstract class WorkspaceRepo {
   Future<Result<BaseResponse>> create(String userToken, Workspace workspace);
   Future<Result<BaseResponse>> update(String userToken, Workspace workspace);
   Future<Result<BaseResponse>> delete(String userToken, String id);
-  Future<Result<List<Workspace>>> getAll(String userToken);
-  Future<Result<List<Workspace>>> getFullAll(String userToken);
-  Future<Result<List<Workspace>>> getShared(String userToken);
+
+  Future<Result<List<Workspace>>> getAll(String userToken,
+      {String? index, int limit = 10});
+
+  Future<Result<List<Workspace>>> getFullAll(String userToken,
+      {String? index, int limit = 10});
+
+  Future<Result<List<Workspace>>> getShared(String userToken,
+      {String? index, int limit = 10});
+
+  Future<Result<List<Workspace>>> getPublic({String? index, int limit = 10});
 }

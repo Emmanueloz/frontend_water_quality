@@ -16,7 +16,8 @@ class MockWorkspaceRepository implements WorkspaceRepo {
   Result<List<Workspace>>? mockGetAllResult;
   Result<List<Workspace>>? mockGetFullAllResult;
   Result<List<Workspace>>? mockGetSharedResult;
-  
+  Result<List<Workspace>>? mockGetPublicResult;
+
   int callCount = 0;
 
   void reset() {
@@ -37,13 +38,15 @@ class MockWorkspaceRepository implements WorkspaceRepo {
   }
 
   @override
-  Future<Result<BaseResponse>> create(String userToken, Workspace workspace) async {
+  Future<Result<BaseResponse>> create(
+      String userToken, Workspace workspace) async {
     callCount++;
     return mockCreateResult ?? Result.failure('Mock not configured');
   }
 
   @override
-  Future<Result<BaseResponse>> update(String userToken, Workspace workspace) async {
+  Future<Result<BaseResponse>> update(
+      String userToken, Workspace workspace) async {
     callCount++;
     return mockUpdateResult ?? Result.failure('Mock not configured');
   }
@@ -55,21 +58,31 @@ class MockWorkspaceRepository implements WorkspaceRepo {
   }
 
   @override
-  Future<Result<List<Workspace>>> getAll(String userToken) async {
+  Future<Result<List<Workspace>>> getAll(String userToken,
+      {String? index, int limit = 10}) async {
     callCount++;
     return mockGetAllResult ?? Result.failure('Mock not configured');
   }
 
   @override
-  Future<Result<List<Workspace>>> getFullAll(String userToken) async {
+  Future<Result<List<Workspace>>> getFullAll(String userToken,
+      {String? index, int limit = 10}) async {
     callCount++;
     return mockGetFullAllResult ?? Result.failure('Mock not configured');
   }
 
   @override
-  Future<Result<List<Workspace>>> getShared(String userToken) async {
+  Future<Result<List<Workspace>>> getShared(String userToken,
+      {String? index, int limit = 10}) async {
     callCount++;
     return mockGetSharedResult ?? Result.failure('Mock not configured');
+  }
+
+  @override
+  Future<Result<List<Workspace>>> getPublic(
+      {String? index, int limit = 10}) async {
+    callCount++;
+    return mockGetPublicResult ?? Result.failure('Mock not configured');
   }
 }
 
@@ -117,7 +130,7 @@ void main() {
     group('Initial State', () {
       test('should have correct initial state', () {
         // Assert
-        expect(provider.shouldReloadList, isTrue);
+        expect(provider.shouldReloadType('mine'), isTrue);
       });
     });
 
@@ -154,7 +167,8 @@ void main() {
       test('should handle error when getting workspace by id', () async {
         // Arrange
         mockAuthProvider.setMockUser(null, 'test_token_123');
-        mockRepository.mockGetByIdResult = Result.failure('Workspace not found');
+        mockRepository.mockGetByIdResult =
+            Result.failure('Workspace not found');
 
         // Act
         final result = await provider.getWorkspaceById('invalid_id');
@@ -196,7 +210,8 @@ void main() {
       test('should get workspaces successfully', () async {
         // Arrange
         mockAuthProvider.setMockUser(null, 'test_token_123');
-        mockRepository.mockGetAllResult = Result.success([testWorkspace1, testWorkspace2]);
+        mockRepository.mockGetAllResult =
+            Result.success([testWorkspace1, testWorkspace2]);
 
         // Act
         final result = await provider.getWorkspaces();
@@ -228,7 +243,8 @@ void main() {
       test('should handle error when getting workspaces', () async {
         // Arrange
         mockAuthProvider.setMockUser(null, 'test_token_123');
-        mockRepository.mockGetAllResult = Result.failure('Failed to fetch workspaces');
+        mockRepository.mockGetAllResult =
+            Result.failure('Failed to fetch workspaces');
 
         // Act
         final result = await provider.getWorkspaces();
@@ -302,7 +318,8 @@ void main() {
       test('should handle error when getting shared workspaces', () async {
         // Arrange
         mockAuthProvider.setMockUser(null, 'test_token_123');
-        mockRepository.mockGetSharedResult = Result.failure('Failed to fetch shared workspaces');
+        mockRepository.mockGetSharedResult =
+            Result.failure('Failed to fetch shared workspaces');
 
         // Act
         final result = await provider.getSharedWorkspaces();
@@ -363,7 +380,8 @@ void main() {
       test('should handle error when getting all workspaces', () async {
         // Arrange
         mockAuthProvider.setMockUser(null, 'test_token_123');
-        mockRepository.mockGetFullAllResult = Result.failure('Failed to fetch all workspaces');
+        mockRepository.mockGetFullAllResult =
+            Result.failure('Failed to fetch all workspaces');
 
         // Act
         final result = await provider.getAllWorkspaces();
@@ -404,10 +422,11 @@ void main() {
       test('should create workspace successfully', () async {
         // Arrange
         mockAuthProvider.setMockUser(null, 'test_token_123');
-        final createResponse = BaseResponse(message: 'Workspace created successfully');
+        final createResponse =
+            BaseResponse(message: 'Workspace created successfully');
         mockRepository.mockCreateResult = Result.success(createResponse);
         bool listenerCalled = false;
-        
+
         provider.addListener(() {
           listenerCalled = true;
         });
@@ -417,7 +436,7 @@ void main() {
 
         // Assert
         expect(result, isNull); // Result.success doesn't set message
-        expect(provider.shouldReloadList, isTrue);
+        expect(provider.shouldReloadType('mine'), isTrue);
         expect(mockRepository.callCount, equals(1));
         expect(listenerCalled, isTrue);
       });
@@ -425,7 +444,8 @@ void main() {
       test('should handle error when creating workspace', () async {
         // Arrange
         mockAuthProvider.setMockUser(null, 'test_token_123');
-        mockRepository.mockCreateResult = Result.failure('Workspace name already exists');
+        mockRepository.mockCreateResult =
+            Result.failure('Workspace name already exists');
 
         // Act
         final result = await provider.createWorkspace(testWorkspace1);
@@ -450,27 +470,29 @@ void main() {
       test('should mark list for reload after successful creation', () async {
         // Arrange
         mockAuthProvider.setMockUser(null, 'test_token_123');
-        final createResponse = BaseResponse(message: 'Workspace created successfully');
+        final createResponse =
+            BaseResponse(message: 'Workspace created successfully');
         mockRepository.mockCreateResult = Result.success(createResponse);
-        
+
         // Confirm list reloaded to reset flag
-        provider.confirmListReloaded();
-        expect(provider.shouldReloadList, isFalse);
+        provider.confirmListReloaded(type: 'mine');
+        expect(provider.shouldReloadType('mine'), isFalse);
 
         // Act
         await provider.createWorkspace(testWorkspace1);
 
         // Assert
-        expect(provider.shouldReloadList, isTrue);
+        expect(provider.shouldReloadType('mine'), isTrue);
       });
 
       test('should notify listeners when creating workspace', () async {
         // Arrange
         mockAuthProvider.setMockUser(null, 'test_token_123');
-        final createResponse = BaseResponse(message: 'Workspace created successfully');
+        final createResponse =
+            BaseResponse(message: 'Workspace created successfully');
         mockRepository.mockCreateResult = Result.success(createResponse);
         int notifyCount = 0;
-        
+
         provider.addListener(() {
           notifyCount++;
         });
@@ -500,10 +522,11 @@ void main() {
       test('should update workspace successfully', () async {
         // Arrange
         mockAuthProvider.setMockUser(null, 'test_token_123');
-        final updateResponse = BaseResponse(message: 'Workspace updated successfully');
+        final updateResponse =
+            BaseResponse(message: 'Workspace updated successfully');
         mockRepository.mockUpdateResult = Result.success(updateResponse);
         bool listenerCalled = false;
-        
+
         provider.addListener(() {
           listenerCalled = true;
         });
@@ -514,7 +537,7 @@ void main() {
         // Assert
         expect(result.$1, isTrue);
         expect(result.$2, isNull);
-        expect(provider.shouldReloadList, isTrue);
+        expect(provider.shouldReloadType('mine'), isTrue);
         expect(provider.shouldReloadWorkspace('workspace_1'), isTrue);
         expect(mockRepository.callCount, equals(1));
         expect(listenerCalled, isTrue);
@@ -547,33 +570,37 @@ void main() {
         expect(result.$2, contains('Mock not configured'));
       });
 
-      test('should mark workspace and list for reload after successful update', () async {
+      test('should mark workspace and list for reload after successful update',
+          () async {
         // Arrange
         mockAuthProvider.setMockUser(null, 'test_token_123');
-        final updateResponse = BaseResponse(message: 'Workspace updated successfully');
+        final updateResponse =
+            BaseResponse(message: 'Workspace updated successfully');
         mockRepository.mockUpdateResult = Result.success(updateResponse);
-        
+
         // Confirm reloads to reset flags
-        provider.confirmListReloaded();
+        provider.confirmListReloaded(type: 'mine');
         provider.confirmWorkspaceReloaded('workspace_1');
-        expect(provider.shouldReloadList, isFalse);
-        expect(provider.shouldReloadWorkspace('workspace_1'), isTrue); // Default is true
+        expect(provider.shouldReloadType('mine'), isFalse);
+        expect(provider.shouldReloadWorkspace('workspace_1'),
+            isTrue); // Default is true
 
         // Act
         await provider.updateWorkspace(testWorkspace1);
 
         // Assert
-        expect(provider.shouldReloadList, isTrue);
+        expect(provider.shouldReloadType('mine'), isTrue);
         expect(provider.shouldReloadWorkspace('workspace_1'), isTrue);
       });
 
       test('should notify listeners when updating workspace', () async {
         // Arrange
         mockAuthProvider.setMockUser(null, 'test_token_123');
-        final updateResponse = BaseResponse(message: 'Workspace updated successfully');
+        final updateResponse =
+            BaseResponse(message: 'Workspace updated successfully');
         mockRepository.mockUpdateResult = Result.success(updateResponse);
         int notifyCount = 0;
-        
+
         provider.addListener(() {
           notifyCount++;
         });
@@ -587,9 +614,11 @@ void main() {
     });
 
     group('Reload Flags Management', () {
-      test('should have shouldReloadList true by default', () {
+      test('should have shouldReloadType true by default', () {
         // Assert
-        expect(provider.shouldReloadList, isTrue);
+        expect(provider.shouldReloadType('mine'), isTrue);
+        expect(provider.shouldReloadType('shared'), isTrue);
+        expect(provider.shouldReloadType('public'), isTrue);
       });
 
       test('should have shouldReloadWorkspace true by default for any id', () {
@@ -601,28 +630,29 @@ void main() {
 
       test('should mark list for reload', () {
         // Arrange
-        provider.confirmListReloaded();
-        expect(provider.shouldReloadList, isFalse);
+        provider.confirmListReloaded(type: 'mine');
+        expect(provider.shouldReloadType('mine'), isFalse);
         bool listenerCalled = false;
-        
+
         provider.addListener(() {
           listenerCalled = true;
         });
 
         // Act
-        provider.markListForReload();
+        provider.markListForReload(type: 'mine');
 
         // Assert
-        expect(provider.shouldReloadList, isTrue);
+        expect(provider.shouldReloadType('mine'), isTrue);
         expect(listenerCalled, isTrue);
       });
 
       test('should mark workspace for reload', () {
         // Arrange
         provider.confirmWorkspaceReloaded('workspace_1');
-        expect(provider.shouldReloadWorkspace('workspace_1'), isTrue); // Default is true
+        expect(provider.shouldReloadWorkspace('workspace_1'),
+            isTrue); // Default is true
         bool listenerCalled = false;
-        
+
         provider.addListener(() {
           listenerCalled = true;
         });
@@ -637,14 +667,14 @@ void main() {
 
       test('should confirm list reloaded', () {
         // Arrange
-        provider.markListForReload();
-        expect(provider.shouldReloadList, isTrue);
+        provider.markListForReload(type: 'mine');
+        expect(provider.shouldReloadType('mine'), isTrue);
 
         // Act
-        provider.confirmListReloaded();
+        provider.confirmListReloaded(type: 'mine');
 
         // Assert
-        expect(provider.shouldReloadList, isFalse);
+        expect(provider.shouldReloadType('mine'), isFalse);
       });
 
       test('should confirm workspace reloaded', () {
@@ -656,7 +686,8 @@ void main() {
         provider.confirmWorkspaceReloaded('workspace_1');
 
         // Assert
-        expect(provider.shouldReloadWorkspace('workspace_1'), isTrue); // Returns to default
+        expect(provider.shouldReloadWorkspace('workspace_1'),
+            isTrue); // Returns to default
       });
 
       test('should handle multiple workspace reload flags independently', () {
@@ -666,14 +697,15 @@ void main() {
         provider.confirmWorkspaceReloaded('workspace_1');
 
         // Assert
-        expect(provider.shouldReloadWorkspace('workspace_1'), isTrue); // Default
+        expect(
+            provider.shouldReloadWorkspace('workspace_1'), isTrue); // Default
         expect(provider.shouldReloadWorkspace('workspace_2'), isTrue);
       });
 
       test('should notify listeners when marking list for reload', () {
         // Arrange
         int notifyCount = 0;
-        
+
         provider.addListener(() {
           notifyCount++;
         });
@@ -688,7 +720,7 @@ void main() {
       test('should notify listeners when marking workspace for reload', () {
         // Arrange
         int notifyCount = 0;
-        
+
         provider.addListener(() {
           notifyCount++;
         });
@@ -730,7 +762,8 @@ void main() {
     });
 
     group('Workspace Selection State', () {
-      test('should track workspace selection through getWorkspaceById', () async {
+      test('should track workspace selection through getWorkspaceById',
+          () async {
         // Arrange
         mockAuthProvider.setMockUser(null, 'test_token_123');
         mockRepository.mockGetByIdResult = Result.success(testWorkspace1);
@@ -743,16 +776,17 @@ void main() {
         expect(result.value!.id, equals('workspace_1'));
       });
 
-      test('should handle workspace selection with different workspaces', () async {
+      test('should handle workspace selection with different workspaces',
+          () async {
         // Arrange
         mockAuthProvider.setMockUser(null, 'test_token_123');
-        
+
         // Act & Assert - First workspace
         mockRepository.mockGetByIdResult = Result.success(testWorkspace1);
         final result1 = await provider.getWorkspaceById('workspace_1');
         expect(result1.isSuccess, isTrue);
         expect(result1.value!.id, equals('workspace_1'));
-        
+
         // Act & Assert - Second workspace
         mockRepository.mockGetByIdResult = Result.success(testWorkspace2);
         final result2 = await provider.getWorkspaceById('workspace_2');
@@ -765,10 +799,11 @@ void main() {
       test('should notify listeners on successful create', () async {
         // Arrange
         mockAuthProvider.setMockUser(null, 'test_token_123');
-        final createResponse = BaseResponse(message: 'Workspace created successfully');
+        final createResponse =
+            BaseResponse(message: 'Workspace created successfully');
         mockRepository.mockCreateResult = Result.success(createResponse);
         int notifyCount = 0;
-        
+
         provider.addListener(() {
           notifyCount++;
         });
@@ -783,10 +818,11 @@ void main() {
       test('should notify listeners on successful update', () async {
         // Arrange
         mockAuthProvider.setMockUser(null, 'test_token_123');
-        final updateResponse = BaseResponse(message: 'Workspace updated successfully');
+        final updateResponse =
+            BaseResponse(message: 'Workspace updated successfully');
         mockRepository.mockUpdateResult = Result.success(updateResponse);
         int notifyCount = 0;
-        
+
         provider.addListener(() {
           notifyCount++;
         });
@@ -801,7 +837,7 @@ void main() {
       test('should notify listeners when marking for reload', () async {
         // Arrange
         int notifyCount = 0;
-        
+
         provider.addListener(() {
           notifyCount++;
         });
@@ -824,7 +860,8 @@ void main() {
           owner: 'user_1',
           type: TypeWorkspace.private,
         );
-        final createResponse = BaseResponse(message: 'Workspace created successfully');
+        final createResponse =
+            BaseResponse(message: 'Workspace created successfully');
         mockRepository.mockCreateResult = Result.success(createResponse);
 
         // Act
@@ -844,7 +881,8 @@ void main() {
           owner: 'user_1',
           type: TypeWorkspace.public,
         );
-        final updateResponse = BaseResponse(message: 'Workspace updated successfully');
+        final updateResponse =
+            BaseResponse(message: 'Workspace updated successfully');
         mockRepository.mockUpdateResult = Result.success(updateResponse);
 
         // Act

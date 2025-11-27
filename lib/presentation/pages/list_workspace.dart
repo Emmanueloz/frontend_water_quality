@@ -8,6 +8,7 @@ import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/domain/models/workspace.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/workspace_provider.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/molecules/pagination_controls.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/organisms/main_grid_workspaces.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/workspace_card.dart';
@@ -32,14 +33,23 @@ class _ListWorkspaceState extends State<ListWorkspace>
   bool isLoadingOwn = false;
   bool isLoadingShared = false;
   bool isLoadingAll = false;
+  bool isLoadingPublic = false;
+
+  // Flags para rastrear qué tipos ya se han cargado
+  bool _hasLoadedOwn = false;
+  bool _hasLoadedShared = false;
+  bool _hasLoadedAll = false;
+  bool _hasLoadedPublic = false;
 
   String? errorOwn;
   String? errorShared;
   String? errorAll;
+  String? errorPublic;
 
   List<Workspace> ownWorkspaces = [];
   List<Workspace> sharedWorkspaces = [];
   List<Workspace> allWorkspaces = [];
+  List<Workspace> publicWorkspaces = [];
 
   @override
   void initState() {
@@ -61,27 +71,77 @@ class _ListWorkspaceState extends State<ListWorkspace>
       case ListWorkspaces.shared:
         currentIndex = 1;
         break;
-      case ListWorkspaces.all:
+      case ListWorkspaces.public:
         currentIndex = 2;
+        break;
+      case ListWorkspaces.all:
+        currentIndex = 3;
         break;
     }
   }
 
   Future<void> _loadWorkspaces() async {
-    await Future.wait([
-      _fetchOwnWorkspaces(),
-      _fetchSharedWorkspaces(),
-      _fetchAllWorkspaces(),
-    ]);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (!authProvider.isAuthenticated) {
+      return;
+    }
+
+    // Solo cargar el tipo actual
+    switch (_type) {
+      case ListWorkspaces.mine:
+        if (!_hasLoadedOwn) {
+          await _fetchOwnWorkspaces();
+          _hasLoadedOwn = true;
+        }
+        break;
+      case ListWorkspaces.shared:
+        if (!_hasLoadedShared) {
+          await _fetchSharedWorkspaces();
+          _hasLoadedShared = true;
+        }
+        break;
+      case ListWorkspaces.public:
+        if (!_hasLoadedPublic) {
+          await _fetchPublicWorkspaces();
+          _hasLoadedPublic = true;
+        }
+        break;
+      case ListWorkspaces.all:
+        if (!_hasLoadedAll && authProvider.user?.rol == AppRoles.admin) {
+          await _fetchAllWorkspaces();
+          _hasLoadedAll = true;
+        }
+        break;
+    }
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final provider = Provider.of<WorkspaceProvider>(context);
-    if (provider.shouldReloadList) {
-      _loadWorkspaces();
-      provider.confirmListReloaded();
+
+    // Verificar si el tipo actual necesita recarga
+    final typeKey = _type.name;
+    if (provider.shouldReloadType(typeKey)) {
+      _reloadCurrentType();
+      provider.confirmListReloaded(type: typeKey);
+    }
+  }
+
+  Future<void> _reloadCurrentType() async {
+    switch (_type) {
+      case ListWorkspaces.mine:
+        await _fetchOwnWorkspaces();
+        break;
+      case ListWorkspaces.shared:
+        await _fetchSharedWorkspaces();
+        break;
+      case ListWorkspaces.public:
+        await _fetchPublicWorkspaces();
+        break;
+      case ListWorkspaces.all:
+        await _fetchAllWorkspaces();
+        break;
     }
   }
 
@@ -135,6 +195,14 @@ class _ListWorkspaceState extends State<ListWorkspace>
         ownWorkspaces = result.value ?? [];
         isLoadingOwn = false;
       });
+
+      // Guardar el último ID para paginación si hay resultados
+      if (result.isSuccess && result.value!.isNotEmpty) {
+        final lastId = result.value!.last.id;
+        if (lastId != null) {
+          // El estado ya se actualiza en el provider
+        }
+      }
     }
   }
 
@@ -174,6 +242,62 @@ class _ListWorkspaceState extends State<ListWorkspace>
     }
   }
 
+  Future<void> _fetchPublicWorkspaces() async {
+    setState(() {
+      isLoadingPublic = true;
+      errorPublic = null;
+    });
+
+    final provider = Provider.of<WorkspaceProvider>(context, listen: false);
+    final Result<List<Workspace>> result = await provider.getPublicWorkspaces();
+
+    if (mounted) {
+      setState(() {
+        errorPublic = result.message;
+        publicWorkspaces = result.value ?? [];
+        isLoadingPublic = false;
+      });
+    }
+  }
+
+  // Métodos de navegación de paginación
+  Future<void> _handleNextPage(ListWorkspaces type) async {
+    final provider = Provider.of<WorkspaceProvider>(context, listen: false);
+
+    String? lastId;
+    switch (type) {
+      case ListWorkspaces.mine:
+        if (ownWorkspaces.isNotEmpty) lastId = ownWorkspaces.last.id;
+        break;
+      case ListWorkspaces.shared:
+        if (sharedWorkspaces.isNotEmpty) lastId = sharedWorkspaces.last.id;
+        break;
+      case ListWorkspaces.public:
+        if (publicWorkspaces.isNotEmpty) lastId = publicWorkspaces.last.id;
+        break;
+      case ListWorkspaces.all:
+        if (allWorkspaces.isNotEmpty) lastId = allWorkspaces.last.id;
+        break;
+    }
+
+    if (lastId != null) {
+      await provider.nextPage(type, lastId);
+      await _reloadCurrentType();
+    }
+  }
+
+  Future<void> _handlePreviousPage(ListWorkspaces type) async {
+    final provider = Provider.of<WorkspaceProvider>(context, listen: false);
+    await provider.previousPage(type);
+    await _reloadCurrentType();
+  }
+
+  Future<void> _handleLimitChange(ListWorkspaces type, int newLimit) async {
+    final provider = Provider.of<WorkspaceProvider>(context, listen: false);
+    await provider.changeLimit(type, newLimit);
+    await _reloadCurrentType();
+  }
+
   void _onDestinationSelected(int index) {
     setState(() {
       currentIndex = index;
@@ -182,6 +306,10 @@ class _ListWorkspaceState extends State<ListWorkspace>
       setState(() {
         _type = ListWorkspaces.mine;
       });
+      // Cargar si no se ha cargado aún
+      if (!_hasLoadedOwn) {
+        _loadWorkspaces();
+      }
       context.goNamed(
         Routes.workspaces.name,
         queryParameters: {
@@ -192,6 +320,10 @@ class _ListWorkspaceState extends State<ListWorkspace>
       setState(() {
         _type = ListWorkspaces.shared;
       });
+      // Cargar si no se ha cargado aún
+      if (!_hasLoadedShared) {
+        _loadWorkspaces();
+      }
       context.goNamed(
         Routes.workspaces.name,
         queryParameters: {
@@ -200,8 +332,26 @@ class _ListWorkspaceState extends State<ListWorkspace>
       );
     } else if (index == 2) {
       setState(() {
+        _type = ListWorkspaces.public;
+      });
+      // Cargar si no se ha cargado aún
+      if (!_hasLoadedPublic) {
+        _loadWorkspaces();
+      }
+      context.goNamed(
+        Routes.workspaces.name,
+        queryParameters: {
+          "type": ListWorkspaces.public.name,
+        },
+      );
+    } else if (index == 3) {
+      setState(() {
         _type = ListWorkspaces.all;
       });
+      // Cargar si no se ha cargado aún
+      if (!_hasLoadedAll) {
+        _loadWorkspaces();
+      }
       context.goNamed(
         Routes.workspaces.name,
         queryParameters: {
@@ -230,6 +380,11 @@ class _ListWorkspaceState extends State<ListWorkspace>
           icon: Icons.share_outlined,
           selectedIcon: Icons.share,
         ),
+        NavigationItem(
+          label: "Publicos",
+          icon: Icons.public_outlined,
+          selectedIcon: Icons.public,
+        ),
         if (authProvider.user?.rol == AppRoles.admin)
           NavigationItem(
             label: "Todos",
@@ -238,7 +393,12 @@ class _ListWorkspaceState extends State<ListWorkspace>
           ),
       ],
       builder: (context, screenSize) {
+        final workspaceProvider = Provider.of<WorkspaceProvider>(context);
+
         if (_type == ListWorkspaces.all) {
+          final paginationState =
+              workspaceProvider.getPaginationState(ListWorkspaces.all);
+
           return MainGridWorkspaces(
             type: _type,
             screenSize: screenSize,
@@ -246,6 +406,16 @@ class _ListWorkspaceState extends State<ListWorkspace>
             errorMessage: errorAll,
             itemCount: allWorkspaces.length,
             onRefresh: _fetchAllWorkspaces,
+            paginationControls: PaginationControls(
+              paginationState: paginationState,
+              onPrevious: () => _handlePreviousPage(ListWorkspaces.all),
+              onNext: () => _handleNextPage(ListWorkspaces.all),
+              onLimitChanged: (newLimit) {
+                if (newLimit != null) {
+                  _handleLimitChange(ListWorkspaces.all, newLimit);
+                }
+              },
+            ),
             itemBuilder: (context, index) {
               final workspace = allWorkspaces[index];
               return WorkspaceCard(
@@ -267,7 +437,52 @@ class _ListWorkspaceState extends State<ListWorkspace>
           );
         }
 
+        if (_type == ListWorkspaces.public) {
+          final paginationState =
+              workspaceProvider.getPaginationState(ListWorkspaces.public);
+
+          return MainGridWorkspaces(
+            type: _type,
+            screenSize: screenSize,
+            isLoading: isLoadingPublic,
+            errorMessage: errorPublic,
+            itemCount: publicWorkspaces.length,
+            onRefresh: _fetchPublicWorkspaces,
+            paginationControls: PaginationControls(
+              paginationState: paginationState,
+              onPrevious: () => _handlePreviousPage(ListWorkspaces.public),
+              onNext: () => _handleNextPage(ListWorkspaces.public),
+              onLimitChanged: (newLimit) {
+                if (newLimit != null) {
+                  _handleLimitChange(ListWorkspaces.public, newLimit);
+                }
+              },
+            ),
+            itemBuilder: (context, index) {
+              final workspace = publicWorkspaces[index];
+              return WorkspaceCard(
+                id: workspace.id ?? '',
+                title: workspace.name ?? "Sin nombre",
+                owner: workspace.user?.username ?? "No disponible",
+                type: workspace.type,
+                onTap: () {
+                  context.goNamed(
+                    Routes.workspace.name,
+                    pathParameters: {
+                      'id': workspace.id ?? '',
+                    },
+                  );
+                },
+                screenSize: screenSize,
+              );
+            },
+          );
+        }
+
         if (_type == ListWorkspaces.shared) {
+          final paginationState =
+              workspaceProvider.getPaginationState(ListWorkspaces.shared);
+
           return MainGridWorkspaces(
             type: _type,
             screenSize: screenSize,
@@ -275,6 +490,16 @@ class _ListWorkspaceState extends State<ListWorkspace>
             errorMessage: errorShared,
             itemCount: sharedWorkspaces.length,
             onRefresh: _fetchSharedWorkspaces,
+            paginationControls: PaginationControls(
+              paginationState: paginationState,
+              onPrevious: () => _handlePreviousPage(ListWorkspaces.shared),
+              onNext: () => _handleNextPage(ListWorkspaces.shared),
+              onLimitChanged: (newLimit) {
+                if (newLimit != null) {
+                  _handleLimitChange(ListWorkspaces.shared, newLimit);
+                }
+              },
+            ),
             itemBuilder: (context, index) {
               final workspace = sharedWorkspaces[index];
               return WorkspaceCard(
@@ -296,6 +521,9 @@ class _ListWorkspaceState extends State<ListWorkspace>
           );
         }
 
+        final paginationState =
+            workspaceProvider.getPaginationState(ListWorkspaces.mine);
+
         return MainGridWorkspaces(
           type: _type,
           screenSize: screenSize,
@@ -303,6 +531,16 @@ class _ListWorkspaceState extends State<ListWorkspace>
           errorMessage: errorOwn,
           itemCount: ownWorkspaces.length,
           onRefresh: _fetchOwnWorkspaces,
+          paginationControls: PaginationControls(
+            paginationState: paginationState,
+            onPrevious: () => _handlePreviousPage(ListWorkspaces.mine),
+            onNext: () => _handleNextPage(ListWorkspaces.mine),
+            onLimitChanged: (newLimit) {
+              if (newLimit != null) {
+                _handleLimitChange(ListWorkspaces.mine, newLimit);
+              }
+            },
+          ),
           itemBuilder: (context, index) {
             final workspace = ownWorkspaces[index];
             return WorkspaceCard(
