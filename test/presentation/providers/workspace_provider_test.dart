@@ -58,25 +58,29 @@ class MockWorkspaceRepository implements WorkspaceRepo {
   }
 
   @override
-  Future<Result<List<Workspace>>> getAll(String userToken) async {
+  Future<Result<List<Workspace>>> getAll(String userToken,
+      {String? index, int limit = 10}) async {
     callCount++;
     return mockGetAllResult ?? Result.failure('Mock not configured');
   }
 
   @override
-  Future<Result<List<Workspace>>> getFullAll(String userToken) async {
+  Future<Result<List<Workspace>>> getFullAll(String userToken,
+      {String? index, int limit = 10}) async {
     callCount++;
     return mockGetFullAllResult ?? Result.failure('Mock not configured');
   }
 
   @override
-  Future<Result<List<Workspace>>> getShared(String userToken) async {
+  Future<Result<List<Workspace>>> getShared(String userToken,
+      {String? index, int limit = 10}) async {
     callCount++;
     return mockGetSharedResult ?? Result.failure('Mock not configured');
   }
 
   @override
-  Future<Result<List<Workspace>>> getPublic() async {
+  Future<Result<List<Workspace>>> getPublic(
+      {String? index, int limit = 10}) async {
     callCount++;
     return mockGetPublicResult ?? Result.failure('Mock not configured');
   }

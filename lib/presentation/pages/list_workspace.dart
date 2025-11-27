@@ -8,6 +8,7 @@ import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/domain/models/workspace.dart';
 import 'package:frontend_water_quality/presentation/providers/auth_provider.dart';
 import 'package:frontend_water_quality/presentation/providers/workspace_provider.dart';
+import 'package:frontend_water_quality/presentation/widgets/common/molecules/pagination_controls.dart';
 import 'package:frontend_water_quality/presentation/widgets/layout/layout.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/organisms/main_grid_workspaces.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/workspace_card.dart';
@@ -194,6 +195,14 @@ class _ListWorkspaceState extends State<ListWorkspace>
         ownWorkspaces = result.value ?? [];
         isLoadingOwn = false;
       });
+
+      // Guardar el último ID para paginación si hay resultados
+      if (result.isSuccess && result.value!.isNotEmpty) {
+        final lastId = result.value!.last.id;
+        if (lastId != null) {
+          // El estado ya se actualiza en el provider
+        }
+      }
     }
   }
 
@@ -249,6 +258,44 @@ class _ListWorkspaceState extends State<ListWorkspace>
         isLoadingPublic = false;
       });
     }
+  }
+
+  // Métodos de navegación de paginación
+  Future<void> _handleNextPage(ListWorkspaces type) async {
+    final provider = Provider.of<WorkspaceProvider>(context, listen: false);
+
+    String? lastId;
+    switch (type) {
+      case ListWorkspaces.mine:
+        if (ownWorkspaces.isNotEmpty) lastId = ownWorkspaces.last.id;
+        break;
+      case ListWorkspaces.shared:
+        if (sharedWorkspaces.isNotEmpty) lastId = sharedWorkspaces.last.id;
+        break;
+      case ListWorkspaces.public:
+        if (publicWorkspaces.isNotEmpty) lastId = publicWorkspaces.last.id;
+        break;
+      case ListWorkspaces.all:
+        if (allWorkspaces.isNotEmpty) lastId = allWorkspaces.last.id;
+        break;
+    }
+
+    if (lastId != null) {
+      await provider.nextPage(type, lastId);
+      await _reloadCurrentType();
+    }
+  }
+
+  Future<void> _handlePreviousPage(ListWorkspaces type) async {
+    final provider = Provider.of<WorkspaceProvider>(context, listen: false);
+    await provider.previousPage(type);
+    await _reloadCurrentType();
+  }
+
+  Future<void> _handleLimitChange(ListWorkspaces type, int newLimit) async {
+    final provider = Provider.of<WorkspaceProvider>(context, listen: false);
+    await provider.changeLimit(type, newLimit);
+    await _reloadCurrentType();
   }
 
   void _onDestinationSelected(int index) {
@@ -346,7 +393,12 @@ class _ListWorkspaceState extends State<ListWorkspace>
           ),
       ],
       builder: (context, screenSize) {
+        final workspaceProvider = Provider.of<WorkspaceProvider>(context);
+
         if (_type == ListWorkspaces.all) {
+          final paginationState =
+              workspaceProvider.getPaginationState(ListWorkspaces.all);
+
           return MainGridWorkspaces(
             type: _type,
             screenSize: screenSize,
@@ -354,6 +406,16 @@ class _ListWorkspaceState extends State<ListWorkspace>
             errorMessage: errorAll,
             itemCount: allWorkspaces.length,
             onRefresh: _fetchAllWorkspaces,
+            paginationControls: PaginationControls(
+              paginationState: paginationState,
+              onPrevious: () => _handlePreviousPage(ListWorkspaces.all),
+              onNext: () => _handleNextPage(ListWorkspaces.all),
+              onLimitChanged: (newLimit) {
+                if (newLimit != null) {
+                  _handleLimitChange(ListWorkspaces.all, newLimit);
+                }
+              },
+            ),
             itemBuilder: (context, index) {
               final workspace = allWorkspaces[index];
               return WorkspaceCard(
@@ -376,6 +438,9 @@ class _ListWorkspaceState extends State<ListWorkspace>
         }
 
         if (_type == ListWorkspaces.public) {
+          final paginationState =
+              workspaceProvider.getPaginationState(ListWorkspaces.public);
+
           return MainGridWorkspaces(
             type: _type,
             screenSize: screenSize,
@@ -383,6 +448,16 @@ class _ListWorkspaceState extends State<ListWorkspace>
             errorMessage: errorPublic,
             itemCount: publicWorkspaces.length,
             onRefresh: _fetchPublicWorkspaces,
+            paginationControls: PaginationControls(
+              paginationState: paginationState,
+              onPrevious: () => _handlePreviousPage(ListWorkspaces.public),
+              onNext: () => _handleNextPage(ListWorkspaces.public),
+              onLimitChanged: (newLimit) {
+                if (newLimit != null) {
+                  _handleLimitChange(ListWorkspaces.public, newLimit);
+                }
+              },
+            ),
             itemBuilder: (context, index) {
               final workspace = publicWorkspaces[index];
               return WorkspaceCard(
@@ -405,6 +480,9 @@ class _ListWorkspaceState extends State<ListWorkspace>
         }
 
         if (_type == ListWorkspaces.shared) {
+          final paginationState =
+              workspaceProvider.getPaginationState(ListWorkspaces.shared);
+
           return MainGridWorkspaces(
             type: _type,
             screenSize: screenSize,
@@ -412,6 +490,16 @@ class _ListWorkspaceState extends State<ListWorkspace>
             errorMessage: errorShared,
             itemCount: sharedWorkspaces.length,
             onRefresh: _fetchSharedWorkspaces,
+            paginationControls: PaginationControls(
+              paginationState: paginationState,
+              onPrevious: () => _handlePreviousPage(ListWorkspaces.shared),
+              onNext: () => _handleNextPage(ListWorkspaces.shared),
+              onLimitChanged: (newLimit) {
+                if (newLimit != null) {
+                  _handleLimitChange(ListWorkspaces.shared, newLimit);
+                }
+              },
+            ),
             itemBuilder: (context, index) {
               final workspace = sharedWorkspaces[index];
               return WorkspaceCard(
@@ -433,6 +521,9 @@ class _ListWorkspaceState extends State<ListWorkspace>
           );
         }
 
+        final paginationState =
+            workspaceProvider.getPaginationState(ListWorkspaces.mine);
+
         return MainGridWorkspaces(
           type: _type,
           screenSize: screenSize,
@@ -440,6 +531,16 @@ class _ListWorkspaceState extends State<ListWorkspace>
           errorMessage: errorOwn,
           itemCount: ownWorkspaces.length,
           onRefresh: _fetchOwnWorkspaces,
+          paginationControls: PaginationControls(
+            paginationState: paginationState,
+            onPrevious: () => _handlePreviousPage(ListWorkspaces.mine),
+            onNext: () => _handleNextPage(ListWorkspaces.mine),
+            onLimitChanged: (newLimit) {
+              if (newLimit != null) {
+                _handleLimitChange(ListWorkspaces.mine, newLimit);
+              }
+            },
+          ),
           itemBuilder: (context, index) {
             final workspace = ownWorkspaces[index];
             return WorkspaceCard(

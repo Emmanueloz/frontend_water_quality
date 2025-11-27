@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:frontend_water_quality/core/enums/list_workspaces.dart';
 import 'package:frontend_water_quality/core/enums/storage_key.dart';
+import 'package:frontend_water_quality/core/interface/pagination_state.dart';
 import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/domain/models/workspace.dart';
 import 'package:frontend_water_quality/domain/repositories/workspace_repo.dart';
@@ -13,6 +15,14 @@ class WorkspaceProvider with ChangeNotifier {
   // Flags para control de recarga por tipo
   final Map<String, bool> _shouldReloadByType = {};
   final Map<String, bool> _shouldReloadWorkspace = {};
+
+  // Estados de paginación por tipo
+  final Map<ListWorkspaces, PaginationState> _paginationStates = {
+    ListWorkspaces.mine: const PaginationState(),
+    ListWorkspaces.shared: const PaginationState(),
+    ListWorkspaces.public: const PaginationState(),
+    ListWorkspaces.all: const PaginationState(),
+  };
 
   WorkspaceProvider(this._workspaceRepo, this._authProvider);
 
@@ -52,6 +62,39 @@ class WorkspaceProvider with ChangeNotifier {
     _shouldReloadWorkspace.remove(id);
   }
 
+  // Getter para obtener el estado de paginación
+  PaginationState getPaginationState(ListWorkspaces type) {
+    return _paginationStates[type]!;
+  }
+
+  // Navegar a la siguiente página
+  Future<void> nextPage(ListWorkspaces type, String lastWorkspaceId) async {
+    final currentState = _paginationStates[type]!;
+    _paginationStates[type] = currentState.nextPage(lastWorkspaceId);
+    notifyListeners();
+  }
+
+  // Navegar a la página anterior
+  Future<void> previousPage(ListWorkspaces type) async {
+    final currentState = _paginationStates[type]!;
+    if (!currentState.isFirstPage) {
+      _paginationStates[type] = currentState.previousPage();
+      notifyListeners();
+    }
+  }
+
+  // Cambiar el límite de elementos por página
+  Future<void> changeLimit(ListWorkspaces type, int newLimit) async {
+    _paginationStates[type] = _paginationStates[type]!.changeLimit(newLimit);
+    notifyListeners();
+  }
+
+  // Actualizar hasMore después de cargar datos
+  void updatePaginationHasMore(ListWorkspaces type, int resultCount) {
+    _paginationStates[type] =
+        _paginationStates[type]!.updateHasMore(resultCount);
+  }
+
   void setAuthProvider(AuthProvider? provider) {
     _authProvider = provider;
   }
@@ -74,48 +117,91 @@ class WorkspaceProvider with ChangeNotifier {
     }
   }
 
-  Future<Result<List<Workspace>>> getWorkspaces() async {
+  Future<Result<List<Workspace>>> getWorkspaces(
+      {String? index, int? limit}) async {
     if (_authProvider == null || _authProvider!.token == null) {
       return Result.failure("User not authenticated");
     }
 
     try {
-      final result = await _workspaceRepo.getAll(_authProvider!.token!);
+      final paginationState = _paginationStates[ListWorkspaces.mine]!;
+      final result = await _workspaceRepo.getAll(
+        _authProvider!.token!,
+        index: index ?? paginationState.currentIndex,
+        limit: limit ?? paginationState.limit,
+      );
+
+      if (result.isSuccess) {
+        updatePaginationHasMore(ListWorkspaces.mine, result.value!.length);
+      }
+
       return result;
     } catch (e) {
       return Result.failure(e.toString());
     }
   }
 
-  Future<Result<List<Workspace>>> getPublicWorkspaces() async {
+  Future<Result<List<Workspace>>> getPublicWorkspaces(
+      {String? index, int? limit}) async {
     try {
-      final result = await _workspaceRepo.getPublic();
+      final paginationState = _paginationStates[ListWorkspaces.public]!;
+      final result = await _workspaceRepo.getPublic(
+        index: index ?? paginationState.currentIndex,
+        limit: limit ?? paginationState.limit,
+      );
+
+      if (result.isSuccess) {
+        updatePaginationHasMore(ListWorkspaces.public, result.value!.length);
+      }
+
       return result;
     } catch (e) {
       return Result.failure(e.toString());
     }
   }
 
-  Future<Result<List<Workspace>>> getSharedWorkspaces() async {
+  Future<Result<List<Workspace>>> getSharedWorkspaces(
+      {String? index, int? limit}) async {
     if (_authProvider == null || _authProvider!.token == null) {
       return Result.failure("User not authenticated");
     }
 
     try {
-      final result = await _workspaceRepo.getShared(_authProvider!.token!);
+      final paginationState = _paginationStates[ListWorkspaces.shared]!;
+      final result = await _workspaceRepo.getShared(
+        _authProvider!.token!,
+        index: index ?? paginationState.currentIndex,
+        limit: limit ?? paginationState.limit,
+      );
+
+      if (result.isSuccess) {
+        updatePaginationHasMore(ListWorkspaces.shared, result.value!.length);
+      }
+
       return result;
     } catch (e) {
       return Result.failure(e.toString());
     }
   }
 
-  Future<Result<List<Workspace>>> getAllWorkspaces() async {
+  Future<Result<List<Workspace>>> getAllWorkspaces(
+      {String? index, int? limit}) async {
     if (_authProvider == null || _authProvider!.token == null) {
       return Result.failure("User not authenticated");
     }
 
     try {
-      final result = await _workspaceRepo.getFullAll(_authProvider!.token!);
+      final paginationState = _paginationStates[ListWorkspaces.all]!;
+      final result = await _workspaceRepo.getFullAll(
+        _authProvider!.token!,
+        index: index ?? paginationState.currentIndex,
+        limit: limit ?? paginationState.limit,
+      );
+
+      if (result.isSuccess) {
+        updatePaginationHasMore(ListWorkspaces.all, result.value!.length);
+      }
+
       return result;
     } catch (e) {
       return Result.failure(e.toString());

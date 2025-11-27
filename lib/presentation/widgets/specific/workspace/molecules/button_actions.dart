@@ -22,8 +22,9 @@ class ButtonActions extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: Wrap(
-              alignment: WrapAlignment.spaceBetween,
-              spacing: 2,
+              alignment: WrapAlignment.end,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 5,
               runSpacing: 10,
               children: actions,
             ),

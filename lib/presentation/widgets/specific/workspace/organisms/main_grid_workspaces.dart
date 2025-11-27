@@ -18,6 +18,7 @@ class MainGridWorkspaces extends StatelessWidget {
   final int itemCount;
   final Widget Function(BuildContext, int) itemBuilder;
   final void Function()? onRefresh;
+  final Widget? paginationControls;
 
   const MainGridWorkspaces({
     super.key,
@@ -28,6 +29,7 @@ class MainGridWorkspaces extends StatelessWidget {
     required this.itemBuilder,
     this.errorMessage,
     this.onRefresh,
+    this.paginationControls,
   });
 
   @override
@@ -58,6 +60,7 @@ class MainGridWorkspaces extends StatelessWidget {
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
             actions: [
+              if (paginationControls != null) paginationControls!,
               IconButton(
                 onPressed: onRefresh,
                 icon: Icon(Icons.refresh),
