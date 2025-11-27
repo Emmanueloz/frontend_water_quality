@@ -37,6 +37,19 @@ class MainGridWorkspaces extends StatelessWidget {
     return _buildMain(context);
   }
 
+  String _getTitle() {
+    switch (type) {
+      case ListWorkspaces.mine:
+        return "Mis espacios de trabajo";
+      case ListWorkspaces.shared:
+        return "Espacios de trabajo invitados";
+      case ListWorkspaces.public:
+        return "Espacios de trabajo públicos";
+      case ListWorkspaces.all:
+        return "Todos los espacios de trabajo";
+    }
+  }
+
   Widget _buildMain(BuildContext context) {
     EdgeInsetsGeometry margin;
 
@@ -53,7 +66,7 @@ class MainGridWorkspaces extends StatelessWidget {
         children: [
           ButtonActions(
             title: Text(
-              "Espacios de trabajo",
+              _getTitle(),
               style: Theme.of(context)
                   .textTheme
                   .bodyLarge
