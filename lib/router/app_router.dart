@@ -157,8 +157,7 @@ class AppRouter {
       Routes.authCallback.path,
     ];
 
-
-    final isOnPublicRoute = publicRoutes.contains(state.uri.path); 
+    final isOnPublicRoute = publicRoutes.contains(state.uri.path);
 
     authProvider.cleanError();
 
@@ -221,7 +220,16 @@ class AppRouter {
         path: Routes.workspaces.path,
         name: Routes.workspaces.name,
         builder: (context, state) {
-          final type = _getTypeWorkspace(state.uri.queryParameters['type']);
+          ListWorkspaces type =
+              _getTypeWorkspace(state.uri.queryParameters['type']);
+
+          final rol =
+              Provider.of<AuthProvider>(context, listen: false).user?.rol;
+
+          if (rol != AppRoles.admin && type == ListWorkspaces.all) {
+            type = ListWorkspaces.mine;
+          }
+
           return ListWorkspace(type: type);
         },
         routes: [
