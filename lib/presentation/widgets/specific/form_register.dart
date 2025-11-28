@@ -32,6 +32,7 @@ class _RegisterFormState extends State<RegisterForm> {
   MobileNumber? number;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _acceptedTerms = false;
 
   @override
   void dispose() {
@@ -151,6 +152,66 @@ class _RegisterFormState extends State<RegisterForm> {
                 return null;
               },
             ),
+            // Terms and Conditions checkbox
+            FormField<bool>(
+              initialValue: _acceptedTerms,
+              validator: (value) {
+                if (value != true) {
+                  return 'Debes aceptar los términos y condiciones para continuar';
+                }
+                return null;
+              },
+              builder: (state) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: state.value ?? false,
+                          onChanged: (value) {
+                            setState(() {
+                              _acceptedTerms = value ?? false;
+                              state.didChange(value);
+                            });
+                          },
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => showDialog(
+                              context: context,
+                              builder: (context) => _TermsDialog(),
+                            ),
+                            child: const Text.rich(
+                              TextSpan(
+                                text: 'He leído y acepto los ',
+                                children: [
+                                  TextSpan(
+                                    text: 'términos y condiciones',
+                                    style: TextStyle(
+                                        decoration: TextDecoration.underline,
+                                        color: Colors.blue),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (state.hasError)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 12.0),
+                        child: Text(
+                          state.errorText ?? '',
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
+
             ElevatedButton(
               onPressed: widget.isLoading
                   ? null
@@ -190,6 +251,69 @@ class _RegisterFormState extends State<RegisterForm> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _TermsDialog extends StatelessWidget {
+  const _TermsDialog({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Términos y condiciones - Aqua Minds'),
+      content: SingleChildScrollView(
+        child: SelectableText(
+          r'''Contrato de términos y condiciones de uso del software
+Última actualización: Noviembre de 2025
+
+1. INTRODUCCIÓN Y ACEPTACIÓN
+El presente contrato describe los términos y condiciones aplicables al uso del software, aplicación móvil, plataforma web y hardware IoT denominados "Aqua Minds", propiedad de la empresa Mentes que Impulsan Nuevas Direcciones en Software, S.A. DE C.V. (en adelante "MINDS" o "El Proveedor").
+Al descargar, instalar, registrarse o utilizar el sistema, el usuario (en adelante "El Cliente" o "El Usuario") acepta vincularse legalmente por estos términos. Si no está de acuerdo, deberá abstenerse de utilizar el servicio.
+
+2. TIPO DE LICENCIA
+De acuerdo con el modelo de negocio establecido, MINDS otorga al Usuario una licencia con las siguientes características:
+Licencia de Uso Limitado: El software no se vende, se licencia bajo la modalidad de suscripción (SaaS). El Usuario adquiere el derecho al uso, no la propiedad del código fuente.
+No Exclusiva: MINDS se reserva el derecho de otorgar licencias similares a otros clientes (Gobiernos, ONGs, Particulares).
+Intransferible: La licencia está vinculada a la cuenta del Usuario y no puede ser cedida, subarrendada o vendida a terceros sin consentimiento escrito.
+Revocable: MINDS puede terminar la licencia si el Usuario incumple estos términos o falta al pago de la suscripción correspondiente.
+
+3. DESCRIPCIÓN DEL SERVICIO Y ALCANCE
+El servicio "Aqua Minds" es una solución integral que combina:
+Hardware IoT: Dispositivo físico de medición de calidad del agua (pH, TDS, turbidez, temperatura, etc.).
+Plataforma Digital: Aplicación Web y Móvil (desarrolladas en Flutter y FastAPI) para la visualización de datos en tiempo real.
+Inteligencia Artificial: Módulo de análisis predictivo y recomendaciones automatizadas.
+
+4. PLANES DE SUSCRIPCIÓN Y PAGOS
+El acceso al software se rige por los siguientes niveles de servicio (SaaS), cuyos costos y características se detallan a continuación:
+Plan Gratuito ($0 MXN): Incluye acceso al panel, 2 espacios de trabajo, 2 medidores, reporte en PDF y funciones limitadas de IA (2 resúmenes/mes).
+Plan Básico ($60 MXN/mes): Aumenta a 5 espacios de trabajo, 5 medidores, 6 resúmenes con IA y 6 predicciones futuras.
+Plan Profesional ($100 MXN/mes): Aumenta a 8 espacios de trabajo, 15 usuarios invitados y 20 consultas de IA al mes.
+Condiciones de Pago:
+Las suscripciones se renuevan automáticamente de forma mensual o anual (con un 20% de descuento en pago anual).
+El incumplimiento de pago resultará en la degradación de la cuenta al Plan Gratuito o la suspensión del servicio.
+
+5. HARDWARE Y PROPIEDAD DEL DISPOSITIVO
+Venta de Hardware: El dispositivo IoT se vende por separado a un costo de $2,499 MXN (pago único).
+Garantía: El hardware es propiedad del Cliente tras la compra. El software necesario para su operación (firmware) se licencia bajo los términos de este contrato.
+Conectividad: El Cliente es responsable de proveer la conexión a internet (WiFi) y suministro eléctrico necesarios para el funcionamiento del dispositivo.
+
+6. USO DE DATOS E INTELIGENCIA ARTIFICIAL
+Recolección de Datos: El sistema recolecta datos personales (nombre, correo, teléfono) y métricas ambientales. El tratamiento de estos datos se rige por nuestro Aviso de Privacidad.
+Descargo de Responsabilidad sobre IA: Las predicciones, análisis y propuestas de mejora generadas por la Inteligencia Artificial son herramientas de apoyo a la decisión. MINDS no se hace responsable por decisiones de salud pública o infraestructura tomadas únicamente con base en estas predicciones sin validación técnica adicional, ya que el producto se encuentra en fase de validación de campo.
+
+7. LIMITACIÓN DE RESPONSABILIDAD
+El servicio se ofrece "tal cual". MINDS no garantiza que el servicio será ininterrumpido o libre de errores, aunque se compromete a realizar mantenimientos preventivos y actualizaciones de software. MINDS no será responsable por daños indirectos derivados del uso incorrecto del dispositivo o la interpretación errónea de los datos de calidad del agua.
+''',
+          style: const TextStyle(fontSize: 14),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cerrar'),
+        ),
+      ],
     );
   }
 }
