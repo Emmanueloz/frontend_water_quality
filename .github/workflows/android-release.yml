@@ -46,27 +46,24 @@ jobs:
         run: flutter pub get
 
       # --------------------------------------------------------------------------------------------------
-      # [Firma 1/3] Decodificar y Guardar Keystore
+      # [Firma 1/2] Decodificar y Guardar Keystore
       - name: 🔑 Decodificar y Guardar Keystore
         id: decode_keystore
         run: |
           # Crea la carpeta de destino y decodifica el secreto Base64
           mkdir -p android/app/
+          # Guarda el keystore en android/app/release.jks
           echo "${{ secrets.SIGNING_KEY_JKS }}" | base64 --decode > android/app/release.jks
 
-      # [Firma 2/3] Crear Archivo de Propiedades de la Clave
+      # [Firma 2/2] Crear Archivo de Propiedades de la Clave
       - name: 📝 Crear key.properties para la Firma
         run: |
-          echo "storeFile=release.jks" > android/key.properties
+          # Guarda el archivo key.properties en la carpeta raíz /android
+          echo "storeFile=app/release.jks" > android/key.properties # ¡CORREGIDA RUTA DEL STORE!
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
           echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
           echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> android/key.properties
       
-      # [Firma 3/3] Configurar la ubicación para que Android la lea
-      - name: 🔗 Mover archivo de propiedades a la ubicación correcta
-        run: |
-          # Mueve el archivo key.properties a la carpeta /android (donde build.gradle lo espera)
-          mv android/key.properties android/
       # --------------------------------------------------------------------------------------------------
 
       - name: 🔢 Get commit count
