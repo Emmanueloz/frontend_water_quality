@@ -52,22 +52,33 @@ class _ViewMeterUbicationsState extends State<ViewMeterUbications> {
 
         final meters = snapshot.data!.value ?? [];
 
-        final ubications = meters.map((meter) {
-          final nameLocation = meter.location.nameLocation;
-          final lat = meter.location.lat;
-          final lng = meter.location.lon;
-          final state = meter.state;
-           {
-            return MeterUbication(
-              name: meter.name,
-              nameLocation: nameLocation,
-              latitude: lat,
-              longitude: lng,
-              state: state,
-            );
-          }
-          
-        }).whereType<MeterUbication>().toList();
+        final ubications = meters
+            .map((meter) {
+              final nameLocation = meter.location.nameLocation;
+              final lat = meter.location.lat;
+              final lng = meter.location.lon;
+              final state = meter.state;
+              {
+                return MeterUbication(
+                  name: meter.name,
+                  nameLocation: nameLocation,
+                  latitude: lat,
+                  longitude: lng,
+                  state: state,
+                );
+              }
+            })
+            .whereType<MeterUbication>()
+            .toList();
+
+        if (ubications.isEmpty) {
+          return Center(
+            child: Text(
+              'No hay medidores disponibles en este espacio de trabajo',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          );
+        }
 
         return MainMapUbications(
           screenSize: screenSize,

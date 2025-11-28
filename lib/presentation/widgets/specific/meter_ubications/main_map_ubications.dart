@@ -32,10 +32,15 @@ class _MainMapUbicationsState extends State<MainMapUbications> {
   void initState() {
     super.initState();
     _mapController = MapController();
-    _initialCenter = LatLng(
-      widget.ubications.first.latitude,
-      widget.ubications.first.longitude,
-    );
+    if (widget.ubications.isNotEmpty) {
+      _initialCenter = LatLng(
+        widget.ubications.first.latitude,
+        widget.ubications.first.longitude,
+      );
+    } else {
+      // Fallback: Center of Mexico (approx) so map shows a valid position
+      _initialCenter = LatLng(23.6345, -102.5528);
+    }
     _initialZoom = kIsWeb ? 8.0 : 6.0;
   }
 
