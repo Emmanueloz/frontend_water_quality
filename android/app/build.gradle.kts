@@ -1,3 +1,20 @@
+import java.io.FileInputStream
+import java.util.Properties
+
+// --- Configuración de Firma CI/CD ---
+
+// 1. Define las variables y la ubicación del archivo de propiedades
+val signingProperties = Properties()
+// Busca el archivo key.properties en el directorio 'android/'
+val signingPropertyFile = rootProject.file("key.properties") 
+
+// 2. Carga las propiedades si el archivo existe
+if (signingPropertyFile.exists()) {
+    signingProperties.load(FileInputStream(signingPropertyFile))
+}
+
+// ------------------------------------
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -20,21 +37,36 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.frontend_water_quality"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
+    // 3. Define el bloque de configuraciones de firma
+    signingConfigs {
+        // Define la configuración de 'release' para leer las credenciales del key.properties
+        create("release") {
+            if (signingPropertyFile.exists()) {
+                storeFile = file(signingProperties.getProperty("storeFile"))
+                storePassword = signingProperties.getProperty("storePassword")
+                keyAlias = signingProperties.getProperty("keyAlias")
+                keyPassword = signingProperties.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // 4. Aplica la configuración de firma
+            // Si key.properties existe (CI/CD), usa la clave de release
+            if (signingPropertyFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            } else {
+                // Si no existe (Desarrollo Local), usa la clave de debug (como antes)
+                signingConfig = signingConfigs.getByName("debug")
+            }
         }
     }
 }
