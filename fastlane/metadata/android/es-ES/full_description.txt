@@ -1,5 +1,15 @@
-AquaMinds es una plataforma diseñada para monitorear la calidad del agua desde dispositivos con sensores controlados por un ESP32. La aplicación permite gestionar espacios de trabajo, registrar medidores, consultar parámetros como pH, turbidez, temperatura y conductividad, y visualizar los datos en tiempo real.
+AquaMinds es una plataforma integral de código abierto diseñada para el monitoreo y análisis de la calidad del agua en tiempo real, integrándose con dispositivos IoT basados en ESP32.
 
-El sistema integra notificaciones sobre estados críticos del agua, genera reportes en PDF y permite a cada usuario mantener la información organizada en su propio espacio de trabajo. Es multiplataforma gracias a Flutter, y se comunica con una API desarrollada con FastAPI.
+Esta aplicación permite a investigadores, estudiantes y gestores ambientales visualizar datos críticos obtenidos de sensores remotos de forma centralizada y segura.
 
-AquaMinds facilita el análisis, la toma de decisiones y el seguimiento de la calidad del agua de forma sencilla y accesible.
+Características Principales:
+• Monitoreo IoT: Conexión con medidores ESP32 para lectura de pH, turbidez, temperatura y conductividad.
+• Visualización en Tiempo Real: Gráficas y datos actualizados al instante para la toma de decisiones.
+• Gestión de Espacios de Trabajo: Organiza múltiples medidores y proyectos en entornos separados.
+• Sistema de Alertas: Notificaciones inmediatas sobre estados críticos del agua.
+• Reportes Profesionales: Generación de informes detallados en formato PDF para análisis y archivo.
+
+Transparencia Técnica:
+• Desarrollada en Flutter para un rendimiento nativo multiplataforma.
+• Comunicación segura con una API backend basada en FastAPI.
+• Licencia MIT: Software libre, sin publicidad y auditable por la comunidad.
