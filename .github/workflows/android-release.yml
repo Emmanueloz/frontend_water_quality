@@ -45,33 +45,28 @@ jobs:
       - name: 📥 Obtener Dependencias de Flutter
         run: flutter pub get
 
-      # --------------------------------------------------------------------------------------------------
-      # [Firma 1/2] Decodificar y Guardar Keystore
       - name: 🔑 Decodificar y Guardar Keystore
         id: decode_keystore
         run: |
-          # Crea la carpeta de destino y decodifica el secreto Base64
-          mkdir -p android/app/
-          # Guarda el keystore en android/app/release.jks
-          echo "${{ secrets.SIGNING_KEY_JKS }}" | base64 --decode > android/app/release.jks
+          # Crea la carpeta de destino /android/ si no existe.
+          mkdir -p android/
+          # Guarda el keystore en android/release.jks
+          echo "${{ secrets.SIGNING_KEY_JKS }}" | base64 --decode > android/release.jks
 
-      # [Firma 2/2] Crear Archivo de Propiedades de la Clave
       - name: 📝 Crear key.properties para la Firma
         run: |
           # Guarda el archivo key.properties en la carpeta raíz /android
-          echo "storeFile=app/release.jks" > android/key.properties # ¡CORREGIDA RUTA DEL STORE!
+          # La ruta relativa es ahora 'release.jks'
+          echo "storeFile=release.jks" > android/key.properties
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
           echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
           echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> android/key.properties
       
-      # --------------------------------------------------------------------------------------------------
-
       - name: 🔢 Get commit count
         id: get_commit_count
         run: echo "count=$(git rev-list --count HEAD)" >> $GITHUB_OUTPUT
         
-      - name: ⚙️ Construir el APK de Lanzamiento (¡Ahora Firmado!)
-        # Flutter leerá automáticamente android/key.properties para la firma
+      - name: ⚙️ Construir el APK de Lanzamiento 
         run: flutter build apk --release --build-name=${{ steps.get_tag.outputs.tag }} --build-number=${{ steps.get_commit_count.outputs.count }}
         
       - name: 📤 Crear y Adjuntar APK al Release
