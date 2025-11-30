@@ -45,23 +45,23 @@ jobs:
       - name: 📥 Obtener Dependencias de Flutter
         run: flutter pub get
 
-      - name: 🔑 Decodificar y Guardar Keystore
+      - name:  Decodificar y Guardar Keystore
         id: decode_keystore
         run: |
-          # Crea la carpeta de destino /android/ si no existe.
-          mkdir -p android/
-          # Guarda el keystore en android/release.jks
-          echo "${{ secrets.SIGNING_KEY_JKS }}" | base64 --decode > android/release.jks
+          # Crea la carpeta de destino /android/app/
+          mkdir -p android/app/
+          # Guarda el keystore en android/app/release.jks (Ruta que Gradle espera en el app module)
+          echo "${{ secrets.SIGNING_KEY_JKS }}" | base64 --decode > android/app/release.jks
 
-      - name: 📝 Crear key.properties para la Firma
+      - name: 📝 Crear key.properties para la Firma 
         run: |
           # Guarda el archivo key.properties en la carpeta raíz /android
-          # La ruta relativa es ahora 'release.jks'
+          # La ruta relativa es ahora 'release.jks' (asumiendo que Gradle lo busca dentro de 'app')
           echo "storeFile=release.jks" > android/key.properties
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
           echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
           echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> android/key.properties
-      
+          
       - name: 🔢 Get commit count
         id: get_commit_count
         run: echo "count=$(git rev-list --count HEAD)" >> $GITHUB_OUTPUT
