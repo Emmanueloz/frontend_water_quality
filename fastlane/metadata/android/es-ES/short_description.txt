@@ -1,0 +1,1 @@
+AquaMinds es una aplicación para monitorear la calidad del agua en tiempo real usando un medidor de calidad de agua. Permite crear espacios de trabajo, visualizar mediciones, recibir alertas y generar reportes.
