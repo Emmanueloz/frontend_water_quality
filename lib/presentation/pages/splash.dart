@@ -1,9 +1,11 @@
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/theme_toggle_button.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // Modelo de datos para los pasos del workflow
 class WorkflowStep {
@@ -291,6 +293,26 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     );
   }
 
+  Widget _textTweenAnimationBuilder({
+    required int durationMillis,
+    required Widget child,
+  }) {
+    return TweenAnimationBuilder(
+      duration: Duration(milliseconds: durationMillis),
+      tween: Tween<double>(begin: 0, end: 1),
+      builder: (context, double value, child) {
+        return Opacity(
+          opacity: value,
+          child: Transform.translate(
+            offset: Offset(0, 30 * (1 - value)),
+            child: child,
+          ),
+        );
+      },
+      child: child,
+    );
+  }
+
   Widget _buildHeroSection() {
     return Container(
       constraints: const BoxConstraints(minHeight: 400),
@@ -345,18 +367,8 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    TweenAnimationBuilder(
-                      duration: const Duration(milliseconds: 1000),
-                      tween: Tween<double>(begin: 0, end: 1),
-                      builder: (context, double value, child) {
-                        return Opacity(
-                          opacity: value,
-                          child: Transform.translate(
-                            offset: Offset(0, 30 * (1 - value)),
-                            child: child,
-                          ),
-                        );
-                      },
+                    _textTweenAnimationBuilder(
+                      durationMillis: 1000,
                       child: Text(
                         'Aqua Minds',
                         textAlign: TextAlign.center,
@@ -370,18 +382,8 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    TweenAnimationBuilder(
-                      duration: const Duration(milliseconds: 1200),
-                      tween: Tween<double>(begin: 0, end: 1),
-                      builder: (context, double value, child) {
-                        return Opacity(
-                          opacity: value,
-                          child: Transform.translate(
-                            offset: Offset(0, 30 * (1 - value)),
-                            child: child,
-                          ),
-                        );
-                      },
+                    _textTweenAnimationBuilder(
+                      durationMillis: 1200,
                       child: Text(
                         'Monitoreo Inteligente de la Calidad del Agua',
                         textAlign: TextAlign.center,
@@ -394,18 +396,8 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    TweenAnimationBuilder(
-                      duration: const Duration(milliseconds: 1400),
-                      tween: Tween<double>(begin: 0, end: 1),
-                      builder: (context, double value, child) {
-                        return Opacity(
-                          opacity: value,
-                          child: Transform.translate(
-                            offset: Offset(0, 30 * (1 - value)),
-                            child: child,
-                          ),
-                        );
-                      },
+                    _textTweenAnimationBuilder(
+                      durationMillis: 1400,
                       child: Text(
                         'Soluciones tecnológicas innovadoras para resolver desafíos ambientales y sociales mediante monitoreo inteligente del agua',
                         textAlign: TextAlign.center,
@@ -417,18 +409,8 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                       ),
                     ),
                     const SizedBox(height: 48),
-                    TweenAnimationBuilder(
-                      duration: const Duration(milliseconds: 1600),
-                      tween: Tween<double>(begin: 0, end: 1),
-                      builder: (context, double value, child) {
-                        return Opacity(
-                          opacity: value,
-                          child: Transform.translate(
-                            offset: Offset(0, 30 * (1 - value)),
-                            child: child,
-                          ),
-                        );
-                      },
+                    _textTweenAnimationBuilder(
+                      durationMillis: 1600,
                       child: ElevatedButton(
                         onPressed: () => context.go(Routes.login.path),
                         style: ElevatedButton.styleFrom(
@@ -453,6 +435,28 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
+                    if (kIsWeb) ...[
+                      const SizedBox(height: 24),
+                      _textTweenAnimationBuilder(
+                        durationMillis: 1800,
+                        child: TextButton(
+                            onPressed: () async {
+                              const url =
+                                  'https://github.com/Emmanueloz/frontend_water_quality/releases/latest/download/app-release.apk';
+                              final uri = Uri.parse(url);
+
+                              if (await canLaunchUrl(uri)) {
+                                await launchUrl(
+                                  uri,
+                                  mode: LaunchMode.externalApplication,
+                                );
+                              } else {
+                                debugPrint('No se pudo abrir el enlace $url');
+                              }
+                            },
+                            child: const Text('Descarga la App')),
+                      ),
+                    ]
                   ],
                 ),
               ),
@@ -1089,7 +1093,6 @@ class _MissionVisionCardState extends State<_MissionVisionCard> {
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
         child: Container(
-          height: double.infinity,
           padding: const EdgeInsets.all(48),
           decoration: BoxDecoration(
             color: widget.isDarkMode
