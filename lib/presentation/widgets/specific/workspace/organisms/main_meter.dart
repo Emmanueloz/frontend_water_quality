@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/constants/limit_chart_sensor.dart';
+import 'package:frontend_water_quality/core/enums/sensor_type.dart';
 import 'package:frontend_water_quality/infrastructure/connectivity_provider.dart';
 import 'package:frontend_water_quality/infrastructure/record_storage.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/organisms/resizable_container.dart';
@@ -156,7 +158,7 @@ class _MainMeterState extends State<MainMeter> {
         sensorType: "Temperatura",
         value: temperature,
         min: 0,
-        max: 60,
+        max: LimitChartSensor.getMaxY(SensorType.temperature),
         interval: 5,
         size: meterSize,
       ),
@@ -164,7 +166,7 @@ class _MainMeterState extends State<MainMeter> {
         sensorType: "PH",
         value: ph,
         min: 0,
-        max: 14,
+        max: LimitChartSensor.getMaxY(SensorType.ph),
         interval: 1,
         size: meterSize,
       ),
@@ -172,7 +174,7 @@ class _MainMeterState extends State<MainMeter> {
         sensorType: "Total de Sólidos Disueltos",
         value: tds,
         min: 0,
-        max: 1200,
+        max: LimitChartSensor.getMaxY(SensorType.tds),
         interval: 100,
         size: meterSize,
       ),
@@ -180,7 +182,7 @@ class _MainMeterState extends State<MainMeter> {
         sensorType: "Conductividad",
         value: conductivity,
         min: 0,
-        max: 1200,
+        max: LimitChartSensor.getMaxY(SensorType.conductivity),
         interval: 100,
         size: meterSize,
       ),
@@ -188,7 +190,7 @@ class _MainMeterState extends State<MainMeter> {
         sensorType: "Turbidez",
         value: turbidity,
         min: 0,
-        max: 500,
+        max: LimitChartSensor.getMaxY(SensorType.turbidity),
         interval: 50,
         size: meterSize,
       ),
