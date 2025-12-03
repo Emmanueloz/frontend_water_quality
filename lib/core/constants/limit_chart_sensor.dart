@@ -8,11 +8,11 @@ class LimitChartSensor {
       case SensorType.ph:
         return 14.0;
       case SensorType.tds:
-        return 700.0;
+        return 1200.0;
       case SensorType.conductivity:
-        return 3000.0;
+        return 1200.0;
       case SensorType.turbidity:
-        return 70;
+        return 500;
     }
   }
 }
