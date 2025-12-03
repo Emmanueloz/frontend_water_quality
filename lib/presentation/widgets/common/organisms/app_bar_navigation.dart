@@ -69,7 +69,9 @@ class AppBarNavigation extends StatelessWidget implements PreferredSizeWidget {
             ButtonProfile(
               username: authProvider.user?.username ?? "",
               email: authProvider.user?.email ?? "",
-              role: authProvider.user?.rol?.nameSpanish,
+              role: authProvider.user?.rol == AppRoles.admin
+                  ? authProvider.user?.rol?.nameSpanish
+                  : null,
               onPressed: () {
                 if (isOffline) {
                   return;

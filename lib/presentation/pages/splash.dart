@@ -206,20 +206,10 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
               const SizedBox(width: 16),
               ElevatedButton(
                 onPressed: () => context.go(Routes.login.path),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.tertiary,
-                  foregroundColor: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                ),
                 child: Text(
                   'Iniciar',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                 ),
               ),
@@ -416,22 +406,15 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 48, vertical: 20),
-                          backgroundColor:
-                              Theme.of(context).colorScheme.tertiary,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50)),
-                          elevation: 8,
-                          shadowColor: isDarkMode
-                              ? const Color(0xFF66C2C2).withValues(alpha: 0.4)
-                              : const Color(0xFF66BB6A).withValues(alpha: 0.4),
                         ),
                         child: Text(
                           'Comenzar Monitoreo',
-                          style:
-                              Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black),
                         ),
                       ),
                     ),
@@ -439,7 +422,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                       const SizedBox(height: 24),
                       _textTweenAnimationBuilder(
                         durationMillis: 1800,
-                        child: TextButton(
+                        child: TextButton.icon(
                             onPressed: () async {
                               const url =
                                   'https://github.com/Emmanueloz/frontend_water_quality/releases/latest/download/app-release.apk';
@@ -454,7 +437,8 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                                 debugPrint('No se pudo abrir el enlace $url');
                               }
                             },
-                            child: const Text('Descarga la App')),
+                            icon: const Icon(Icons.android, size: 30),
+                            label: const Text('Descarga la App')),
                       ),
                     ]
                   ],

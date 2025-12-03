@@ -51,7 +51,7 @@ class AnalysisDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String typeSensor = "5";
+    String typeSensor = "Todos";
     String? sensor = analysis!.parameters!.sensor;
 
     final token = Provider.of<AuthProvider>(context, listen: false).token;

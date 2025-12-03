@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/meter_state.dart';
 import 'package:frontend_water_quality/core/interface/meter_ubication.dart';
 import 'package:frontend_water_quality/core/interface/result.dart';
 import 'package:frontend_water_quality/domain/models/meter_model.dart';
@@ -57,7 +58,8 @@ class _ViewMeterUbicationsState extends State<ViewMeterUbications> {
               final nameLocation = meter.location.nameLocation;
               final lat = meter.location.lat;
               final lng = meter.location.lon;
-              final state = meter.state;
+              final state =
+                  meter.state?.nameSpanish ?? MeterState.unknown.nameSpanish;
               {
                 return MeterUbication(
                   name: meter.name,

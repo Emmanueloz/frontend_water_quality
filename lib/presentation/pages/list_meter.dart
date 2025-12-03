@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/enums/meter_state.dart';
 import 'package:frontend_water_quality/core/interface/result.dart';
 
 import 'package:frontend_water_quality/domain/models/meter_model.dart';
@@ -99,7 +100,7 @@ class _ListMeterState extends State<ListMeter> {
             return MeterCard(
               id: meter.id ?? '',
               name: meter.name,
-              state: meter.state ?? 'disconnected',
+              state: meter.state ?? MeterState.unknown,
               location: meter.location,
               onTap: () {
                 context.goNamed(

@@ -1,29 +1,14 @@
 import 'package:frontend_water_quality/core/enums/storage_key.dart';
 import 'package:frontend_water_quality/domain/models/storage_model.dart';
 import 'package:frontend_water_quality/domain/models/user.dart';
+import 'package:frontend_water_quality/infrastructure/base_hive_storage.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:flutter/foundation.dart';
-import 'package:path_provider/path_provider.dart';
 
 class LocalStorageService {
-  static bool _initialized = false;
-
-  // Inicializar Hive según plataforma
-  static Future<void> init() async {
-    if (_initialized) return;
-    if (kIsWeb) {
-      // Necesario para Flutter Web
-      await Hive.initFlutter();
-    } else {
-      final dir = await getApplicationDocumentsDirectory();
-      Hive.init(dir.path);
-    }
-    _initialized = true;
-  }
+  static final BaseHiveStorage _storage = BaseHiveStorage('settings');
 
   static Future<Box> get _box async {
-    await init();
-    return await Hive.openBox('settings');
+    return await _storage.getBox();
   }
 
   // Guardar valor
@@ -31,7 +16,7 @@ class LocalStorageService {
     try {
       (await _box).put(key.name, value);
     } catch (e) {
-      print('LocalStorageService.save error: '+e.toString());
+      print('LocalStorageService.save error: ' + e.toString());
     }
   }
 
@@ -40,7 +25,7 @@ class LocalStorageService {
     try {
       return (await _box).get(key.name, defaultValue: null);
     } catch (e) {
-      print('LocalStorageService.get error: '+e.toString());
+      print('LocalStorageService.get error: ' + e.toString());
       return null;
     }
   }
@@ -60,7 +45,7 @@ class LocalStorageService {
         user: user,
       );
     } catch (e) {
-      print('LocalStorageService.getAll error: '+e.toString());
+      print('LocalStorageService.getAll error: ' + e.toString());
 
       return StorageModel();
     }
@@ -71,7 +56,7 @@ class LocalStorageService {
     try {
       await (await _box).delete(key.name);
     } catch (e) {
-      print('LocalStorageService.remove error: '+e.toString());
+      print('LocalStorageService.remove error: ' + e.toString());
     }
   }
 }
