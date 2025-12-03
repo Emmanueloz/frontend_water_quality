@@ -35,10 +35,14 @@ class ButtonProfile extends StatelessWidget {
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           Text(
             email,
             style: theme.textTheme.bodySmall,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           if (role != null && role!.isNotEmpty)
             Text(
@@ -46,6 +50,8 @@ class ButtonProfile extends StatelessWidget {
               style: theme.textTheme.bodySmall?.copyWith(
                 fontStyle: FontStyle.italic,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
         ],
       ),

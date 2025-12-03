@@ -78,7 +78,7 @@ class _LayoutMetersState extends State<LayoutMeters> {
       selectedIcon: Icons.analytics,
     ),
     NavigationItem(
-      label: "Climan",
+      label: "Clima",
       icon: Icons.cloud_outlined,
       selectedIcon: Icons.cloudy_snowing,
     ),
