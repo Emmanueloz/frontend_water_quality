@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_water_quality/core/constants/limit_chart_sensor.dart';
 import 'package:frontend_water_quality/core/enums/screen_size.dart';
+import 'package:frontend_water_quality/core/enums/sensor_type.dart';
 import 'package:frontend_water_quality/domain/models/meter_records_response.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/atoms/base_container.dart';
 import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/line_graph.dart';
@@ -29,12 +31,12 @@ class SensorConfig {
 }
 
 /// Sensor configuration constants with measurement units and thresholds
-const Map<String, SensorConfig> sensorConfigs = {
+Map<String, SensorConfig> sensorConfigs = {
   'temperature': SensorConfig(
     name: 'Temperatura',
     unit: '°C',
     minY: 0,
-    maxY: 60,
+    maxY: LimitChartSensor.getMaxY(SensorType.temperature),
     intervalY: 10,
     minThreshold: 10,
     maxThreshold: 35,
@@ -43,7 +45,7 @@ const Map<String, SensorConfig> sensorConfigs = {
     name: 'PH',
     unit: 'pH',
     minY: 0,
-    maxY: 14,
+    maxY: LimitChartSensor.getMaxY(SensorType.ph),
     intervalY: 2,
     minThreshold: 6.5,
     maxThreshold: 8.5,
@@ -52,7 +54,7 @@ const Map<String, SensorConfig> sensorConfigs = {
     name: 'Total de Sólidos Disueltos',
     unit: 'ppm',
     minY: 0,
-    maxY: 1200,
+    maxY: LimitChartSensor.getMaxY(SensorType.tds),
     intervalY: 100,
     minThreshold: 300,
     maxThreshold: 490,
@@ -61,7 +63,7 @@ const Map<String, SensorConfig> sensorConfigs = {
     name: 'Conductividad',
     unit: 'µS/cm',
     minY: 0,
-    maxY: 1200,
+    maxY: LimitChartSensor.getMaxY(SensorType.conductivity),
     intervalY: 100,
     minThreshold: 0,
     maxThreshold: 1000,
@@ -70,7 +72,7 @@ const Map<String, SensorConfig> sensorConfigs = {
     name: 'Turbidez',
     unit: 'NTU',
     minY: -50,
-    maxY: 500,
+    maxY: LimitChartSensor.getMaxY(SensorType.turbidity),
     intervalY: 50,
     minThreshold: 0,
     maxThreshold: 5,

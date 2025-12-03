@@ -10,7 +10,7 @@ class LimitChartSensor {
       case SensorType.tds:
         return 1200.0;
       case SensorType.conductivity:
-        return 1200.0;
+        return 1800.0;
       case SensorType.turbidity:
         return 500;
     }
