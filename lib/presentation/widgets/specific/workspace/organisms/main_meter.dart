@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_water_quality/core/enums/storage_key.dart';
 import 'package:frontend_water_quality/infrastructure/connectivity_provider.dart';
-import 'package:frontend_water_quality/infrastructure/local_storage_service.dart';
+import 'package:frontend_water_quality/infrastructure/record_storage.dart';
 import 'package:frontend_water_quality/presentation/widgets/common/organisms/resizable_container.dart';
+import 'package:frontend_water_quality/presentation/widgets/specific/workspace/molecules/data_indicator.dart';
 import 'package:frontend_water_quality/router/routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -38,8 +38,6 @@ class _MainMeterState extends State<MainMeter> {
 
   RecordResponse lastRecord = RecordResponse.empty;
 
-  int count = 0;
-
   bool _resizable = false;
 
   @override
@@ -49,7 +47,7 @@ class _MainMeterState extends State<MainMeter> {
         Provider.of<ConnectivityProvider>(context, listen: false).isOffline;
 
     if (isOffline) {
-      print("is offline");
+      //print("is offline");
       return;
     }
     _meterProvider = Provider.of<MeterRecordProvider>(context, listen: false);
@@ -68,14 +66,15 @@ class _MainMeterState extends State<MainMeter> {
   }
 
   Future<void> _getLastRecord() async {
-    String? recordString =
-        await LocalStorageService.get(StorageKey.lastRecords);
-
-    print(recordString);
+    String? recordString = await RecordStorage.get(widget.idMeter);
 
     if (recordString != null) {
       setState(() {
         lastRecord = RecordResponse.fromString(recordString);
+      });
+    } else {
+      setState(() {
+        lastRecord = RecordResponse.empty;
       });
     }
   }
@@ -84,6 +83,8 @@ class _MainMeterState extends State<MainMeter> {
   void dispose() {
     // Usar la referencia guardada en lugar de acceder al Provider
     _meterProvider?.unsubscribe();
+    lastRecord = RecordResponse.empty;
+    _meterProvider?.clean();
     super.dispose();
   }
 
@@ -92,6 +93,7 @@ class _MainMeterState extends State<MainMeter> {
     return Consumer<MeterRecordProvider>(
       builder: (context, meterProvider, _) {
         final record = meterProvider.recordResponse;
+        final isLive = meterProvider.recordResponse != null;
         if (meterProvider.errorMessageSocket != null) {
           return BaseContainer(
             margin: _getMargin(),
@@ -115,30 +117,26 @@ class _MainMeterState extends State<MainMeter> {
           );
         }
 
-        return _buildMain(context, record ?? lastRecord);
+        return _buildMain(context, record ?? lastRecord, isLive, record);
       },
     );
   }
 
   void _saveRecord(RecordResponse? record) {
-    if (count != 10) {
-      count++;
-      return;
-    }
-
-    String? recordString = record!.toJsonEncode();
-
-    LocalStorageService.save(StorageKey.lastRecords, recordString);
-    count = 0;
+    if (record == null) return;
+    String recordString = record.toJsonEncode();
+    RecordStorage.save(widget.idMeter, recordString);
   }
 
-  Widget _buildMain(BuildContext context, RecordResponse? record) {
+  Widget _buildMain(BuildContext context, RecordResponse? record, bool isLive,
+      RecordResponse? liveRecord) {
     final meterSize = _getMeterSize();
 
-    _saveRecord(record);
+    // Solo guardar si hay un nuevo registro del socket (isLive)
+    if (isLive && liveRecord != null) {
+      _saveRecord(liveRecord);
+    }
 
-    // Aquí debes mapear los datos recibidos a los valores de los medidores
-    // Ejemplo de cómo podrías hacerlo:
     final temperature =
         record?.temperature.value ?? 0; // Valor por defecto si no está presente
     final ph = record?.ph.value ?? 0;
@@ -148,7 +146,6 @@ class _MainMeterState extends State<MainMeter> {
     final SRColorValue color =
         record?.color.value ?? SRColorValue(r: 111, g: 111, b: 111);
 
-    // Lista de medidores de ejemplo (puedes modificarla para pruebas)
     final List<Widget> meters = [
       SensorColor(
         red: color.r,
@@ -172,27 +169,27 @@ class _MainMeterState extends State<MainMeter> {
         size: meterSize,
       ),
       RadialGaugeMeter(
-        sensorType: "TDS",
+        sensorType: "Total de Sólidos Disueltos",
         value: tds,
         min: 0,
-        max: 500,
-        interval: 50,
+        max: 1200,
+        interval: 100,
         size: meterSize,
       ),
       RadialGaugeMeter(
         sensorType: "Conductividad",
         value: conductivity,
         min: 0,
-        max: 3000,
-        interval: 300,
+        max: 1200,
+        interval: 100,
         size: meterSize,
       ),
       RadialGaugeMeter(
         sensorType: "Turbidez",
         value: turbidity,
         min: 0,
-        max: 50,
-        interval: 5,
+        max: 500,
+        interval: 50,
         size: meterSize,
       ),
     ];
@@ -235,6 +232,10 @@ class _MainMeterState extends State<MainMeter> {
                         ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   actions: [
+                    // Indicador de recibido de datos (primer elemento)
+                    // Si isLive==true, el indicador pulsa en cada rebuild; si false, aparece apagado (gris).
+                    DataIndicator(active: isLive),
+                    // Acciones de pantalla completa / resizable
                     if (widget.screenSize == ScreenSize.largeDesktop ||
                         widget.screenSize == ScreenSize.smallDesktop)
                       if (_resizable)
