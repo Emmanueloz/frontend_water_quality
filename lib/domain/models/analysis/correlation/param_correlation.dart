@@ -43,7 +43,7 @@ class ParamCorrelation extends Parameters {
         "sensors": sensors == null
             ? []
             : List<dynamic>.from(
-                sensors!.map((x) => x.nameEnglish),
+                sensors!.map((x) => x.nameEnglish.toLowerCase()),
               ),
       };
 }
